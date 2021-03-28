@@ -1,0 +1,87 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Show disk usage of current directory.  Saves result under ${PWD}/hddu.ot
+
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <file>+
+
+  -h  Display this help text.
+"
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+# ERRORS=""
+#
+# if ((${#FILES[*]} == 0)); then
+#   ERRORS="${ERRORS} - You must provide at least one argument.\n"
+# fi
+#
+# if [ ! -z "${ERRORS}" ]; then
+#   echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+#   echo -e "${ERRORS}"
+#   echo -e "Command aborted."
+#   exit 1
+# fi
+
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+# TODO:  To implement one day if usefull.  This is an old alias that existed
+#
+#   hdduroot fetches space used under /, but does not look into mounted
+#   filesystems.
+#   alias hdduroot='du -hx -d1 / | sort -rh | tee hdduroot.out'
+
+
+du -sh * | sort -rh >hddu.out
+
+echo -e "─────\n$(cat hddu.out | cut -f1 | sed 's/G/ * 1000 M/;s/M/ * 1000 K/;s/K/ * 1000/; s/$/ + \\/; $a0' | bc -l | numfmt --to=iec-i --suffix=B)	\e[3mTotal\e[0m" >>hddu.out
+
+echo -e "\nGenerated on $(date "+${TIMESTAMP_FORMAT_HUMAN}")">>hddu.out
+cat hddu.out

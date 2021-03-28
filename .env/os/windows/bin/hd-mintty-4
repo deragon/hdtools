@@ -1,0 +1,38 @@
+#!/usr/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+trap SIGHUP
+
+YRES=`hd-screen-resolution x`
+if [ "${YRES}" = "1024" ]; then
+  YRANGE="000 472"
+else
+  echo "Y Resolution ${YRES} not supported.  Aborting."
+fi
+
+YRES=`hd-screen-resolution y`
+if [ "${YRES}" = "1024" ]; then
+  YRANGE="000 472"
+else
+  echo "Y Resolution ${YRES} not supported.  Aborting."
+fi
+
+
+for x in 000 560; do
+  for y in ${YRANGE}; do
+    mintty \
+      --position ${x},${y} \
+      --option Columns=76 \
+      --option Rows=40 \
+      --option FontHeight=8 \
+      --option Font="Lucida Console" \
+      &
+  done
+done

@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import os.path
+import sys
+import socket
+
+# os.path.realpath(os.curdir) # Current directory, canonical form.
+
+scriptPath=os.path.dirname(sys.argv[0])
+scriptName=os.path.basename(sys.argv[0])
+
+scriptPathAbs=os.path.realpath(scriptPath)
+
+scriptNameandpathAbs=scriptPathAbs + os.sep + scriptName
+
+try:
+  scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
+except IndexError:
+  scriptNameBase=scriptName # There is no extension.
+
+  scriptPathAbsParent=os.path.dirname(scriptPathAbs)
+
+# PARSING ARGUMENTS
+# ────────────────────────────────────────────────────────────────────────────
+#
+# See:  http://docs.python.org/2/library/argparse.html
+#
+# WARNING:
+#
+# - and -- options are always optional according to argparse.  If you
+# want mandatory arguments, they should not be prefixed with - or --.
+#
+# http://stackoverflow.com/questions/24180527/argparse-required-arguments-listed-under-optional-arguments
+
+import argparse
+parser = argparse.ArgumentParser(description='Listen to a port and print data received.  This is to replace nc when the tool is not available.')
+
+parser.add_argument('--host', metavar='host', default=None, type=str,
+                   help='Host/IP to listen to.  Default is "localhost".', required=False)
+parser.add_argument('-p', '--port', metavar='port', default=None, type=int,
+                   help='port to listen to.  Mandatory parameter.')
+
+args = parser.parse_args()
+
+errors=""
+
+host=args.host
+port=args.port
+
+if host == None:
+  host = "localhost"
+  print("--host not provided.  Set to default \"localhost\".")
+
+if port == None :
+  errors += "\n  --port is mandatory.  You must provide a port on which to listen too."
+
+if len(errors) > 0:
+  print("ERROR:  The following errors were detected:\n" + errors)
+  print("\nCommand aborted.")
+  sys.exit(1)
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print("Listening to " + host + ":" + str(port))
+s.bind((host, port))
+s.listen(1)
+
+while True:
+    conn, addr = s.accept()
+    data = conn.recv(1024)
+    conn.close()
+    print(data.decode('utf-8'))

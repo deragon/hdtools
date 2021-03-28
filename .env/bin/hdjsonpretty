@@ -1,0 +1,129 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  cat <<EOM
+Prints on stdout the pretty version of the provided JSON file.  If -i
+is provided, the file itself is changed to the pretty version.
+
+Usage:  ${SCRIPT_NAME} [-i] <file.json>
+
+  -i  In replacement.  The file is replaced with its pretty version.
+  -c  Print in color.
+  -l  Pass through 'less'.
+  -s  Sort keys
+EOM
+}
+
+OPTIONS=""
+LESS=0
+COLOR=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+INPLACE_REPLACEMENT=0
+while getopts "cilsh" OPTCMD; do
+  case "${OPTCMD}" in
+    "i")    INPLACE_REPLACEMENT=1;;
+    "c")    COLOR=1;;
+    "l")    LESS=1;;
+    "s")    OPTIONS="${OPTIONS}, sort_keys=True";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+# TRAPPING AN ERROR
+# ────────────────────────────────────────────────────────────────────────────
+
+# When 'set -e' is configured, upon an error the function 'signalerrorhandler'
+# gets called.
+signalerrorhandler()
+{
+  #set -x
+  last_command="$(fc -l 0)"
+  LINENO_ERR=$1
+  echo -e "$(cat <<EOM
+
+\e[1;37;41mERROR:\e[0m  The previous command failed.  Script aborted.
+         Following the command that failed:
+EOM
+)"
+  echo
+
+  # From:  https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
+  awk 'NR>L-4 && NR<L+4 { printf "             %-5d%3s%s%s\n",NR,(NR==L?">>>":""),$0,(NR==L?"<<<":"") }' L=${LINENO_ERR} $0
+}
+
+# IMPORTANT:  ' must be used, not " to ensure that ${LINENO} is not being
+#             evaluated during the declaration of the trap.
+trap 'signalerrorhandler ${LINENO}' ERR
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+# STDIN OR FILES
+#
+# If no file has been provided, set one file as STDIN (-).  This way,
+# either files passed as arguments are processed or STDIN.
+(( ${#FILES[*]} == 0 )) && FILES[0]="-"
+
+for FILE in ${FILES[@]}; do
+
+  # Calling the module json.tool -with -m does not provide the wealth of
+  # options available with the library  This is why we run direct Python code
+  # instead.
+  #
+  #   python3 -m json.tool $@  # No options available.
+
+  [ ! -r "${FILE}" ] && [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]] && FILE=$(cygpath -u "${FILE}")
+
+  # Print only if more than one file is being processed.
+  (( ${#FILES[*]} > 1 )) && echo "Processing ${FILE}"
+
+  if [ "${FILE}" == "-" ]; then
+    # Input is from stdin
+    OPENFILE_CMD="sys.stdin"
+  else
+    OPENFILE_CMD="open('${FILE}', 'r')"
+  fi
+
+  # ensure_ascii = False keeps UTF-8 characters as is, i.e. 'é' shows as such.
+  # If set to false, UTF-8 characters are replaced with unicode codes, such as
+  # \u00e9 for 'é'.
+  JSON_PRETTY=$(python3 -c "import sys, json; jsondata=json.load(${OPENFILE_CMD}); print(json.dumps(jsondata, ensure_ascii=False, indent=2${OPTIONS}))")
+  (( $? > 0)) && exit $?
+
+  if (( INPLACE_REPLACEMENT )); then
+    echo "${JSON_PRETTY}" >"${FILE}"
+  else
+    if (( ${COLOR} )) && which pygmentize >/dev/null; then
+      COLOR_CMD="| pygmentize -l json"
+    else
+      COLOR_CMD=""
+    fi
+
+    if (( ${LESS} )); then
+      LESS_CMD="| less -r"
+    else
+      LESS_CMD=""
+    fi
+    eval "echo \"\${JSON_PRETTY}\" ${COLOR_CMD} ${LESS_CMD}"
+  fi
+done

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Todo:  save permissions of files and restore them.  Example to fetch
+#        permissions on next line:
+# stat.exe env.gen.cygwin.sh | perl -ne "print if s/.*?\((\d{4}).*/\1/g;"
+#
+# Détails:  http://permalink.gmane.org/gmane.os.cygwin/41380
+
+for ARG in "$@"; do
+  #echo ARG=$ARG
+  if [ -z "${ARG/-*/}" ]; then
+    ARGS="${ARGS} ${ARG}"
+    continue
+  else
+    FILES="${FILES} \""`cygpath -w "${ARG}"`"\""
+  fi
+done
+FILES="${FILES:1}"
+
+[ -z "${HD_GVIM}" ] && HD_GVIM="HD_GVIM"
+
+# Converting HDVIM to windows format, locally only.
+# .vimrc specific to Hans Deragon calls ${HDVIM}, thus
+# it must be in the proper format.
+HDVIMWIN=`cygpath -w "${HDVIM}"`
+HDVIM="${HDVIMWIN}"
+#echo "\${HDVIM}=${HDVIM}"
+# Doubling \ because they need to be escaped.
+FILES=`echo "${FILES}" | perl -pe 's%\\\\%\\\\\\\\%g'`
+eval "'${HD_GVIM}' ${ARGS} ${FILES} &";

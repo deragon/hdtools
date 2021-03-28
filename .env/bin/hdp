@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import getopt
+import os.path
+import re
+import HDLibNetwork
+
+from hdlib2 import *
+
+# See:  http://www.cyberciti.biz/howto/question/linux/dpkg-cheat-sheet.php
+
+# ----------------------------------------------------------------------
+def usage(code=255):
+  print(gScriptName + """ [ -c | --content ]
+
+      [ <-l|--list> "argument*"]  List all packages installed.
+                                  On DEB systems, * wildcard works.
+                                  On RPM systems, perform fgrep like
+                                  command if argument given.
+
+      [ -i | --info ]             Show information on package
+
+      [ -f | --search-file ]      Provide a file and the package
+                                  containing it will show up.
+
+      [ -e | --search-executable "executable" ]  Perform `which on
+                                                 "executable" then query
+                                                 database.
+
+      [ -z <debug level> | --debug=<debug level> ]
+      [ -h | --help ]
+
+  If a package name is provided and is an actual file, then that file
+  will be queried.  Else, the package within the packaging system
+  (already installed) will be queried.
+
+  This script is a wrapper for dpkg and rpm.
+""")
+  sys.exit(code)
+
+
+######################################################################
+# Main
+
+pkgsystem = getEnv("HD_OS_CODE")
+DEB=1
+RPM=2
+
+rv=0
+
+class PerformAction:
+  def __init__(self, pkgsystem, installedcmd, filecmd):
+    self.pkgsystem    = pkgsystem
+    self.installedcmd = installedcmd
+    self.filecmd      = filecmd
+
+  def run(self, title, isFile):
+    if isFile:
+      cmd=self.filecmd
+    else:
+      cmd=self.installedcmd
+
+    runCommand(title, [ getPkgTool() ] + cmd )
+
+def performAction(package, title, hPkgSystems):
+  global pkgsystem
+
+  isFile=False
+  if os.path.isfile(package):
+    isFile=True
+    if package[-4:] == ".rpm":
+      pkgsystem=RPM
+    elif package[-4:] == ".deb":
+      pkgsystem=DEB
+    else:
+      print("ERROR:  Unkown file type:  " + package + ".  Aborting.")
+      sys.exit(1)
+
+  hPkgSystems[pkgsystem].run(title, isFile)
+
+def runCommand(title, cmd):
+  global rv
+  print(str(title + " (Running '" + str(cmd) + "') ").ljust(70) + "\n")
+  rv, lines = execute(cmd, printLines=True)
+  rv=rv >> 8
+  debug("runCommand():  rv=" + str(rv), 60)
+  return lines
+
+if pkgsystem == "ubuntu":
+  pkgsystem=DEB
+  pkgtool="dpkg"
+else:
+  pkgsystem=RPM
+  pkgtool="rpm"
+
+def getPkgTool():
+  global pkgsystem
+  if pkgsystem == DEB:
+    return "dpkg"
+  elif pkgsystem == RPM:
+    return "rpm"
+  else:
+    return "# Unkwon system"
+
+def showInfo(arg):
+  if pkgsystem == DEB:
+    if os.path.isfile(arg):
+      runCommand("Info", [ pkgtool, "--info", arg ])
+    else:
+      # dpkg -p does not always work.  Using apt-cache show instead.
+      # runCommand("Info", [ pkgtool, "-p", arg ])
+      runCommand("Info", [ "apt-cache", "show", arg ])
+  else:
+    if os.path.isfile(arg):
+      runCommand("Info", [ pkgtool, "-qpi", arg ])
+    else:
+      runCommand("Info", [ pkgtool, "-qi", arg ])
+
+def showContents(arg):
+  performAction(arg, "Contents", {
+      DEB : PerformAction(DEB,
+        installedcmd = [ "-L", arg ],
+        filecmd      = [ "-c", arg]  ),
+      RPM : PerformAction(RPM,
+        installedcmd = [ "-ql", arg ],
+        filecmd      = [ "-qpl", arg ] ) } )
+
+def findFile(arg):
+  title="\nSearching for file"
+  if pkgsystem == DEB:
+    cannonicalExecutable = runCommand("Canonical search for " + arg, [ "hdcanonical",  arg ])[0].strip()
+    return runCommand(title, [ pkgtool, "-S", cannonicalExecutable ])
+  else:
+    return runCommand(title, [ pkgtool, "-qf", arg ])
+
+def showList(args):
+  if pkgsystem == DEB:
+      runCommand("List", [ pkgtool, "-l" ] + args )
+  else:
+    # Hans Deragon, 2010/01/01, 13:56 EST
+    # BUG:  The following will probably not work because of the pipe.
+    #       Need to find a way to get the fgrep executed.
+    runCommand("List", [ pkgtool, "-qa", "|", "fgrep" ] + args )
+
+try:
+  opts, args = getopt.gnu_getopt( \
+      sys.argv[1:], "cliefz:h", \
+        ["content", "list", "info", \
+         "search-file", "search-executable", \
+         "help", "debug="])
+except getopt.GetoptError:
+  # print help information and exit:
+  print("Error:  invalid argument(s).")
+  usage(2)
+
+gShowContents=False
+gShowList=False
+gShowInfo=False
+gFindFile=False
+gFindExecutable=False
+
+for option, arg in opts:
+  debug("argv: " + option + arg)
+  #print "argv: " + option + arg
+  if option in ("-h", "--help"):
+    usage(1)
+  elif option in ("-c", "--content"):
+    gShowContents=True
+  elif option in ("-i", "--info"):
+    gShowInfo=True
+  elif option in ("-l", "--list"):
+    gShowList=True
+  elif option in ("-f", "--search-file"):
+    gFindFile=True
+  elif option in ("-e", "--search-executable"):
+    gFindFile=True
+    gFindExecutable=True
+    gShowInfo=True
+  elif option in ("-z", "--debug"):
+    debug.setLevel(int(arg))
+    print("Debug level set to " + arg)
+
+pkgs=[]
+if gFindFile:
+  regex=re.compile("^(.*):.*");
+  for arg in args:
+    if gFindExecutable:
+      code, lines = execute(["which", arg])
+      if code > 0:
+        print("Error:  `which` exited with code: " + str(code))
+        print("        Is '" + str(arg) + "' really an executable?")
+        sys.exit(code)
+      else:
+        arg = lines[0][:-1]  # Get first line and strip newline.
+    currentPkgs=findFile(arg)
+    for currentPkg in currentPkgs:
+      mo=regex.match(currentPkg)
+      if mo:
+        pkgs.append(mo.group(1))
+
+  print()
+else:
+  pkgs = args
+
+debug("pkgs = " + str(pkgs), 10)
+
+for pkg in pkgs:
+  if gShowInfo:
+    showInfo(pkg)
+  if gShowContents:
+    showContents(pkg)
+
+if gShowList:
+  showList(pkgs)
+
+# Going
+sys.exit(rv)

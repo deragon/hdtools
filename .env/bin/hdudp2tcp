@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import socket, time
+from threading import Thread
+
+class Udp2Tcp (Thread):
+    def __init__ (self):
+        Thread.__init__(self)
+
+        self._port = 88
+        self._dst = '127.0.0.1'
+        self._dst_port = 88
+
+        self.daemon = True
+        self.start()
+
+    def _init(self):
+        self.udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.udp.bind(('127.0.0.1', self._port))
+
+        self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.tcp.connect((self._dst, self._dst_port))
+        self.tcp.setblocking(True)
+
+    def run(self):
+        self._init()
+        while True:
+            try:
+                data, address = self.udp.recvfrom(1024)
+                if len(data) > 0:
+
+                    print("Received {0} bytes via udp from {1}".format(len(data), address))
+                    self.tcp.sendall(data)
+                data2 = self.tcp.recv(1024)
+                if len(data2) > 0:
+                    print("Received {0} bytes via tcp".format(len(data2)))
+                    print(data)
+                    self.udp.sendto(data2, (self._dst, self._port))
+                    #self.udp.sendall(data, (self._dst, self._port))
+            except Exception as e:
+                print(e)
+
+        self._deinit()
+
+    def _deinit(self):
+        self.tcp.shutdown(socket.SHUT_RDWR)
+        self.udp.shutdown(socket.SHUT_RDWR)
+
+if __name__ == '__main__':
+    print ("Opening gateway ...")
+    v = Udp2Tcp()
+    time.sleep(120)
+print ("Closing gateway ...")

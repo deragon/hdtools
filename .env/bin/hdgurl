@@ -1,0 +1,51 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  cat <<EOM
+Show the URL of the Git repositories found in path provided as parameters.  If
+no path is provide, '.' is used by default.
+
+Usage:  ${SCRIPT_NAME} [-h] [<paths..>]
+
+  -h  Display this help text.
+EOM
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if GIT_PATHS in $@ have spaces,
+                          # we separate GIT_PATHS properly.
+
+GIT_PATHS=("$@") # If you want the number of elements of $@, use $#
+
+((${#GIT_PATHS[*]} == 0)) && GIT_PATHS[0]="."
+
+for GIT_PATH in ${GIT_PATHS[@]}; do
+  cd "${GIT_PATH}"
+  echo "${GIT_PATH/*\/}"
+  for REMOTE in $(git remote); do
+    printf '% 16s:  ' "${REMOTE}"
+    git remote get-url --all "${REMOTE}"
+  done
+done

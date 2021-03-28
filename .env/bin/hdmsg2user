@@ -1,0 +1,78 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_PATH_REL=`dirname "$0"`
+SCRIPT_PATH_ABS=`( cd "${SCRIPT_PATH_REL}" && pwd )`
+SCRIPT_NAME=`basename "${0}"`
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+unset TEXT
+unset TITLE
+
+while getopts "b:t:u:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "t")  TEXT="${OPTARG}";;
+    "b")  TITLE="${OPTARG}";;  # B == Title Bar
+    "u")  TGT_USER="${OPTARG}";;
+    "h")  cat <<EOM
+  Usage:  ${SCRIPT_NAME} -t <text> -b <title> [-h]
+EOM
+          exit 1;;
+  esac
+done
+
+unset ERRORS
+
+[ -z "${TEXT}" ] && \
+  ERRORS="${ERRORS}\n - Text is missing.  Please use -t <text>"
+[ -z "${TITLE}" ] && TITLE="Message important"
+[ -z "${TGT_USER}" ] && TGT_USER="${USER}"
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "The following errors were detected.\n${ERRORS}"
+  exit 2
+fi
+
+set -x
+#XAUTH_LIST=`xauth list | perl -ne "print if /^\S+:0\s+.*/" | head -1`
+#xauth add ${XAUTH_LIST}
+#export DISPLAY=`echo ${XAUTH_LIST} | perl -pe "s/\s+.*//g"`
+#export DISPLAY=localhost:0
+
+IFS="
+"
+
+# Remove.  À ne pas faire.
+#for XAUTH in `xauth list | awk '{ print $1; }'`; do
+#  eval xauth remove ${XAUTH}
+#done
+
+#for XAUTH in `xauth list`; do
+  #eval xauth add ${XAUTH}
+#done
+
+PID=`pgrep -u "${TGT_USER}" gnome-session` 
+
+DISPLAY_NB=`awk -v 'RS=\0' -F= '$1=="DISPLAY" {print $2}' /proc/${PID}/environ`
+export DISPLAY="localhost${DISPLAY_NB}"
+
+eval xauth add `sudo -i -u "${TGT_USER}" xauth list | fgrep "${DISPLAY_NB}"`
+
+cat <<EOM
+DISPLAY=${DISPLAY}
+
+${TITLE}
+
+${TEXT}
+EOM
+
+set -x
+zenity --warning --text "${TEXT}" --title "${TITLE}" --width 800 --height 600

@@ -1,0 +1,16 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+PATH_TO_SEARCH="$@"
+if [ -z "${PATH_TO_SEARCH}" ]; then
+  PATH_TO_SEARCH="."
+fi
+
+find "${PATH_TO_SEARCH}" -type f -print0 | xargs -0 ls -1l --time-style=full-iso | perl -pe "s%(.+)?\s+(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d.\d\d\d\d\d\d\d\d\d)\s+(.*)%\2 \1 \3%g" | sort
+echo -e "\nLatest files are at the bottom of the list."

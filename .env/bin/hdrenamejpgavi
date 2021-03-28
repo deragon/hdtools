@@ -1,0 +1,32 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+REPERTOIRES=$@
+[ -z "${REPERTOIRES}" ] && REPERTOIRES=.
+renamefiles -r         \
+  --old JPG  --new jpg \
+  --old jpeg --new jpg \
+  --old JPEG --new jpg \
+  --old GIF  --new gif \
+  --old PNG  --new png \
+  --old AVI  --new avi \
+  --old MKV  --new mkv \
+  --old MP3  --new mp3 \
+  --old MP4  --new mp4 \
+  --old SVG  --new svg \
+  --old SVGZ --new svgz \
+  --old ICO  --new ico \
+  ${REPERTOIRES}
+
+for  REPERTOIRE in ${REPERTOIRES}; do
+  find "${REPERTOIRE}" \
+    -regextype posix-extended \
+    -regex '^.*\.(jpg|gif|mkv|avi|mp4|3gp|svg|svgz|png|ico)$' \
+    -exec chmod -x {} \;
+done

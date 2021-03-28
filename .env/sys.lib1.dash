@@ -1,0 +1,188 @@
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# WARNING:
+#
+# dash cannot interpret ${!VARNAME} format.  Thus you always must
+# use 'eval TMP="\$${VARNAME}"' to fetch the value of variable ${VARNAME}
+
+exportfunction()
+{
+  # dash does not support exporting of functions.  Thus we
+  # check if bash is running.
+  if [ ! -z "${BASH}" ]; then
+    export -f ${1}
+    # Now creating aliases without any special characters to ease.
+    # typing of the functions
+    [ "${1//_}" != "${1}" ] && eval "alias ${1//_}=${1}"
+  fi
+}
+
+hd_setHardware()
+{
+  [ ! -z "${HD_HARDWARE}" ] && return
+
+  if [ -f /sys/devices/virtual/dmi/id/product_name ]; then
+    export HD_HARDWARE="`cat /sys/devices/virtual/dmi/id/product_name`"
+    return
+  fi
+
+  # WARNING:  hwinfo gives up much less information if not running as root.
+  #           The following actually fails.
+  if `which hwinfo >/dev/null 2>&1`; then
+    export HD_HARDWARE="`hwinfo --bios | \
+      perl -ne "s/\s*system.hardware.product\s*=\s*'(.*)'.*/\1/g and print"`"
+    return
+  fi
+
+  if [ ! -z "$1" ]; then
+    DMIDECODE=$1
+  elif [ -z "${DMIDECODE}" ]; then
+    DMIDECODE="dmidecode"
+  fi
+
+  if ((${EUID} == 0)) && `which ${DMIDECODE} >/dev/null 2>&1`; then
+    export HD_HARDWARE="`${DMIDECODE} | sed -ne "/.*DMI type 1,/,/^Handle.*/{
+  s/.*Product Name: \(.*\)/\1/p
+  }" | tr "[:upper:]" "[:lower:]"`"
+  fi
+}
+exportfunction hd_setHardware
+
+# Argument 1:             Path variable name
+# Arguments 2 and above:  Options or paths to add
+#
+# Example:  add2path PATH /usr/local/bin
+#           add2path PATH -b /usr/local/bin
+add2path()
+{
+  #echo -n "add2path: "`date`"    "
+  #set -x
+  local VARNAME="$1"
+  shift
+
+  if [ -z "${VARNAME}" ]; then
+    echo "ERROR:  VARNAME passed to add2path is empty.  Path not added."
+    return 255
+  fi
+  local SEPARATOR=":"
+  local TESTFLAG="-d"
+  local MODE="a"
+  local ARG
+  local TMPTMP
+  local EVALCONTENT
+  local EVALCONTENT_ORIG
+  local EMPTY
+
+  local WINDOWS_FORMAT=0  # For Cygwin compatibility
+
+  if [ "${VARNAME}" = "PATH" ]; then
+    WINDOWS_FORMAT=0
+    SEPARATOR=":"
+  fi
+
+  # WARNING:
+  #
+  # dash cannot interpret ${!VARNAME} format.  Thus you always must
+  # use 'eval TMPTMP="\$${VARNAME}"' to fetch the value of variable ${VARNAME}
+  eval TMPTMP="\$${VARNAME}:"
+  if [ -z "${TMPTMP}" ]; then
+    EMPTY=1
+    unset EVALCONTENT
+  else
+    EMPTY=0
+    EVALCONTENT="\${${VARNAME}}"
+  fi
+  EVALCONTENT_ORIG="${EVALCONTENT}"
+
+  for ARG in "$@";
+  do
+    case "${ARG}" in
+      -d)   TESTFLAG="-d" ;;
+      -f)   TESTFLAG="-f" ;;
+      -s)   SEPARATOR=shift ;;
+      -a)   MODE="a" ;;
+      -b)   MODE="b" ;;
+      -w)   WINDOWS_FORMAT="1" ;;
+
+       *)
+
+          if [ "${TESTFLAG}" "${ARG}" ]; then
+
+            if [ "${HD_OS_FAMILY}" == "Cygwin" ]; then
+              if [ "${WINDOWS_FORMAT}" = "1" ]; then
+                ARG=`cygpath ${ARG}`
+              fi
+            fi
+
+            if [ "${EMPTY}" = 1 ]; then
+              EMPTY=0
+              EVALCONTENT="${ARG}"
+              continue
+            fi
+
+            if [ "${MODE}" = "b" ]; then
+              EVALCONTENT="${ARG}${SEPARATOR}${EVALCONTENT}"
+            else
+              EVALCONTENT="${EVALCONTENT}${SEPARATOR}${ARG}"
+            fi
+          fi
+        ;;
+    esac
+  done
+  [ "${EVALCONTENT_ORIG}" = "${EVALCONTENT}" ] && return
+  EVALCONTENT="export ${VARNAME}=\"${EVALCONTENT}\""
+  #echo "add2path [${MODE}] \${EVALCONTENT}=${EVALCONTENT}"
+  eval "${EVALCONTENT}"
+  #echo "PATH=${PATH}"
+  #eval "echo \${${VARNAME}}"
+}
+exportfunction add2path
+
+scriptdir()
+{
+#   local RELSCRIPTDIR
+#   local ABSSCRIPTDIR
+#
+#   RELSCRIPTDIR="`expr "$0" : '\(.*\)/.*'`"
+#   cd $startdir
+#   ABSSCRIPTDIR=`pwd`
+#   cd -
+#   echo ${ABSSCRIPTDIR}
+  case $0 in
+    /*) echo $0;;
+     *) echo `pwd`/$0;;
+  esac
+}
+exportfunction scriptdir
+
+# Return 1 if directory exists, 0 otherwise.
+# See setVarIfDirsExist() for usage example.
+runCommandIfDirsExist()
+{
+  local COMMAND="${1}"
+  local DIRECTORY
+  shift;
+
+  for DIRECTORY in "$@"; do
+    if [ -d "${DIRECTORY}" ]; then
+      eval "${COMMAND}"
+      return 1
+    fi
+  done
+  return 0
+}
+exportfunction runCommandIfDirsExist
+
+# Return 1 if directory exists, 0 otherwise.
+# setVarIfDirsExist <VARIABLE NAME> <DIRECTORY #1> [<DIRECTORY #2>]...
+setVarIfDirsExist()
+{
+  runCommandIfDirsExist "export ${1}=\"\${DIRECTORY}\"" "$@"
+}
+exportfunction setVarIfDirsExist

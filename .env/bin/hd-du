@@ -1,0 +1,22 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+#   — by jasembo on April 14, 2012, 4:02 a.m.
+#
+#   Explanation
+# 
+#     echo -e prints G for Gigabytes, M for Megabytes and K for Kilobytes in a line each.
+#     2>/dev/null send stderr to /dev/null
+#     sort -rn sorts in reverse numerical order. Largest first
+
+DU_OUT=`du -hsx * .* --exclude=.. --exclude=. 2>/dev/null`
+
+for i in $(echo -e 'G\nM\nK'); do
+  echo "${DU_OUT}" | perl -ne "print if /^\s*[\d|\.]+${i}/" #| sort -rn;
+done

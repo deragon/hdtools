@@ -1,0 +1,14 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# For some reason, upon startup, the CopyQ icon does not show up on in the tray section.
+# Adding a delay to so Gnome has time so settle before.
+sleep 10
+/usr/bin/copyq &
+disown

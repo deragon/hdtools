@@ -1,0 +1,115 @@
+#!/bin/sh
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From:  http://stackoverflow.com/questions/9820830/how-can-i-merge-pdf-files-or-ps-if-not-possible-such-that-every-file-will-begi
+
+#script to add automatically blank page at the end of a pdf documents, if count of their pages is a not a module of 2 and then to join all pdfs into one
+#
+#  made by Dingo
+#
+# dokupuppylinux.co.cc
+#
+#http://pastebin.com/u/dingodog (my pastebin toolbox for pdf scripts)
+
+filename=$1
+altxlarg="`pdfinfo -box $filename| grep MediaBox | cut -d : -f2 | awk '{print $3 FS $4}'`"
+echo "%PDF-1.4
+%µí®û
+3 0 obj
+<<
+/Length 0
+>>
+stream
+endstream
+endobj
+4 0 obj
+<<
+/ProcSet [/PDF ]
+/ExtGState <<
+/GS1 1 0 R
+>>
+>>
+endobj
+5 0 obj
+<<
+/Type /Halftone
+/HalftoneType 1
+/HalftoneName (Default)
+/Frequency 60
+/Angle 45
+/SpotFunction /Round
+>>
+endobj
+1 0 obj
+<<
+/Type /ExtGState
+/SA false
+/OP false
+/HT /Default
+>>
+endobj
+2 0 obj
+<<
+/Type /Page
+/Parent 7 0 R
+/Resources 4 0 R
+/Contents 3 0 R
+>>
+endobj
+7 0 obj
+<<
+/Type /Pages
+/Kids [2 0 R ]
+/Count 1
+/MediaBox [0 0 595 841]
+>>
+endobj
+6 0 obj
+<<
+/Type /Catalog
+/Pages 7 0 R
+>>
+endobj
+8 0 obj
+<<
+/CreationDate (D:20110915222508)
+/Producer (libgnomeprint Ver: 2.12.1)
+>>
+endobj
+xref
+0 9
+0000000000 65535 f
+0000000278 00000 n
+0000000357 00000 n
+0000000017 00000 n
+0000000072 00000 n
+0000000146 00000 n
+0000000535 00000 n
+0000000445 00000 n
+0000000590 00000 n
+trailer
+<<
+/Size 9
+/Root 6 0 R
+/Info 8 0 R
+>>
+startxref
+688
+%%EOF" | sed -e "s/595 841/$altxlarg/g">blank.pdf
+pdftk blank.pdf output fixed.pdf
+mv fixed.pdf blank.pdf
+pages="`pdftk $filename dump_data | grep NumberOfPages | cut -d : -f2`"
+if [ $(( $pages % 2 )) -eq 0 ]
+    then echo "$filename has already a multiple of 2 pages ($pages ). Script will be skipped for this file" >>report.txt
+    else
+pdftk A=$filename B=blank.pdf cat A B output blankadded.pdf
+mv blankadded.pdf $filename
+pdffiles=`ls *.pdf | grep -v -e blank.pdf -e joinedtogether.pdf| xargs -n 1`;  pdftk $pdffiles cat output joinedtogether.pdf
+fi
+exit 0

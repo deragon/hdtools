@@ -1,0 +1,115 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Creates a new Git Worktree from the branch passed as arguments.  If no branch
+is passed as argument, the user is prompted to enter one.
+
+Note:  Do not include "remotes/origin" in the branch name.
+
+Usage:  ${SCRIPT_NAME} [-h] [<branch>+]
+
+  -l  List all Git worktrees.
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "lh" OPTCMD; do
+  case "${OPTCMD}" in
+    "l")    git worktree list; exit 0;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if BRANCHES in $@ have spaces,
+                          # we separate BRANCHES properly.
+
+BRANCHES=("$@") # If you want the number of elements of $@, use $#
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
+if (( $? != 0 )); then
+  ERRORS="${ERRORS} - You must be under a git repository.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+
+
+# title()
+# ────────────────────────────────────────────────────────────────────────────
+#
+#  call:  title "Test #1"
+#  stdout:  ═ Test #1 2020-02-21 11:22:51 ════════════════════════════════════════════════════
+title()
+{
+  local LINE="═══════════════════════════════════════════════════════════════════════════════"
+  local TITLE="${1} "$(date "+${TIMESTAMP_FORMAT_HUMAN}")
+  local SEPARATOR=$(printf "%s %s %s\n" "${LINE:1:1}" "${TITLE}" "${LINE:${#TITLE}}")
+  echo -e "${SEPARATOR}\n"
+}
+
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+if (( ${#BRANCHES[*]} == 0 )); then
+  # No branch provided.  Asking for one.
+  read -p "Please provide a branch name:  " -e BRANCHES[0]
+fi
+
+# Running through remaining arguments
+for BRANCH in ${BRANCHES[@]}; do
+
+  # Print title only if more than one file is being processed.
+  title "Creating worktree ${BRANCH}"
+
+  GIT_WORKTREE_DIR="$(readlink --canonicalize-missing "${GIT_ROOT_DIR}/../${BRANCH}")"  # Canonical
+  REMOTE_BRANCH="remotes/origin/${BRANCH}"
+  if [ -z "$(git branch -a | fgrep "${REMOTE_BRANCH}")" ]; then
+    echo "No remote branch ${REMOTE_BRANCH} found.  Creating local one only."
+    git checkout -b "${BRANCH}" # CREATE BRANCH
+  else
+    echo "Remote branch ${REMOTE_BRANCH} found.  Creating local one connected to it."
+    git checkout -b "${BRANCH}" "remotes/origin/${BRANCH}"  # CREATE BRANCH
+  fi
+  set -e
+  git checkout master
+  git worktree add "${GIT_WORKTREE_DIR}" "${BRANCH}"
+  echo -e "\nTo jump to newly created worktree directory:  cd '${GIT_WORKTREE_DIR}'"
+
+  if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
+    # Remove execution permission on non executables such as text files.
+    hdchmodfiles -q "${GIT_WORKTREE_DIR}"
+  fi
+
+done

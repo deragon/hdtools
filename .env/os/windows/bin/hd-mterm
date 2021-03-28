@@ -1,0 +1,169 @@
+#!/usr/bin/python
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import getopt
+import sys
+import time
+import socket
+
+from hdlib2 import *
+
+def usage():
+  print """
+minterm [ -n <number> | --number=<number> ]
+        [ -r <remote host> | --remotehost=<remotehost> ]
+        [ -x <size x> ]
+        [ -y <size y> ]
+        [ --posx=<position x> ]
+        [ --posy=<position y> ]
+        [ -d <debug level> | --debug=<debug level> ]
+        [ -h | --help ]
+        [ -e "<extra-options>" | --extra-args="<extra-options>" ]
+"""
+
+def createTerminal(sizex=None, sizey=None, posx=None, posy=None, \
+                   configuration=None, remotehost=None):
+  global gExtraArgs 
+  # Apparently, we must give as the first argument the name of the
+  # binary...
+  args = ["/bin/mintty"]
+
+  if posx != None and posy != None:
+    args.append("--position")
+    args.append(str(posx) + "," + str(posy))
+
+  if not sizex:
+    sizex=40
+
+  if not sizey:
+    sizey=80
+
+  args.append("--size")
+  args.append(str(sizey) + "," + str(sizex))
+
+  if configuration:
+    args.append("--config")
+    args.append(configuration)
+
+  # Execute must be the last command in the args list.
+  if remotehost:
+    # --execute does not work here.  Use --command instead.  I think
+    # that to use --execute, you must put the command in an extra argument,
+    # but I have not tested this.
+    sshenvfilename=os.environ["HOME"] + "/.ssh/env/" + \
+                   socket.gethostname() + ".py"
+    sshenvfd=open(sshenvfilename, 'r')
+    sshenvdata=sshenvfd.read()
+    sshenvfd.close()
+    exec(sshenvdata)
+    remoteHostString = "--command=hdssh " + remotehost
+    args.append(remoteHostString )
+
+  #print args
+  if gExtraArgs != "":
+    args.append(gExtraArgs)
+  debug("args = " + str(args))
+  os.execvp(args[0], args)
+
+
+######################################################################
+# Main
+######################################################################
+
+gRemoteHost = None
+
+gSizeX      = None
+gSizeY      = None
+gPosX       = None
+gPosY       = None
+gNumber     = 1
+gExtraArgs  = ""
+
+try:
+  opts, args = getopt.gnu_getopt(sys.argv[1:], \
+      "hx:y:r:z:n:e:", \
+      ["help", "number=", "remotehost=", "extra-args=", \
+       "posx=", "posy=", "debug="])
+except getopt.GetoptError:
+  # print help information and exit:
+  print "Error:  invalid argument(s)."
+  usage()
+  sys.exit(2)
+
+for option, arg in opts:
+  debug("argv: " + option + arg)
+  if option in ("-h", "--help"):
+    usage()
+    sys.exit(1)
+  elif option in ("-x"):
+    gSizeX=int(arg)
+  elif option in ("-y"):
+    gSizeY=int(arg)
+  elif option in ("--posx"):
+    gPosX=int(arg)
+  elif option in ("--posy"):
+    gPosY=int(arg)
+  elif option in ("-n", "--number"):
+    gNumber=int(arg)
+  elif option in ("-r", "--remotehost"):
+    gRemoteHost=arg
+  elif option in ("-e", "--extra-args"):
+    gExtraArgs=arg
+  elif option in ("-z", "--debug"):
+    debug.setLevel(int(arg[1:]))
+
+if gRemoteHost:
+  profileType="Remote"
+else:
+  profileType="HD"
+
+xRes=int(execute(["hd-screen-resolution", "x"])[1][0])
+yRes=int(execute(["hd-screen-resolution", "y"])[1][0])
+debug("Res   = " + str(xRes) + "x" + str(yRes))
+
+if xRes >= 1600:
+  if not gSizeX:
+    gSizeX=46
+  profileSize = "1600"
+elif xRes == 1280 and yRes == 1024:
+  profileSize = "1280"
+elif xRes == 1280 and yRes == 800:
+  if not gSizeX:
+    gSizeX=36
+  profileSize = "1024"
+else:
+  profileSize = "1024"
+
+if gNumber > 1:
+  if not gPosX:
+    gPosX=xRes/40
+    gPosY=yRes/40
+
+profileName = None
+
+debug("gPosX = " + str(gPosX))
+debug("gPosY = " + str(gPosY))
+posX=None
+posY=None
+
+for index in range(0, gNumber):
+  if gPosX:
+    posX=gPosX+index*50
+  if gPosY:
+    #posY=gPosY+index*47
+    posY=gPosY+index*32
+
+  if os.fork() == 0:
+    # Child process.
+    createTerminal(gSizeX, gSizeY, posX, posY, profileName, gRemoteHost)
+    # Need to wait a second to ensure that terminals appear on the screen
+    # in the proper order.
+
+  time.sleep(0.5)

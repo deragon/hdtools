@@ -1,0 +1,157 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-d <db credentials>] [-n] [-h] <table1> <table2>
+
+
+Connects to the provided schema passed with parameter "-d" and download
+the tables content in CSV format, under the filename <table1>.csv in
+the current directory.
+
+Any existing *.csv file will be overwritten.
+
+  -d <db credentials>  DB Credentials and schema to operate on.
+
+                Format:   <usager>/<mot de pase>@<serveur>:<port>/<schema>
+                Exemple:  DERAGONH/----------/@saoraihd1:1521/IHD1
+
+  -n  Download only headers; no data will be saved in the CSV.
+
+Note:  The table names can finish with the prefix '.csv'.  This prefix
+       will be stripped to fetch the actual table.  This is a useful
+       feature that allows to run:
+
+       ${SCRIPT_NAME} -d <CR> *.csv
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+unset DB_INFO
+CONDITIONS=""
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "d:nh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DB_INFO="${OPTARG}";;
+    "n")    CONDITIONS="WHERE 1=2";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if TABLES in $@ have spaces,
+                          # we separate TABLES properly.
+
+TABLES=("$@") # If you want the number of elements of $@, use $#
+
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [ ! -d "${ORACLE_HOME}" ]; then
+  ERRORS="${ERRORS} - ORACLE_HOME is not well configured.  Current value:  >>${ORACLE_HOME}<<\n"
+fi
+
+if [ -z "${DB_INFO}" ]; then
+  ERRORS="${ERRORS} - Database credentials must be provided with the '-d' option.\n"
+fi
+
+if ((${#TABLES[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one table name.\n"
+fi
+
+if ! which sql >/dev/null 2>&1 ; then
+  ERRORS="${ERRORS} - This script requires Oracle SQL Developer to be installed.\n   It makes use of the binary '\e[1;33;40mslq.exe\e[0m'.  Please add its directory to \${PATH}.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+
+TIMESTAMP_LOG=`date +"%Y%m%d.%H%M%S"`
+TIMESTAMP_START=`date +"%s"` # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+# Code to run code in parallel, but with a limit of number of processes at a
+# time.
+
+# Maximum number of processes to run in parallel.  Here, reading the number
+# of processor (co-processors) available on the system.
+PROCESS_MAX=$(egrep -E 'processor' /proc/cpuinfo | wc -l)
+for (( INDEX = 0; INDEX < ${#TABLES[*]}; INDEX ++ )); do
+
+  TABLE="${TABLES[${INDEX}]}"
+  TABLE="${TABLE/.csv/}"
+  TABLE_LC=$(echo "${TABLE}" | tr 'A-Z' 'a-z')  # To lowercase.
+
+  (
+    echo "Lauching in parallel processing of:  ${TABLE}"
+    OUTPUT=$(
+
+      OUTPUT_FILE="${TABLE_LC}.csv"
+      sleep "${INDEX}";
+
+      cat  <<EOF | sql "${DB_INFO}"
+set sqlformat csv;
+
+-- No output other thand
+set feedback off;
+
+-- Configure CSV export such that <null> shows up as 'null' in the CSV file.
+SET NULL "null";
+
+-- Default does not show timestamps with hours, minutes and seconds.
+-- Here, we correct this.
+alter SESSION set NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS';
+alter SESSION set NLS_TIMESTAMP_FORMAT = 'YYYY-MM-DD HH24:MI:SS';
+
+spool ${OUTPUT_FILE};
+select * from ${TABLE} ${CONDITIONS};
+spool off;
+EOF
+      # For some reason, the executable bit is set.  We remove it.
+      chmod -x "${OUTPUT_FILE}"
+    ) 2>&1
+
+    echo -e "Processing complete for:  ${TABLE}\nOutput follows:\n${OUTPUT}"
+  ) &
+
+  PAUSE_MSG_NEEDTOSHOW=1
+  while (( $(jobs -p | wc -l) >= ${PROCESS_MAX} )); do
+    if (( ${PAUSE_MSG_NEEDTOSHOW} == 1 )); then
+      echo "Parallel limit of ${PROCESS_MAX} reached.  Pausing."
+      PAUSE_MSG_NEEDTOSHOW=0
+    fi
+    sleep 1
+  done
+  (( ! ${PAUSE_MSG_NEEDTOSHOW} )) && \
+    echo "Parallel limit of ${PROCESS_MAX} not reached anymore.  Resuming."
+done
+wait

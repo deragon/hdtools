@@ -1,0 +1,54 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-d <directory>] [-h]
+
+Test if files found in provided directory are corrupted or not.
+
+  -d  Directory to test.  Default is current directory ('.')
+EOM
+}
+
+DIRECTORY="."
+
+unset FLAGS  # o == ok, b == bad
+while getopts "obd:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "b")    FLAGS="${FLAGS}b";;
+    "o")    FLAGS="${FLAGS}o";;
+    "d")    DIRECTORY="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+[ -z "${FLAGS}" ] && FLAGS="b" # Showing only corrupted files.
+
+MSG="Filtering options set to show files which are:\n\n"
+[[ "${FLAGS}" == *o* ]] && MSG="${MSG} ∙ Ok"
+[[ "${FLAGS}" == *b* ]] && MSG="${MSG} ∙ Bad"
+
+echo -e "${MSG}\n"
+
+IFS="
+"
+for FILE in `find "${DIRECTORY}" -type f`; do
+  LAST_MODIFIED=`stat -c "%y" "${FILE}"`
+  SIZE=`stat -c "%s" "${FILE}"`
+  tr -d '\0' <"${FILE}" | read -n 1
+  if (( $? == 0 || SIZE == 0 )); then
+    [[ "${FLAGS}" == *o* ]] && echo "Ok:   ${LAST_MODIFIED}  ${FILE}"
+  else
+    [[ "${FLAGS}" == *b* ]] && echo "Bad:  ${LAST_MODIFIED}  ${FILE}"
+  fi
+done

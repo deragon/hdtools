@@ -1,0 +1,100 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+help()
+{
+  cat <<EOM
+
+This script will check multiple entries and try to resolve them, indicating
+a success or failure.
+
+Write a script following the example.
+
+Each entry has the format:
+
+  DNS name[|DNS server to interrogate][# Comment]
+
+Example script:
+
+  >>>>
+  FQDNS="
+  web-ext.axa.ca|simtl104.axa-canada.intraxa
+  web-extappselect.axa.ca|simtl104.axa-canada.intraxa
+  web-intent1.axa-canada.com
+  intcwebapps.axa-canada.com
+  web-supswt.axa-canada.com
+  web-intent02.axa-canada.com  # Pas sûr que l'on voulait celui-ci.
+  web-frmacm.axa.ca          # Pas de demande encore faite.  101119
+  web-frmacm.axa-canada.com  # Pas de demande encore faite.  101119
+  "
+
+    echo -e "${FQDNS}" | hd-dns
+  <<<<
+EOM
+}
+
+export SCREEN_COLOR_RED="\e[1;31m"
+export SCREEN_COLOR_GREEN="\e[1;32m"
+export SCREEN_COLOR_DEFAULT="\e[0;00m"
+
+nslookup_perform_cygwin()
+{
+  FQDN=$1
+  DNSSERVER_NAME=$2
+
+  local IFS='
+'
+  CMD="nslookup ${FQDN} ${DNSSERVER_NAME}"
+  #echo "CMD=${CMD}"
+  NSLOOKUP_OUTPUT=(`eval "${CMD}"`)
+  #NSLOOKUP_OUTPUT=(`nslookup ${FQDN} ${DNSSERVER_NAME}`)
+  #echo "NSLOOKUP_OUTPUT=${NSLOOKUP_OUTPUT}"
+  # Fetching Default DNS.
+  DNSSERVER_IP=`echo "${NSLOOKUP_OUTPUT[1]}" | perl -ne "print if s/.*?((\d+\.){3}\d+).*/\1/g"`
+
+  DNSSERVER_OUTPUT=(`nslookup ${DNSSERVER_IP}`)
+  DNSSERVER_NAME2=`echo "${DNSSERVER_OUTPUT[2]}" | perl -ne "print if s/.*?name\s+=\s+(\S+)\.$/\1/g"`
+  [ ! -z "${DNSSERVER_NAME2}" ] && DNSSERVER_NAME=${DNSSERVER_NAME2}
+
+  #hd_bash_array_output_newline ${DNSSERVER_OUTPUT[*]}
+
+  SERVER_NAME=`echo "${NSLOOKUP_OUTPUT[((${#NSLOOKUP_OUTPUT[*]}-2))]}" | perl -ne "print if s/.*?Name:\s+(\S+).*/\1/g"`
+  SERVER_IP=`echo "${NSLOOKUP_OUTPUT[((${#NSLOOKUP_OUTPUT[*]}-1))]}" | perl -ne "print if s/.*?Address:\s+(\S+).*/\1/g"`
+  #echo -e "${NSLOOKUP_OUTPUT[*]}"
+  #hd_bash_array_output_newline ${NSLOOKUP_OUTPUT[*]}
+}
+
+# IMPORTANT:
+#
+# This script has only been tested against Windows NT nslookup.exe command.
+# Adaptation is certainly required for Linux and Solaris.
+#set -x
+while read FQDNENTRY; do 
+  FQDNENTRY="${FQDNENTRY/\#*}"
+  [ -z "${FQDNENTRY}" ] && continue
+  FQDN="${FQDNENTRY/|*}"
+  DNSSERVER="${FQDNENTRY/*|}"
+  [ "${FQDN}" = "${DNSSERVER}" ] && DNSSERVER=""
+  if [ -z "${DNSSERVER}" ]; then
+    DNSSERVER_DESC="using default DNS server"
+  else
+    DNSSERVER_DESC="via DNS server"
+  fi
+  #echo "Probing ${FQDN} on ${DNSSERVER}"
+  nslookup_perform_cygwin "${FQDN}" "${DNSSERVER}"
+  #NSLOOKUP_OUTPUT=`nslookup "${FQDN}" "${DNSSERVER}"`
+  if echo -e "${NSLOOKUP_OUTPUT[*]}" | fgrep --quiet "server can't find"; then
+    echo -en "${SCREEN_COLOR_RED}FAILURE:  ${FQDN} could not be resolved"
+  else
+    echo -en "${SCREEN_COLOR_GREEN}SUCCESS:  ${FQDN} was resovled to:  ${SERVER_NAME}:${SERVER_IP}"
+  fi
+  echo " ${DNSSERVER_DESC} ${DNSSERVER_NAME}/${DNSSERVER_IP}"
+done
+
+echo -e "${SCREEN_COLOR_DEFAULT}"

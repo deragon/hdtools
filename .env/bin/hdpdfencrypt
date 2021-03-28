@@ -1,0 +1,87 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=`dirname $(readlink -f "${BASH_SOURCE[0]}")` # Fetch real directory, not symlink.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-z] [-n <nom>] [-h]
+EOM
+}
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:hz" OPTCMD; do
+  case "${OPTCMD}" in
+    "n")    NAME="${OPTARG}";;
+    "z")    ZIP=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+ERRORS=""
+
+if (( "$#" == 0 )); then
+  ERRORS="${ERRORS} - Vous devez fournir au moins un fichier PDF à chiffré.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+cat <<EOM
+Notez qu'en raison des vermines suivantes, l'encryption n'est que de 128 bits.
+
+ ∙ https://bugzilla.gnome.org/show_bug.cgi?id=726598
+ ∙ https://bugs.launchpad.net/ubuntu/+source/evince/+bug/1293282
+
+ATTENTION, LE MOT DE PASSE SERA AFFICHÉ À L'ÉCRAN.
+
+EOM
+
+echo -n "Prière de fournir le mot de passe de l'usager:      "
+read PASSWD_USER
+
+echo -n "Prière de fournir le mot de passe du propriétaire:  "
+echo -e "\n\e[1;37;42mTaper <enter> pour qu'il soit le même que celui de l'usager.\e[0;00m"
+
+echo -en "\e[s"    # Save cursor position
+
+echo -en "\e[2A"   # Cursor up 2 lines.
+echo -en "\e[52C"  # Cursor forward 52 columns.
+
+read PASSWD_OWNER
+if [ -z "${PASSWD_OWNER}" ]; then
+  PASSWD_OWNER="${PASSWD_USER}"
+  echo -en "\e[1A"   # Cursor up 2 lines.
+  echo -en "\e[52C"  # Cursor forward 52 columns.
+  echo -en "${PASSWD_OWNER}"
+fi
+
+echo -en "\e[u\n"  # Restore cursor position + LF
+
+for PDFFILE in $@; do
+  PDFFILE_CHIFFRE="${PDFFILE/.pdf/}-chiffré.pdf"
+  #set -x
+  qpdf --encrypt "${PASSWD_USER}" "${PASSWD_OWNER}" 128 -- "${PDFFILE}" "${PDFFILE_CHIFFRE}"
+  #set +x
+  echo "Fichier encrypté:  ${PDFFILE_CHIFFRE}"
+done

@@ -1,0 +1,83 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-z] [-n <nom>] [-h]
+EOM
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:hz" OPTCMD; do
+  case "${OPTCMD}" in
+    "-")
+        # Long options here.
+        case "${OPTARG}" in
+          name=)
+            val=${OPTARG#*=}
+            NAME=${OPTARG%=$val}
+        esac;;
+    "n")    NAME="${OPTARG}";;
+    "z")    ZIP=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#FILES[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one argument.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+TIMESTAMP_LOG=`date +"%Y%m%dT%H%M%S"` # ISO 8601 format.
+OUTPUT_DIR="/tmp/${SCRIPT_NAME}-${TIMESTAMP_LOG}"
+mkdir -p "${OUTPUT_DIR}"
+
+# Running through remaining arguments
+set -x
+for FILE in ${FILES[@]}; do
+  FILE_JPG="${OUTPUT_DIR}/${FILE/.pdf/.jpg}"
+   convert -density 300 -quality 90 "${FILE}" "${FILE_JPG}"
+
+  for FILE in $(ls "${OUTPUT_DIR}/"*); do
+    FILE_JPG="${OUTPUT_DIR}/${FILE/.pdf/.jpg}"
+    convert -rotate $(echo "0.${RANDOM:3} + 0.5" | bc) \
+            "${FILE_JPG}" "${FILE_JPG}"
+  done
+done

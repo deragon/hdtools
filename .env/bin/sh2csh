@@ -1,0 +1,92 @@
+#!/usr/bin/perl
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+use strict;
+my @files;
+my $outputdir="./";
+
+while($_=$ARGV[0])
+{
+  shift @ARGV;
+
+  if(/-o/)
+  {
+    # Fetching next argument.
+    $outputdir=shift @ARGV;
+    next;
+  }
+
+  if(/-h/) { Usage(); }
+
+  push(@files, $_);
+}
+
+if("${outputdir}" eq ".")
+{
+  $outputdir="./";
+}
+
+my ($file, $newfile, $line);
+foreach $file (@files)
+{
+  #print "\$file=>>$file<<\n";
+  if($file=~/(.*)\.sh$/)
+  {
+    $newfile="$1.csh";
+  }
+  else
+  {
+    $newfile="$file.csh";
+  }
+
+  $newfile="$outputdir/$newfile";
+
+  if(!open(INPUT, "<$file"))
+  {
+    print "Error.  Could not open $file for reading.\n";
+    next;
+  }
+
+  if(!open(OUTPUT, ">$newfile"))
+  {
+    print "Error.  Could not open $newfile for writing.\n";
+    close(INPUT);
+    next;
+  }
+
+  while($line=<INPUT>)
+  {
+    #print $line;
+    if($line=~/^(\s*)alias(\s+)(.+)\=(.+)$/)
+    {
+      print OUTPUT "${1}alias${2}${3} ${4}\n";
+    }
+    else
+    {
+      print OUTPUT "$line";
+    }
+  }
+
+  close(INPUT);
+  close(OUTPUT);
+}
+
+sub Usage
+{
+  print <<EOF;
+Usage:  csh2sh [-h] [-o <outputdir>] file1 [... fileX]
+
+  where 
+
+    -h    prints this help message.
+    -o
+EOF
+  exit(0);
+}

@@ -1,0 +1,3 @@
+Le texte fut remplacé.
+un remplacement
+multiline

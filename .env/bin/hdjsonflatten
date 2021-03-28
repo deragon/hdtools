@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import os.path
+import sys
+import logging
+
+from datetime import datetime
+
+import argparse
+from argparse import RawTextHelpFormatter
+
+scriptPath=os.path.dirname(sys.argv[0])
+scriptName=os.path.basename(sys.argv[0])
+
+logger = logging.getLogger(scriptName)
+
+scriptPathAbs=os.path.realpath(scriptPath)
+scriptPathAbsParent=os.path.dirname(scriptPathAbs)
+
+scriptNameAndPathAbs=scriptPathAbs + os.sep + scriptName
+
+try:
+  scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
+except IndexError:
+  scriptNameBase=scriptName # There is no extension.
+
+
+
+# PARSING ARGUMENTS
+# ────────────────────────────────────────────────────────────────────────────
+#
+# See:  http://docs.python.org/2/library/argparse.html
+#
+# WARNING:
+#
+# - and -- options are always optional according to argparse.  If you
+# want mandatory arguments, they should not be prefixed with - or --.
+#
+# http://stackoverflow.com/questions/24180527/argparse-required-arguments-listed-under-optional-arguments
+
+parser = argparse.ArgumentParser(description="""
+Flatten JSON files
+
+Original files are left intact.  Flattened JSON are sent to stdout.
+
+For example, run:
+
+    """ + scriptName + """  <file.json>+
+
+""", formatter_class=RawTextHelpFormatter)
+
+# Positional arguments definition here.
+parser.add_argument('files', metavar='files', type=str, nargs='+',
+                    help='List of JSON files to flatten.')
+
+# Optional argument with parameter (--user USER).  By putting 'type=str', we
+# tell the parser that the argument must take a parameter with it.
+parser.add_argument('-u', '--user', type=str, dest='user', 
+                    default=os.environ["USER"], help='Provide user id.')
+
+parser.add_argument('-d', '--debug', dest='debug', default=False, action="store_true", help='Debug level logs enabled.')
+parser.add_argument('-i', '--info' , dest='info' , default=False, action="store_true", help='Info level logs enabled.')
+parser.add_argument('-e', '--error', dest='error', default=False, action="store_true", help='Error level logs enabled.')
+
+args = parser.parse_args()
+
+if args.debug == True:
+  logging.basicConfig(level=logging.DEBUG)
+elif args.info == True:
+  logging.basicConfig(level=logging.INFO)
+elif args.error == True:
+  logging.basicConfig(level=logging.ERROR)
+else:
+  logging.basicConfig(level=logging.WARNING)
+
+errors=""
+
+if len(errors) > 0:
+  print("\x1B[1;37;41mERROR:\x1B[0m  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
+  print("\x1B[1;37;41mERREUR:\x1B[0m  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
+  sys.exit(1)
+
+logging.debug("Test of logging %s", "here. :)")
+logger.debug("Test of logging %s", "here. :)")
+
+
+# JSON
+# ────────────────────────────────────────────────────────────────────────────
+import json
+
+# From:  https://towardsdatascience.com/how-to-flatten-deeply-nested-json-objects-in-non-recursive-elegant-python-55f96533103d
+def flatten_json(nested_json):
+    """
+        Flatten json object with nested keys into a single level.
+        Args:
+            nested_json: A nested json object.
+        Returns:
+            The flattened json object if successful, None otherwise.
+    """
+    out = {}
+
+    def flatten(x, name=''):
+        if type(x) is dict:
+            for a in x:
+                flatten(x[a], name + a + '_')
+        elif type(x) is list:
+            i = 0
+            for a in x:
+                flatten(a, name + str(i) + '_')
+                i += 1
+        else:
+            out[name[:-1]] = x
+
+    flatten(nested_json)
+    return out
+
+import re
+for file in args.files:
+    with open(file) as fd:
+        json_dict=json.load(fd)
+        print(re.sub("(^\{|\}$)", "", str(flatten_json(json_dict))).replace(", ", "\n"))

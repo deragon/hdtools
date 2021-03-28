@@ -1,0 +1,83 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+JUNK_PATTERN='(.*sw\w|.*~lock.*)'
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Deletes recusrively from current directory any junk file.  A junk file is
+anyfile that follows the following patterns:
+
+  ${JUNK_PATTERN}
+
+This script \e[1;37;42masks for permission\e[0m before deleting what are
+considered junk files.
+
+
+Usage:  ${SCRIPT_NAME} [-h]
+
+  -h  Display this help text.
+"
+EOM
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+INTERACTIV=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES="$(find . -regextype posix-extended -iregex "${JUNK_PATTERN}")"
+
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+if [ -z "${FILES[@]}" ]; then
+  echo "No junk files found.  Aborting nicely."
+else
+  echo -e "Following are the list of all files considered as junk:\n"
+  printf '%s\n' "${FILES[@]}"   # Print all values on separate lines.
+  echo
+
+  for FILE in ${FILES[@]}; do
+
+    read -N 1 -p "Do you wish to delete this file (y/n, q for quit):  '${FILE}'?  " -e ANSWER
+
+    case "${ANSWER}" in
+      "q")  exit;;
+      "y")  rm "${FILE}"
+            echo "'${FILE}' deleted.";;
+    esac
+  done
+fi

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SEPARATOR=$1
+[ -z "${SEPARATOR}" ] && SEPARATOR=":"
+# 2nd perl is to remove the extra : appended by the first one.
+perl -pe "s/\n$/${SEPARATOR}/g" | perl -pe "s/:$//g"

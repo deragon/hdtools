@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From:  https://superuser.com/questions/221711/batch-remove-comments-from-pdf-files
+import sys, pdfrw
+
+in_path = sys.argv[1]
+out = sys.argv[2]
+reader = pdfrw.PdfReader(in_path)
+
+for p in reader.pages:
+    if p.Annots:
+        # See PDF reference (Sec. 12.5.6) for all annotation types
+        p.Annots = [a for a in p.Annots if a.Subtype == "/Link"]
+
+pdfrw.PdfWriter(out, trailer=reader).write()

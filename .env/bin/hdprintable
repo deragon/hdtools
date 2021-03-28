@@ -1,0 +1,62 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Filter out non printable characters.  Great for files with \@ (nulls)
+between each character.
+
+Conversion is sent to STDOUT.
+
+Usage:  ${SCRIPT_NAME} [-h] <file>+
+
+        OR
+
+        cat <file> | ${SCRIPT_NAME}
+"
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+# STDIN OR FILES
+#
+# If no file has been provided, set one file as STDIN (-).  This way,
+# either files passed as arguments are processed or STDIN.
+if (( ${#FILES[*]} == 0 )); then
+  FILES[0]="-"
+fi
+
+for FILE in ${FILES[@]}; do
+  sed 's/[^[:print:]]//g' "${FILE}"
+done

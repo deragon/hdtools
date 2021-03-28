@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import os.path
+import sys
+
+# os.path.realpath(os.curdir) # Current directory, canonical form.
+
+script_path=os.path.dirname(sys.argv[0])
+script_name=os.path.basename(sys.argv[0])
+
+try:
+  script_name_base=script_name.rsplit('.', 1)[0] # Extension found.
+except IndexError:
+  script_name_base=script_name # There is no extension.
+
+script_path_abs=os.path.realpath(script_path)
+script_path_abs_parent=os.path.dirname(script_path_abs)
+
+script_nameandpath_abs=script_path_abs + os.sep + script_name
+
+
+# ════════════════════════════════════════════════════════════════════════════
+
+import argparse
+
+parser = argparse.ArgumentParser( \
+  formatter_class=argparse.RawTextHelpFormatter, \
+  prog=script_name, description="""
+Converts a list of path separated from Linux format to Windows format. 
+Useful to convert "${CLASSPATH}" for instance.  Converted paths are
+sent to stdout.  Example of usage:
+
+export CLASSPATH=`hdlinux2windowspaths "${CLASSPATH}"`
+
+\'cygpath -w\' is used behind the scene.
+\n
+
+""")
+
+parser.add_argument('paths', metavar='paths', type=str,
+                   help='The list of paths')
+
+args = parser.parse_args()
+
+if args.paths != None:
+  paths = args.paths
+
+
+# ════════════════════════════════════════════════════════════════════════════
+
+import re
+
+# Regular expression comes from:  
+# http://stackoverflow.com/questions/6416065/c-sharp-regex-for-file-paths-e-g-c-test-test-exe
+winpath_regex=re.compile('^(?:[a-zA-Z]\:|\\[\w.]+\[\w.$]+)\\(?:[\w]+\)*\w([\w.])+$')
+winpath_regex=re.compile("^[a-zA-Z]\:.*")
+
+#paths=sys.argv[1]
+
+newPaths=""
+paths=paths.replace(":/", ";/").replace(".:\\", ".;\\")
+for path in paths.split(";"):
+  # Sometimes, human error introduces two consecutive ";;", causing 'path' to
+  # have zero character.  A valid path is a minimum 1 character, thus the
+  # reason why we check that the length is > 0.
+  if len(path) > 0:
+    path=os.popen("cygpath -w '" + path + "'").read()
+    newPaths=newPaths+";"+path.strip()
+
+newPaths=newPaths[1:]
+print(newPaths)

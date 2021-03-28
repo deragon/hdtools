@@ -1,0 +1,200 @@
+#!/bin/bash
+
+# ======================================================================
+# Comment by Hans Deragon, 2006/05/21, 11:15
+#
+# This file was a script downloaded from the web and heavily modified
+# by Hans Deragon (hans@deragon.biz).  Unfortunately, the source
+# of this script has been lost and cannot be found on the web.
+#
+# ======================================================================
+#
+# Copyright (c) 2006, Hans Deragon (hans@deragon.biz)
+# All rights reserved.
+#
+# Redistribution and use of this software in source and binary forms, with or
+# without modification, are permitted provided that the following conditions
+# are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name, "Hans Deragon", nor the names of its contributors may
+#   be used to endorse or promote products derived from this software without
+#   specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+
+
+######################################################################
+# INSTALLATION
+#
+# Local computer:   Computer from which you are typing now.
+# Remote computer:  Computer to which you want to ssh to.
+#
+# Create keys with ssh-keygen on local computer.  It will ask for a
+# passphrase; save it.  Later this passphrase will be asked and it will
+# allow you to access any remote computer where you would have sent your
+# public key (be patient).
+#
+#   ssh-keygen -t dsa -b 2048
+#
+# Two files are created:
+#
+#   ~/.ssh/id_dsa ~/.ssh/id_dsa.pub
+#
+# Connect once with ssh to remote computer (it will ask for the
+# password).  Add the contents of localcomputer:~/.ssh/id_dsa.pub to
+# remotecomputer:~/.ssh/authorized_keys
+#
+# Logout from remote computer.  Source this script.  It will ask for a
+# passphrase.  This is the passphrase you provided when executing
+# ssh-keygen.
+#
+# ssh to remote computer.  No password is required.
+
+#env | fgrep sh
+#echo $SHELL
+
+print()
+{
+  ((${PRINT})) && echo $@
+}
+
+# Checking if -q is passed as argument or if we are not connected to a tty.
+# If any of these conditions are met, this script remains silent.
+if [ "${1}" = "-q" -o ! -t 0 ]; then
+  PRINT=0
+else
+  PRINT=1
+fi
+
+# Testing if we have permissions to access ${HOME}/.ssh/.  Sometimes
+# we are another user and therefore ${HOME} does not point to the real
+# user's home.  Thus, permissions are not given and there is no point
+# in starting sshagent in such environment.
+if [ ! -d ${HOME}/.ssh/. ]; then
+  print "Cannot access ${HOME}/.ssh/.  Aborting."
+  exit 1
+fi
+
+mkdir -p ${HOME}/.ssh/env
+chmod 700 ${HOME}/.ssh/env
+
+# HOSTNAME may actually contain the domain name (it happens under Mac OS X).
+# Thus we truncate it at the '.', if any.
+export SSH_ENV="${HOME}/.ssh/env/${HOSTNAME/.*}"
+
+function start_ssh_agent
+{
+  if [ -w "${SSH_ENV}.sh" -o ! -f "${SSH_ENV}.sh" ]; then
+    eval `ssh-agent -s | sed 's/^echo/#echo/'`
+
+    # Rebuilding env files.  This is necessary because we might have
+    # inherited valid values of $SSH_AUTH_SOCK and $SSH_AGENT_PID that
+    # are not saved in these files.
+    cat >${SSH_ENV}.sh <<EOF
+export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
+export SSH_AGENT_PID=${SSH_AGENT_PID}
+EOF
+
+    cat >${SSH_ENV}.csh <<EOF
+setenv SSH_AUTH_SOCK ${SSH_AUTH_SOCK}
+setenv SSH_AGENT_PID ${SSH_AGENT_PID}
+EOF
+
+    cat >${SSH_ENV}.py <<EOF
+os.environ["SSH_AUTH_SOCK"]="${SSH_AUTH_SOCK}"
+os.environ["SSH_AGENT_PID"]="${SSH_AGENT_PID}"
+EOF
+
+    cat >${SSH_ENV}.pl <<EOF
+\${SSH_AUTH_SOCK}="${SSH_AUTH_SOCK}"
+\${SSH_AGENT_PID}="${SSH_AGENT_PID}"
+EOF
+    print "ssh-agent started."
+  else
+    print "ssh-agent not started."
+  fi
+}
+
+killrogueagents()
+{
+  [ -z "${USER}" ] && USER=`whoami`
+  if (($? > 1)); then
+    cat <<EOM
+Cannot identify current user.  Rogue agents cannot be killed.
+Operation continues however.
+EOM
+    return
+  fi
+
+  # SSH_AGENT_PID is not defined anywhere, but that does not mean
+  # that there is no ssh-agent running for the user.  Trying to find at
+  # least one.
+  if [ "${HD_OS_FAMILY}" = "Cygwin" -o "${HD_OS_FAMILY}" = "MinGW" ] || [[ "$(uname)" == *"MINGW"* ]]; then
+    # CYGWIN and MinGW BUG:  ps -eo -> option -o is not available under these environments.
+    export ROGUE_SSH_AGENT_PIDS=`ps -ef | fgrep "${USER}" | fgrep -v "<defunct>" | awk '{print $2, $6}' | perl -ne "if(/\d+\s+.+ssh-agent$/) { print; exit 1 }" | awk '{print $1}'`
+  else
+    # On some Linux system, ps -eo "user..." truncated the userid to 8 characters.  Thus instead, we use the euid.
+    # EUID is a read-only variable already set by Bash.
+    export ROGUE_SSH_AGENT_PIDS=$(ps -eo "euid pid comm" | perl -ne "if(/^\s*${EUID}\s+(\d+)\s+ssh-agent$/) { print \$1; exit 0 }")
+  fi
+
+  #print "ROGUE_SSH_AGENT_PIDS=${ROGUE_SSH_AGENT_PIDS}"
+  # Ok, we have found a few rogue ssh-agents.  There are no use since we do not
+  # know what state there in and what their $SSH_AUTH_SOCK is.  We kill them
+  # all and start fresh.
+  for PID in ${ROGUE_SSH_AGENT_PIDS}; do
+    # If the PID is to good SSH agent, we must not kill it!
+    if [ "${PID}" != "${SSH_AGENT_PID}" ]; then
+      print "Killing rogue ssh-agent ${PID}."
+      kill ${PID}
+    fi
+  done
+}
+
+check_ssh_agent()
+{
+  [ -r ${SSH_ENV}.sh ] && source "${SSH_ENV}.sh" >/dev/null
+
+  if ps -ef | fgrep -v 'grep' | egrep --extended-regexp "${SSH_AGENT_PID}.*ssh-agent" >/dev/null; then
+    print "ssh-agent already running as PID ${SSH_AGENT_PID}."
+    return 1
+  else
+    print "No running ssh-agent with PID ${SSH_AGENT_PID} found."
+    return 0
+  fi
+}
+
+if check_ssh_agent; then
+  start_ssh_agent
+fi
+
+killrogueagents
+ssh-add -l >/dev/null
+if (($?)); then
+  print "No keys saved in ssh-agent.  Adding now."
+  if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
+    # Pour une raison inconnue, soudainement en début 2012, cygwin
+    # n'ajoute pas les clefs; il faut les spécifier.
+    ssh-add "${HOME}/.ssh/id_rsa"
+  else
+    ssh-add
+  fi
+fi

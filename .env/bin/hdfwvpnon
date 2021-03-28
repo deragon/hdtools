@@ -1,0 +1,32 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+VPN_PORT=9999 # (the port, the vpn server listens to)
+NORMAL_INTERFACE=eth0
+VPN_INTERFACE=tun0
+VPN_PROTOCOL=tcp # tcp or udp
+
+# The default rule will be to drop everything that leaves your computer
+enable()
+{
+  iptables -P OUTPUT DROP
+  iptables -A OUTPUT -t filter -o lo -j ACCEPT
+  iptables -A OUTPUT -t filter -o ${VPN_INTERFACE} -j ACCEPT
+  iptables -A OUTPUT -t filter -o ${NORMAL_INTERFACE} \
+           -p ${VPN_PROTOCOL} --dport ${VPN_PORT} -j ACCEPT
+}
+
+disable()
+{
+  iptables -P OUTPUT ACCEPT
+  iptables -D OUTPUT -t filter -o lo -j ACCEPT
+  iptables -D OUTPUT -t filter -o ${VPN_INTERFACE} -j ACCEPT
+  iptables -D OUTPUT -t filter -o ${NORMAL_INTERFACE} \
+           -p ${VPN_PROTOCOL} --dport ${VPN_PORT} -j ACCEPT
+}

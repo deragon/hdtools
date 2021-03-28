@@ -1,0 +1,155 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${0/*\/}"
+
+# 'bundle' directory makes reference to 'vim/bundle', which contains only
+# stuff that is downloaded, never changed by Hans Deragon.  Thus it is not
+# relevant to compare files under 'vim/bundle'.  The diff command does not
+# permit excluding a path like 'vim/bundle'.  We have no choice that to
+# exclude 'bundle' for excluding the directory.
+#
+# .spl & .sug files are Vim's spelling and suggestion binary files.
+EXCLUDES_SET_1="\t*.git*\t*zCopy*\t*pycache*\t*.sw*\t*.pyc\t*.spl\t*.sug\tbundle"
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-e <exclude pattern>]* [-h] <src dir> <dst dir>
+
+Print list of differences between <src dir> and <dst dir>, showing
+the differences with 'vimdiff' command as a prefix.
+
+This allows one to cut and paste the line and have 'vimdiff' show
+the difference.
+
+  -n  No color (default is on if connected to TTY; none if not connected.)
+
+  -e  Exclude pattern.  Can be used multiple times.  Useful to exclude
+      generated code and IDE configuration files.
+
+      ${SCRIPT_NAME} -e target -e .idea ...
+
+  -1  Add exclude pattern set #1 to exclude patterns.  This set adds:
+
+      ${EXCLUDES_SET_1//\\t/  }
+
+  -h  Show this help text.
+
+Example:
+
+  ${SCRIPT_NAME} -e target -e .idea trunk branches/mybranch
+EOM
+}
+
+unset EXCLUDES
+
+COLOR=1
+while getopts "ne:1h" OPTCMD; do
+  case "${OPTCMD}" in
+    "n")    COLOR=0;;
+    "e")    EXCLUDES=`echo -e "${EXCLUDES}\t${OPTARG}"`;;
+    "1")    EXCLUDES=`echo -e "${EXCLUDES_SET_1}"`;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+# If we are not connected to a terminal/tty session, disable color.
+[ ! -t 1 ] && COLOR=0
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+# Running through remaining arguments
+DIR1="$1"
+DIR2="$2"
+
+IFS=`echo -e "\t"`
+for EXCLUDE in ${EXCLUDES}; do
+  EXCLUDES_OPTIONS="${EXCLUDES_OPTIONS} --exclude \"${EXCLUDE}\""
+done
+
+unset CHANGE_COLOR_A
+unset CHANGE_COLOR_B
+
+if (( COLOR )); then
+  COLOR_RESET="\e[0m"
+
+  colorSelector()
+  {
+    CHANGE_TS_EPOCH_1=$(stat --format "%Y" "${FILENAMEA}" 2>/dev/null)
+    CHANGE_TS_EPOCH_2=$(stat --format "%Y" "${FILENAMEB}" 2>/dev/null)
+
+    if (( CHANGE_TS_EPOCH_1 > CHANGE_TS_EPOCH_2 )); then
+      #CHANGE_COLOR_A="\e[1;37;42m"  # White on green
+      CHANGE_COLOR_A="\e[1;37m"      # White font only.
+      CHANGE_COLOR_B=""
+    else
+      #CHANGE_COLOR_B="\e[1;37;42m"  # White on green
+      CHANGE_COLOR_B="\e[1;37m"      # White font only.
+      CHANGE_COLOR_A=""
+    fi
+  }
+
+else
+  colorSelector() { :; }
+  unset COLOR_RESET
+fi
+
+while IFS='' read -r LINE || [[ -n "${LINE}" ]]; do
+  #echo "Text read from file: ${LINE}"
+  if [ -z "${LINE/Only*/}" ]; then
+    FILENAMEA=$(sed -r "s%Only in ([^:]+):\s+(\S+)%\1/\2%g" <<< "${LINE}")
+    unset FILENAMEB
+    if [[ "${FILENAMEA}" =~ "${DIR1}" ]];then
+      # ${FILENAMEA} contains ${DIR1}, thus DIRB must be set to the other
+      # directory.
+      DIRA="${DIR1}"
+      DIRB="${DIR2}"
+    else
+      DIRA="${DIR2}"
+      DIRB="${DIR1}"
+    fi
+    DIRB="$(dirname ${DIRB}/${FILENAMEA/${DIRA}\//})"
+  else
+    FILENAMEA=$(sed -r "s%^'([^']*)'.*%\1%g" <<< "${LINE}")
+    FILENAMEB=$(sed -r "s%^'[^']*'\s+'([^']*)'%\1%g" <<< "${LINE}")
+    DIRB=${DIR2}
+  fi
+  #echo "FILENAMEA=${FILENAMEA}, FILENAMEB=${FILENAMEB}"
+  CHANGE_TS_HUMAN_A=$(stat --format "%y" "${FILENAMEA}" | sed -r 's/\..*//g')
+
+  FILE_TYPE="$(file "${FILENAMEA}")"
+  FILE_TYPE="${FILE_TYPE,,}"  # To lowercase.
+
+  colorSelector
+
+  if [ -z "${FILENAMEB}" ]; then
+    if [[ "${FILE_TYPE}" =~ " text" ]]; then
+      echo -e "vim '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A}"
+    else
+      echo -e "ls -l '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A}"
+    fi
+    echo -e "  cp -rp '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' '${DIRB}/.'  # ${CHANGE_TS_HUMAN_A}"
+  else
+    CHANGE_TS_HUMAN_2=$(stat --format "%y" "${FILENAMEB}" | sed -r 's/\..*//g')
+
+    if [[ "${FILE_TYPE}" =~ " zip" ]]; then
+      echo -e "vimdiff <(unzip -l '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}') <(unzip -l '${CHANGE_COLOR_B}${FILENAMEB}${COLOR_RESET}')  # ${CHANGE_TS_HUMAN_A} / ${CHANGE_TS_HUMAN_2}"
+    else
+      echo -e "vimdiff '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' '${CHANGE_COLOR_B}${FILENAMEB}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A} / ${CHANGE_TS_HUMAN_2}"
+    fi
+  fi
+
+done < <(
+  eval diff -qr ${EXCLUDES_OPTIONS} \
+    "\"${DIR1}\"" "\"${DIR2}\"" | \
+    perl -pe "s/^\s*Files (.*?)\s+and\s+(.*?)\s+differ$/'\$1' '\$2'/g"
+)

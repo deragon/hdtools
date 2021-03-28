@@ -1,0 +1,23 @@
+#!/bin/bash -x
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+REPERTOIRES=$@
+[ -z "${REPERTOIRES}" ] && REPERTOIRES=.
+renamefiles -r JPG  jpg ${REPERTOIRES}
+renamefiles -r jpeg jpg ${REPERTOIRES}
+renamefiles -r JPEG jpg ${REPERTOIRES}
+renamefiles -r PNG  png ${REPERTOIRES}
+renamefiles -r AVI  avi ${REPERTOIRES}
+renamefiles -r MP4  mp4 ${REPERTOIRES}
+set -x
+for  REPERTOIRE in ${REPERTOIRES}; do
+  find "${REPERTOIRE}" \
+    -regex '\(.*?\.jpg\|.*?\.avi\|.*?\.mp4\|.*?\.3gp\)$' \
+    -exec chmod -x {} \;
+done

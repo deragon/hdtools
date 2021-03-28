@@ -1,0 +1,117 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Usage:  ${SCRIPT_NAME} <file>+
+
+Show all Test Suite and their respective Test Cases of a SoapUI project.
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#FILES[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one file to process.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERREUR:\e[0m  Les erreurs suivantes furent détectées.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+
+# title()
+# ────────────────────────────────────────────────────────────────────────────
+#
+#  call:  title "Test #1"
+#  stdout:  ═ Test #1 2020-02-21 11:22:51 ════════════════════════════════════════════════════
+title()
+{
+  local LINE="═══════════════════════════════════════════════════════════════════════════════"
+  local TITLE="${1}"
+  local SEPARATOR=$(printf "%s %s %s\n" "${LINE:1:1}" "${TITLE}" "${LINE:${#TITLE}}")
+  echo -e "${SEPARATOR}\n"
+}
+
+
+# Other 'xml' commands not useful here but need to be documented since it can
+# be used manually in other circumstances and this is the best place to put
+# them.
+#
+# xml sel -t -v con:soapui-project/con:testSuite/@name *.xml xml sel -t -v
+# con:soapui-project/con:testSuite/con:testCase/@name *.xml
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+if which xml >/dev/null 2>&1; then
+  for FILE in ${FILES[@]}; do
+
+    # Print title only if more than one file is being processed.
+    (( ${#FILES[*]} > 1 )) && title "${FILE}"
+
+    # Removing trailing \r if any.  This needs to be done if running under a
+    # Windows (Cygwin) machine.
+    xml sel -t -v 'con:soapui-project/con:testSuite/@name|con:soapui-project/con:testSuite/con:testCase/@name' "${FILE}" | \
+      tr -d '\r' | hdxmlentities2characters
+    echo
+  done
+else
+  echo -e "
+\e[1;37;42mERROR:\e[0m
+
+xmlstarlet needs to be installed.  Please downloaded it from:
+
+  http://xmlstar.sourceforge.net
+
+and add its 'xml' binary to \${PATH}.
+
+Command aborted.
+"
+fi

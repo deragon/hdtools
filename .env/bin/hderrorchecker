@@ -1,0 +1,132 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+GREP_TARGET="(err|warn|excp)"
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+This script reads provide log files and simply run the following:
+
+  egrep -i --color=always '${GREP_TARGET}' \$@
+
+Usage:  ${SCRIPT_NAME} [-s] [-c] [-h] [<logfile>]*
+
+If no <logfile> is provided, STDIN is used.
+
+Options:
+
+  -s  Strict mode.  More restraining keywords are used to limit the noise
+      showing up on screen.
+
+  -c  Cut the output to terminal's number of columns.  Default is not to cut.
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+MATCHING_STRINGS='(fail|err|warn|exception|caused by)'
+CUT=0
+
+STRICT=0
+while getopts "csh" OPTCMD; do
+  case "${OPTCMD}" in
+    "c")    CUT=1;;
+    "s")    MATCHING_STRINGS='(fail|error|exception|caused by|erreur|avertissement)';;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+TERM_COLUMNS=$(tput cols)
+
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+# ERRORS=""
+#
+# if (( $# == 0 )); then
+#   ERRORS="${ERRORS} - You must provide at least one file to parse.\n"
+# fi
+#
+# if [ ! -z "${ERRORS}" ]; then
+#   echo -e "ERROR:  The following errors where detected.\n"
+#   echo -e "${ERRORS}"
+#   echo -e "Command aborted."
+#   exit 1
+# fi
+
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+if (( CUT == 1 )); then
+  TERM_COLUMNS="$(tput cols)"
+else
+  TERM_COLUMNS="65536"
+fi
+
+if [ -t 1 ] ; then
+  # Output to terminal.  We set color on.
+  COLOR_OPTION="always"
+  COLOR_CODE_YELLOW_REVERSE="\e[1;30;43m"
+  COLOR_CODE_NORMAL="\e[0m"
+else
+  # Output to a pipe.  No color, no escape code desired.
+  COLOR_OPTION="none"
+  COLOR_CODE_YELLOW_REVERSE=""
+  COLOR_CODE_NORMAL=""
+fi
+
+# STDIN OR FILES
+#
+# If no file has been provided, set one file as STDIN (-).  This way,
+# either files passed as arguments are processed or STDIN.
+if (( ${#FILES[*]} == 0 )); then
+  echo -e "${COLOR_CODE_YELLOW_REVERSE} WARNING ${COLOR_CODE_NORMAL}  SDTIN being used for input."
+  FILES[0]="-"
+fi
+
+FILTERS=(
+'\] DEBUG '
+'set -o pipefail -e'
+'This will be an error in Hadoop'
+'XX:OnOutOfMemoryError='
+'failureaccess.*.jar'
+'error_prone_annotations.*\.jar'
+'maxTaskFailuresPerNode'
+'ConfiguredRMFailoverProxyProvider'
+)
+
+printf -v FILTER '|%s' "${FILTERS[@]}"; FILTER=${FILTER:1};  # Join all elements, separted by ','.
+
+#echo "FILTER=>>>${FILTER}<<<"
+
+# First stage is filtering common messages that are not actual errors.
+# The last 'sed' reset the colors so that subsequent lines do not inherit the wrong color comming from the cut command before.
+egrep -v --extended-regexp -- "(${FILTER})" "${FILES[@]}" | \
+    egrep -i --color=${COLOR_OPTION} "${MATCHING_STRINGS}" | cut -c1-${TERM_COLUMNS} | sed -r 's/$/\x1B[0m/g'

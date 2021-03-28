@@ -1,0 +1,43 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${0/*\/}"                  # Basename, efficient form
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} -p <prefix> [-h] <file> [<files>*]
+
+  Add a prefix to the "Note" parameter of an mp3 file.
+EOM
+}
+
+while getopts "hp:" OPTCMD; do
+  case "${OPTCMD}" in
+    "p")  prefix="${OPTARG}";;
+    "h")  usage;exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))
+
+if [ -z "${prefix}" ]; then
+  echo -e "Prefix need to be provided as argument.  Aborting.\n"
+  usage
+  exit 2
+fi
+
+IFS="
+"
+
+for file in $@; do
+  note=`id3tool "${file}" | perl -ne "print if s/Note:\s+(.*)/\1/g"`
+  [ ! -z "${note}" ] && note=" - ${note}"
+  id3tool --set-note "${prefix}${note}" "${file}"
+done

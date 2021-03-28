@@ -1,0 +1,36 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From https://www.reddit.com/r/linux/comments/3ly2zl/lpt_use_python_interpreter_as_an_advanced/
+
+cat <<EOM
+Python load with mathematic functions.
+
+Functions:
+
+  **   (power)
+  sqrt
+
+  log
+  sin (in radians)
+  cos (in radians)
+  tan (in radians)
+
+Constants:
+
+  e
+  pi
+
+
+x = ( sin(pi/6)*cos(pi/6) )**2 + sqrt(2/3)
+x
+
+From https://www.reddit.com/r/linux/comments/3ly2zl/lpt_use_python_interpreter_as_an_advanced/
+EOM
+python -ic "from math import *; import cmath"

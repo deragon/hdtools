@@ -1,0 +1,58 @@
+#!/usr/bin/bash --login
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# To call this script from window's desktop, create a shortcut with the
+# following command:
+#
+# D:\tools\cygwin\bin\bash.exe --login ~/bin/winx50
+#
+# or better:
+#
+# D:\tools\cygwin\bin\bash.exe ~/bin/winx50
+
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/X11R6/bin:/usr/local/bin:/usr/bin:/bin:/usr/X11R6/bin:${PATH}
+
+. ~/.bashrc
+
+limit=6
+
+let nbrxvt=(`ps | fgrep rxvt | wc -l | sed "s/ //g"`)
+
+if [ ${nbrxvt} -ge ${limit} ]; then
+  let nbrxvt=${limit}
+fi
+
+# Configure with limit=4
+#let posx=${nbrxvt}*170+18
+# Configure with limit=6
+let posx=${nbrxvt}*80+18
+let posy=${nbrxvt}*20
+
+# For fonts selection, see: http://home.bsu.edu/prn/monofont/
+#
+# -fn "Andale Mono-bold-15" \
+# -fn "Courier New-15" \
+# -fn "Lucida Console-bold-11" \
+# -fn "Terminal-bold" \
+# -fn "FixedSys" \
+
+set -x
+cd /tmp
+nohup rxvt.exe -fg white \
+  -bg black \
+  -cr green +vb +st  \
+  -sl 2000 \
+  -fn "Lucida Console-bold-18" \
+  --geometry 80x56+${posx}+${posy} \
+  -e /usr/bin/bash \
+  --login \
+  -i &
+
+exit

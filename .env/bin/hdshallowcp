@@ -1,0 +1,54 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+srcdir="$1"
+dstdir="$2"
+
+fetchFileSystem()
+{
+  df -P ${1} | perl -ne "s%^(/\S+).*%\1%g and print"
+}
+
+base_srcdir=`basename "${srcdir}"`
+dir_srcdir=`dirname "${srcdir}"`
+
+if [ ! "${dstdir/\/*/detected}" = "detected" ]; then
+  # Destination dir is not absolute.  We make it so.
+  cur_dir=`pwd`
+  abs_dstdir="${cur_dir}/${dstdir}"
+else
+  abs_dstdir="${dstdir}"
+fi
+
+cd "${dir_srcdir}"
+abs_srcdir=`pwd`
+abs_base_srcdir="${abs_srcdir}/${base_srcdir}"
+echo "Creating directories"
+find "${base_srcdir}" -name "*" \
+     -type d -print -exec mkdir -p "${abs_dstdir}/{}" \;
+cd "${abs_dstdir}"
+
+src_filesystem=`fetchFileSystem "${abs_srcdir}"`
+dst_filesystem=`fetchFileSystem "${abs_dstdir}"`
+
+# If src and dst filesystem are the same, we perform hard links, else
+# soft links.
+if [ "${src_filesystem}" = "${dst_filesystem}" ]; then
+  OPTIONS=''
+else
+  OPTIONS='-s'
+fi
+
+echo "Creating symlinks"
+files=`find ${abs_base_srcdir} -name "*" -type f -print`
+for file in ${files}; do
+  destination=${file/${abs_srcdir}\//}
+  echo "Linking ${file}"
+  ln ${OPTIONS} ${file} ${destination}
+done

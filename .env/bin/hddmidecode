@@ -1,0 +1,40 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+DMIDECODE="/pub/linux/i386/nodist/bin/dmidecode"
+echo "============================================================"
+echo "SYSTEM INFO"
+echo
+for key in \
+  'bios-vendor' \
+  'bios-version' \
+  'bios-release-date' \
+  'system-manufacturer' \
+  'system-product-name' \
+  'system-version' \
+  'system-serial-number' \
+  'system-uuid' \
+  'baseboard-manufacturer' \
+  'baseboard-product-name' \
+  'baseboard-version' \
+  'baseboard-serial-number' \
+  'baseboard-asset-tag' \
+  'chassis-manufacturer' \
+  'chassis-type' \
+  'chassis-version' \
+  'chassis-serial-number' \
+  'chassis-asset-tag' \
+  'processor-family' \
+  'processor-manufacturer' \
+  'processor-version' \
+  'processor-frequency'; do
+
+  OUTPUT=`${DMIDECODE} -s ${key} | sed "s/ *$//g"`
+  echo "${key}: >>${OUTPUT}<<"
+done

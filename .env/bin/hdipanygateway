@@ -1,0 +1,18 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Printing out any valid gateway.
+# Works as of 2018-02-24 03:46:26 EST
+route -N | \
+  egrep -v "^(Kernel|Destination|link-local)" | \
+  awk -F " " "{ print \$2 }" | fgrep -v "0.0.0.0"
+
+# Another solution, but requires a dig
+# https://unix.stackexchange.com/questions/53446/what-is-the-gnu-linux-equivalent-of-bsds-route-get
+# ip route get "$(dig google.com +short)" | perl -ne 'print if s/.*via\s+([\w|\.]+)\s+.*/\1/g'

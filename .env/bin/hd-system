@@ -1,0 +1,43 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+#OPTIND=1
+#while getopts "d:v:a:p:" OPTCMD; do
+#  
+#done
+
+COMMAND=`echo $1 | tr "[A-Z]" "[a-z]"`
+
+PowerManagement()
+{
+  # See http://people.freedesktop.org/~hughsient/temp/power-management-spec-0.2.html
+
+  dbus-send \
+    --session \
+    --dest=org.freedesktop.PowerManagement \
+    --type=method_call \
+    --print-reply \
+    --reply-timeout=2000 \
+    /org/freedesktop/PowerManagement \
+    org.freedesktop.PowerManagement.$1
+}
+
+if   [ "${COMMAND}" = "shutdown"          ] ; then
+  PowerManagement Shutdown
+elif [ "${COMMAND}" = "suspend"           ] ; then
+  PowerManagement Suspend
+elif [ "${COMMAND}" = "hibernate"         ] ; then
+  PowerManagement Hibernate
+elif [ "${COMMAND}" = "reboot"            ] ; then
+  PowerManagement Reboot
+elif [ "${COMMAND}" = "shutdown-lowlevel" ] ; then
+  sudo shutdown
+elif [ "${COMMAND}" = "reboot-lowlevel"   ] ; then
+  sudo reboot
+fi

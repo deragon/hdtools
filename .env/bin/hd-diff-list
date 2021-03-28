@@ -1,0 +1,40 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+DIR1="${1/\/}"
+DIR2="${2/\/}"
+
+echo -e "Enter the list of files to diff.  Leave an empty line to stop input.\n"
+
+unset LINES
+while ((1)); do
+  read LINE
+  [ -z "${LINE}" ] && break
+
+  # If the list comes from the output of a zip operation, remove zip related
+  # info.
+  LINE=`perl -e "\\\$_='${LINE}';s/(\s*adding:\s*)*(.*?)(\s+\\\(deflated.*)/\2/g;print \\\$_;"` # zip
+  LINE=`perl -e "\\\$_='${LINE}';s/(\s*\d+\s+\d{2}-\d{2}-\d{2}\s+\d{2}:\d{2}\s+)*(.*)/\2/g;print \\\$_;"` # unzip -l
+
+  #echo "LINE=${LINE}"
+  LINES="${LINES}${LINE}\n"
+done
+
+echo -e "List of files to diff:\n\n${LINES}"
+
+LINES=`echo -e ${LINES}`
+export IFS=$'\n'
+
+for FILE in ${LINES}; do
+  #echo "FILE=>>${FILE}<<"
+  DIFF=`diff "${DIR1}/${FILE}" "${DIR2}/${FILE}"`
+  if (($?)); then
+    echo -e "Diff ${FILE}\n${DIFF}"
+  fi
+done

@@ -1,0 +1,154 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h] [directory]
+
+Goes through provided directory, or '.' by default, search for all SVN trunks/ and update them with depth set to 'infinity'.
+
+  -d  Dry-run.
+  -e  Execute command.
+  -z  Debug logs enabled.
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=1
+DEBUG=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "e")    DRYRUN=0;;  # Run in execute mode.
+    "z")    DEBUG=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+DIRECTORY="${FILES[0]}"
+if [ -z "${DIRECTORY}" ]; then
+  DIRECTORY="."
+else
+  if [ ! -d "${DIRECTORY}" ]; then
+    ERRORS="${ERRORS} - Directory does not exist:  '${DIRECTORY}'.\n"
+  fi
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+TIMESTAMP_FILE=`date +"%Y%m%dT%H%M%S"` # ISO 8601 format.
+TIMESTAMP_START=`date +"%s"` # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+svnfetch()
+{
+  local DIR="$1"
+  local DIR_FIRSTLEVEL="${DIR/\/*/}"
+  local DIR_REMAINING="${DIR/${DIR_FIRSTLEVEL}\//}"
+
+  [ -z "${DIR_FIRSTLEVEL}" ] && return
+
+  #echo "CURRENT DIR=${PWD}"
+  if [ -z "${DIR_FIRSTLEVEL/trunk}" ]; then
+    svn update --set-depth infinity "${DIR_FIRSTLEVEL}"
+  else
+    if [ ! -d "${DIR_FIRSTLEVEL}" ]; then
+      svn update --set-depth empty "${DIR_FIRSTLEVEL}"
+    fi
+  fi
+
+  pushd . >/dev/null
+  cd "${DIR_FIRSTLEVEL}" >/dev/null
+  svnfetch "${DIR_REMAINING}"
+  popd >/dev/null
+}
+
+SVN_URL=$(svn info "${DIRECTORY}" | perl -ne 'print if s/^URL:\s*(.*)/\1/g')
+
+IFS='
+'
+
+tput civis # Hide cursor
+
+echo -en "Started:  ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+
+declare -a SVN_TRUNKS=()
+index=0
+while read -r LINE
+do
+  (( index=index+1 ))
+  if (( index % 200 == 0 )); then
+    echo -n "▚"
+    tput cub 1  # Move cursor 1 caracter to the left.
+  elif (( index % 100 == 0 )); then
+    echo -n "▞"
+    tput cub 1  # Move cursor 1 caracter to the left.
+  fi
+
+  if [ -z "${LINE/trunk\//}" -o -z "${LINE/*\/trunk\//}" ]; then
+    SVN_TRUNKS+=("${LINE}")
+    #echo -e "\nLINE=>>${LINE}<<"
+    echo -n "█"
+  fi
+done < <( svn ls --depth infinity "${SVN_URL}" )
+echo
+
+printf 'Trunks:  %s\n' "${SVN_TRUNKS[@]}"   # Print all values on separate lines.
+
+for SVN_TRUNK in "${SVN_TRUNKS[@]}"; do  # Quotes are important to handle spaces.
+  echo "Trunk:  ${SVN_TRUNK}"
+  svnfetch "${SVN_TRUNK}"
+done
+
+
+echo "${index} entries scanned."
+
+TIMESTAMP_END=`date +"%s"` # Seconds since epoch.
+TIMESTAMP_DIFF=$((${TIMESTAMP_END}-${TIMESTAMP_START}))
+
+echo -en "Started:    ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+echo -en "Ended:      ";date -d @"${TIMESTAMP_END}"   +"${TIMESTAMP_FORMAT_HUMAN}"
+
+TIMESTAMP_DIFF_DAYS=`printf '% 8d' $(($(date -u -d @"${TIMESTAMP_DIFF}" +'%j')-1))`
+
+echo -en "Timelapse:  ${TIMESTAMP_DIFF_DAYS} ";date -u -d @"${TIMESTAMP_DIFF}" +'%H:%M:%S'
+
+tput cvvis # Show cursor

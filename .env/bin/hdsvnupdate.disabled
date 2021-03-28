@@ -1,0 +1,52 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${0/*\/}"
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h]
+
+Updates all subversion working directories found under the current directory.
+
+More specifically, recursively goes through all directories under the current
+one and check for a .svn directory.  If one found, it calls 'svn update' on it
+and stops the recursion.
+EOM
+}
+
+while getopts "n:hz" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+svnupdate()
+{
+  for ENTRY in $@; do
+
+    if [ -d "${ENTRY}" ]; then
+      if [ -z "${ENTRY/*archive*/}" ]; then
+        echo "Skipping archive directory:  ${ENTRY}"
+        continue
+      elif [ -d "${ENTRY}/.svn" ]; then
+        svn update "${ENTRY}"
+      else
+        svnupdate "${ENTRY}"/*
+      fi
+    fi
+  done
+}
+
+svnupdate .

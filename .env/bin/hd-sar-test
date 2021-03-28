@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+TESTDIR="./hd-sar-test.d"
+#hd-sar -r -R $* "li(..)e" "devrait etre gn:  >>\1<< ligne" "${TESTDIR}"
+
+hd-sar --debug=20 -r -R --multiline $* "Ceci\nest" "Le texte fut remplacé." "${TESTDIR}"
+
+echo "Après test ==========================================================="
+find "${TESTDIR}"

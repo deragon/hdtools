@@ -1,0 +1,85 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Replaces XML / HTML entities below with their corresponding characters:
+
+  &nbsp                         > <
+  &amp                           &
+  &lt                            <
+  &gt                            >
+  &quot                          \"
+  &ldquo                         \"
+  &rdquo                         \"
+
+Reads files passed as input or stdin.
+
+Usage:  ${SCRIPT_NAME} [-h] [file>+]
+
+  -h  Display this help text.
+"
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+# title()
+# ────────────────────────────────────────────────────────────────────────────
+#
+#  call:  title "Test #1"
+#  stdout:  ═ Test #1 2020-02-21 11:22:51 ════════════════════════════════════════════════════
+title()
+{
+  local LINE="═══════════════════════════════════════════════════════════════════════════════"
+  local TITLE="${1} "$(date "+${TIMESTAMP_FORMAT_HUMAN}")
+  local SEPARATOR=$(printf "%s %s %s\n" "${LINE:1:1}" "${TITLE}" "${LINE:${#TITLE}}")
+  echo "${SEPARATOR}"
+}
+
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+NB_FILES="${#FILES[*]}"
+if ((NB_FILES == 0)); then
+  FILES[0]="-"
+fi
+
+# Running through remaining arguments
+for FILE in ${FILES[@]}; do
+
+  # Print title only if more than one file is being processed.
+  (( NB_FILES > 1 )) && echo "Processing ${FILE}"
+
+  cat "${FILE}" | sed 's/&nbsp;/ /g; s/&amp;/\&/g; s/&lt;/\</g; s/&gt;/\>/g; s/&quot;/\"/g; s/#&#39;/\'"'"'/g; s/&ldquo;/\"/g; s/&rdquo;/\"/g;'
+
+done

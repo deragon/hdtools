@@ -1,0 +1,28 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Safe to execute.
+echo "Synchronizing branches with remote.  This operation is safe."
+
+git remote update origin --prune
+
+# Erasing safely (using '-d') local branches that were tracking the
+# remotes branches that are gone.  If there are some local branches
+# that cannot be safely delete, an error message will show on screen
+# and the user could then decide what to do about them.
+
+git branch -av | sed -rn 's/^(\s+)*(\S+)\s+.*\[gone\].*/\2/gp' |
+  xargs --no-run-if-empty git branch -d
+
+# Vieux code à effacer un jour.
+#git branch -av | \
+  #fgrep ' [gone] ' | \
+  #awk '{ print $1 }' | \
+  #xargs --no-run-if-empty git branch -d
+

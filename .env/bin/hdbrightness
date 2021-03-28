@@ -1,0 +1,22 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+BRIGHTNESS="$1"
+
+if [ -z "${BRIGHTNESS}" ]; then
+  echo "You must provide a brightness level between 1 and 15."
+  exit 1
+fi
+
+for DEVICE in "/sys/class/backlight/acpi_video0/brightness"; do
+  if [ -e "${DEVICE}" ]; then
+    sudo echo "${BRIGHTNESS}" >"${DEVICE}"
+    break
+  fi
+done

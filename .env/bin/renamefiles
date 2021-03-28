@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import getopt
+import os
+import os.path
+import re
+import datetime
+import shutil
+
+from hdlib2 import *
+
+gRecursive=False
+gLowercase=False
+gUppercase=False
+gTitle=False
+gGit=False
+gSVN=False
+gDate=False
+gDirectories=False
+gRegex=False
+
+# ----------------------------------------------------------------------
+def usage(code=255):
+  print("""
+renamefiles [ -r | -R | --recursive ]
+            [ -D | --directories ]
+            [ -d | --dry-run ]
+            [ -g | --git]               Perform 'git mv'.
+            [ -s | --svn]               Perform 'svn mv'.
+            [ -a | --date]              Prepend name with date.
+            [ -z <debug level> | --debug=<debug level> ]
+            [ -h | --help ]
+            [ -l | --lowercase ]        Convert to lowercase
+            [ -u | --uppercase ]        Convert to uppercase
+            [ -t | --title ]            Convert first letters to uppercase
+            [ -o <old> | --old <old>]   Old pattern to replace
+            [ -n <new> | --new <new>]   New pattern
+            <regex old pattern> <regex new pattern> <files>
+""")
+  sys.exit(code)
+
+# ----------------------------------------------------------------------
+def clearLine():
+  if debug.level <= 0:
+    termsize=shutil.get_terminal_size((80, 20))  # pass fallback
+    sys.stdout.write('\r')
+    for index in range(termsize.columns):
+      sys.stdout.write(' ')
+    sys.stdout.flush()
+
+# ----------------------------------------------------------------------
+def printSameLine(string):
+  termsize=shutil.get_terminal_size((80, 20))  # pass fallback
+  if len(string) > termsize.columns:
+    demarkation=" ... "
+    #print("len(string) = " + str(len(string)) );
+    stringLengthHalf= int(round(len(string)/2))
+    #print("columns = " + str(termsize.columns) );
+    columnsToCut = len(string)-termsize.columns+2+len(demarkation)
+    columnsToCutHalf = int(round(columnsToCut/2))
+    #print("columnsToCut = " + str(columnsToCut) );
+    string = string[0:stringLengthHalf-columnsToCutHalf] + demarkation + \
+             string[stringLengthHalf+columnsToCutHalf:]
+
+  # Filling the rest of 'string' with spaces to clear rest of the line.
+  for index in range(termsize.columns-len(string)):
+    string=string+" "
+
+  if debug.level <= 0:
+    sys.stdout.write("\r" + string)
+    sys.stdout.flush()
+  else:
+    print(string)
+
+# ----------------------------------------------------------------------
+def processFiles(path, files):
+  global gRecursive, gDate, gDirectories
+
+  debug("processFiles():  files = " + str(files), 20)
+
+  for file in files:
+
+    filePath = path + "/" + file
+    printSameLine("Scanning " + filePath)
+    if os.path.isdir(filePath):
+      if gRecursive:
+        processFiles(filePath, os.listdir(filePath))
+      if not gDirectories:
+        # Directories are not to be renamed.  Jump to the next file.
+        continue
+      # Directories are to be renamed.  Continue normal flow.
+
+    if gDate:
+      stat = os.stat(file)
+      datetime_instance = datetime.datetime(1970, 1, 1)
+      time_modify = datetime_instance.fromtimestamp(stat.st_mtime)
+      iso8601today = str(time_modify.year) + "-" + \
+                     "{0:02}".format(time_modify.month) + "-" + \
+                     "{0:02}".format(time_modify.day) + "_" + \
+                     "{0:02}".format(time_modify.hour) + "-" + \
+                     "{0:02}".format(time_modify.minute) + "-" + \
+                     "{0:02}".format(time_modify.second)
+      newFile = iso8601today + "-" + file
+    elif gLowercase:
+      newFile = file.lower()
+    elif gUppercase:
+      newFile = file.lower()
+    elif gTitle:
+      newFile = file.title()
+    else:
+      newFile = file
+      for pattern in patterns:
+        newFile = re.sub(pattern[0], pattern[1], newFile)
+        debug(str(file) + " -> " + str(newFile) + "  " + str(pattern))
+
+    if newFile != file:
+      if debug.execution:
+        print("\r'" + file + "' -> '" + newFile + "'", end=' ')
+        if gGit:
+          execute(["git", "mv", filePath, path + "/" + newFile])
+        elif gSVN:
+          execute(["svn", "mv", filePath, path + "/" + newFile])
+        else:
+          os.rename(filePath, path + "/" + newFile)
+      else:
+        print("\rdry-run:  '" + file + "' -> '" + newFile + "'", end=' ')
+
+      print("(" + path + ")")
+
+
+######################################################################
+# Main
+
+try:
+  opts, args = getopt.gnu_getopt(sys.argv[1:], \
+          "o:n:rRDz:lutdagsh", \
+      ["old=", "new=", "help", "git", "svn", "directories", "date", "recursive",
+       "lowercase", "uppercase", "title", "regex", "dry-run", "debug="])
+except getopt.GetoptError:
+  # print help information and exit:
+  print("Error:  invalid argument(s).")
+  usage(2)
+
+patterns=[]
+
+for option, arg in opts:
+  debug("argv -  option:  '" + str(option) + "'  arg:  '" + str(arg) + "'")
+  if option in ("-h", "--help"):
+    usage(1)
+  elif option in ("-D", "--directories"):
+    gDirectories=True
+  elif option in ("-a", "--date"):
+    gDate=True
+  elif option in ("-r", "-R", "--recursive"):
+    gRecursive=True
+  elif option in ("-l", "-L", "--lowercase"):
+    gLowercase=True
+  elif option in ("-u", "-U", "--uppercase"):
+    gUppercase=True
+  elif option in ("-t", "-T", "--title"):
+    gTitle=True
+  elif option in ("-g", "-G", "--git"):
+    gGit=True
+  elif option in ("-s", "-S", "--svn"):
+    gSVN=True
+  elif option in ("--regex"):
+    gRegex=True
+  elif option in ("-z", "--debug"):
+    debug.setLevel(int(arg))
+    print("Debug level set to " + arg)
+  elif option in ("-o", "--old"):
+    lastIndex=len(patterns)-1
+    if lastIndex==-1:
+      last=[arg]
+      patterns.append(last)
+    else:
+      last=patterns[lastIndex]
+      if len(last) < 2:
+        last[0:1]=arg
+      else:
+        last=[arg]
+        patterns.append(last)
+  elif option in ("-n", "--new"):
+    lastIndex=len(patterns)-1
+    if lastIndex==-1:
+      last=[arg]
+      patterns.append(last)
+    else:
+      last=patterns[lastIndex]
+      if len(last) < 2:
+        last.append(arg)
+      else:
+        last=[arg]
+        patterns.append(last)
+  elif option in ("-d", "--dry-run"):
+    print("Dry run mode enabled.")
+    debug.setExecution(False)
+  elif option in ("-"):  # Stop interpreting arguments.
+    break
+
+try:
+  if gLowercase or gUppercase or gTitle:
+    gFiles=args
+  else:
+    if len(patterns) == 0:
+      patterns.append([args[0], args[1]])
+      gFiles=args[2:]
+    else:
+      gFiles=args
+except IndexError:
+  print("Missing arguments.")
+  usage(3)
+
+if not (gLowercase or gUppercase or gTitle):
+  debug("patterns=" + str(patterns))
+debug("gFiles=" + str(gFiles))
+
+if gRegex:
+  for pattern in patterns:
+     pattern[0] = re.compile(pattern[0])
+
+processFiles(".", gFiles)
+clearLine()

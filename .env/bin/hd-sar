@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import sys
+import os
+import stat
+import getopt
+import re
+import sre_constants
+
+from hdlib2 import *
+
+# Test code
+#walkRegEx(".", 2)
+#sys.exit(0)
+
+def processPath(path, regexPattern=None):
+  path = os.path.abspath(path)
+  path2String="***" + path[-50:-1]+path[-1]
+  debug("path=" + path, 5)
+
+  # Now we are ensure that we do not process twice the same path.
+  # This can occur if the user gives multiple directories and at least
+  # one is a subdirectory of another.
+  if path in gsetProcessedPaths:
+    return
+  gsetProcessedPaths.add(path)
+
+  if gExcludeRE.search(path):
+    return
+
+  if os.path.isdir(path):
+    if gRecursive:
+      for subpath in os.listdir(path):
+        processPath(path + "/" + subpath, regexPattern)
+    return
+
+  # At this point, 'path' is a file, not a directory.
+  mo1 = gFindSarRE.search(path)
+  debug("mo1=" + str(mo1), 30)
+  if regexPattern:
+    mo2 = regexPattern.search(path)
+  else:
+    mo2 = None
+
+  debug("mo2=" + str(mo2), 30)
+  if mo1 or (regexPattern != None and not mo2):
+    printSameLine("Ignored:".ljust(12) + path2String)
+    return
+
+  inName  = path
+  orgName = path + ".sar"
+  tmpName = path + ".tmp.sar"
+
+  try:
+    try:
+      inFD = open(inName, mode='r', encoding='UTF-8')
+      FileContent = inFD.read()
+    except UnicodeDecodeError:
+      inFD = open(inName, mode='r', encoding='ISO-8859-1')
+      FileContent = inFD.read()
+    inFD.close()
+  except IOError as ioerror:
+    printNewLine("Error (jumping over):".ljust(12) + path2String + "  " + str(ioerror))
+    return
+
+  isThereChanges = False
+  NewFileContent=gMainRE.sub(gNewString, FileContent)
+
+  if NewFileContent != FileContent:
+    isThereChanges = True
+    if not gDryMode:
+      tmpFD = open(tmpName, 'w')
+      tmpFD.write(NewFileContent)
+      tmpFD.close()
+
+  debug("isThereChanges = " + str(isThereChanges), 5)
+
+  if isThereChanges:
+    index = 0
+    while True:
+      index += 1
+      if os.path.exists(orgName):
+        orgName = inName + "." + str(index) + ".sar"
+      else:
+        break
+    if not gDryMode:
+      try:
+        os.rename(inName, orgName)
+        os.rename(tmpName, inName)
+
+        # Now preserving permissions.
+        mode=os.stat(orgName)
+        permissions=stat.S_IMODE(mode[stat.ST_MODE])
+        os.chmod(inName, permissions)
+
+        if os.geteuid() == 0:
+          # Now preserving ownership.  Since only root has the power
+          # to change ownership, this is only executed if the user is EUID is 0.
+          uid=mode[stat.ST_UID]
+          gid=mode[stat.ST_GID]
+          os.chown(inName, uid, gid)
+      except OSError as oserror:
+        print("Error:  " + str(inName) + "\n      " + str(oserror))
+
+    printNewLine("*Changed:".ljust(12) + path)
+  else:
+    printSameLine("Unchanged:".ljust(12) + path2String)
+
+
+
+######################################################################
+# START OF MAIN
+######################################################################
+
+scriptname = os.path.basename(sys.argv[0])
+
+def usage(exit=255):
+  print("""
+Usage:  """ + scriptname + """ [-r|--regex] [-R|--recursive]
+        [-h|--help] [-d|--dry-run] [-m|--multiline] [-z|--debug]
+        <old string> <new string> <files>+
+
+Example:  """ + scriptname + """ -r -R "([c|C])ar" "New \\1ar" 'somefile.*.txt'
+""")
+  sys.exit(exit)
+
+gDryMode=False
+gRecursive=False
+gRegex=False
+
+try:
+  opts, args = getopt.gnu_getopt( \
+      sys.argv[1:], "rRhdmz:", \
+      ["regex", "recursive",  "help", "dry-run", "multiline", "debug="])
+except getopt.GetoptError:
+  # print help information and exit:
+  usage()
+
+reFlags = 0; # From re.py, default for flags is 0
+
+for option, arg in opts:
+  debug("argv option = " + option, 20)
+  if option in ("-h", "--help"):
+    usage()
+    sys.exit()
+  elif option in ("-d", "--dry-run"):
+    print("Dry run mode enabled.")
+    gDryMode=True
+  elif option in ("-z", "--debug"):
+    debug.setLevel(int(arg))
+    print("Debug level set to " + arg)
+  elif option in ("-m", "--multiline"):
+    print("Multiline option enabled.")
+    reFlags += re.MULTILINE
+  elif option in ("-r", "--regex"):
+    print("Regular expression enabled.")
+    gRegex=True
+  elif option in ("-R", "--recursive"):
+    print("Recursing through directories enabled.")
+    gRecursive=True
+
+debug("Arguments left:  " + str(args), 3)
+
+erroroutput=""
+bMissingParameter=False
+try:
+  gOldString=args[0]
+except IndexError:
+  erroroutput += "The mandatory <old string> parameter needs to be provided.\n"
+  bMissingParameter=True
+
+try:
+  gNewString=args[1]
+except IndexError:
+  erroroutput += "The mandatory <new string> parameter needs to be provided.\n"
+  bMissingParameter=True
+
+# Fetching list of arguments with "[#:]" in a list will not throw
+# an Index Error.  We need to test the length of the list returned.
+gDirectoriesAndFiles=args[2:]
+if len(gDirectoriesAndFiles) == 0:
+  erroroutput += "The mandatory <files> parameter needs to be provided.\n"
+  bMissingParameter=True
+
+if bMissingParameter:
+  print("ERROR:\n\n" + indent(erroroutput, 2))
+  usage(1)
+
+import curses
+curses.setupterm()
+# We need to substract 1 to the number of columns else erasing the whole
+# line would cause an automatic carriage return to be performed as we
+# hit the end of a line.
+gColumnsToClear = curses.tigetnum('cols')-1
+
+def printText(output, bSameLine=True):
+  # rxvt-xpm is the terminal used by Cygwin (090625) and does not
+  # properly support sameline printing.
+  if debug.level > 0 or os.environ.get("COLORTERM") == "rxvt-xpm":
+    print(output)
+  elif bSameLine:
+    output=output.ljust(gColumnsToClear)
+    print("\r" + output, end=' ')
+  else:
+    output=output.ljust(gColumnsToClear)
+    print("\r" + output)
+
+def printSameLine(output):
+  printText(output, True)
+
+def printNewLine(output):
+  printText(output, False)
+
+if not gRegex:
+  gOldString=re.escape(gOldString)
+
+debug("gOldString = " + str(gOldString), 20)
+debug("reFlags =    " + str(reFlags), 20)
+gMainRE=re.compile(gOldString, reFlags)
+gFindSarRE=re.compile(".*\.sar$")
+gExcludeRE=re.compile(".*(\.idea/.*|\.git/.*|\.svn/.*|\.sw.|\.jar|\.sar)$")
+gsetProcessedPaths = set()
+
+for path in gDirectoriesAndFiles:
+  if os.path.isfile(path) or os.path.isdir(path):
+    processPath(path)
+  else:
+    # path is actually a regular expression.  We set path to . and if
+    # recursion is on, fetch all files under . that match the pattern given.
+    try:
+      regexPattern=re.compile(path)
+      debug("regexPattern=" + str(regexPattern) + "  path= " + path, 20)
+    except sre_constants.error:
+      print("Path '" + path + "' is not a valid regular expression.  Aborting.")
+      sys.exit(1)
+
+    path="."
+    processPath(path, regexPattern)
+
+printSameLine("")

@@ -1,0 +1,212 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-h] -c <credentials> -s schema
+
+Drops all objects found in an Oracle schema.
+
+  -c <info bd>  Credential and dabase information to connect.
+
+                Format:   <user>/<password>@<serveur>:<port>/<schema>
+                Example:  DERAGONH/----------/@saoraihd1:1521/IHD1
+
+  -s <schema>   Schema to delete all objects from.
+
+  -d  Dry-run, the default.
+  -e  Execute command.  Default is dry-run.
+  -h  Display this help text.
+EOM
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    eval $@
+  fi
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=1
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "c:s:deh" OPTCMD; do
+  case "${OPTCMD}" in
+    "c")    DB_INFO="${OPTARG}";;
+    "s")    SCHEMA="${OPTARG}";;
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "e")    DRYRUN=0;;  # Run in execute mode.
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [ -z "${DB_INFO}" ]; then
+  ERRORS="${ERRORS} - You must provide the credentials with the '-c' option.\n"
+fi
+
+if [ -z "${SCHEMA}" ]; then
+  ERRORS="${ERRORS} - You must provide the schmea with the '-s' option.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+TIMESTAMP_FILE=$(date +"%Y%m%dT%H%M%S") # ISO 8601 format.
+TIMESTAMP_START=$(date +"%s") # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+
+# TRAPPING AN ERROR
+# ────────────────────────────────────────────────────────────────────────────
+
+# When 'set -e' is configured, upon an error the function 'signalerrorhandler'
+# gets called.
+signalerrorhandler()
+{
+  #set -x
+  last_command="$(fc -l 0)"
+  LINENO_ERR=$1
+  echo -e "$(cat <<EOM
+
+\e[1;37;41mERREUR:\e[0m  La commande précédente a échouée.  script avorté.
+         Voici la commande qui a échouée:
+EOM
+)"
+  echo
+
+  # From:  https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
+  awk 'NR>L-4 && NR<L+4 { printf "             %-5d%3s%s%s\n",NR,(NR==L?">>>":""),$0,(NR==L?"<<<":"") }' L=${LINENO_ERR} $0
+}
+
+# IMPORTANT:  ' must be used, not " to ensure that ${LINENO} is not being
+#             evaluated during the declaration of the trap.
+trap 'signalerrorhandler ${LINENO}' ERR
+
+
+main()
+{
+  SQL_FILE="/tmp/${SCRIPT_NAME_BASE}.${TIMESTAMP_FILE}.sql"
+  #SQL_FILE="$(cygpath -w "${SQL_FILE}")"
+
+  # From:  https://asktom.oracle.com/pls/apex/f?p=100:11:0::::P11_QUESTION_ID:9533339900346988950
+  SQL="
+--define on;
+
+set linesize 32000;
+set pagesize 50000;
+set wrap off;
+set tab off;
+-- numwidth 20 == get ride of scitific notation for large integers.
+set numwidth 20;
+set trimout on;
+
+set pages 0;
+set lines 300;
+set heading off;
+
+-- Spool is not working properly.
+-- spool ${SQL_FILE}
+select 'drop table '|| owner ||'.'||table_name||' cascade constraints purge force;'
+from dba_tables
+where owner = upper('${SCHEMA}')
+union all
+select 'drop ' || object_type || ' ' || owner || '.' || object_name || (case object_type when 'TYPE' then ' force' end) || ';'
+from dba_objects
+where object_type not in ('TABLE','INDEX','PACKAGE BODY','TRIGGER','LOB')
+and object_type not like '%LINK%'
+and object_type not like '%PARTITION%'
+and owner = upper('${SCHEMA}')
+order by 1;
+-- spool off
+"
+
+  echo -n "${SQL}" | sqlplus "${DB_INFO}" 2>&1 | sed -rn "s/.*(drop\s)/\1/gp" | iconv -f ISO8859-1 -t UTF-8 | tr -d '\r' >"${SQL_FILE}"
+  echo "SQL file generated:  ${SQL_FILE}"
+  run cat "${SQL_FILE}" \| sqlplus "${DB_INFO}"
+}
+
+# Directory is 'log', not 'logs', to follow Linux standard '/var/log'.
+LOGDIR="${HOME}/log/${SCRIPT_NAME_BASE}"
+mkdir -p "${LOGDIR}"
+LOGFILE="${LOGDIR}/${SCRIPT_NAME_BASE}.${SCHEMA}.${TIMESTAMP_FILE}.log"
+{
+  echo -en "Started:  ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+
+  main
+
+  TIMESTAMP_END=$(date +"%s") # Seconds since epoch.
+  TIMESTAMP_DIFF=$((${TIMESTAMP_END}-${TIMESTAMP_START}))
+
+  echo -en "Started:    ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+  echo -en "Ended:      ";date -d @"${TIMESTAMP_END}"   +"${TIMESTAMP_FORMAT_HUMAN}"
+
+  TIMESTAMP_DIFF_DAYS=$(printf '% 8d' $(($(date -u -d @"${TIMESTAMP_DIFF}" +'%j')-1)))
+
+  echo -en "Timelapse:  ${TIMESTAMP_DIFF_DAYS} ";date -u -d @"${TIMESTAMP_DIFF}" +'%H:%M:%S'
+
+} 2>&1 | \
+while IFS= read -r LINE; do
+  # From:  http://mywiki.wooledge.org/BashFAQ/001#Trimming
+  #
+  # The read command modifies each line read; by default it removes all leading
+  # and trailing whitespace characters (spaces and tabs, or any whitespace
+  # characters present in IFS). If that is not desired, the IFS variable has to
+  # be cleared.
+  #
+  # -r instructions 'read' to not consider backslashes as an escape character.
+
+  # If Cygwin, choose 'printf', else use 'date' since it is more accurate (to the nano)
+
+  # Cygwin solution
+  printf -v NOW '%(%F %T)T'  # ISO 8601 Format, to the seconds.  For Cygwin (faster, no fork)
+                             # Nanoseconds is not available, unfortunately.
+  NOW="${NOW:0:23}"  # The remaining nanoseconds are removed.  Milliseconds remain.
+
+  echo "${NOW} ${LINE}"
+  echo "${NOW} ${LINE}" >>"${LOGFILE}"
+done
+
+
+# DRY RUN / EXECUTION WARNING
+# ════════════════════════════════════════════════════════════════════
+echo
+if (( DRYRUN )); then
+  echo -en "\e[1;37;44mCommand was executed in dry mode; nothing was executed.\nRerun with -e to execute the action."
+  echo -en "\e[1;37;44mCommande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.\nRerouler avec l'option -e pour exécuter l'action."
+else
+  echo -en "\e[1;37;42mCommand was executed."
+  echo -en "\e[1;37;42mCommande fut exécutée."
+fi
+echo -e "\e[0;00m"

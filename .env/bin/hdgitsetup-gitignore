@@ -1,0 +1,24 @@
+# Backup files
+*~
+*.bak
+*.backup
+
+# Compressed files
+*.tar
+*.tar.*
+*.zip
+
+# Windows binaries
+*.exe
+*.ddl
+*.com
+
+# Log files
+*.log
+*.out
+
+# Intellij IDEA files.
+.idea
+
+# Java/Maven
+target

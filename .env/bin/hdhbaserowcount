@@ -1,0 +1,102 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h]
+
+  -h  Display this help text.
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if TABLES in $@ have spaces,
+                          # we separate TABLES properly.
+
+TABLES=("$@") # If you want the number of elements of $@, use $#
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#TABLES[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one argument.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+TIMESTAMP_TABLE=$(date +"%Y%m%dT%H%M%S") # ISO 8601 format.
+TIMESTAMP_START=$(date +"%s") # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+# Maximum number of processes to run in parallel.  Here, reading the number
+# of processor (co-processors) available on the system.
+#PROCESS_MAX=$(egrep -E 'processor' /proc/cpuinfo | wc -l)
+PROCESS_MAX=8
+
+declare -a OUTPUTS=() 
+for (( INDEX = 0; INDEX < ${#TABLES[*]}; INDEX ++ )); do
+
+  TABLE="${TABLES[${INDEX}]}"
+
+  echo "Starting count for ${TABLE}"
+  #OUTPUTS[${INDEX}]=$(hbase org.apache.hadoop.hbase.mapreduce.RowCounter "${TABLE}" 2>&1 | perl -ne 'print if s/^\s*ROWS=(\d+)/\1/g') &
+  #( echo "${TABLE}:  $(echo "   ROWS=${INDEX}" 2>&1 | perl -ne 'print if s/^\s*ROWS=(\d+)/\1/g')") &
+  #( echo "${TABLE}:  $(hbase org.apache.hadoop.hbase.mapreduce.RowCounter "${TABLE}" 2>&1 | perl -ne 'print if s/^\s*ROWS=(\d+)/\1/g')") &
+  ( printf "%- 50s  % 12d  %s\n" "${TABLE}:" "$(hbase org.apache.hadoop.hbase.mapreduce.RowCounter "${TABLE}" 2>&1 | perl -ne 'print if s/^\s*ROWS=(\d+)/\1/g')" " as of $(date +"${TIMESTAMP_FORMAT_HUMAN}")" ) &
+  #echo ${OUTPUTS[${INDEX}]}
+
+  #echo "${OUTPUTS[*]}"
+
+  PAUSE_MSG_NEEDTOSHOW=1
+  while (( $(jobs -p | wc -l) >= ${PROCESS_MAX} )); do
+    if (( ${PAUSE_MSG_NEEDTOSHOW} == 1 )); then
+      echo "Parallel limit of ${PROCESS_MAX} reached.  Pausing."
+      PAUSE_MSG_NEEDTOSHOW=0
+    fi
+    sleep 1
+  done
+  (( ! ${PAUSE_MSG_NEEDTOSHOW} )) && \
+    echo "Parallel limit of ${PROCESS_MAX} not reached anymore.  Resuming."
+done
+
+wait
+#
+# for (( INDEX = 0; INDEX < ${#TABLES[*]}; INDEX ++ )); do
+#   echo "${TABLES[${INDEX}]}:  ${OUTPUTS[${INDEX}]}"
+# done

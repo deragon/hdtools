@@ -1,0 +1,23 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Script to convert snoop traces to pcap files that Wireshark can read.
+#
+# Generate snoop file with the following command:
+#
+# export INTERFACE='vnet0' # one example of an interface
+# snoop -d ${INTERFACE} -o `hostname`-${INTERFACE}-`date +"%y%m%d.%H%M%S"`.snoop
+#
+# Ref:  http://keramida.wordpress.com/2007/12/04/wireshark-converting-solaris-snoop-captured-data-to-libpcap-format/
+
+for FILE in $@ ; do
+  echo -n "Processing ${FILE} "
+  tshark -r "${FILE}" -w "${FILE}.pcap"
+  echo "- ${FILE}.pcap created."
+done

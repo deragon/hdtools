@@ -1,0 +1,73 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=`dirname $(readlink -f "${BASH_SOURCE[0]}")` # Fetch real directory, not symlink.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+HIGH_LEVEL_SUSPEND_INHIBITOR_IGNORE="systemctl suspend --ignore-inhibitors"
+HIGH_LEVEL_SUSPEND_INHIBITOR_RESPECT="systemctl suspend"
+LOW_LEVEL_SUSPEND="sudo bash -c \"echo mem >/sys/power/state\""
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-i] [-l] [-h]
+
+  -i  Do not ignore inhibitor (default is too ignore)
+      (perform 'man systemctl' and look for '--ignore-inhibitors')
+
+      Command performed when this option is choosen:
+
+        ${HIGH_LEVEL_SUSPEND_INHIBITOR_RESPECT}
+
+  -l  Perform low level suspend.
+
+      Command performed when this option is choosen:
+
+      ${LOW_LEVEL_SUSPEND}
+
+  Command performed as default:
+
+    ${HIGH_LEVEL_SUSPEND_INHIBITOR_IGNORE}
+EOM
+}
+
+INHIBITOR_IGNORE=1
+LOW_LEVEL=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "ilh" OPTCMD; do
+  case "${OPTCMD}" in
+    "i")    INHIBITOR_IGNORE=0;;
+    "l")    LOW_LEVEL=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+if (( ${LOW_LEVEL} )); then
+  eval "${LOW_LEVEL_SUSPEND}"
+else
+  $(which systemctl >/dev/null 2>&1)
+
+  if (( $? != 0 )); then
+    echo "WARNNING:  systemctl command not found.  Will perform low level suspend."
+    eval "${LOW_LEVEL_SUSPEND}"
+  fi
+  
+  if (( ${INHIBITOR_IGNORE} )); then
+    eval "${HIGH_LEVEL_SUSPEND_INHIBITOR_IGNORE}"
+  else
+    eval "${HIGH_LEVEL_SUSPEND_INHIBITOR_RESPECT}"
+  fi
+fi

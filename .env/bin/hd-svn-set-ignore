@@ -1,0 +1,51 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+ARGS=`echo "$@" | perl -pe "s/\s+/\\n/g"`
+
+ADDITIONAL="*.pyc
+*.class
+*.old
+*.obs*
+*.disabled
+*.bak
+*.org
+*.gz
+*.tar
+*.bz2
+*.zip
+*.deb
+*.rpm
+*.pkg
+*.cache
+${ARGS}"
+
+#echo "ADDITIONAL=${ADDITIONAL}"
+
+for DIR in `find . -type d | fgrep -v .svn`; do
+  EXISTING=`svn propget svn:ignore ${DIR}`
+  IGNORE="${EXISTING}
+${ADDITIONAL}"
+
+  UNIQUE=`echo "${IGNORE}" | sort --unique | perl -ne "print if ! /^$/"`
+  # echo "ADD:  ${ADDITIONAL}"
+  # echo "EXI:  ${EXISTING}"
+  # echo "UNQ:  ${UNIQUE}"
+  svn propset svn:ignore "${UNIQUE}" ${DIR}
+done
+
+cat <<EOM
+When committing the directories, you can use the following comment:
+
+  Set property svn:ignore.
+
+You can edit manually the property with:
+
+   svn propedit svn:ignore ${DIR}
+EOM

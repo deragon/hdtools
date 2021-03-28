@@ -1,0 +1,21 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+if [ "${HD_OS_CODE}" = "ubuntu" ]; then
+  if [ "${HD_OS_VERSION}" = "14.04" ]; then
+    sudo restart network-manager
+  else
+    # From:  http://askubuntu.com/questions/764310/troubleshoot-personal-internet-failure
+    sudo systemctl restart network-manager
+    #systemctl restart NetworkManager
+  fi
+else
+  echo "Erreur:  Système d'exploitation \"${HD_OS_NAME}\" non supporté."
+  exit 1
+fi

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# ht == Head / Tail
+
+# Works with symlinks
+SCRIPT_NAME="${0/*\/}" # Basename, efficient form,
+SCRIPT_PATH_REL=`dirname $(readlink -f "${0}")` # Fetch real directory, not symlink.
+SCRIPT_PATH_ABS=`( \cd "${SCRIPT_PATH_REL}" && pwd )`
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h] <file>
+
+Show the head and tail of the file passed as a parameter.
+EOM
+}
+
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+
+FILE="$1"
+
+ERRORS=""
+
+if [ -z "${FILE}" ]; then
+  ERRORS="${ERRORS} - File to perform head/tail operation must be provided.  Example:  ${SCRIPT_NAME_BASE} <file>\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+echo -e "HEAD ═════════════════════════════════════════════════════════════════════════\n"
+head "${FILE}"
+
+echo -e "\nTAIL ═════════════════════════════════════════════════════════════════════════\n"
+tail "${FILE}"

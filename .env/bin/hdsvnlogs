@@ -1,0 +1,57 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${0/*\/}"
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h] [-d <directory>]
+
+Fetch svn logs of all the projects in the provided directory and
+output them in indivudual files, under "./svnlog/"
+
+If no directory is provided, the current one is used.
+EOM
+}
+
+DIRECTORY="."
+while getopts "d:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DIRECTORY="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+rm -rf svnlog
+mkdir svnlog
+
+svnlogs()
+{
+  for ENTRY in $@; do
+
+    if [ -d "${ENTRY}" ]; then
+      if [ -d "${ENTRY}/.svn" ]; then
+        OUTPUTFILE="svnlog/"`echo "${ENTRY}" | sed 's%/%__%g'`"-svnlog.txt"
+        OUTPUTFILE="${OUTPUTFILE/.__/}"
+        echo "Generating log file \"${OUTPUTFILE}\""
+        svn log "${ENTRY}" >"${OUTPUTFILE}"
+        perl -pe 's/\n+/ /g => s/^----------.*/\n/g;s/line /line  /g' "${OUTPUTFILE}" | column -s"|" -t >"${OUTPUTFILE/.txt/-oneline.txt}"
+      else
+        svnlogs "${ENTRY}"/*
+      fi
+    fi
+  done
+}
+
+svnlogs `readlink -f "${DIRECTORY}"`

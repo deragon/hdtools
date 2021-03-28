@@ -1,0 +1,77 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+shopt -s expand_aliases
+
+usage()
+{
+    cat <<EOM
+Usage:  ${SCRIPT_NAME} [-v] [-g] [-f] [-t] [-h]
+EOM
+}
+
+PRINT_FILENAME=0
+PRINT_TAIL_CMD=0
+VIM=0
+GVIM=0
+
+while getopts "vgftpz" OPTCMD; do
+  case "${OPTCMD}" in
+    "f")    PRINT_FILENAME=1;;
+    "t")    PRINT_TAIL_CMD=1;;
+    "v")    VIM=1;;
+    "g")    GVIM=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+LOG_DIR="$1"
+
+ERRORS=""
+if [ -z "${LOG_DIR}" ]; then
+  ERRORS="You need to provide a directory with log files.  Aborting."
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+LATEST_LOG=`find "${LOG_DIR}" -name "*.log" -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" "`
+
+DO_TAIL=1
+if (( PRINT_FILENAME )); then
+  echo "${LATEST_LOG}"
+  DO_TAIL=0
+fi
+
+if (( PRINT_TAIL_CMD )); then
+  echo "tail -f \"${LATEST_LOG}\""
+  DO_TAIL=0
+fi
+
+if (( VIM )); then
+  vim -u "${HDVIMRC}" "${LATEST_LOG}"
+  #vim "${LATEST_LOG}"
+  DO_TAIL=0
+fi
+
+if (( GVIM )); then
+  gvim -u "${HDVIMRC}" "${LATEST_LOG}"
+  DO_TAIL=0
+fi
+
+if (( DO_TAIL )); then
+  tail -f "${LATEST_LOG}"
+fi

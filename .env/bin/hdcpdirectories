@@ -1,0 +1,96 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h] <src> <dst>
+
+Exemple:
+
+${SCRIPT_NAME} 2017 2018
+
+Nouveau répertoire crée:  2018/Vidéotron
+Nouveau répertoire crée:  2018/Vidéotron/Factures
+Nouveau répertoire crée:  2018/Vidéotron/Factures/Transmises
+Nouveau répertoire crée:  2018/Vidéotron/Factures/Sources
+Nouveau répertoire crée:  2018/Vidéotron/Factures/.icons
+...
+Nouveau répertoire crée:  2018/Employés
+
+EOM
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:hz" OPTCMD; do
+  case "${OPTCMD}" in
+    "n")    NAME="${OPTARG}";;
+    "z")    ZIP=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+SRC_DIR="$1"
+DST_DIR="$2"
+
+if [ -z "${SRC_DIR}" ]; then
+  ERRORS="${ERRORS} - Il faut fournir un répertoire de source.\n"
+fi
+
+if [ -z "${DST_DIR}" ]; then
+  ERRORS="${ERRORS} - Il faut fournir un répertoire de destination.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERREUR:  Les erreurs suivantes ce sont produites:\n"
+  echo -e "${ERRORS}"
+  echo -e "Commande avortée."
+  exit 1
+fi
+
+SUBDIRS=$(cd "${SRC_DIR}"; find . -type d | sed -rn "s|\./||gp")
+
+IFS="
+"
+
+mkdir -p "${DST_DIR}"
+
+for SUB_DIR in ${SUBDIRS}; do
+  NEW_DIR="${DST_DIR}/${SUB_DIR}"
+  if [ -d "${NEW_DIR}" ]; then
+    echo "Répertoire existe déjà:   ${NEW_DIR}"
+  else
+    echo "Nouveau répertoire crée:  ${NEW_DIR}"
+    mkdir "${NEW_DIR}"
+  fi
+done

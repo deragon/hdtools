@@ -1,0 +1,71 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Lenovo W510:  http://www.thinkwiki.org/wiki/How_to_control_fan_speed
+#               Still valid as of 2021-02-20 on Ubuntu 20.04 LTS.
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} <fan level>
+
+  <fan level>   Values accepted 0 to 7
+                'disengaged' and 'auto'
+
+disengaged == Maximum fan
+
+  In disengaged mode, the embedded controller does not monitor the fan speed.
+  It "disengages" the closed-loop control function that keeps track of fan
+  speed, and uses an open-loop control function that ramps up the fan to its
+  maximum speed (100% duty-cycle). The end speed is not stable, but it is
+  often much faster than the maximum speed manual and automatic modes would
+  set the fan to.
+
+DOCUMENTATION:
+
+  gunzip -c /usr/share/doc/thinkfan/README.gz | less
+
+Pour que ces commandes fonctionnent, il faut faire:
+
+  echo "options thinkpad_acpi experimental=1 fan_control=1" \
+    >/etc/modprobe.d/thinkpad_acpi.modprobe
+  reboot
+
+  More information at:
+
+    http://www.thinkwiki.org/wiki/How_to_control_fan_speed
+EOM
+}
+
+ERRORS=""
+
+LEVEL="${1}"
+
+if [ -z "${LEVEL}" ]; then
+  ERRORS="${ERRORS} - Level must be provided.  0-9, 'disengaged' or 'auto'.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+perl -ne 'print if s/^level:\s+(.+)$/Current level:  \1/g' /proc/acpi/ibm/fan
+if [ ! -z "${LEVEL}" ]; then
+  echo "New level:      ${LEVEL}"
+
+  # Following does not work because redirection is never executed
+  # under sudo.  The work around is to use 'tee'.
+  #   sudo echo "level ${LEVEL}" >/proc/acpi/ibm/fan
+  echo "level ${LEVEL}" | sudo tee /proc/acpi/ibm/fan >/dev/null
+fi

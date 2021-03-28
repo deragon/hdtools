@@ -1,0 +1,40 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+unset FILE1
+unset FILE2
+
+for ENTRY in $@; do
+  while ((1)); do
+    if [ -r "${ENTRY}" ]; then
+      if [ -z "${FILE1}" ]; then
+        FILE1="${ENTRY}"
+      else
+        FILE2="${ENTRY}"
+        break
+      fi
+    elif [ "${ENTRY: -1}" == "." ]; then
+      # Last character is a ".".  A dot can be appended to a valid filename if it is
+      # at the end of a sentence.  So 
+      ENTRY="${ENTRY::-1}"
+    else
+      break
+    fi
+  done
+done
+
+if [ -z "${FILE1}" ]; then
+  echo "Could not identify any file in the arguments.  Aborting."
+  exit 1
+elif [ -z "${FILE2}" ]; then
+  echo "Could identify only one file.  Aborting.  File identified:  '${FILE1}'"
+  exit 1
+else
+  vimdiff -u "${HDVIMRC}" "${FILE1}" "${FILE2}" 
+fi

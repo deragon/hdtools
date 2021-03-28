@@ -1,0 +1,24 @@
+#!/usr/bin/python
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import py_compile
+import sys
+import os
+import stat
+from hdlib2 import *
+
+debug.setLevel(0)
+
+for file in sys.argv[1:]:
+  debug("file = " + file)
+  py_compile.compile(file)
+  mode=os.stat(file)
+  permissions=stat.S_IMODE(mode[stat.ST_MODE])
+  debug("permissions = " + '%o' % permissions, 5)
+  os.chmod(file + "c", permissions)

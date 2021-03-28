@@ -1,0 +1,43 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+TIMEZONE1=${1}
+TIME=${2}
+
+# For the moment, current timezone.
+#TIMEZONE2=`date +%Z`
+TIMEZONE2=UTC
+
+print()
+{
+  STRING1="${1}"
+  shift
+  printf "%- 30s  %s\n" "${STRING1}:" "${*}"
+}
+
+[ -z "${TIMEZONE1}" ] && TIMEZONE1=`date +"%z"`
+[ -z "${TIME}"      ] && TIME=`date +"%H:%M:%S"`
+
+
+if [ "${TIMEZONE1}" = "EDT" ]; then
+  TIMEZONE1="EST5EDT"
+fi
+
+#set -x
+print "Time to convert" "${TIME} ${TIMEZONE1}"
+print "${TIMEZONE2} vs ${TIMEZONE1} diff" `TZ=${TIMEZONE1} date --date="${TIMEZONE2}"`
+echo "--"
+print "${TIME} ${TIMEZONE2} in ${TIMEZONE1}" `TZ=${TIMEZONE1} date --date="${TIME} ${TIMEZONE2}"`
+print "${TIME} ${TIMEZONE1} in ${TIMEZONE2}" `date --date="${TIME} ${TIMEZONE1}"`
+echo "--"
+#
+# Next line is buggy.  Do not know why.
+#set -x
+print "Current time in ${TIMEZONE2}" `TZ="${TIMEZONE2}" date`
+print "Current time in ${TIMEZONE1}" `TZ="${TIMEZONE1}" date`

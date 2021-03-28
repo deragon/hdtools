@@ -1,0 +1,191 @@
+#!/bin/bash -e
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  cat <<EOM
+  echo -e "
+Usage:  ${SCRIPT_NAME} [-h]
+
+  -h  Display this help text.
+"
+EOM
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+# DIFF - COMMON
+# ────────────────────────────────────────────────────────────────────
+diff_setup_common()
+{
+  git config --global mergetool.trustExitCode "true"
+  git config --global difftool.trustExitCode  "true"
+  git config --global difftool.prompt         "false"
+
+
+  # hdvimdiff
+  git config --global difftool.hdvimdiff.cmd 'vimdiff -u "${HDVIMRC}" "${LOCAL}" "${REMOTE}"'
+  git config --global difftool.hdvimdiff.trustExitCode "true"
+  git config --global difftool.hdvimdiff.prompt "false"
+
+  # hdgvimdiff
+  #
+  # In order to work correctly, gvim must stay in the foreground and NOT fork
+  # a new process as usual. This is accomplished by using the -f or --nofork
+  # flag when starting gvim (or gvimdiff).
+  #
+  # See:  https://stackoverflow.com/questions/26554865/how-can-i-make-git-difftool-to-use-gvim-gvimdiff
+  git config --global difftool.hdgvimdiff.cmd 'gvimdiff --nofork -u "${HDVIMRC}" "${LOCAL}" "${REMOTE}"'
+  git config --global difftool.hdgvimdiff.trustExitCode "true"
+  git config --global difftool.hdgvimdiff.prompt "false"
+}
+
+
+# DIFF - CYGWIN
+# ────────────────────────────────────────────────────────────────────
+diff_setup_cygwin()
+{
+  git config --global diff.tool  meld
+  git config --global merge.tool meld
+
+  git config --global difftool.meld.cmd '"c:/Program Files (x86)/Meld/Meld.exe" "${LOCAL}" "${REMOTE}"'
+  git config --global difftool.meld.trustExitCode "true"
+  git config --global difftool.meld.prompt "false"
+}
+
+
+# DIFF - LINUX
+# ────────────────────────────────────────────────────────────────────
+diff_setup_linux()
+{
+  git config --global diff.tool    "hdvimdiff"
+  git config --global diff.guitool "hdgvimdiff"
+}
+
+
+# GLOBAL
+# ────────────────────────────────────────────────────────────────────
+setup_global()
+{
+  git config --global log.date                "iso"
+  git config --global core.filemode           "false"
+  git config --global core.quotePath          "false"  # UTF-8 Fix.
+
+  # Setting 'Fast Forwarding only' as the default pull strategy.  Required since
+  # Git 2.27.
+  #
+  # See:  https://stackoverflow.com/questions/62653114/how-to-deal-with-this-git-warning-pulling-without-specifying-how-to-reconcile
+  git config --global pull.ff only
+}
+
+
+# USER
+# ────────────────────────────────────────────────────────────────────
+setup_user()
+{
+
+  git config --global user.name               "Hans Deragon"
+
+  if [ "${USERDOMAIN}" = "VIDEOTRON" ] || [[ "$(hostname -f)" =~ "videotron" ]]; then
+    git config --global user.email "hans.deragon@videotron.com"
+  else
+    git config --global user.email "hans@deragon.biz"
+  fi
+}
+
+
+# GITIGNORE
+# ────────────────────────────────────────────────────────────────────
+setup_gitignore()
+{
+  echo "Setting up ${HOME}/.gitignore"
+
+  if [ -e "${HOME}/.gitignore" ]; then
+
+    hdbackup "${HOME}/.gitignore"
+
+    # Here, we remove all the lines that match does of 'hdgitsetup-gitignore';
+    # they will be appended below.  This makes a nice reset.
+    grep -Fvxf "${SCRIPT_PATH_ABS}/hdgitsetup-gitignore" "${HOME}/.gitignore" >"${HOME}/.gitignore.tmp"
+     mv "${HOME}/.gitignore.tmp" "${HOME}/.gitignore"
+
+  fi
+
+  cat "${SCRIPT_PATH_ABS}/hdgitsetup-gitignore" >>"${HOME}/.gitignore"
+}
+
+
+# Processing
+# ════════════════════════════════════════════════════════════════════
+
+# Backup
+[ -e "${HOME}/.gitconfig" ] && hdbackup "${HOME}/.gitconfig"
+
+setup_global
+setup_user
+diff_setup_common
+
+if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
+  git config --global core.pager        "$(hdcanonical -G -w less)"
+  git config --global core.longpaths    "true"
+  git config --global credential.helper "wincred"
+
+  HDVIMRC="$(hdcanonical -G "${HDVIMRC}")"
+
+  #CMD_VIMDIFF="$(hdcanonical -Gw "vimdiff")"
+
+  # hdcanonical returns "vim.exe" since "vimdiff" is a symlink.
+  # Thus, we must replace vim with vimdiff
+  #CMD_VIMDIFF="${CMD_VIMDIFF/vim.exe/vimdiff}"
+
+  if [ -z "${HD_GVIM}" ]; then
+    echo -e "\${HD_GVIM} is not set, thus gVim is not set as the editor.\n" \
+    "Please set the variable using a Cygwin path style (/cygdrive/c...).\n" \
+    "Without a proper editor, vim under Cygwin will not work well..\n"
+  else
+    git config --global core.editor $(hdcanonical -G "${HD_GVIM}")
+  fi
+
+  diff_setup_cygwin
+else
+  diff_setup_linux
+fi
+
+setup_gitignore
+
+cat <<EOM
+
+Petit avertissement:  Un jour, il faudrait compléter ce script pour demander
+                      le courriel à utiliser pour Git.
+EOM
+
+echo -e "\nContent of '${HOME}/.gitconfig':\n"
+cat "${HOME}/.gitconfig"

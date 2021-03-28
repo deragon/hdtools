@@ -1,0 +1,47 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+PERMISSIONS=`stat /etc/sudoers --format "%a"`
+
+EXT2ATTR=`lsattr /etc/sudoers | perl -pe "s/(\S+)\s+.*/\1/;s/-//g"`
+chattr -i /etc/sudoers
+chmod u+w /etc/sudoers
+
+while true; do
+  vim -u ${HDVIMRC} /etc/sudoers
+  visudo -c
+  if (($?)); then
+    cat <<EOM
+
+  There are errors in the vimsudoers file.
+  Please redit by pressing any key.
+
+  Press 'q' if you insist at leaving the errors in the file and
+  return to the bash prompt.
+
+EOM
+    read -s -n 1 ANSWER
+    if [ "${ANSWER/[q|Q]*/detected}" = "detected" ]; then
+      break
+    fi
+  else
+    break
+  fi
+done
+
+#if [ "${OS_CODE}" = "suse" ]; then
+# if hd_IsOS "suse" ">=SLED10" -; then
+#   chmod 0440 /etc/sudoers
+# elif hd_IsOS "suse" - -; then
+#   chmod 0600 /etc/sudoers
+# else
+#   chmod 0440 /etc/sudoers
+# fi
+chmod ${PERMISSIONS} /etc/sudoers
+chattr =${EXT2ATTR} /etc/sudoers

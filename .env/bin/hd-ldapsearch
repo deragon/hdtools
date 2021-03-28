@@ -1,0 +1,169 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Usage:  ${SCRIPT_NAME} -u <userid> -p <password> -U <LDAP URL> -B <LDAP BASE>
+                     [-h] <file with list of userid>*
+
+For each user id found in the provide files, a search is done for them
+in the LDAP server.
+
+Since Active Directory is a LDAP service, this script can be used to
+query that service.
+
+If no file is provided, STDIN is used.
+
+Another tool to query Active Directory is:
+
+  'Active Directory Administrative Center'
+
+Just type this name in the Windows's start button and it will be executed.
+
+
+  -u <userid>     userid used to connect to the LDAP database.
+  -p <password>   password used to connect to the LDAP database.
+  -U <LDAP URL>   URL of LDAP server.
+  -B <LDAP BASE>  BASE of LDAP.
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "u:p:U:B:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "u") CREDENTIALS_USERNAME="${OPTARG}";;
+    "p") CREDENTIALS_PASSWORD="${OPTARG}";;
+    "U") LDAP_URL="${OPTARG}";;
+    "B") LDAP_BASE="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [ -z "${CREDENTIALS_USERNAME}" ]; then
+  ERRORS="${ERRORS} - User name must be provided with '-u <username>'.\n"
+fi
+
+if [ -z "${CREDENTIALS_PASSWORD}" ]; then
+  ERRORS="${ERRORS} - Password must be provided with '-p <password>'.\n"
+fi
+
+if [ -z "${LDAP_URL}" ]; then
+  ERRORS="${ERRORS} - LDAP URL must be provided with '-U <LDAP URL>'.\n"
+fi
+
+if [ -z "${LDAP_BASE}" ]; then
+  ERRORS="${ERRORS} - LDAP BASE must be provided with '-B <LDAP BASE>'.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+TIMESTAMP_FILE=$(date +"%Y%m%dT%H%M%S") # ISO 8601 format.
+TIMESTAMP_START=$(date +"%s") # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+set -e
+
+processDN()
+{
+  local OUTPUT="$1"
+  DN=$(echo "${OUTPUT}" | egrep --extended-regexp "^dn:")
+
+  # if [[ "${DN}" =~ "dn::" ]]; then
+  #   # DN is encoded in base64 because it contains caracters that are outside
+  #   # the ASCIII range (0x00-x7F).  Decoding it.
+  #   DN=$(echo "${DN/dn:: }" | base64 --decode)
+  # fi
+
+  # sed does not support the greedy (?) operator.  Need to use perl here.
+  local OU=$(echo "${DN}" | perl -ne "print if s/^.*?(OU=.*?),DC.*/\1/g" | sed -r 's/OU=//g;s/,/ + /g' )
+
+  echo "${OU}"
+}
+
+processEntry()
+{
+  local USERID="$1"
+
+  local OUTPUT_RAW=$(ldapsearch -o ldif-wrap=no -x \
+    -H "${LDAP_URL}" \
+    -b "${LDAP_BASE}" \
+    -D "${CREDENTIALS_USERNAME}" \
+    -w "${CREDENTIALS_PASSWORD}" \
+    "(sAMAccountName=${USERID})")
+
+  # All entries with double '::' are base64 encoded.  We decode them all here
+  # and ensure that no trailling '\r' exist.
+  local OUTPUT=$(echo "${OUTPUT_RAW}" | perl -CS -MMIME::Base64 -MEncode=decode -n -00 -e 's/(?<=:: )(\S+)/decode("UTF-8",decode_base64($1))/eg;s/\r//g;print')
+  echo "${OUTPUT}" >"${USERID}-ldap.txt"
+
+  local NAME_FIRST=$(echo "${OUTPUT}" | sed -rn "s/^givenName:\s+(.*)/\1/gp" )
+  local NAME_LAST=$( echo "${OUTPUT}" | sed -rn "s/^sn:\s+(.*)/\1/gp"        )
+  local EMAIL=$(     echo "${OUTPUT}" | sed -rn "s/^mail:\s+(.*)/\1/gp"      )
+
+  OU=$(processDN "${OUTPUT}")
+
+  EMAIL="${EMAIL,,}" # Lowercase
+  echo "${USERID}, ${EMAIL}, ${NAME_FIRST}, ${NAME_LAST}, ${OU}"
+}
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+# STDIN OR FILES
+#
+# If no file has been provided, set one file as STDIN (-).  This way,
+# either files passed as arguments are processed or STDIN.
+if (( ${#FILES[*]} == 0 )); then
+  echo -e "\e[1;30;43m WARNING \e[0m  SDTIN being used for input."
+  FILES[0]="-"
+fi
+
+# Running through remaining arguments
+for FILE in ${FILES[@]}; do
+
+  #echo "${FILE}"
+
+  while IFS='' read -r LINE || [[ -n "${LINE}" ]]; do
+    processEntry "${LINE}"
+  done <"${FILE}"
+done

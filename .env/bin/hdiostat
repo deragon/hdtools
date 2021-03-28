@@ -1,0 +1,18 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+export S_COLORS="always" # From 'man iostat'
+
+# Excluding loops, title (name) and partitions from list.
+LIST_OF_DEVICES=$(cat /proc/partitions | awk '{ print $4 }' | egrep -v '^((loop|name).*||sd.[0-9])$' | sort)
+
+CMD="iostat -y --human -x ${LIST_OF_DEVICES} 1 1"
+watch --no-title --color --interval 1 ${CMD}
+clear
+${CMD}

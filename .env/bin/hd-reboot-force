@@ -1,0 +1,25 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# See:
+#
+# http://www.ussg.indiana.edu/hypermail/linux/kernel/0510.1/1332.html
+# http://www.cdrinfo.com/Sections/Reviews/Specific.aspx?ArticleId=19672
+
+echo -n "Immediate reboot.  Are you sure [y/n]? "
+read -s -n 1 KEY
+
+echo -e "\nTo logout of an ssh session that hangs, type ~."
+
+if [ "${KEY}" = "y" ]; then
+  echo 1 >/proc/sys/kernel/sysrq
+  echo s >/proc/sysrq-trigger
+  echo u >/proc/sysrq-trigger
+  echo b >/proc/sysrq-trigger
+fi

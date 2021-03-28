@@ -1,0 +1,50 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+if [ -d /var/log/httpd ]; then
+  LOGSDIR=/var/log/httpd
+elif [ -d /var/log/apache2 ]; then
+  LOGSDIR=/var/log/apache2
+fi
+
+function createxterm
+{
+  LOGFILE=$1
+  VERTICAL=$2
+  COLOR=$3
+
+  xterm -cr green \
+        -bg ${COLOR} \
+        -fg grey \
+        -sb \
+        -sl 500 \
+        -j \
+        -fn "-misc-*-bold-r-*-*-15-*-*-*-*-*-*-*" \
+        -geometry 130x13+10+${VERTICAL} \
+        -title "${LOGFILE}" \
+        -e "/usr/bin/tail -f ${LOGSDIR}/${LOGFILE} | logcolorise.pl" \
+        &
+}
+
+Y=30
+COLORS[0]="rgb:00/00/00"
+COLORS[1]="rgb:00/60/00"
+COLORS[2]="rgb:60/00/00"
+COLORS[3]="rgb:00/00/60"
+index=0
+for path in `ls -1 ${LOGSDIR}/*log`; do
+  file=`basename ${path}`
+  createxterm ${file} ${Y} ${COLORS[${index}]}
+  let Y=${Y}+230
+  let index=(index+1)%${#COLORS[*]}
+done
+# createxterm access_log        30  black
+# createxterm error_log        260  rgb:0/60/0
+# createxterm ssl_access_log   490  rgb:60/0/0
+# createxterm ssl_error_log    720  rgb:0/0/60

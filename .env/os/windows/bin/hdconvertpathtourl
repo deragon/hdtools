@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Converts path to file:// URLs, compatible with Java expected URLs for files.
+#
+# Example:
+#
+#   C:\Users\hderago1\ypgprojects -> file:///C:/Users/hderago1/ypgprojects
+
+PATH_TO_CONVERT="${1}"
+
+[ -z "${PATH_TO_CONVERT}" ] && PATH_TO_CONVERT="."
+
+
+# Convert to canonical path
+PATH_TO_CONVERT=`readlink -f "${PATH_TO_CONVERT}"`
+PATH_TO_CONVERT=`cygpath -w "${PATH_TO_CONVERT}"`
+
+
+# Backslashes are converted to slashes. \ -> /
+# Spaces are converted to hex rep.        -> %20
+URL="file:///"`echo "${PATH_TO_CONVERT}" | sed 's%\\\\%/%g;s/ /%20/g'`
+
+echo "${URL}"

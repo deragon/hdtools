@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import getopt
+import os.path
+import re
+import HDLibNetwork
+
+from hdlib2 import *
+
+gRecursive=False
+gDirectories=False
+
+# ----------------------------------------------------------------------
+def usage(code=255):
+  print(gScriptName + """ [ -q | --quiet     ]
+               [ -a | --all       ] 
+               [ -e | --external  ] 
+               [ -p | --private   ] 
+               [ -l | --localhost ] 
+               [ -k | --locallink ] 
+               [ -h | --help      ]
+               [ -z <debug level> | --debug=<debug level> ]
+
+  Without any arguments, print all valid external and private IP addresses.
+""")
+  sys.exit(code)
+
+# ----------------------------------------------------------------------
+# See:  http://en.wikipedia.org/wiki/Private_network for address assignments.
+
+# Private networks:
+#
+#   [10.0.0.0,    10.255.255.255]  - 16 bits
+#   [172.16.0.0,  172.31.255.255]  - 20 bits
+#   [192.168.0.0, 192.168.255.255] - 16 bits
+privateNetworkDefinitions=[ \
+  [ "10.0.0.0",    24 ],   \
+  [ "172.16.0.0",  20 ],   \
+  [ "192.168.0.0", 16 ]  ]
+
+# Local host range is [127.0.0.0, 127.0.0.255]
+# Ref:  http://en.wikipedia.org/wiki/Localhost
+localHostDefinition=[ [ "127.0.0.0", 24 ] ]
+
+# Local Link range is [169.254.0/24, 169.254.255/24]
+localLinkDefinition=[ [ "169.254.0.0", 24 ] ]
+
+def testNetwork(number, definitions):
+
+  debug("testNetwork() called.", 5)
+  for definition in definitions:
+    reference = HDLibNetwork.dottedQuadToNum(definition[0])
+    bitsInMask   = definition[1]
+
+    revMask=HDLibNetwork.makeMask(bitsInMask) ^ 0xFFFFFFFF
+
+    debug("  ----------------------------------------", 10)
+    debug("  reference = 0x%0.8X" % reference, )
+    debug("  number    = 0x%0.8X" % number, 10)
+    debug("  revMask   = 0x%0.8X" % revMask, 10)
+    if (number & revMask) == (reference & revMask):
+      return True
+
+  return False
+
+
+######################################################################
+# Main
+
+try:
+  opts, args = getopt.gnu_getopt( \
+      sys.argv[1:], "qaeplkz:h", \
+        ["quiet", "all", "external", "private", "localhost", "locallink", \
+         "help", "debug="])
+except getopt.GetoptError:
+  # print help information and exit:
+  print("Error:  invalid argument(s).")
+  usage(2)
+
+gShowAll       = False
+gExternal      = False
+gShowPrivate   = False
+gShowLocalHost = False
+gShowLocalLink = False
+gQuiet         = False
+
+for option, arg in opts:
+  debug("argv: " + option + arg)
+  #print "argv: " + option + arg
+  if option in ("-h", "--help"):
+    usage(1)
+  elif option in ("-q", "--quiet"):
+    gQuiet=True
+  elif option in ("-a", "--all"):
+    gShowAll=True
+  elif option in ("-e", "--external"):
+    gExternal=True
+  elif option in ("-p", "--private"):
+    gShowPrivate=True
+  elif option in ("-l", "--localhost"):
+    gShowLocalHost=True
+  elif option in ("-k", "--locallink"):
+    gShowLocalLink=True
+  elif option in ("-z", "--debug"):
+    debug.setLevel(int(arg))
+    print("Debug level set to " + arg)
+
+if not gShowAll and \
+   not gExternal and \
+   not gShowPrivate and \
+   not gShowLocalHost and \
+   not gShowLocalLink:
+  gExternal    = True
+  gShowPrivate = True
+
+if os.environ["HD_OS_FAMILY"].lower().find("cygwin") >= 0:
+  command = "ipconfig"
+  reInitAddr=re.compile("\s+Adresse IP.*?:\s+(\d+\.\d+\.\d+\.\d+).*")
+else:
+  command = "ifconfig"
+  reInitAddr=re.compile("\s+inet addr:(\d+\.\d+\.\d+\.\d+).*")
+
+code, lines = execute(command)
+
+
+exitcode=1
+for line in lines:
+  mo=reInitAddr.match(line)
+  if mo:
+    address = mo.group(1)
+    intAddress = HDLibNetwork.dottedQuadToNum(address)
+
+    isPrivate   = testNetwork(intAddress, privateNetworkDefinitions)
+    isLocalHost = testNetwork(intAddress, localHostDefinition)
+    isLocalLink = testNetwork(intAddress, localLinkDefinition)
+    isExternal  = not (isPrivate or isLocalHost or isLocalLink)
+
+    if gShowAll:
+      if not gQuiet:
+        print(address)
+      exitcode=0
+    if gShowPrivate and isPrivate:
+      if not gQuiet:
+        print(address)
+      exitcode=0
+    if gShowLocalHost and isLocalHost:
+      if not gQuiet:
+        print(address)
+      exitcode=0
+    if gShowLocalLink and isLocalLink:
+      if not gQuiet:
+        print(address)
+      exitcode=0
+    if gExternal and isExternal:
+      if not gQuiet:
+        print(address)
+      exitcode=0
+
+sys.exit(exitcode)

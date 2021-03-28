@@ -1,0 +1,5 @@
+texte1
+devrait etre gn:  >>gn<< devrait etre gn:  >>gn<< devrait etre gn:  >>gn<< ligne 2
+bonjour
+devrait etre gn:  >>gn<< devrait etre gn:  >>gn<< devrait etre gn:  >>gn<< ligne 4
+devrait etre gn:  >>gn<< devrait etre gn:  >>gn<< devrait etre gn:  >>gn<< ligne 5

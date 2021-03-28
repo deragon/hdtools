@@ -1,0 +1,155 @@
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# INITIALIZATION
+# ══════════════════════════════════════════════════════════════════════════════
+
+source "${HDENVDIR}/osdetect.sh"
+
+if [ "${HD_OS_FAMILY}" = "Linux" -o "${HD_OS_FAMILY}" = "Cygwin" ]; then
+  HOSTNAME_FQDN=`hostname -f 2>&1`
+else
+  HOSTNAME_FQDN=`hostname 2>&1`
+fi
+HOSTNAME="${HOSTNAME_FQDN%%.*}"
+
+
+# Cygwin takes time.  We do not need hardware information.  Thus, bypass.
+[ "${HD_OS_FAMILY}" != "Cygwin" ] && hd_setHardware
+
+HD_TTY=`tty`
+export GPG_TTY="${HD_TTY}"  # man gpg-agent
+
+
+
+# HDENVDIR
+# ══════════════════════════════════════════════════════════════════════════════
+for HDENVDIR in "${HDENVDIR}" ~hans/.hans.deragon/.env ~hans/.env; do
+ [ -d "${HDENVDIR}" ] && break
+done
+export HDENVDIR
+
+add2path PATH "${HDENVDIR}/bin"
+add2path PATH "${HDENVDIR}/bin/bigdata"
+add2path PATH "${HDENVDIR}/bin/3rdparty"
+add2path PATH "${HDENVDIR}/personal/bin"
+
+add2path PATH /sbin
+add2path PATH /usr/sbin
+
+for HD_LOGICIELS in /vol/data/base/software SoftwareDirectoryNotAvailable; do
+  if [ -d "${HD_LOGICIELS}" ]; then
+    export HD_LOGICIELS
+    break
+  fi
+done
+
+
+
+# PYTHON
+# ══════════════════════════════════════════════════════════════════════════════
+export HDPYTHONDIR="${HDENVDIR}/python3"
+export PYTHONPATH="${HDPYTHONDIR}:${PYTHONPATH}"
+alias cdpython='cd "${HDPYTHONDIR}"'
+
+alias pythonpath='splitpath PYTHONPATH'
+alias spythonpath='splitpath PYTHONPATH'
+
+
+
+# JAVA
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Setting proper path for java
+if [ ! -d "${JAVA_HOME}" ]; then
+  if [ -d "${HD_LOGICIELS}/nodist/x86_64/java/jdk-10" ]; then
+    export JAVA_HOME="${HD_LOGICIELS}/nodist/x86_64/java/jdk-10"
+  elif [ -d "${HD_LOGICIELS}/nodist/x86_64/java/jdk" ]; then
+    export JAVA_HOME="${HD_LOGICIELS}/nodist/x86_64/java/jdk"
+  elif [ -d /usr/java ]; then
+    export JAVA_HOME=`ls -1d /usr/java/j*dk* 2>/dev/null | tail -1`
+  fi
+
+  export JAVA_JRE="${JAVA_HOME}"
+fi
+
+if [ ! -z "${JAVA_HOME}" ]; then
+  # Next line should be deleted;  why assign a binary to a variable??
+  #export JAVA=${JAVA_HOME}/bin/java
+
+  add2path PATH -b "${JAVA_HOME}/bin"
+
+  CLASSPATH=".:${CLASSPATH}"
+
+# TODO:  Refine to load only proper jars.
+[ -d "${JAVA_HOME}/jre" ] && \
+  add2path CLASSPATH -f `find "${JAVA_HOME}/jre" -name "*.jar"`
+
+# Comment by Hans Deragon (hans@deragon.biz), 2018-01-31 11:26:54
+# AIX's 'find' command does not support '-maxdepth'... ugh...
+[ -d "${JAVA_HOME}/lib" -a "${HD_OS_FAMILY}" != "AIX" ] && \
+  add2path CLASSPATH -f `find "${JAVA_HOME}/lib" -maxdepth 1 -name "*.jar"`
+
+  [ "${HD_OS_FAMILY}" == "Cygwin" ] && export JAVA_HOME=`cygpath "${JAVA_HOME}"`
+else
+  unset JAVA_HOME
+fi
+
+
+
+# VIM
+# ══════════════════════════════════════════════════════════════════════════════
+#
+#   ⚡⚡⚡ AVERTISSEMENT ⚡⚡⚡
+#   ────────────────────────────────────────────────────────────────────────────
+#
+#     NE PAS CONFIGURER ${VIM}. Si ${VIM} est configuré, vim s'attend à
+#     retrouver tous ses fichiers standard sous ${VIM}, comme par exemple
+#     syntax/syntax.vim.  Ce n'est pas une façon d'appliquer une configuration
+#     system-wide.
+#
+#
+#   System-wide
+#   ────────────────────────────────────────────────────────────────────────────
+#
+#     La meilleure façon de configurer vim sur tout le système, c'est d'ajouter
+#     les lignes suivantes:
+#
+#        # Added by Hans Deragon (hans@deragon.biz)
+#        # Using fnameescape to handle potential spaces in path.
+#        exec 'source '.fnameescape('${HDVIM}/.vimrc')
+#
+#     Dans un des fichiers suivants:
+#
+#        Linux:   /etc/vim/vimrc
+#        Cygwin:  /etc/vimrc
+#
+#   Ce commentaire fut revisé le 2016-05-31 13:25:58 EDT
+
+export HDVIM="${HDENVDIR}/vim"
+export HDVIMRC="${HDVIM}/.vimrc"
+unalias vi >/dev/null 2>&1
+unalias vim >/dev/null 2>&1
+if which vim >/dev/null 2>&1; then
+  alias vi='vim -u "${HDVIMRC}"'
+  alias vim='vim -u "${HDVIMRC}"'
+  alias vimdiff='vimdiff -u "${HDVIMRC}"'
+  alias gvimdiff='gvimdiff -u "${HDVIMRC}"'
+  EDITOR="vim -u \"${HDVIMRC}\""
+else
+  EDITOR="vi"
+fi
+export EDITOR
+
+cdwhich() { eval cd `which $*`; }
+
+vimw() { eval ${EDITOR} `which $*`; }
+viml() { locate $* | xargs ${EDITOR}; }
+
+gvimw() { hdgvim `which $*`; }
+gviml() { locate $* | xargs gvim; }

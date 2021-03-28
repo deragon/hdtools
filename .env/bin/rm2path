@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+use strict;
+my @paths;
+my $pre=0;
+
+while($_=$ARGV[0])
+{
+  shift @ARGV;
+
+  if(/-pre/)
+  {
+    # Fetching next argument.
+    $pre=1;
+    next;
+  }
+
+  if(/^-h$/) { Usage(); }
+
+  push(@paths, $_);
+}
+
+my $path;
+my $sourcePath=shift @paths;
+
+
+foreach $path (@paths)
+{
+  #print "\$path=>>$path<<\n";
+  $sourcePath=~s/[\w|\/]*${path}[\w|\/]*://g;
+  $sourcePath=~s/:[\w|\/]*${path}[\w|\/]*//g;
+}
+
+print "$sourcePath";
+#print "\n"; # for debugging only.
+
+sub Usage
+{
+  print <<EOF;
+This script removes a path from a list of path seperated by colons (:) and
+sends out the result to stdout.
+
+Usage:  rm2path <list of path> <path to remove>+
+
+  where:  <list of path>      is the the list of paths seperated by the colons
+                              from which <path to remove> should be removed.
+
+          <path to remove>    is the path to remove from <list of path>. You
+                              may provide more than one path to remove.
+
+  Note that a whole path is removed from <list of path> if only a partial
+  match is found with <path to remove>.  For instance, if <path to remove>
+  is "bin", then all the path such as /bin, /usr/bin, /usr/sbin, etc...
+  will be removed.
+
+
+Example #1:
+
+  > echo PATH
+  /bin:/usr/bin:/usr/sbin:/sbin:/pub/is/bin:/scripts:/usr/openwin/bin:
+
+  > rm2path PATH /usr/sbin
+  /bin:/usr/bin:/sbin:/pub/is/bin:/scripts:/usr/openwin/bin:
+
+
+Example #2:
+  > echo PATH
+  /bin:/usr/bin:/usr/sbin:/sbin:/pub/is/bin:/scripts:/usr/openwin/bin:
+
+  > rm2path PATH bin
+  /scripts
+
+
+EOF
+  exit(0);
+}

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+#set -x
+
+# Call this script with -f for $CLASSPATH which might contain jar files.
+# We then test the existance of the files as such, not as directories.
+FILE_OK=0
+TESTMODE=0
+DELIMITER=":"
+while getopts "ftd:" OPTCMD; do
+  case ${OPTCMD} in
+    f) FILE_OK=1;;
+    t) TESTMODE=1;;
+    d) DELIMITER="${OPTARG}";;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+
+# WARNING:  Because we set IFS, we need to always quote ${DELIMITER} when
+#           performing an echo command on it.  Else, IFS will interprete
+#           the delimiter.
+PATHCONTENT="$@"
+
+debug() { ((${TESTMODE})) && echo $@; }
+
+if ((${TESTMODE})); then
+  if [ -z "${PATHCONTENT}" ]; then
+    PATHCONTENT=/usr/kerberos/bin:/usr/local/bin:/bin:/usr/X11R6/bin:/sp/home/hans/bin:/usr/bin:.:/pub/linux/noarch/sbin:/pub/linux/noarch/bin:/sbin:/pub/linux/i386/nodist/OpenOffice.org1.1.3/program:/sbin:/usr/sbin:${HDENVDIR}/bin:/usr/local/bin
+  fi
+fi
+if [ -z "${PATHCONTENT}" ]; then
+  PATHVAR="PATH"
+else
+  PATHVAR="PATHCONTENT"
+fi
+IFS="${DELIMITER}"
+for path in ${!PATHVAR}; do
+  debug "Testing ${path}"
+  if [ -z "${NEWPATH}" ]; then
+    NEWPATH=${path}
+  else
+    duplicate=0
+    for directory in ${NEWPATH}; do
+      #debug "Comparing ${directory} with ${path}"
+      if [ "${directory}" = "${path}" ]; then
+        debug "${path} is a duplicate"
+        duplicate=1
+        break
+      fi
+    done
+
+    if ((!${duplicate})); then
+      if [ -d "${path}" ] || ( ((${FILE_OK})) && [ -f "${path}" ] ); then
+        NEWPATH=${NEWPATH}${DELIMITER}${path}
+      else
+        debug "${path} is not a valid path."
+      fi
+    fi
+  fi
+done
+
+# Need to unset IFS or else the delimiter will not show up in the result.
+unset IFS
+
+if ((${TESTMODE})); then
+  echo
+  echo "OLD->${!PATHVAR}"
+  echo "NEW->${NEWPATH}"
+else
+  echo "${NEWPATH}"
+fi

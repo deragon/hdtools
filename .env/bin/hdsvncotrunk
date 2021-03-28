@@ -1,0 +1,63 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${0/*\/}"
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h] <SVN URL>
+
+Fetches all trunk repositories within an SVN parent repository.
+
+More specifically, it lists all the entries under <SVN URL> with:
+'svn list <SVN URL>' and for each entry (here by named <ENTRY>),
+runs the command 'svn co <SVN URL>/<ENTRY>/trunk'
+
+This avoids checking out branches and tags.
+EOM
+}
+
+while getopts "n:hz" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+SVN_BASE=${1}
+
+ERRORS=""
+
+if [ -z "${SVN_BASE}" ]; then
+  ERRORS="${ERRORS} - URL to SVN repository required.  Aborting."
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}\n"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+SVN_BASENAME="${SVN_BASE[0]/*\/}"
+mkdir -p "${SVN_BASENAME}"
+cd "${SVN_BASENAME}"
+
+for REPO in `svn list -R "${SVN_BASE}" | \
+  egrep --extended-regexp '.*trunk/$'`; do
+
+  echo "Extracting ${SVN_BASE}/${REPO}"
+  mkdir -p "${REPO}"
+  svn co "${SVN_BASE}/${REPO}" "${REPO}"
+
+done

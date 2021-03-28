@@ -1,0 +1,105 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Works with symlinks
+SCRIPT_NAME="${0/*\/}" # Basename, efficient form
+SCRIPT_PATH_REL=`dirname "${0}"`
+SCRIPT_PATH_ABS=`( \cd "${SCRIPT_PATH_REL}" && pwd )`
+
+sep()
+{
+  echo -e "\n\n────────────────────────────────────────────────────────────────────────────"
+}
+
+usage()
+{
+   cat <<EOM
+Usage:  ${SCRIPT_NAME} [-z] [-n <nom>] [-h]
+EOM
+}
+
+DISK=/dev/sda
+while getopts "d:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DISK="${OPTARG}";;
+    "z")    ZIP=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+echo -e "Current settings.\n"
+
+cat <<EOM
+-B  A higher value means more power is used but also promises higher
+    performance or speed. Values between 1 and 128 allow the drive to shut
+    down, whereas values from 129 to 254 forbid that from happening.
+EOM
+hdparm -B "${DISK}"
+sep
+cat <<EOM
+-M  Many modern hard drives allow you to slow down the head movement. Although
+    doing so will increase access times, it will also reduce the noise level.
+
+    Values between 128 and 254 are allowed, resulting in a trade-off between
+    noise level and speed. Incidentally, your Linux kernel must also support
+    acoustic management, which should be the case for all current major
+    distributions.
+EOM
+hdparm -M "${DISK}"
+sep
+cat <<EOM
+-W  With write-back caching, the hard drive first stores the data to be
+    written in a buffer. In this way, it can accept data much faster, which in
+    the end leads to a faster write speed.
+
+    You can activate the function with the -W1 switch.
+
+    If hdparm will not allow this change, you need to make sure that
+    write-back caching has been activated in the BIOS. However, this function
+    is not recommended for all situations: In the case of a power outage, the
+    data in the buffer would be lost permanently.
+EOM
+hdparm -W "${DISK}"
+sep
+cat <<EOM
+
+-m  To speed up data transmission, a hard disk usually reads several sectors
+    at the same time. 
+
+    The -i option can be used to find the maximum setting supported by an
+    installed drive (look for MaxMultSect in the  output).
+
+    HD:  Valeur original du ST1000LM024 HN-M101MBB:  non configuré.
+         Augmenté manuellement à: 16
+
+EOM
+hdparm -i "${DISK}" | fgrep --color MaxMultSect
+hdparm -m "${DISK}"
+sep
+cat <<EOM
+
+-A  The IDE drive´s read-lookahead feature (usually ON by default)
+EOM
+hdparm -A "${DISK}"
+sep
+cat <<EOM
+
+-a  Get/set sector count for filesystem (software) read-ahead. This is used to
+    improve performance in sequential reads of large files, by prefetching
+    additional blocks in anticipation of them being needed by the running
+    task. Many IDE drives also have a separate built-in read-ahead function,
+    which augments this filesystem (software) read-ahead function.
+
+    HD:  Valeur original du ST1000LM024 HN-M101MBB:  256
+         Augmenté manuellement à: 1024 
+
+EOM
+hdparm -a "${DISK}"
+
+#hdparm -u /dev/sda1

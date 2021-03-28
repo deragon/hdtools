@@ -1,0 +1,68 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+PATTERN='.*\.((od[t|s|p])|(txt)|(md)|(res)|(csv)|(json)|(yaml)|(xml)|(msg)|(ppt[x]*)|(doc[x]*)|(xls[x]*)|(pdf)|(html{0,1})|(jpe{0,1}g)|(gif)|(png)|(svg)|(sql)|(tar)|(gz)|(zip)|(jar)|(c)|(java)|(scala)|(groovy)|(js)|(mp.)|(avro)|(avsc)|(properties)|(log))$'
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Usage:  ${SCRIPT_NAME} [-h] [<file>+]
+
+Remove 'execute' (-x) permission on all files that should not be executable.
+If no path is provided, defaults to '.'.
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+QUIET=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "qh" OPTCMD; do
+  case "${OPTCMD}" in
+    "q")    QUIET=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+((${#FILES[*]} == 0)) && FILES["0"]="."
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+for FILE in ${FILES[@]}; do
+
+  (( ! QUIET )) && echo "Processing ${FILE}"
+
+  if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
+    FILE=$(cygpath "${FILE}")
+  fi
+
+  find "${FILE}" -type f -regextype posix-extended -regex "${PATTERN}" -print0 | xargs --no-run-if-empty --null chmod -x
+
+done

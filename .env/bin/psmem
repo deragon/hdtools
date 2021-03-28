@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=`dirname $(readlink -f "${BASH_SOURCE[0]}")` # Fetch real directory, not symlink.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-z] [-n <nom>] [-h]
+EOM
+}
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:hz" OPTCMD; do
+  case "${OPTCMD}" in
+    "n")    NAME="${OPTARG}";;
+    "z")    ZIP=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+PS_FORMAT="user pid rss %mem args"
+DATA_SORTED=`ps -e --format "${PS_FORMAT}" --cols 80 | sort -n -k 3`
+#TOTAL_MEM_KIB=`echo "${DATA_SORTED}" | awk '{ print $3 }' | grep -P '^\d+$' | paste -s -d+ | bc -l`
+TOTAL_MEM_KIB=`echo "${DATA_SORTED}" | awk '{ print $3 }' | perl -ne 'print if s/^\s*(\d+)$/\1/g' | paste -s -d+ | bc -l`
+
+TOTAL_MEM_MIB=$(( TOTAL_MEM_KIB / 1024 ))
+TOTAL_MEM_GIB=$(( TOTAL_MEM_MIB / 1024 ))
+
+echo -e "${PS_FORMAT}\n${DATA_SORTED}\n"
+echo "${TOTAL_MEM_GIB} Gib  ${TOTAL_MEM_MIB} Mib  ${TOTAL_MEM_KIB} Kib"

@@ -1,0 +1,17 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From:  https://unix.stackexchange.com/questions/196098/copy-paste-in-xfce4-terminal-adds-0-and-1
+#
+# The issue is that your terminal is in bracketed paste mode, but doesn’t seem
+# to support it properly. The issue was fixed in VTE, but xfce4-terminal is
+# still using an old and unmaintained version of it.
+#
+# You can try temporarily turning bracketed paste mode off by using:
+printf "\e[?2004l"

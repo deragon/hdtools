@@ -1,0 +1,33 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+NB_OF_KERNELS_TO_KEEP=3
+
+unset PACKAGE_TO_DELETE
+for kernel in \
+  `ls -l /boot/vmlinuz* | head -n -${NB_OF_KERNELS_TO_KEEP} | perl -ne "print if s/.*vmlinuz-(.*)/\1/g"`; do
+   echo "Removing ${kernel}"
+   PACKAGE_TO_DELETE="${PACKAGE_TO_DELETE} linux-image-${kernel} linux-headers-${kernel}"
+done
+
+#echo "Packages to delete = >>${PACKAGE_TO_DELETE}<<"
+
+if [ ! -z "${PACKAGE_TO_DELETE}" ]; then
+  apt-get remove --purge --yes ${PACKAGE_TO_DELETE}
+
+  # Reinstalling latest, in case previous installation failed because of
+  MOST_RECENT=`ls -l /boot/vmlinuz* | tail -n -1 | perl -ne "print if s/.*vmlinuz-(.*)/\1/g"`
+  # lack of space on /boot
+  apt-get install --reinstall \
+    linux-image-${MOST_RECENT} linux-headers-${MOST_RECENT}
+
+  update-grub
+else
+  echo "No kernel to remove.  ${NB_OF_KERNELS_TO_KEEP} left in /boot"
+fi

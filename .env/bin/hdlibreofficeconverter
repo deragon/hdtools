@@ -1,0 +1,165 @@
+#!/bin/bash -e
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-z] [-e] [-d <dst dir>] [-s] [-t] [-p] [-h] [<file>+]
+
+Convert Open Document Format to any of the following formats:
+
+ - PDF
+ - docx
+ - xlsx
+
+Options:
+
+  -g  Perform odg conversion.
+  -s  Perform ods conversion.
+  -t  Perform odt conversion.
+  -m  Perform doc docx xls xlsx (Microsoft formats) conversion.
+  -p  PDF output everywhere.
+
+  -d  Destination directory.  Default is "."
+
+  -z  Dry-run.
+  -e  Execute command.  Default is dry-run.
+  -h  Display this help text.
+EOM
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    $@
+  fi
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=1
+GENPDF=0
+CONVERSION_TYPE=""
+DST_DIR="."
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "d:gstmpzeh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DST_DIR="${OPTARG}";;
+    "p")    GENPDF=1;;
+    "g")    CONVERSION_TYPE="${CONVERSION_TYPE} odg";;
+    "s")    CONVERSION_TYPE="${CONVERSION_TYPE} ods";;
+    "t")    CONVERSION_TYPE="${CONVERSION_TYPE} odt";;
+    "m")    CONVERSION_TYPE="${CONVERSION_TYPE} doc docx xls xlsx";;
+    "z")    DRYRUN=1;;  # Run in dry-run mode.
+    "e")    DRYRUN=0;;  # Run in execute mode.
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+if ((${#FILES[*]} == 0)); then
+  FILES=$(find . -regextype posix-extended -iregex ".*\.od.")
+fi
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [ ! -d "${DST_DIR}" ]; then
+  ERRORS="${ERRORS} - The following destination directory does not exist:  ${DST_DIR}\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 2
+fi
+
+TIMESTAMP_FILE=$(date +"%Y%m%dT%H%M%S") # ISO 8601 format.
+TIMESTAMP_START=$(date +"%s") # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+set -x
+for FILE in ${FILES[@]}; do
+  ODF_FILE_NAME="${FILE/*\/}"    # Basename, efficient form.
+  EXTENSION="${ODF_FILE_NAME##*.}"
+  FILENAME="${ODF_FILE_NAME%.*}"
+
+  # case "${CONVERSION_TYPE}" in
+  #   *"odg"*)  [ "${EXTENSION}" != "odg" ] && continue;;
+  #   *"ods"*)  [ "${EXTENSION}" != "ods" ] && continue;;
+  #   *"odt"*)  [ "${EXTENSION}" != "odt" ] && continue;;
+  # esac
+
+  [[ ! "${CONVERSION_TYPE}" =~ "${EXTENSION}" ]] && continue
+
+  #echo "${FILE}"
+  #echo "ODF_FILE_SRC:  >>${ODF_FILE_SRC}<<"
+  #continue
+
+  case "${EXTENSION,,}" in
+    "odt")  OUTPUT_FORMAT="docx"; LO_FORMAT="document";;
+    "ods")  OUTPUT_FORMAT="xlsx"; LO_FORMAT="spreadsheet";;
+    "odg")  OUTPUT_FORMAT="pdf";  LO_FORMAT="graphics";;
+    "doc"*) OUTPUT_FORMAT="pdf";  LO_FORMAT="document";;
+    "xls"*) OUTPUT_FORMAT="pdf";  LO_FORMAT="spreadsheet";;
+    *)
+      echo "ERROR:  Unkown format for:  ${ODF_FILE_NAME}"
+      exit 11;;
+  esac
+
+  if (( GENPDF )); then
+    OUTPUT_FORMAT="pdf"
+  else
+    case "${EXTENSION,,}" in
+      "odt") OUTPUT_FORMAT="docx";;
+      "ods") OUTPUT_FORMAT="xlsx";;
+      "odg") OUTPUT_FORMAT="pdf";;
+      *)
+        echo "ERROR:  Bug.  This line should never be executed.  Unkown format for:  ${ODF_FILE_NAME}"
+        exit 12
+    esac
+  fi
+  OUTPUT_EXTENSION="${OUTPUT_FORMAT}"
+  DST_FILE_NAME="${BASE_FILE_NAME}.${OUTPUT_EXTENSION}"
+  DST_FILE_PATH="${DST_DIR}/${FILE%.*}.${OUTPUT_EXTENSION}"
+  #echo "unoconv -f DST --export=ExportFormFields=false \"${DST_FILE_PATH}\""
+  echo "Generating '${DST_FILE_PATH}'"
+  rm -f "${DST_FILE_PATH}"
+  run unoconv \
+    --export=ExportFormFields=false \
+    --doctype="${LO_FORMAT}" \
+    --format="${OUTPUT_FORMAT}" \
+    --output="${DST_FILE_PATH}" \
+    "${FILE}"
+done

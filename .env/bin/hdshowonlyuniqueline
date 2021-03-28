@@ -1,0 +1,35 @@
+#!/usr/bin/python
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import sys
+import argparse
+
+parser = argparse.ArgumentParser(description='Show repeating lines from STDIN only once.')
+parser.add_argument('--file', dest='file', default=None,
+                    help='write output to \'<file>\'')
+
+args = parser.parse_args()
+
+if args.file != None:
+  print("Writing output to stdout and '" + args.file + "'.")
+  output=open(args.file, 'w')
+
+lines = set()
+
+while True:
+  lineraw = sys.stdin.readline()
+  line=lineraw.strip()
+  if not line in lines:
+    lines.add(line)
+    #print ">>" + line + "<<"  # For debugging.
+    print(line)
+    output.write(lineraw)
+    output.flush()
+
+output.close()

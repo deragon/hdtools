@@ -1,0 +1,14 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# See:  http://svn.rpmforge.net/svn/trunk/tools/unoconv/docs/formats.txt
+#
+
+$file=$1
+ooffice --invisible 'macro:///Standard.Module1.SaveAsXHTML("${file}")'

@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# NOTE:  Sometimes use OS supplied 'mkpasswd' is available on a platform
+#        to perform the same thing.
+
+from hdlib2 import *
+import hdpasswd
+import getopt
+import sys
+
+def usage():
+  print("""
+usage:  crypt [-c|crypt] [-s|sha] [-z|debug <level>] [-h|help] <password>
+
+        -c | --crypt            /etc/passwd basic format password. [DEFAULT]
+
+        -m | --md5              /etc/shadow MD-5 format password.
+
+        -s | --sha              SHA encryption.
+
+                                Compatible with:
+
+                                  - Apache httpasswd
+                                  - Moinmoin password in user files
+
+        -z | --debug <level>    Set debug level (<level> is a number).
+
+        -h | --help             This text.
+
+        <password>              Password in clear text.
+
+                                WARNING:  A clear text password sent
+                                          on the command line can be read by
+                                          anybody with the command 'ps -ef'.
+
+                                          Ensure that nobody else is logged
+                                          in your computer when you do this.
+""")
+  sys.exit(1)
+
+try:
+  opts, args = getopt.getopt( \
+                 sys.argv[1:], "hcmsz", ["help", "md6", "crypt", "sha", "debug"])
+except getopt.GetoptError:
+  # print help information and exit:
+  usage()
+
+mode="crypt"
+
+for option, arg in opts:
+  debug("argv option = " + option, 3)
+  if option in ("-h", "--help"):
+    usage()
+    sys.exit()
+  elif option in ("-c", "--crypt"):
+    mode="crypt"
+  elif option in ("-m", "--md5"):
+    mode="md5"
+  elif option in ("-s", "--sha"):
+    mode="sha"
+  elif option in ("-z", "--debug"):
+    debug.setLevel(1)
+
+debug("Arguments left:  " + str(args), 3)
+if len(args) > 0:
+  passwd=args[0]
+  #print passwd
+else:
+  print("Error:  You must provide a password in clear text.")
+  usage()
+
+if mode == "crypt":
+  print(hdpasswd.crypt(passwd))
+elif mode == "md5":
+  print(hdpasswd.md5(passwd))
+elif mode == "sha":
+  print(hdpasswd.sha(passwd))

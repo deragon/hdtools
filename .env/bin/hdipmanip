@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import HDLibNetwork
+
+number=HDLibNetwork.dottedQuadToNum("0.0.255.255")
+number=HDLibNetwork.dottedQuadToNum("10.255.255.255")
+print(hex(number))
+print(hex(10))
+
+print("netmask = " + hex(HDLibNetwork.makeMask(24)))
+print("aa => " + hex( 0xa0000000 & HDLibNetwork.makeMask(24) ))
+print("aa => " + hex( 0x000000a0 & 0x0000005f ))
+print(hex(HDLibNetwork.makeMask(8)))
+print(hex(HDLibNetwork.makeMask(16)))
+
+print("------------------------------------------------------------")
+ref=HDLibNetwork.dottedQuadToNum("172.16.0.0")
+print("ref:      " + "0x%0.8X" % ref)
+number=HDLibNetwork.dottedQuadToNum("172.16.0.0")
+print("number1:  " + "0x%0.8X" % number)
+number=HDLibNetwork.dottedQuadToNum("172.31.0.0")
+print("number2:  " + "0x%0.8X" % number)
+number=HDLibNetwork.dottedQuadToNum("172.7.0.0")
+print("number3:  " + "0x%0.8X" % number)
+
+number=HDLibNetwork.dottedQuadToNum("172.16.0.0")
+print("number:   " + "0x%0.8X" % number)
+
+netmask=HDLibNetwork.makeMask(20)
+print("netmask:  " + "0x%0.8X" % netmask)
+
+revmask=netmask ^ 0xFFFFFFFF
+print("revmask:  " + "0x%0.8X" % revmask)
+
+orMask=(ref | netmask) ^ 0xFFFFFFFF
+print("or mask:  " + "0x%0.8X" % orMask)
+result=(number & revmask | orMask ) == revmask
+
+result = (number & revmask) == (ref & revmask)
+
+print("or mask:  " + "0x%0.8X" % orMask)
+print("number:   " + "0x%0.8X" % number)
+print("result:   " + "0x%0.8X" % result)

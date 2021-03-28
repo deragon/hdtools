@@ -1,0 +1,27 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Returning immediatly the screen to normal orientation.
+xrandr -o normal
+
+# Permenantly freezing the setting.
+gsettings set org.gnome.settings-daemon.plugins.orientation     active           false
+gsettings set org.gnome.settings-daemon.peripherals.touchscreen orientation-lock true
+
+cat <<EOM
+Screen orientation set back to normal.
+
+Gnome configuration changed to disable the automatic screen orientation
+change.  You need to logout / login for this to take effect, apparently
+(18.04).
+
+Refs:
+
+  https://askubuntu.com/questions/874487/ubuntu-gnome-16-10-screen-orientation-spontaneously-changes
+EOM

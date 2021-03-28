@@ -1,0 +1,29 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Change the ownership of a file to oneself even if not root, by copying the
+# original file.  This script assumes you have the rights to move, copy and
+# delete files in the targetted directory.
+
+SCRIPTNAME=`basename ${0}`
+for FILE in $*; do
+  if [ -e "${FILE}" ]; then
+    mv ${FILE} ${FILE}.${SCRIPTNAME}.tmp
+    if (($? != 0)); then
+      echo "Error:  Renaming ${FILE} to ${FILE}.${SCRIPTNAME}.tmp failed.  Aborting."
+      exit 1
+    fi
+    cp -p ${FILE}.${SCRIPTNAME}.tmp ${FILE}
+    if (($? != 0)); then
+      echo "Error:  Copying ${FILE}.${SCRIPTNAME}.tmp to ${FILE} failed.  Aborting."
+      exit 2
+    fi
+    rm -f ${FILE}.${SCRIPTNAME}.tmp
+  fi
+done

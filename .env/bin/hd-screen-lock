@@ -1,0 +1,25 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From: https://people.gnome.org/~mccann/gnome-screensaver/docs/gnome-screensaver.html#gs-method-Lock
+# From:  http://unix.stackexchange.com/questions/107787/how-can-i-trigger-the-screensavers-locking-feature-using-d-bus-from-the-command
+
+dbus-send \
+  --session \
+  --dest=org.gnome.ScreenSaver \
+  --type=method_call \
+  --print-reply \
+  --reply-timeout=1000 \
+  /org/gnome/ScreenSaver \
+  org.gnome.ScreenSaver.Lock
+
+# Other options:
+#  /org/gnome/PowerManager \
+#  org.gnome.PowerManager.Suspsend
+#  org.gnome.PowerManager.Hibernate

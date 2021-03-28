@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+CMD="/setup*.exe --no-admin -q -P wget -P gcc-g++ -P make -P diffutils -P libmpfr-devel -P libgmp-devel -P libmpc-devel"
+cat <<EOM
+Now installing all necessary packages to compile in C and C++.
+
+The list of packages to installed was taken from:
+
+  https://preshing.com/20141108/how-to-install-the-latest-gcc-on-windows/
+
+Now launching:  ${CMD}
+
+EOM
+
+${CMD}

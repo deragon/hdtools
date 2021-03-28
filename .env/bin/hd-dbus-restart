@@ -1,0 +1,21 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From:
+#
+#   http://polishlinux.org/linux/ubuntu/ubuntu-704-feisty-fawn-cool-fresh-and-unstable/
+#
+# /etc/init.d/dbus restart — this command is probably well-known to all
+# Feisty users. NetworkManager cannot detect any network? The computer
+# fails to hibernate or suspend? GNOME acts unstable? Restarting DBUS
+# service is a magic cure to all. It’s great but… doesn’t the fact that
+# I have to complain about it disqualifies the distribution as a
+# “regular user” friendly? Well, yes it does.
+
+/etc/init.d/dbus restart

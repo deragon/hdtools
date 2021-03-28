@@ -1,0 +1,20 @@
+#!/usr/bin/python
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From
+# http://unix.stackexchange.com/questions/32182/simple-command-line-http-server
+
+
+Code non terminé.  Il faudrait vérifier la version de python
+puis exécuté le bon module, ou simplement faire un try:  except: autour de
+chacun des appels.
+
+
+import SimpleHTTPSServer  # Python 2
+import http.server        # Python 3

@@ -1,0 +1,39 @@
+#!/usr/bin/python
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import subprocess
+import re
+import sys
+
+######################################################################
+# ENVIRONMENT VARIABLES
+
+# Exporting only variables that start with an alphabetic character.
+# We try to avoid exporting variables like $_, $1, etc...
+regexp = re.compile("^([a-zA-Z]+\w*)=(.+)")
+environment = subprocess.getoutput( \
+                "bash -c \". " + sys.argv[1] + "; env\"").split("\n")
+
+for line in environment:
+  #print "line* " + line
+
+  # Comment by Hans Deragon, 2003/08/14, 12:23 EDT
+  # Can't get the #@%$@#$ following line to work.  Using mo.group()
+  # until I discover what the problem is...
+  #print "subs* " + regexp.sub('setenv \1 \"\2\"\n', line, 1)
+
+  mo = regexp.search(line)
+  if mo != None:
+    print("setenv " + mo.group(1) + " \"" + mo.group(2) + "\";")
+
+######################################################################
+# ALIASES
+
+# Comment by Hans Deragon, 2003/08/14, 13:13 EDT
+# No aliases converted yet.

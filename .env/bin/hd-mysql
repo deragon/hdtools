@@ -1,0 +1,160 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Arrays cannot be exported.  Thus this script will not get the
+# array from the parent.  We must source the file defining the
+# ${HD_DB} array.
+for SCRIPT in "${HOME}/.hans.deragon-private/"*.sh; do
+  . "${SCRIPT}"
+done
+
+# Works with symlinks
+SCRIPT_NAME="${0/*\/}" # Basename, efficient form
+SCRIPT_PATH_REL=`dirname "${0}"`
+SCRIPT_PATH_ABS=`( \cd "${SCRIPT_PATH_REL}" && pwd )`
+#echo "HD-MYSQL - DEBUG >>${!HD_DB[*]}<<"
+usage()
+{
+  IFS=$(echo -en " 	\n\b")    # Set IFS so if entries in $@ have spaces,
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-c <configuration>] [-d <database>] [-e|-i] [<file.sql>]
+                 [-z] [-h]
+
+  Valid configurations:  ${!HD_DB[*]}
+
+  Arguments:
+
+    -c <configuration>          Define configuration to use.
+
+    -s <schema>                 Define schema to use.
+
+    -d                          Dump schema to file with current timestamp.
+                                <file.sql> will be ignored if provided.
+
+    -i                          Import dump file into schema.
+
+    <file.sql | SQL statement>  SQL file to execute or import.
+
+    -v                          Show configuration details.
+                                WARNING:  PASSWORD ARE BEING SHOWN
+
+    -z                          Dry-run.  WARNING:  Password are shown on screen.
+EOM
+}
+
+execute()
+{
+  CMD="$1"
+
+  if (( ${DRYRUN} )); then
+    echo "DRY-RUN:  ${CMD}"
+  else
+    eval "${CMD}"
+  fi
+}
+
+CONFIGURATION="default"
+
+IMPORT=0
+DUMP=0
+DRYRUN=0
+VIEW_CONF=0
+while getopts "c:s:divhz" OPTCMD; do
+  case "${OPTCMD}" in
+    "c")    CONFIGURATION="${OPTARG}";;
+    "s")    SCHEMA="${OPTARG}";
+            EXTRA_ARGS="${EXTRA_ARGS} --database=${SCHEMA}";;
+    "d")    DUMP=1;;
+    "i")    IMPORT_FILE=1;;
+    "z")    DRYRUN=1;;
+    "v")    VIEW_CONF=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+if (( VIEW_CONF )); then
+cat <<EOM
+You asked to view all configuration details
+
+WARNING:  PASSWORDS WILL BE SHOWN.
+
+EOM
+  echo -n "Do you still wish to proceed (y/n) "
+  read -n 1 ANSWER
+  echo
+
+  if [ "${ANSWER/[y|Y]*/detected}" = "detected" ]; then
+    echo -e "\nConfiguration:\n\n${HD_DB[*]}"
+  fi
+
+  exit 0
+fi
+
+eval ${HD_DB[${CONFIGURATION}]}
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+if (( "${DUMP}" == 0 )); then
+  ARG="${1}"
+  if [ -z "${ARG}" ]; then
+    echo "SQL input file required as argument.  Aborting."
+    usage
+    exit 1
+  fi
+
+  if (( "${IMPORT}" == 0 )); then
+    CMDBASE="mysql \
+      -vvv \
+      --host=\"${HD_DB_HOST}\" \
+      --port=\"${HD_DB_PORT}\" \
+      --user=\"${HD_DB_USER}\" \
+      --password=\"${HD_DB_PASSWORD}\" \
+      --local-infile=1 \
+      --show-warnings \
+      ${EXTRA_ARGS} "
+
+    if [ -r "${ARG}" ]; then
+      CMD="${CMDBASE} < \"${ARG}\""
+    else
+      CMD="echo \"${ARG}\" | ${CMDBASE}"
+    fi
+
+    execute "${CMD}"
+  else
+    CMD="mysqlimport \
+      -vvv \
+      --host=\"${HD_DB_HOST}\" \
+      --port=\"${HD_DB_PORT}\" \
+      --user=\"${HD_DB_USER}\" \
+      --password=\"${HD_DB_PASSWORD}\" \
+      \"${SCHEMA}\" \
+      \"${ARG}\""
+
+    execute "${CMD}"
+  fi
+else
+  HDTIMESTAMPFILENAME=`date +"${HD_TIMESTAMP_FORMAT_ISO8601}"`
+  DUMP_FILE="mysql-${SCHEMA}-${HDTIMESTAMPFILENAME}.dump"
+  CMD="mysqldump \
+    -vvv \
+    --host=\"${HD_DB_HOST}\" \
+    --port=\"${HD_DB_PORT}\" \
+    --user=\"${HD_DB_USER}\" \
+    --password=\"${HD_DB_PASSWORD}\" \
+    --comments \
+    \"${SCHEMA}\" \
+    >\"${DUMP_FILE}\""
+
+  execute "${CMD}"
+
+  if (( ! ${DRYRUN} )); then
+    echo "Dump file:  ${DUMP_FILE}"
+  fi
+fi

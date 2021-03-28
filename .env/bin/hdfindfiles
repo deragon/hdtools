@@ -1,0 +1,95 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# Script inspired from:
+# https://stackoverflow.com/questions/5566310/how-to-recursively-find-and-list-the-latest-modified-DIRECTORIES-in-a-directory-with-s
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m  Show the earliest or latest DIRECTORIES in descending orders of the date of their last modification.
+
+Usage:  ${SCRIPT_NAME} [-l|-e] [-f] [-n <# of DIRECTORIES>] [-h] <directory>+
+
+  -l  latest (default)
+  -e  earliest
+  -f  Show only file names, one per line.
+  -n  Number of DIRECTORIES to show (default 20)
+      Set to 0 for NO LIMITS.
+  -h  Display this help text.
+"
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+NUMBER="20"
+TYPE="latest"
+FILENAMES_ONLY_FILTER=""
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "lfen:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "l")    TYPE="latest";;
+    "f")    FILENAMES_ONLY_FILTER="| cut -d ' ' -f4-";;
+    "e")    TYPE="earliest";;
+    "n")    NUMBER="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if DIRECTORIES in $@ have spaces,
+                          # we separate DIRECTORIES properly.
+
+DIRECTORIES=("$@") # If you want the number of elements of $@, use $#
+
+(( ${#DIRECTORIES[*]} == 0 )) && DIRECTORIES="."
+
+
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ! [[ "${NUMBER}" =~ ^[0-9]+$ ]]; then
+  ERRORS="${ERRORS} - Number of DIRECTORIES to show (${NUMBER}) is not a positive integer.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+(( NUMBER == 0 )) && NUMBER=2147483648 # 2**31, max interger
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+if [ "${TYPE}" == "latest" ]; then
+  HEADTAIL_CMD="head"
+else
+  HEADTAIL_CMD="tail"
+fi
+
+eval "find \"${DIRECTORIES[@]}\" -type f -print0 | xargs -0 stat --format '%Y :%y %n' | sort -nr | cut -d: -f2- | ${HEADTAIL_CMD} -n "${NUMBER}" ${FILENAMES_ONLY_FILTER}"

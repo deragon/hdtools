@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+shopt -s expand_aliases
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Usage:  ${SCRIPT_NAME} [-w] [-h] <grep args>+
+
+  -w  Wide disply, no truncation.
+  -h  Display this help text.
+"
+}
+
+MAXCOL=$(tput cols)
+unset GREP_ARGS
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "wh" OPTCMD; do
+  case "${OPTCMD}" in
+    "w")  MAXCOL=65536;;
+    "h")  usage; exit 1;;
+    "*")  GREP_ARGS="${GREP_ARGS} ${OPTCMD} ${OPTARG}";;  # Not tested. Not sure if this works.
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+GREP_ARGS="${GREP_ARGS}$@" # If you want the number of elements of $@, use $#
+
+if [ "${HD_OS_FAMILY,,}" = "linux" ]; then
+  #echo "USER       PID  PPID S %MEM %CPU COMMAND"
+  PS='ps'
+  OUTPUT=`${PS} -e --format "user pid ppid s nice etime %mem %cpu args" --cols ${MAXCOL}`
+elif [ "${HD_OS_FAMILY,,}" = "cygwin" ]; then
+  #echo "     UID     PID    PPID TTY     STIME COMMAND"
+  PS='procps'
+  #OUTPUT=`${PS} -e --format "user pid ppid s etime %mem %cpu args" --cols ${MAXCOL}`
+  OUTPUT=`${PS} -e --format "user pid ppid s etime %mem %cpu args"`
+elif [ "${HD_OS_FAMILY}" = "MinGW" ]; then
+  PS='ps'
+  OUTPUT=`${PS}`
+elif [ "${HD_OS_FAMILY}" = "Darwin" -o "${HD_OS_FAMILY}" = "AIX" ]; then
+  #echo "     UID     PID    PPID   C    STIME    TTY  TIME CMD"
+  PS='ps'
+  OUTPUT=`${PS} -ef`
+elif [ "${HD_OS_FAMILY}" = "Solaris" ]; then
+  # Setting ps to /bin/ps because for Solaris, we want to avoid having the
+  # old /usr/ucb/ps being called.
+  PS='ps'
+  [ -x /bin/ps ] && PS="/bin/ps"
+
+  #echo "S   PID  PPID     USER %MEM  RSS  VSZ COMMAND"
+  OUTPUT=`${PS} -A -o "s pid ppid user pmem rss  vsz args" | cut -c1-${MAXCOL}`
+else
+  echo "ERROR:  Platform '${HD_OS_FAMILY}' not supported.  Aborting."
+  exit 1
+fi
+
+IFS=$'\n' OUTPUT_ARRAY=($(echo -e "${OUTPUT}" ))
+echo ${OUTPUT_ARRAY[0]}  # Output of the header line.
+
+IFS=''
+#OUTPUT=$(echo "${OUTPUT}" | egrep --extended-regexp --color=always ${GREP_ARGS} | cut -c1-${MAXCOL})
+#echo "${OUTPUT}" | perl -ne "print unless /^(\w+ +$$.*|\w+ +\d+ +$$.*)$/"
+
+# First egrep is to remove this 'psg' process from the output.
+#
+# Command 'cut' must not process any escape code, else it might cut one in the
+# middle, breaking up the code and screwing up the display.  Instead, 'grep'
+# without colors, pass through 'cut' and then 'grep' again to add colors.
+echo "${OUTPUT}" | egrep --extended-regexp -v " +$$ +" | egrep --extended-regexp --color=no ${GREP_ARGS} | cut -c1-${MAXCOL} | egrep --extended-regexp --color=always ${GREP_ARGS}

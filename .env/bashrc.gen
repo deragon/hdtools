@@ -1,0 +1,145 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# INSTRUCTIONS
+# ══════════════════════════════════════════════════════════════════════════════
+#
+#   Specific environment for Hans Deragon.  If you log in from Hans's
+#   computer, his environment will be automatically loaded.  Else, this
+#   user's environment will remain virgin and you would need to manually
+#   type "hdenv" to load Hans's environment.
+#
+#   Add the follow in the user's .bashrc to enable this environment:
+#
+#   export HD_ENV_LOAD="1"  # To force loading if user is not "Hans".
+#   export HD_CORP_IDENTIFIER="<corp identifier here>"
+#   export HDENVDIR="${HOME}/.hans.deragon/.env"
+#   [ -d ${HDENVDIR} ] && . "${HDENVDIR}/bashrc.gen"
+#
+#
+#   On systems where loading all the time is not welcomed, the alias
+#   gohd can be created as below.  It will only be called automatically
+#   if the SSH connection comes from a known host, Hans's workstation.
+#
+#   # ----------------------------------------------------------------------
+#   # Alias pour charger l'environnement de Hans Deragon.  N'affecte en rien
+#   # l'environnement s'il n'est pas appelé.
+#   alias gohd="source /home/deragonh/.hans.deragon/.desjardins/gohd"
+#   [ "$(echo "$(host ${SSH_CLIENT/ */})" | sed -E 's/.*(vl[^\.]+).*/\1/g')" = "vl146562" ] && gohd
+
+
+
+# FUNCTIONS
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Setup really minimum variables to get some tools working properly like vim.
+hdenv_minimum()
+{
+  export HDENVDIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+  export HD_CORP_DIR="${HDENVDIR/\/.env}/.${HD_CORP_IDENTIFIER}"
+
+  if [ ! -z "${HD_CORP_IDENTIFIER}" -a -z "${HD_CORP_DIR}" ]; then
+    tty -s && echo "bashrc.gen - Error:  .${HD_CORP_DIR} (\${HD_CORP_DIR}) does not exist."
+    return 2
+  fi
+
+  export HDVIM="${HDENVDIR}/vim"
+}
+
+hdenv()
+{
+  if (( ! $? )); then
+    # Loading private files
+    if [ -d "${HOME}/.hans.deragon-private/"*.sh ]; then
+      for SCRIPT in "${HOME}/.hans.deragon-private/"*.sh; do
+        . "${SCRIPT}"
+      done
+    fi
+
+    if [ -z "${HDENVDIR}" ]; then
+      echo "bashrc.gen - Error:  '${HDENVDIR}' does not exist."
+      return 3
+    else
+      source "${HDENVDIR}/sys.lib1.dash"
+
+      if [ "${HD_PERSONAL}" == "1" ]; then
+        source "${HDENVDIR}/env.loadall.sh"
+      else
+        #echo HD_CORP_IDENTIFIER=${HD_CORP_IDENTIFIER}
+        #echo HD_CORP_DIR=${HD_CORP_DIR}
+        for FILE in \
+          "${HD_CORP_DIR}/env.noarch.pre.sh" \
+          "${HDENVDIR}/env.loadall.sh" \
+          "${HD_CORP_DIR}/env.noarch.post.sh" \
+          "${HD_CORP_DIR}/env.noarch.private.sh"; do
+          [ -r "${FILE}" ] && source "${FILE}"
+        done
+      fi
+    fi
+  else
+    return $?
+  fi
+}
+
+# MAIN
+# ══════════════════════════════════════════════════════════════════════════════
+
+#echo "bashrc.gen called."
+
+[ -r "${HDENVDIR}/personal/env.personal.detect.sh" ] && \
+  source "${HDENVDIR}/personal/env.personal.detect.sh"
+
+source "${HDENVDIR}/env.corp.sh"
+
+hdenv_minimum  # Loading minimal configuration for all processes.
+
+# Check if there is an interactive session.  If not, probably we are called by
+# scp or rsync.  Having the environment loaded during scp breaks the protocol
+# as stuff is sent to stdout, which should not be.
+
+# TESTING FOR INTERACTIVE SHELL WITH PS1 IS NOT RELIABLE.  Use 'tty' instead.
+#[ -z "${PS1}" ] && return  # More efficient test; same test used in /etc/profile.
+! tty -s && return  # Less efficient since tty spawns a new process.
+
+# To be evaluated with ((${HD_BASH_INTERACTIVE})).
+export HD_BASH_INTERACTIVE=1 # Terminal is interactive (1 == true)
+
+# In theory, there would be another way to detect if it is interactive, but
+# at startup, bash flags are not setup so the following trick would not
+# work:
+#
+# $- returns bash flags.  On a normal running interactive bash, the content
+# of this variable would be "himBH".
+#
+# See:  http://defindit.com/readme_files/bash_examples.html
+#
+# i stands for interactive, meaning that the terminal is interactive.
+#
+#[ -z "${-/*i*}" ] && return
+
+
+# Permanently disable bracketed paste.
+# See:  https://askubuntu.com/questions/662222/why-bracketed-paste-mode-is-enabled-sporadically-in-my-terminal-screen
+bind 'set enable-bracketed-paste off'
+
+# Check if current ${USER} is one that can be found in
+# ${HD_USERS_EQUIVALENCE} or if the environment need to be loaded
+# by force.
+TMP_NOMINAL_USER="${USER,,}"                # Lowercase.
+TMP_NOMINAL_USER="${TMP_NOMINAL_USER##su}"  # Removing 'su' prefix for sudo users.
+
+if [ "${HD_ENV_LOAD}" = "1" -o "${HD_PERSONAL}" = "1" ] ||
+   [[ "${HD_USERS_EQUIVALENCE[@]}" =~ "${TMP_NOMINAL_USER}" ]]; then
+
+  # Only load the full environment if the session is interactive.
+  (( ${HD_BASH_INTERACTIVE} )) && hdenv
+fi
+
+unset TMP_NOMINAL_USER

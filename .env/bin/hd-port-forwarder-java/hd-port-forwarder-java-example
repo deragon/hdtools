@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Source:  http://code.google.com/p/portforward/
+
+java -classpath commons-logging.jar:portforward.jar \
+  org.enterprisepower.net.portforward.Forwarder \
+  20389 localhost:10389

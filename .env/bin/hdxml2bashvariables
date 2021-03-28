@@ -1,0 +1,64 @@
+#!/bin/bash -x
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# IDEA:  For better performance, this script could be rewritten in two
+#        scripts, with most of it in python to process the result of xsltproc.
+
+SCRIPT_NAME="${0/*\/}" # Basename, efficient form,
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h] <XSL file> <XML file #1> [<XML file #2>...]
+
+  -h      Display this help text.
+
+This script converts XML files with the provided XSL file and generates
+bash variable assignement statements containing the values found within
+the XML files.
+
+To make use of this script, it must actually be sourced, like so:
+
+. "${SCRIPT_NAME}"
+EOM
+}
+
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*) usage; exit 1;;
+  esac
+done
+
+
+ENTRIES=`xsltproc $@ | tr '|' '\n' | perl -ne 'print if /.*?=".*?"/'`
+IFS="
+"
+
+#echo "${ENTRIES}"
+
+# ENTRIES contains lines of format "<variable>=<value>"
+# However, the <variables> may contain invalid characters for Bash variable
+# names.  We thus convert them to '_'.
+for ENTRY in ${ENTRIES}; do
+
+  VARIABLE="${ENTRY/=*/}"
+  VALUE="${ENTRY#*=}"
+
+  # Removing trailing spaces and replacing any invalid character for
+  # bash variables by '_'.
+  VARIABLE=`echo "${VARIABLE}" | perl -pe 's/\s+$//g;s/[^\w|_]/_/g'`
+
+  # Variable name now put to uppercase.
+  VARIABLE=`echo "${VARIABLE}" | tr 'a-z' 'A-Z'`
+
+  CMD="export ${VARIABLE}=${VALUE}"
+  echo -e "${CMD}"
+  eval "${CMD}"
+
+done

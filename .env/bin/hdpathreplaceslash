@@ -1,0 +1,74 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+SLASH_REPLACEMENT='¤'
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-r <character>] | [-s] | [-c] [-h] <path>+
+
+  -r <character>  Set replacement character to provided character.
+                  <character> can actually be a string of more than one
+                  character.
+  -c              Set replacement character to '¤' (U+00A4 Currency)
+  -s              Set replacement character to '∕' (U+2215 Division Slash)
+  -h              Display this help text.
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "r:csh" OPTCMD; do
+  case "${OPTCMD}" in
+    "r")    SLASH_REPLACEMENT="${OPTARG}";;
+    "c")    SLASH_REPLACEMENT='¤';;  # U+00A4 Currency
+    "s")    SLASH_REPLACEMENT='∕';;  # U+2215 Division Slash
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if INPUT_PATHS in $@ have spaces,
+                          # we separate INPUT_PATHS properly.
+
+INPUT_PATHS=("$@") # If you want the number of elements of $@, use $#
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#INPUT_PATHS[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one argument.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+for INPUT_PATH in ${INPUT_PATHS[@]}; do
+  echo "${INPUT_PATH//\//${SLASH_REPLACEMENT}}"
+done

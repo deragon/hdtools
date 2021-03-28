@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import os.path
+import sys
+import re
+
+from datetime import datetime
+
+import argparse
+from argparse import RawTextHelpFormatter
+
+import socket
+from contextlib import closing
+
+scriptName=os.path.basename(sys.argv[0])
+
+try:
+  scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
+except IndexError:
+  scriptNameBase=scriptName # There is no extension.
+
+
+
+# PARSING ARGUMENTS
+# ────────────────────────────────────────────────────────────────────────────
+#
+# See:  http://docs.python.org/2/library/argparse.html
+#
+# WARNING:
+#
+# - and -- options are always optional according to argparse.  If you
+# want mandatory arguments, they should not be prefixed with - or --.
+#
+# http://stackoverflow.com/questions/24180527/argparse-required-arguments-listed-under-optional-arguments
+
+
+parser = argparse.ArgumentParser(description="""
+
+Test if a port is reachable.  Equivalent of 'nc -zv <args>'.
+
+Return codes:
+
+      0   The port is opened.
+      1   The port is closed.
+    128   An error occured.
+
+For example, run:
+
+    """ + scriptNameBase + """ 1.2.3.4
+    """ + scriptNameBase + """ somehostname
+    """ + scriptNameBase + """ somehostname 1234
+    """ + scriptNameBase + """ somehostname:1234
+
+""", formatter_class=RawTextHelpFormatter)
+
+
+parser.add_argument('hostport', metavar='<ip, hostname with or without port>',
+                    type=str,  nargs='+', help='IP, hostname with or without port')
+
+parser.add_argument('-t', '--timeout', dest='timeout', default=2, required=False,
+                    help='Timeout expressed in seconds.  Default is 2.')
+
+parser.add_argument('-s', '--silence', action="store_true", default=False, required=False,
+                    help='No ouptput.  Be silenced.  Default is to print to stdin results.')
+
+args = parser.parse_args()
+
+errors=""
+
+port = None
+pattern = re.compile("([^:]+):*(.+)*")
+matches = pattern.match(args.hostport[0])
+if matches != None:
+    hostname=matches.group(1)
+    port=matches.group(2)
+
+if not port:
+    try:
+        port=args.hostport[1]
+    except IndexError:
+        errors += "\n  - The port must be an integer.  You provided '" + str(args.hostport[1]) + "'"
+
+if port:
+    try:
+        port = int(port)
+    except ValueError:
+      errors += "\n  - The port must be an integer.  You provided '" + str(port) + "'"
+
+if args.timeout:
+    try:
+        args.timeout = int(args.timeout)
+    except ValueError:
+      errors += "\n  - The timeout must be an integer, expressing seconds."
+
+
+#if args.hardlink == True and args.softlink == True:
+  #errors += "\n  --hardlink and --softlink are mutually exclusive.  You must chose one."
+
+if len(errors) > 0:
+    print("\x1B[1;37;41mERROR:\x1B[0m  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
+    sys.exit(128)
+
+
+# Main
+# ════════════════════════════════════════════════════════════════════════════
+with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+    sock.settimeout(args.timeout)  # Seconds.
+
+    if not args.silence:
+        print("Testing:  " + hostname + ":" + str(port))
+
+    if sock.connect_ex((hostname, port)) == 0:
+        if not args.silence:
+            print("Port is open")
+
+        # Experiment sending stdin like netcat (nc) would do.
+        # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
+        # that HTTPS is expected and this code will not work.
+        # See:  https://stackoverflow.com/questions/31599634/malformed-http-response-with-docker-private-registry-v2-behind-an-nginx-proxy
+
+        # print(sock.sendmsg(sys.stdin.buffer))
+        # returnTuple=sock.recvmsg(2**16, 2**16)
+        # print(returnTuple)
+        # print(returnTuple[0].decode('utf-8'))
+
+        sys.exit(0)
+    else:
+        if not args.silence:
+            print("Port is not open")
+        sys.exit(1)

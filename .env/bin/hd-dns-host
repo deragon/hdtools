@@ -1,0 +1,110 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+help()
+{
+  cat <<EOM
+
+This script will check multiple entries and try to resolve them, indicating
+a success or failure.
+
+Write a script following the example.
+
+Each entry has the format:
+
+  DNS name[|DNS server to interrogate][# Comment]
+
+Example script:
+
+  >>>>
+  FQDNS="
+  web-ext.axa.ca|simtl104.axa-canada.intraxa
+  web-extappselect.axa.ca|simtl104.axa-canada.intraxa
+  web-intent1.axa-canada.com
+  intcwebapps.axa-canada.com
+  web-supswt.axa-canada.com
+  web-intent02.axa-canada.com  # Pas sûr que l'on voulait celui-ci.
+  web-frmacm.axa.ca          # Pas de demande encore faite.  101119
+  web-frmacm.axa-canada.com  # Pas de demande encore faite.  101119
+  "
+
+    echo -e "${FQDNS}" | hd-dns-host
+  <<<<
+EOM
+}
+
+export SCREEN_COLOR_RED="\e[1;31m"
+export SCREEN_COLOR_GREEN="\e[1;32m"
+export SCREEN_COLOR_DEFAULT="\e[0;00m"
+
+set -x
+DNSLOOKUP_perform_cygwin()
+{
+  FQDN=$1
+  DNSSERVER_NAME=$2
+
+  local IFS='
+'
+
+  DNS_HOSTNAME="${FQDN/.*}"
+  DNS_DOMAIN="${FQDN#${DNS_HOSTNAME}.}"
+
+  if [ "${DNS_DOMAIN}" = "axa.ca" -a -z "${DNSSERVER_NAME}" ]; then
+    DNSLOOKUP_perform_cygwin "${FQDN}" "simtl104.axa-canada.intraxa"
+    unset DNSSERVER_NAME
+  fi
+
+  CMD="host ${FQDN} ${DNSSERVER_NAME}"
+  echo "CMD=${CMD}"
+  DNSLOOKUP_OUTPUT=`eval "${CMD}"`
+
+  # Remove the lines describing the DNS server.  We are only interested
+  # with the information regarding the host we are querying for.
+  local TMP_OUTPUT=""
+  #echo -e "${DNSLOOKUP_OUTPUT}"
+  for LINE in ${DNSLOOKUP_OUTPUT}; do
+    if [ -z "${TMP_OUTPUT}" ]; then
+      TMP_OUTPUT="${LINE}"
+    else
+      TMP_OUTPUT="${TMP_OUTPUT}\n${LINE}"
+    fi
+    [ -z "${LINE}" ] && unset TMP_OUTPUT
+  done
+  #echo -e "${DNSLOOKUP_OUTPUT}"
+  DNSLOOKUP_OUTPUT="${TMP_OUTPUT}"
+  #echo -e "${DNSLOOKUP_OUTPUT}"
+
+  #DNSLOOKUP_OUTPUT=(`DNSLOOKUP ${FQDN} ${DNSSERVER_NAME}`)
+  #echo "DNSLOOKUP_OUTPUT=${DNSLOOKUP_OUTPUT}"
+  # Fetching Default DNS.
+  echo -e "${DNSLOOKUP_OUTPUT}" | perl -pe "s/is an alias for/ CNAME/g; s/has address//g; s/\.$//g; s/ +/\t/g; s/\.([a-z]\S+)/\t\1/g"
+
+  return
+}
+
+# IMPORTANT:
+#
+# This script has only been tested against Windows NT DNSLOOKUP.exe command.
+# Adaptation is certainly required for Linux and Solaris.
+#set -x
+while read FQDNENTRY; do
+  FQDNENTRY="${FQDNENTRY/\#*}"
+  [ -z "${FQDNENTRY}" ] && continue
+  FQDN="${FQDNENTRY/|*}"
+  DNSSERVER="${FQDNENTRY/*|}"
+  [ "${FQDN}" = "${DNSSERVER}" ] && DNSSERVER=""
+  if [ -z "${DNSSERVER}" ]; then
+    DNSSERVER_DESC="using default DNS server"
+  else
+    DNSSERVER_DESC="via DNS server"
+  fi
+  #echo "Probing ${FQDN} on ${DNSSERVER}"
+  DNSLOOKUP_perform_cygwin "${FQDN}" "${DNSSERVER}"
+  break
+done

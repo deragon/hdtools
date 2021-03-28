@@ -1,0 +1,49 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+[ -z "${DMIDECODE}" ] && DMIDECODE="dmidecode"
+
+echo "============================================================"
+echo "BIOS INFO"
+echo
+if [ -r /dev/mem ]; then
+  for key in \
+    'bios-vendor' \
+    'bios-version' \
+    'bios-release-date' \
+    'system-manufacturer' \
+    'system-product-name' \
+    'system-version' \
+    'system-serial-number' \
+    'system-uuid' \
+    'baseboard-manufacturer' \
+    'baseboard-product-name' \
+    'baseboard-version' \
+    'baseboard-serial-number' \
+    'baseboard-asset-tag' \
+    'chassis-manufacturer' \
+    'chassis-type' \
+    'chassis-version' \
+    'chassis-serial-number' \
+    'chassis-asset-tag' \
+    'processor-family' \
+    'processor-manufacturer' \
+    'processor-version' \
+    'processor-frequency'; do
+
+    # Because of multiple output, the output need to be processed by
+    # two separte calls to perl;  could not combine them into one, it
+    # simply does not work.
+    OUTPUT=`${DMIDECODE} -s ${key} 2>/dev/null | \
+      perl -pe 's/\s+$/<< >>/g' | perl -pe 's/(<< >>)+$//g'`
+    [ ! -z "${OUTPUT}" ] && echo "${key}: >>${OUTPUT}<<"
+  done
+else
+  echo "Error:  no read permission to /dev/mem.  Try the command as root."
+fi

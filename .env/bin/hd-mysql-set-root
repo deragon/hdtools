@@ -1,0 +1,36 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+PASSWORD=$1
+
+if [ -z "${PASSWORD}" ]; then
+  while ((1)); do
+    echo "Please enter the root password."
+    read -e -s PASSWORD
+
+    echo "Please repeate it again."
+    read -e -s PASSWORD_VERIFY
+
+    if [ "${PASSWORD}" = "${PASSWORD_VERIFY}" ]; then
+      echo "Password accepted."
+      break
+    else
+      echo "Passwords do not match.  Please retry."
+    fi
+  done
+fi
+
+/etc/init.d/mysql stop
+mysqld_safe &
+
+mysqladmin -u root password "${PASSWORD}"
+mysqladmin -u root -h `hostname` password "${PASSWORD}"
+
+kill %1
+/etc/init.d/mysql start

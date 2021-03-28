@@ -1,0 +1,84 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-i] [-b] [-h] <file>+
+
+    Defautl sends the output on STDOUT.
+
+    -i  Modify the file inline.  No backup created.
+    -b  Like inline, except backup file (*.bak) is created if none already exists.
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+INLINE=0
+BACKUP=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "bih" OPTCMD; do
+  case "${OPTCMD}" in
+    "b")    BACKUP=1;;
+    "i")    INLINE=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#FILES[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one argument.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+# Running through remaining arguments
+for FILE in ${FILES[@]}; do
+  # From:  https://stackoverflow.com/questions/21275928/how-to-format-xml-document-in-linux
+  if (( INLINE == 1 || BACKUP == 1 )); then
+    [ ! -e "${FILE}.bak" ] && mv "${FILE}" "${FILE}.bak"
+    xmllint -format -recover "${FILE}.bak" >"${FILE}"
+    (( INLINE == 1 )) && rm "${FILE}.bak"
+  else
+    if (( "${#FILES[*]}" > 2 )); then
+      let NBOFCOLS=`tput cols`-${#FILE}
+
+      # Print message, followed by spaces required to erase the rest of
+      # the line.
+      printf "%s%-${NBOFCOLS}s" "${FILE}" ""
+    fi
+    xmllint -format -recover "${FILE}"
+  fi
+done

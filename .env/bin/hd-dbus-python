@@ -1,0 +1,27 @@
+#!/usr/bin/python
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import inspect
+
+try:
+  import dbus
+  dbusSession=dbus.SessionBus()
+  powerManagement=dbusSession.get_object("org.freedesktop.PowerManagement",
+                                         "/org/freedesktop/PowerManagement")
+  members=inspect.getmembers(powerManagement)
+  for member in members:
+    print str(member)
+
+  powerManagement.("org.freedesktop.PowerManagement.Suspend")
+  #powerManagement.org.freedesktop.PowerManagement.Suspend
+  #"org.freedesktop.PowerManagement.SuspendA"
+
+  #oDbus
+except ImportError:
+  print "Dbus bindings not available.  Please install python-dbus package."

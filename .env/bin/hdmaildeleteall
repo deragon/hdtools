@@ -1,0 +1,52 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-h]
+
+  -d  Dry-run.
+  -e  Execute command.  Default is dry-run.
+  -h  Display this help text.
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=1
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "deh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "e")    DRYRUN=0;;  # Run in execute mode.
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+if (( DRYRUN )); then
+  echo "DRY-RUN:  No mail deleted."
+else
+  # From:  https://stackoverflow.com/questions/7076186/how-do-i-purge-a-linux-mail-box-with-huge-number-of-emails
+  echo 'd *' | mail -N
+  echo "All mail deleted."
+fi

@@ -1,0 +1,181 @@
+#!/bin/bash -e
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+TIMESTAMP_START=$(date +"%s") # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-m] <file or directory>+ | [-d] | [-h]
+
+Copies the files or directories passed as parameters, named as:
+
+  [<prefix>-]<file or directory>-<ISO 8601 timestamp>[-<suffix>]
+
+The default timestamp appended in the 'modification time' of the file being
+process.  Use -c to tag the file with the current time instead.
+
+OR
+
+If -d is used, create a directory with the ISO 8601 timestamp.
+
+  -c           Use current time to tag the file instead of its 'modification' time.
+  -m           Rename / move instead of copying the directories.
+  -d           Create directory using the generated ISO 8601 timestamp.
+  -b           .tar.bz2 compression
+  -p <prefix>  Prefix filename with <prefix>.
+  -s <suffix>  Suffix filename with <suffix>.
+  -h           Display this help text.
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+MOVE=0
+MAKEDIR=0
+BTAR=0
+TIMESTAMP_TYPE="file"
+unset PREFIX SUFFIX
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "bcdmp:s:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "b")    BTAR=1;;
+    "c")    TIMESTAMP_TYPE="now";;
+    "p")    PREFIX="${OPTARG}";;
+    "s")    SUFFIX="-${OPTARG}";;
+    "d")    MAKEDIR=1;;
+    "m")    MOVE=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((MAKEDIR == 0 && ${#FILES[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one file to backup.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+if (( MAKEDIR )); then
+  DIR="$(date +"%Y%m%dT%H%M%S")"
+  mkdir -p "${DIR}"
+  echo "cd '${DIR}'"
+  exit 0
+fi
+
+setTimeStampFile()
+{
+  local FILE_SRC="${1}"
+  # All time formats are following the ISO 8601 standard.
+  if [ "${TIMESTAMP_TYPE}" == "file" ]; then
+    TIMESTAMP_FILE=$(date --date="@$(stat -c "%Y" ${FILE_PATH}${FILE_SRC})" +"%Y%m%dT%H%M%S")
+  else
+    TIMESTAMP_FILE=$(date +"%Y%m%dT%H%M%S")
+  fi
+}
+
+# Running through remaining arguments
+
+if ((BTAR)); then
+  setTimeStampFile "${FILES[0]}"
+  FILE_DST="${PREFIX}-${FILES[0]}-${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
+  tar cvjf "${FILE_DST}" ${FILES[@]}
+  rm -rf ${FILES[@]}
+  echo "Created:  ${FILE_DST}"
+else
+  for FILE_SRC in ${FILES[@]}; do
+
+    FILE_SRC="${FILE_SRC%\/}"  # Remove any trailing '/'.
+    if [ ! -e "${FILE_SRC}" ]; then
+      echo -e "\e[1;37;41mFILE NOT FOUND\e[0m:  ${FILE_SRC}."
+      continue
+    fi
+
+    FILE_PATH="$(dirname "${FILE_SRC}")"
+    if [ "${FILE_PATH}" == "." ]; then
+      FILE_PATH="" # No need to prefix.
+    else
+      FILE_PATH="${FILE_PATH}/"
+    fi
+
+    FILE_SRC="${FILE_SRC/*\/}" # Basename, efficient form.
+    FILE_SRC="${FILE_SRC%/}"  # Removing trailing '/', if any.
+
+    if [ "${FILE_SRC:0:1}" == "." ]; then
+      # FILE_SRC is a hidden file."
+      FILE_SRC_WITHOUT_FIRST_DOT="${FILE_SRC:1}"
+      EXTENSION="${FILE_SRC_WITHOUT_FIRST_DOT##*.}"
+      if [ "${FILE_SRC_WITHOUT_FIRST_DOT}" == "${EXTENSION}" ]; then
+        EXTENSION=""
+        FILENAME="${FILE_SRC_WITHOUT_FIRST_DOT}"
+      else
+        EXTENSION=".${EXTENSION}"
+        FILENAME="${FILE_SRC_WITHOUT_FIRST_DOT%.*}"
+      fi
+      if [ -z "${PREFIX}" ]; then
+        FILENAME=".${FILENAME}"  # No prefix, so restauring leading '.'.
+      else
+        PREFIX=".${PREFIX}"   # Prefix should comme after FILENAME
+      fi
+    else
+      EXTENSION="${FILE_SRC##*.}"
+      if [ "${EXTENSION}" == "${FILE_SRC}" ]; then
+        # No extension found.
+        EXTENSION=""
+        FILENAME="${FILE_SRC}"
+      else
+        EXTENSION=".${EXTENSION}"
+        FILENAME="${FILE_SRC%.*}"
+      fi
+    fi
+
+    [ ! -z "${PREFIX}" ] && PREFIX="${PREFIX}-"
+    setTimeStampFile "${FILE_SRC}"
+
+    FILE_DST="${FILE_PATH}${PREFIX}${FILENAME}-${TIMESTAMP_FILE}${SUFFIX}${EXTENSION}"
+
+    if (( ${MOVE} )); then
+      echo "Moving ${FILE_SRC} ▶▶ ${FILE_DST}"
+      mv "${FILE_PATH}${FILE_SRC}" "${FILE_DST}"
+    else
+      echo "Copying ${FILE_SRC} ▶▶ ${FILE_DST}"
+      cp -rp "${FILE_PATH}${FILE_SRC}" "${FILE_DST}"
+    fi
+
+  done
+fi

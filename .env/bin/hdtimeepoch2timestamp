@@ -1,0 +1,114 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=`dirname $(readlink -f "${BASH_SOURCE[0]}")` # Fetch real directory, not symlink.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-u] [-h] [<seconds since epoch>+ | -f <file to modify> -o <output to file>]
+
+  <seconds since epoch>    Seconds since 1970-01-01 00:00:00 UTC
+
+  -u  Show UTC time only
+  -i  Show ISO 8601 Compact time format only
+  -h  This help text.
+EOM
+}
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+UTC_ONLY=0
+ISO8601_COMPACT=0
+unset FILENAME
+unset OUTPUT
+
+while getopts "uif:o:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "i")    ISO8601_COMPACT=1;;
+    "u")    UTC_ONLY=1;;
+    "f")    FILENAME="${OPTARG}";;
+    "o")    OUTPUT="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+ERRORS=""
+
+[ -z "${FILENAME}" ] && (( $# == 0 )) && ERRORS="${ERRORS} - seconds from epoch missing.\n"
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+unset PREFIX
+
+# This function if fully generic and works fine, with normal epochs and JavaScript epochs.
+processEpochs()
+{
+  for EPOCH in $@; do
+
+    EPOCH="${EPOCH:0:10}"
+
+    unset OUTPUT
+    (( ! UTC_ONLY ))        && OUTPUT="${OUTPUT}  "$(date --date="@${EPOCH}" +"%Y-%m-%d %H:%M:%S 000 %Z")
+    (( ! ISO8601_COMPACT )) && OUTPUT="${OUTPUT}  "$(date --date="@${EPOCH}" +"%Y-%m-%d %H:%M:%S 000 %Z" -u)
+    (( ! UTC_ONLY ))        && OUTPUT="${OUTPUT}  "$(date --date="@${EPOCH}" +"%Y-%m-%dT%H:%M:%S%z")
+    OUTPUT="${OUTPUT}  "$(date --date="@${EPOCH}" +"%Y-%m-%dT%H:%M:%S%z" -u)
+    OUTPUT="${OUTPUT/  }"  # Removing '  ' from beginning.
+
+    echo -e "${EPOCH} ▶▶▶ ${OUTPUT}"
+  done
+}
+
+# WARNING:
+#
+#   This function is not generic, but very specific to a use case of
+#   processing JavaScript epochs which includes milliseconds.  It also does
+#   not process any epoch which is preceded by - or ".
+processFile()
+{
+  while IFS='' read -r LINE || [[ -n "${LINE}" ]]; do
+    #echo "Text read from file: ${LINE}"
+
+    # Only one timestamp per line supported.
+    TIMESTAMP=$(echo "${LINE}" | perl -ne 'print if s/.*[^-|"](\d{13}).*\n/\1/g')
+    DATEMS=$(echo "${LINE}" | perl -ne 'print if s/.*(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{4}:\d{3}).*\n/\1/g')
+    EPOCH="${TIMESTAMP:0:10}"
+    EPOCHMS="${TIMESTAMP:10:13}"
+    if [ -z "${EPOCH}" ]; then
+      if [ -z "${DATEMS}" ]; then
+        echo "${LINE}"
+      else
+        MILLISECONDS="${DATEMS/*:}"
+        DATE="${DATEMS%:*}"
+        TIMESTAMP=$(date --date="${DATE}" +"%s")"${MILLISECONDS}"
+        echo "${LINE/${DATEMS}/${TIMESTAMP}${EPOCHMS}}"
+      fi
+    else
+      TIMESTAMP_HUMAN=$(date --date="@${EPOCH}" +"%Y-%m-%dT%H:%M:%S%z" -u)
+      echo "${LINE/${TIMESTAMP}/${TIMESTAMP_HUMAN}:${EPOCHMS}}"
+    fi
+  done < "${FILENAME}"
+}
+
+if [ -z "${FILENAME}" ]; then
+  processEpochs "$@"
+else
+  processFile
+fi

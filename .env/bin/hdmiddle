@@ -1,0 +1,32 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${0/*\/}"
+
+usage()
+{
+  echo "${SCRIPT_NAME} [-s <start line #>] [-e <start line #>] file1 ..."
+  exit 0
+}
+
+START='1'
+END='$'
+while getopts "hs:e:" OPTCMD; do
+  case "${OPTCMD}" in
+    "s")    START="${OPTARG}";;
+    "e")    END="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+sed -n "${START},${END}p" $@

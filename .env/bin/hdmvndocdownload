@@ -1,0 +1,74 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# http://search.maven.org/remotecontent?filepath=org/springframework/retry/spring-retry/1.1.2.RELEASE/spring-retry-1.1.2.RELEASE-javadoc.jar
+
+
+#/cygdrive/c/Users/hderago1/.m2/repository/org/springframework/retry/spring-retry/1.1.2.RELEASE/spring-retry-1.1.2.RELEASE-sources.jar.sha1
+
+SCRIPT_NAME="${0/*\/}" # Basename, efficient form
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} <template file>
+
+Pass a template file, i.e. any file downloaded by maven in the .m2 directory
+for example and this script will download in the same directory the javadoc
+corresponding.
+
+For instance:
+
+  ${SCRIPT_NAME} /cygdrive/u/.m2/repository/org/springframework/retry/spring-retry/1.1.2.RELEASE/spring-retry-1.1.2.RELEASE-sources.jar.sha1
+
+Will result with the downloading of:
+
+  ${SCRIPT_NAME} /cygdrive/u/.m2/repository/org/springframework/retry/spring-retry/1.1.2.RELEASE/spring-retry-1.1.2.RELEASE-javadoc.jar
+EOM
+
+  exit 1
+}
+
+while getopts "n:hz" OPTCMD; do
+  case "${OPTCMD}" in
+    "n")    NAME="${OPTARG}";;
+    "z")    ZIP=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+[ -z "${1}" ] && usage
+
+for TEMPLATE_RAW_FILE in $@; do
+
+  TEMPLATE_FILE=`perl -e "\\\$_=\"${TEMPLATE_RAW_FILE}\"; print if s%.*/([^/]+?)(?:-sources.*|.jar.*|.pom.*|-javadoc.*).*%\1%g"`
+
+  TEMPLATE_DIR="${TEMPLATE_RAW_FILE/\/${TEMPLATE_FILE}*}"
+  #echo ${TEMPLATE_FILE}
+  #echo ${TEMPLATE_DIR}
+  OUTPUTDOCUMENT="${TEMPLATE_DIR}/${TEMPLATE_FILE}-javadoc.jar"
+
+
+  if [ -e "${OUTPUTDOCUMENT}" ]; then
+    echo "${OUTPUTDOCUMENT} already exist.  Skipping."
+    continue
+  fi
+
+  echo "────────────────────────────────────────────────────────"
+  echo "Downloading:  ${OUTPUTDOCUMENT}"
+  URL_DIR="${TEMPLATE_DIR/*repository\/}"
+
+  URL="http://search.maven.org/remotecontent?filepath=${URL_DIR}/${TEMPLATE_FILE}-javadoc.jar"
+
+  wget "${URL}" --output-document "${OUTPUTDOCUMENT}"
+done

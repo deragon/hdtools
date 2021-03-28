@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+import getopt
+import os.path
+import re
+import HDLibNetwork
+
+from hdlib2 import *
+
+gRecursive=False
+gDirectories=False
+
+# ----------------------------------------------------------------------
+def usage(code=255):
+  print(gScriptName + """ [ -a | --all ]
+               [ -z <debug level> | --debug=<debug level> ]
+               [ -h | --help ]
+
+  Print all valid external IP addresses.
+  If -a or --all is given, prints out also localhost addresses.
+""")
+  sys.exit(code)
+
+######################################################################
+# Main
+
+try:
+  opts, args = getopt.gnu_getopt( \
+      sys.argv[1:], "apz:h", ["all", "private", "help", "all", "debug="])
+except getopt.GetoptError:
+  # print help information and exit:
+  print("Error:  invalid argument(s).")
+  usage(2)
+
+gShowAll       = False
+gExternal      = False
+gShowPrivate   = False
+gShowLocalLink = False
+
+for option, arg in opts:
+  debug("argv: " + option + arg)
+  #print "argv: " + option + arg
+  if option in ("-h", "--help"):
+    usage(1)
+  elif option in ("-a", "--all"):
+    gShowAll=True
+  elif option in ("-e", "--external"):
+    gExternal=True
+  elif option in ("-p", "--private"):
+    gShowPrivate=True
+  elif option in ("-l", "--locallink"):
+    gShowLocalLink=True
+  elif option in ("-z", "--debug"):
+    debug.setLevel(int(arg))
+    print("Debug level set to " + arg)
+
+code, lines = execute("ifconfig")
+
+reInitAddr=re.compile("\s+inet addr:(\d+\.\d+\.\d+\.\d+).*")
+
+# See:  http://en.wikipedia.org/wiki/Private_network for address assignments.
+
+# Local Link range is [169.254.0/24, 169.254.255/24]
+reLocalLink=re.compile("(^169\.254\.)")
+
+# Local host range is [127.0.0.0, 127.0.0.255]
+# Ref:  http://en.wikipedia.org/wiki/Localhost
+reLocalHost=re.compile("(^127\.0\.0\.)")
+
+# Private networks:
+#
+#   [10.0.0.0,    10.255.255.255]  - 16 bits
+#   [172.16.0.0,  172.31.255.255]  - 20 bits
+#   [192.168.0.0, 192.168.255.255] - 16 bits
+privateNetworkMasks=[ 0x00FFFFFF, 0x08FFFFFF, 0x0000FFFF ]
+
+
+for line in lines:
+  mo=reInitAddr.match(line)
+  if mo:
+    if gShowAll:
+      print(mo.group(1))
+    else:
+      moLocalHost=reLocalHost.match(mo.group(1))
+      if not moLocalHost:
+        print(mo.group(1))

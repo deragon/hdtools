@@ -1,0 +1,22 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+COLUMNS=`tput cols`
+let COLUNMS_PADDING=COLUMNS-2
+(( COLUNMS_PADDING > 80 )) && COLUNMS_PADDING=80
+
+TABLES="filter nat mangle raw security"
+cat <<EOM
+List of all iptables tables (${TABLES}).
+EOM
+
+for TABLE in ${TABLES}; do
+  printf "\n%-${COLUNMS_PADDING}s\n" "${TABLE}¤" | perl -pe 's/ /═/g;s/¤/ /g'
+  iptables -vL -t "${TABLE}"
+done

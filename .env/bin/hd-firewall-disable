@@ -1,0 +1,19 @@
+#!/bin/bash
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+iptables -F
+iptables -X
+iptables -P INPUT   ACCEPT
+iptables -P OUTPUT  ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -t nat -A POSTROUTING -j MASQUERADE
+iptables -A FORWARD
+
+echo -e "Firewall disable.  Current rules:\n"
+iptables --list -n -v
