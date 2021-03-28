@@ -9,9 +9,13 @@ Licence
 ==================================================
 
 All scripts I wrote are licenced under the GPL 3.0 licence and are identified
-as such within.
+as such within.  That said, not all scripts in this repository have been
+written by me and can thus bare another licence.  Also, many of my scripts
+have snippets obtained from the web.
 
-However, many scripts have snippets obtained from the web and it is possible that one or more script I have not written or I obtained elsewhere and where was added to this repository.  
+If in any case, you find / feel that I have relicence a script or piece of
+code that should not have been, please do not hesitate to contact me; I will
+promptly fix this issue.
 
 
 
