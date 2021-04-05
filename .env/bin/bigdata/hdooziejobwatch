@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") # Fetch real directory, not symlink.  Spaces are well handled.
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h] <oozie job id>
+
+  -h  Display this help text.
+EOM
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+
+OOZIE_IDS=("$@") # If you want the number of elements of $@, use $#
+
+# If no file has been provided, read from STDIN.
+if (( ${#OOZIE_IDS[*]} == 0 )); then
+  echo -e "\e[1;30;43m WARNING \e[0m  SDTIN being used for input."
+  OOZIE_ID="$(</dev/stdin)"
+else
+  OOZIE_ID="${OOZIE_IDS[0]}"
+fi
+
+OOZIE_ID="${OOZIE_ID/job: /}"  # Remove 'job: ' if present.
+
+
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+if [ -z "${OOZIE_ID}" ]; then
+  ERRORS="${ERRORS} - You have to provide a Oozie job ID.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+# De:  https://github.com/kepkin/dev-shell-essentials/blob/master/highlight.sh
+function highlight() {
+
+  local color=$1
+  shift
+
+  declare -A fg_color_map
+  fg_color_map[black]=30
+  fg_color_map[red]=31
+  fg_color_map[green]=32
+  fg_color_map[yellow]=33
+  fg_color_map[blue]=34
+  fg_color_map[magenta]=35
+  fg_color_map[cyan]=36
+  local c_rs=$'\e[0m'
+
+  local SA
+  for ENTRY in $@; do
+    fg_c=$(echo -e "\e[1;${fg_color_map[${color}]}m")
+    SAR="${SAR}s/${ENTRY}/$fg_c\0$c_rs/g;"
+  done
+  sed --unbuffered --regexp-extended "${SAR}"
+}
+export -f highlight
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+IFS="
+"
+
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+
+printf '\33[H\33[2J'  # Same as 'clear', but scrollback buffer remains intact!
+CMD="date +'${TIMESTAMP_FORMAT_HUMAN}' | highlight blue .; oozie job -info '${OOZIE_ID}' | highlight green OK SUCCEEDED RUNNING @end | highlight red ERROR KILLED FAILURE"
+watch --no-title --interval 1 --color "${CMD}"
+eval "${CMD}"
+
+
+SCANNED_OOZIE_IDS=($(oozie job -info "${OOZIE_ID}" | sed -r 's/\s+/\n/g' | sed -rn 's/([[:digit:]|]+-oozie-oozi-[[:alpha:]]).*/\1/gp' | sort -u))
+echo -e "\nFor details, run:\n"
+
+
+# Oozie Jobs
+for SCANNED_OOZIE_ID in "${SCANNED_OOZIE_IDS[@]}"; do
+  echo -e \
+"  - oozie job  -log \"${SCANNED_OOZIE_ID}\"
+  - oozie job -info \"${SCANNED_OOZIE_ID}\" -verbose\n"
+done
+
+# Oozie Actions
+for SCANNED_OOZIE_ID in "${SCANNED_OOZIE_IDS[@]}"; do
+  # OOZIE_ACTIONS is an array.
+  OOZIE_ACTIONS=($(hdooziejoblistactions "${SCANNED_OOZIE_ID}"))
+  if [ ! -z "${OOZIE_ACTIONS}" ]; then
+    printf "Actions for ${SCANNED_OOZIE_ID}:\n\n"
+    printf '  - %s\n' "${OOZIE_ACTIONS[@]}"
+    printf '\n'
+    #echo -e "Actions:\n\n${OOZIE_ACTIONS[*]}"
+
+    printf "Yarn logs for ${SCANNED_OOZIE_ID}:\n\n"
+    for OOZIE_ACTION in "${OOZIE_ACTIONS[@]}"; do
+      YARN_APP_ID="${OOZIE_ACTION/*job_/application_}"
+      printf "  - yarn logs -applicationId ${YARN_APP_ID} | hderrorchecker -s -c\n"
+      printf "  - hdhadoopyarnlog ${YARN_APP_ID}\n"
+    done
+    echo
+  fi
+done

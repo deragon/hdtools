@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+# From http://www.michael-noll.com/blog/2013/03/17/reading-and-writing-avro-files-from-the-command-line
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS=`dirname $(readlink -f "${BASH_SOURCE[0]}")` # Fetch real directory, not symlink.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} <schema.avsc> <data.json> [<data.avro>]
+
+  Genarates the avro file from a json file, following a provided schema.
+
+  schema.avsc     Avro schema file describing the data, in json format.
+  data.json       Json file containing the data.
+  data.avro       Filename used to generate the avro file.
+                  If not specified, binary output is sent to stdout
+
+  AVRO_JAR environment variable must be defined, pointing to the Avro jar file
+  (avro-tools-*.jar)
+EOM
+}
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
+                          # we separate entries properly.
+
+SCHEMA="$1"
+JSON="$2"
+AVRO="$3"
+
+ERRORS=""
+
+if [ -z "${AVRO_JAR}" ]; then
+  ERRORS="${ERRORS} - AVRO_JAR environment variable must be defined, pointing to the Avro jar file (avro-tools-*.jar)\n"
+fi
+
+if (( $# < 2 )); then
+  ERRORS="${ERRORS} - The number of arguments is not valid.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "ERROR:  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted.\n"
+  usage
+  exit 1
+fi
+
+if [ ! -z "${AVRO}" ]; then
+  # Redirect stdout to a file.
+  exec 3<> "${AVRO}"
+  exec 1>&3
+fi
+
+set -x
+[[ "${HD_OS_FAMILY}" =~ "CYGWIN" ]] && JSON=$(cygpath -w "${JSON}")
+java -jar "${AVRO_JAR}" fromjson --schema-file "${SCHEMA}" "${JSON}"

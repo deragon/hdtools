@@ -1,0 +1,220 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+NIFI_LOG_DIR="/var/log/nifi"
+NIFI_LOG_DST="${HOME}/nifi/logs"
+NIFI_LOG_SERVER_DECOMPRESS_DST="${NIFI_LOG_DST}-decompressed"
+NIFI_TRANSFER_LOG_DIR="${HOME}/nifi/transfer-logs"
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+Download Nifi logs from Nifi servers, only those who changed and decompress
+
+Decompressed files end up under:
+
+  ${NIFI_LOG_SERVER_DECOMPRESS_DST}
+
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <file>+
+
+  -d  Dry-run.
+  -e  Execute command.  Default is dry-run.
+  -z  Debug logs enabled.
+  -h  Display this help text.
+"
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    $@
+  fi
+}
+
+NIFI_USER_SERVERS=(
+"<USER>@<NIFI_SERVER_#1_FQDN>"
+"<USER>@<NIFI_SERVER_#2_FQDN>"
+)
+
+mkdir -p "${NIFI_LOG_DST}" "${NIFI_TRANSFER_LOG_DIR}"
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=0
+DEBUG=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    #"n")    NAME="${OPTARG}";;
+    "e")    DRYRUN=0;;  # Run in execute mode.
+    "z")    DEBUG=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+# ERRORS=""
+#
+# if ((${#FILES[*]} == 0)); then
+#   ERRORS="${ERRORS} - You must provide at least one argument.\n"
+# fi
+#
+# if [ -z "${ENV}" ]; then
+#   ERRORS="${ERRORS} - Environment must be provided.  Example: '-e acc'.\n"
+# fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+TIMESTAMP_FILE=$(date +"%Y%m%dT%H%M%S") # ISO 8601 format.
+TIMESTAMP_START=$(date +"%s") # Seconds since epoch.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+
+
+# printLineWithSpacesToEnd()
+# ────────────────────────────────────────────────────────────────────────────
+#
+#   This function is used to print a line over an already existing line.  This
+#   is to show quickly, on the same line, activity such as a script that
+#   searches through many files.  The filenames can then be shown quickly on
+#   the same line as the files are being scanned one after the other one.
+
+TERM_COLS_NB=$(tput cols)  # Get once the number of colomns of the current
+                           # terminal window.
+
+printLineWithSpacesToEnd()
+{
+  printf "%- ${TERM_COLS_NB}b\r" "${1}"
+}
+
+
+
+# PROCESSING
+# ────────────────────────────────────────────────────────────────────────────
+
+# Code to run code in parallel, but with a limit of number of processes at a time.
+# Maximum number of processes to run in parallel.  Here, reading the number
+# of processor (co-processors) available on the system.
+echo -e "Fetching.\n"
+PROCESS_MAX=$(egrep -E 'processor' /proc/cpuinfo | wc -l)
+for NIFI_USER_SERVER in ${NIFI_USER_SERVERS[@]}; do
+
+  [ -z "${NIFI_USER_SERVER}" ] && break  # No more servers to process.
+
+  NIFI_SERVER="${NIFI_USER_SERVER/*@/}"
+  NIFI_LOG_SERVER_DST="${NIFI_LOG_DST}/${NIFI_SERVER}"
+  LOG_FILE="${NIFI_TRANSFER_LOG_DIR}/${NIFI_SERVER}-${TIMESTAMP_FILE}.log"
+
+  mkdir -p "${NIFI_LOG_SERVER_DST}"
+  echo "  ${NIFI_USER_SERVER}:${NIFI_LOG_DIR}/* -> ${NIFI_LOG_SERVER_DST}"
+
+  (
+    run rsync -arv --exclude "*.tmp" "${NIFI_USER_SERVER}:${NIFI_LOG_DIR}/*" "${NIFI_LOG_SERVER_DST}"
+  ) >"${LOG_FILE}" 2>&1 &
+
+  PAUSE_MSG_NEEDTOSHOW=1
+  while (( $(jobs -p | wc -l) >= ${PROCESS_MAX} )); do
+    if (( ${PAUSE_MSG_NEEDTOSHOW} == 1 )); then
+      echo "Parallel limit of ${PROCESS_MAX} reached.  Pausing."
+      PAUSE_MSG_NEEDTOSHOW=0
+    fi
+    sleep 1
+  done
+  (( ! ${PAUSE_MSG_NEEDTOSHOW} )) && \
+    echo "Parallel limit of ${PROCESS_MAX} not reached anymore.  Resuming."
+done
+
+wait
+
+echo -e "\n\nDecompressing.\n"
+
+mkdir -p "${NIFI_LOG_SERVER_DECOMPRESS_DST}"
+
+FILES=($(find "${NIFI_LOG_DST}" -type f))
+for FILE in ${FILES[@]}; do
+
+  [ -z "${NIFI_USER_SERVER}" ] && break  # No more servers to process.
+
+  FILENAME="${FILE/${NIFI_LOG_DST}\//}" # Remove path.
+  FILENAME="${FILENAME/\//-}"           # Replace '/' with '-' to flatten files and put them in the same directory.
+  #echo "FILE=>>${FILE}<<    FILENAME=>>${FILENAME}<<"
+
+  if [ "${FILE}" -nt "${NIFI_LOG_SERVER_DECOMPRESS_DST}/${FILENAME/.gz/}" ]; then
+    (
+      printLineWithSpacesToEnd "Copying       ${FILENAME}";echo
+      run cp -p "${FILE}" "${NIFI_LOG_SERVER_DECOMPRESS_DST}/${FILENAME}"
+
+      if [ "${FILE/.gz/}" != "${FILE}" ]; then
+        printLineWithSpacesToEnd "Decompressing ${FILENAME}";echo
+        run gunzip "${NIFI_LOG_SERVER_DECOMPRESS_DST}/${FILENAME}"
+      fi
+    ) &
+  else
+    printLineWithSpacesToEnd "Skipping      ${FILENAME}"
+  fi
+
+  # If max cores are used, waiting until one is freed up.
+  while (( $(jobs -p | wc -l) >= ${PROCESS_MAX} )); do
+    sleep 1
+  done
+done
+
+wait
+
+# Cleanup of last line on the screen.
+printLineWithSpacesToEnd " "
+
+# DRY RUN / EXECUTION WARNING
+# ════════════════════════════════════════════════════════════════════
+echo
+if (( DRYRUN )); then
+  echo -en "\n\e[1;37;44mCommand was executed in dry mode; nothing was executed.\nRerun with -e to execute the action."
+fi
+echo -e "\e[0;00m"
+
+NIFI_LOG_LATEST=$(find "${NIFI_LOG_SERVER_DECOMPRESS_DST}" -iname "*-app.log" | sed -r 's/$/ \\/g;s/^/  /g')
+NIFI_LOG_LATEST="${NIFI_LOG_LATEST::-2}"
+
+echo -e "\nDecompressed files available at:
+
+cd '${NIFI_LOG_SERVER_DECOMPRESS_DST}'
+
+Suggest to run the following command to find your string against latest logs:
+
+fgrep \"<your string here>\" \\
+${NIFI_LOG_LATEST}
+"

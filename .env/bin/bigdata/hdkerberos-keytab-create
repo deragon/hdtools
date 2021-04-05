@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  cat <<EOM
+Usage:  ${SCRIPT_NAME} [-h]
+
+  -w  Generate keytab for use under Windows.
+
+      When this option is enabled, the username used to generate the keytab is
+      in upper case.
+
+  -h  Display this help text.
+EOM
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+FOR_WINDOWS=0
+while getopts "wh" OPTCMD; do
+  case "${OPTCMD}" in
+    "w")    FOR_WINDOWS=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+unset KRB_CONF_FILE
+for FILE in "${FILES[@]}"; do  # Quotes are important to handle spaces.
+  if [ -r "${FILE}" ]; then
+    KRB_CONF_FILE="${FILE}"
+  fi
+done
+
+if [ -z "${KRB_CONF_FILE}" ]; then
+  KRB_CONF_FILE="/etc/krb5.conf"
+fi
+
+# COMMANDLINE VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [ -z "${KERBEROS_REALM}" -a ! -r "${KRB_CONF_FILE}" ]; then
+  ERRORS="${ERRORS} - '/etc/krb5.conf' does not exists.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+(( FOR_WINDOWS )) && echo "Generating keytab for use on MS WINDOWS."
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+echo -n "Enter Kerberos password (Usually the Active Directory password):  "
+read -s KERBEROS_PASSWORD
+echo
+
+set -e
+# Sometimes, the default realm defined in /etc/krb5.conf is not the one to be
+# used for the current user.  Thus if ${CORP_KERBEROS_REALM} is defined, it is
+# used instead of the default one.
+if [ -z "${CORP_KERBEROS_REALM}" ]; then
+  KERBEROS_REALM=$(perl -ne 'print if s/^\s*default_realm\s*=\s*(.*)/\1/g' /etc/krb5.conf)
+else
+  KERBEROS_REALM="${CORP_KERBEROS_REALM}"
+fi
+KERBEROS_PRINCIPAL_NAME="${USER#su}"
+(( FOR_WINDOWS )) && KERBEROS_PRINCIPAL_NAME="${KERBEROS_PRINCIPAL_NAME^^}"
+KERBEROS_PRINCIPAL="${KERBEROS_PRINCIPAL_NAME}@${KERBEROS_REALM}"
+KERBEROS_KEYTAB="${HOME}/${KERBEROS_PRINCIPAL}.keytab"
+rm -f "${KERBEROS_KEYTAB}"
+printf "%b" "addent -password -p "${KERBEROS_PRINCIPAL}" -k 1 -e arcfour-hmac\n${KERBEROS_PASSWORD}\nwrite_kt ${KERBEROS_KEYTAB}" | ktutil
+unset KERBEROS_PASSWORD
+
+echo "Keytab created:  ${KERBEROS_KEYTAB}"
