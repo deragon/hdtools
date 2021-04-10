@@ -404,7 +404,7 @@ if has("win32")
 
     "let yres=system("C:\Users\dzz5328\Projets\Outils\cygwin64\bin\bash.exe
 
-    let yres=1200
+    let yres=1080
     "echo "yres=>>".yres."<<"
 
     " For font dialog, do             >> :set guifont=*
@@ -418,9 +418,7 @@ if has("win32")
 
     " For font dialog, do             >> :set guifont=*
     " For name of font being used, do >> :set guifont
-    if yres >= 1200
-      let font_size="h10"
-    elseif yres >= 1080
+    if yres >= 1080
       let font_size="h13"
     elseif yres >= 768
       let font_size="h11"
