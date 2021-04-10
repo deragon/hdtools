@@ -187,17 +187,49 @@ if($HDVIM != "")
 
   " VUNDLE ─────────────────────────────────────────────────────────────────────
   "
+  "   DOCUMENTATION AT:  https://github.com/VundleVim/Vundle.vim/
+  "
   "   Vundle make use of $HDVIM/bundle.
   "   GIT repositories must be saved under $HDVIM/bundle
   "
   "   Vundle is short for Vim vundle and is a Vim plugin manager.
   "   https://github.com/gmarik/Vundle.vim
+  "
+  "   BUGS:
+  "
+  "     - PluginSearch does not work as of 2021-04-10:
+  "         https://github.com/VundleVim/Vundle.vim/issues/914
 
   filetype off " It can be renabled after all Vundle plugins have been loaded.
   set rtp+=$HDVIM/bundle/Vundle.vim
-  let g:bundle_dir=$HDVIM
+  let g:bundle_dir=$HDVIM."/bundle"
   "echo "Vundle g:bundle_dir ="g:bundle_dir
   call vundle#begin()
+  call vundle#rc(g:bundle_dir)
+
+  " let Vundle manage Vundle, required
+  Plugin 'VundleVim/Vundle.vim.git'
+
+  Plugin 'AndrewRadev/linediff.vim.git'
+  Plugin 'chrisbra/csv.vim.git'
+  Plugin 'elzr/vim-json.git'
+  Plugin 'godlygeek/tabular.git'
+  Plugin 'jamessan/vim-gnupg.git'
+  Plugin 'plasticboy/vim-markdown.git'
+  Plugin 'scrooloose/nerdtree.git'
+  Plugin 'skywind3000/quickmenu.vim.git'
+  Plugin 'thinca/vim-fontzoom'
+  Plugin 'tomtom/tcomment_vim'
+  Plugin 'tpope/vim-abolish.git'
+  Plugin 'tpope/vim-commentary.git'
+  Plugin 'tpope/vim-fugitive.git'
+  Plugin 'tpope/vim-sensible.git'
+  Plugin 'tpope/vim-unimpaired.git'
+  Plugin 'vim-scripts/SQLUtilities.git'
+
+  " All of your Plugins must be added before the following line
+  call vundle#end()            " required
+  filetype plugin indent on    " required
 else
   echo "ERROR:  ${HDVIM} is not set.  'rtp' is missing that path:"
   echo "rtp=" &rtp
