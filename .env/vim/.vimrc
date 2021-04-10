@@ -1039,11 +1039,11 @@ endif
 "
 "   Ce plugin ne marche pas avec la version 7.4
 if v:version > 800
-  source $HDVIM/hd-quickmenu.vim
-
   " Autres options qui ne marchent qu'avec vim 8+
   set belloff=all " Disable all bells/sounds.
   set foldmethod=marker foldlevel=0
+
+  "source $HDVIM/hd-quickmenu.vim
 endif
 
 " CSV Plugin
