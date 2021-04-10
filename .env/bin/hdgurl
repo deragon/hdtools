@@ -48,4 +48,5 @@ for GIT_PATH in ${GIT_PATHS[@]}; do
     printf '% 16s:  ' "${REMOTE}"
     git remote get-url --all "${REMOTE}"
   done
+  cd - >/dev/null 2>&1
 done
