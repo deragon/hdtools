@@ -920,11 +920,6 @@ map <Leader>c /[^\x00-\x7F]\+<CR>
 " Search for null character
 map <Leader>n /[\x00]<CR>
 
-" pathogen is a plugin manager
-"
-" See https://github.com/tpope/vim-pathogen
-execute pathogen#infect()
-
 " Ici, on ajoutes toutes les commandes pour overridé:
 "
 "   /usr/share/vim/vim74/ftplugin/python.vim
