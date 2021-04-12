@@ -1,0 +1,11 @@
+*~
+*.sw?
+**/archive
+**/personal
+**/todel
+**/*-disabled
+**/vim/bundle
+**/vim/spell/*.spl
+**/vim/spell/*.sug
+**/conky
+seafile-ignore.txt
