@@ -1,0 +1,176 @@
+#!/bin/bash
+
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS=$(cd $(dirname $(ls -l "${SCRIPT_NAME}" | awk '{print$NF}')); pwd) # Equivalent of 'readlink -f', not available on AIX.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Copies .hans.deragon to remote computer, but strips any file that are
+not strictly necessary and/or are confidential.
+
+Usage:  ${SCRIPT_NAME} [-d] [-h] <username@fqdn>
+
+  <username@fqdn>  Destination to which the files should be transferred.
+
+  -d  Dry-run.
+  -h  Display this help text.
+"
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    $@
+  fi
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "o:deh" OPTCMD; do
+  case "${OPTCMD}" in
+    "o")    OPTIONS="${OPTARG}";;
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+DSTS=("$@") # If you want the number of elements of $@, use $#
+DST="${DSTS[0]}"
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [ -z "${DST}" ] ;then
+  ERRORS="${ERRORS} - Destination is required as an argument.  Aborting."
+fi
+
+for SRC in \
+  "${HOME}/.hans.deragon" \
+  "${HOME}/Seafile/Hans/.hans.deragon" \
+  null; do
+  [ -d "${SRC}" ] && break
+done
+
+if [ "${SRC}" == "null" ]; then
+  ERRORS="${ERRORS} - Could not setup source directory.  Aborting."
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+if [ ! -d "${DST}" ]; then
+
+  # Destination is not a directory, but a remote machine, probably.
+
+  HOST="${DST/:*}"
+  PORT="${DST/*:}"
+
+  if [ ! -z "${PORT}" -a "${PORT}" != "${HOST}" ]; then
+    SSH_CMD="-e \"ssh -p ${PORT}\""
+  fi
+
+  DST="${HOST}:"
+  DST="${DST/::/:}" # It is possible that we added one ':' too many, so we
+                    # remove it.
+
+  ping -w 1 "${DST}" >/dev/null 2>&1
+
+  if (( ! $? )); then
+    echo "${DST} does not ping.  Aborting."
+    exit 1
+  fi
+
+fi
+
+RSYNC_OPTIONS="
+  --include='COPYRIGHT.txt' \
+  --exclude='*.txt*' \
+  --exclude='*.doc*' \
+  --exclude='*.xls*' \
+  --exclude='*.odt*' \
+  --exclude='*.ods*' \
+  --exclude='*.odp*' \
+  --exclude='*.pdf*' \
+  --exclude='*.jpg*' \
+  --exclude='*.png*' \
+  --exclude='*.gif*' \
+  --exclude='*.tar*' \
+  --exclude='*.zip*' \
+  --exclude='*.log' \
+  --exclude='*.out' \
+  --exclude='*.sw?' \
+  --exclude='**/personal' \
+  --exclude='**/pj' \
+  --exclude='.netrwhist' \
+  --exclude='Feuille de temps' \
+  --exclude='conky' \
+  --exclude='desktop' \
+  --exclude='docs' \
+  --exclude='lynx' \
+  --exclude='obsolete' \
+  --exclude='old' \
+  --exclude='rsync*' \
+  --exclude='**/__pycache__/**' \
+  --exclude='*/windows' \
+  --exclude='**/archive' \
+  --exclude='**/mus*e' \
+  --exclude='*/ericsson' \
+  --exclude='*home*' \
+  --exclude='env.hd.linux.sh' \
+  --exclude='*/bin/rsync*' \
+  --exclude='*/bin/*email*' \
+  --exclude='*/bin/vl*' \
+  --exclude='*voxel*' \
+  --exclude='env.pers*' \
+  --exclude='seafile-ignore.txt' \
+  --exclude='zCopy' \
+  --exclude='corp-transfer-env' \
+  --exclude='${SCRIPT_NAME}' \
+"
+
+#echo "\${RSYNC_OPTIONS}=${RSYNC_OPTIONS}"
+
+if [[ "${OPTIONS}" == *"excludeprivate"* ]]; then
+  RSYNC_OPTIONS="${RSYNC_OPTIONS}
+  --exclude='*private*' \
+  --exclude='*privé*' \
+"
+fi
+
+eval rsync -av \
+  ${RSYNC_OPTIONS} \
+  --delete \
+  --delete-excluded \
+  --timeout=20 \
+  ${SSH_CMD} \
+  "${SRC}" "${DST}" \
+
+  #--dry-run \
