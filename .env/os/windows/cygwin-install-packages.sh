@@ -21,8 +21,7 @@
     -P dos2unix \
     -P fdupes \
     -P gettext \
-    -P gnupg \
-    -P gpg2 \
+    -P gnupg2 \
     -P inettools \
     -P lynx \
     -P mintty \
