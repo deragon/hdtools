@@ -25,6 +25,7 @@ Usage:  ${SCRIPT_NAME} [-d] <file>+
   -x <resolution in X axis>     Default:  256
   -y <resolution in Y axis>     Default:  256
   -s <square resolution side>   Default:  256
+  -n No change in resolution / use same resolution.
   -o <output directory>         Default is '.'.
 
   -h  Display this help text.
@@ -43,13 +44,14 @@ OUTPUT_DIR="."
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "o:z:s:x:y:h" OPTCMD; do
+while getopts "no:z:s:x:y:h" OPTCMD; do
   case "${OPTCMD}" in
     "o")    OUTPUT_DIR="${OPTARG}";;
     "z")    DENSITY="${OPTARG}";;
     "s")    SQUARE_RES="${OPTARG}";;
     "x")    RES_X="${OPTARG}";;
     "y")    RES_Y="${OPTARG}";;
+    "n")    RES_X=0;RES_Y="0";;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -103,7 +105,8 @@ convertWithInkscape()
   if [[ "$(inkscape --without-gui --version)" == *"0.9"* ]]; then
     inkscape --without-gui -w "${RES_X}" -h "${RES_Y}" "${FILE}" -e "${OUTPUT}"
   else
-    inkscape --without-gui -w "${RES_X}" -h "${RES_Y}" "${FILE}" --export-filename "${OUTPUT}"
+    #inkscape --without-gui -w "${RES_X}" -h "${RES_Y}" "${FILE}" --export-filename "${OUTPUT}"
+    inkscape -w "${RES_X}" -h "${RES_Y}" "${FILE}" --export-filename "${OUTPUT}"
   fi
 }
 
@@ -131,7 +134,13 @@ mkdir -p "${OUTPUT_DIR}"
 for FILE in ${FILES[@]}; do
 
   FILENAME="${FILE%.*}"
-  OUTPUT="${OUTPUT_DIR}/${FILENAME}-${RES_X}x${RES_Y}.png"
+  if [ "${RES_X}" == "0" -a "${RES_Y}" == "0" ]; then
+    RESOLUTION=""
+  else
+    RESOLUTION="-${RES_X}x${RES_Y}"
+  fi
+
+  OUTPUT="${OUTPUT_DIR}/${FILENAME}${RESOLUTION}.png"
 
   title "Processing ${FILE} -> ${OUTPUT}"
 
