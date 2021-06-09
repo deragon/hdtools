@@ -2,6 +2,7 @@
 *~
 *.bak
 *.backup
+*-202*
 
 # Compressed files
 *.tar
