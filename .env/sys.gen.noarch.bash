@@ -767,6 +767,14 @@ hdproxyunset()
 }
 
 
+# Libreoffice system wide setup to force it to run with GTK 3 instead with
+# KDE.
+#
+# From:  https://ask.libreoffice.org/en/question/3078/choose-gui-toolkit-for-lo-session/
+export SAL_USE_VCLPLUGIN=gtk3
+
+
+
 # BASH HISTORY MANAGEMENT
 # ════════════════════════════════════════════════════════════════════════════
 
