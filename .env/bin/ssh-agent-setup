@@ -173,7 +173,7 @@ check_ssh_agent()
 {
   [ -r ${SSH_ENV}.sh ] && source "${SSH_ENV}.sh" >/dev/null
 
-  if ps -ef | fgrep -v 'grep' | egrep --extended-regexp "${SSH_AGENT_PID}.*ssh-agent" >/dev/null; then
+  if ps -ef | egrep -Ev '(grep|<defunct>)' | egrep --extended-regexp "${SSH_AGENT_PID}.*ssh-agent" >/dev/null; then
     print "ssh-agent already running as PID ${SSH_AGENT_PID}."
     return 1
   else
