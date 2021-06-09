@@ -135,11 +135,11 @@ setup_gitignore()
     # Here, we remove all the lines that match does of 'hdgitsetup-gitignore';
     # they will be appended below.  This makes a nice reset.
     grep -Fvxf "${SCRIPT_PATH_ABS}/hdgitsetup-gitignore" "${HOME}/.gitignore" >"${HOME}/.gitignore.tmp"
-     mv "${HOME}/.gitignore.tmp" "${HOME}/.gitignore"
-
+    mv "${HOME}/.gitignore.tmp" "${HOME}/.gitignore"
   fi
 
   cat "${SCRIPT_PATH_ABS}/hdgitsetup-gitignore" >>"${HOME}/.gitignore"
+  git config --global core.excludesfile "${HOME}/.gitignore"
 }
 
 
