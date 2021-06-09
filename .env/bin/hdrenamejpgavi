@@ -7,8 +7,9 @@
 #
 #     https://www.gnu.org/licenses/gpl-3.0.en.html
 
-REPERTOIRES=$@
-[ -z "${REPERTOIRES}" ] && REPERTOIRES=.
+REPERTOIRES=("$@") # If you want the number of elements of $@, use $#
+[ -z "${REPERTOIRES}" ] && REPERTOIRES[0]=.
+
 renamefiles -r         \
   --old JPG  --new jpg \
   --old jpeg --new jpg \
@@ -22,9 +23,10 @@ renamefiles -r         \
   --old SVG  --new svg \
   --old SVGZ --new svgz \
   --old ICO  --new ico \
-  ${REPERTOIRES}
+  "${REPERTOIRES[@]}"
 
-for  REPERTOIRE in ${REPERTOIRES}; do
+for REPERTOIRE in "${REPERTOIRES[@]}"; do
+
   find "${REPERTOIRE}" \
     -regextype posix-extended \
     -regex '^.*\.(jpg|gif|mkv|avi|mp4|3gp|svg|svgz|png|ico)$' \
