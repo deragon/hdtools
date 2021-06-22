@@ -1,0 +1,55 @@
+MAPPING OF A CLASS
+══════════════════════════════════════════════════════════════════════════════
+
+  See:  http://docs.jboss.org/hibernate/stable/annotations/reference/en/html/entity.html#entity-mapping
+
+
+
+COMPOSED PRIMARY KEYS - NOT SUPPORTED
+══════════════════════════════════════════════════════════════════════════════
+
+  Hibernate does not support directly composed primary keys (primary keys
+  created from more than one field).
+
+  However, it is possible do create a Primary key composed of with
+  the @EmbeddedId
+
+  See: http://stackoverflow.com/questions/3585034/how-to-map-a-composite-key-with-hibernate
+
+
+
+SPRING
+══════════════════════════════════════════════════════════════════════════════
+
+  Hibernate 4 with Spring
+
+  https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=5&cad=rja&uact=8&ved=0CDcQFjAE&url=http%3A%2F%2Fwww.baeldung.com%2Fhibernate-4-spring&ei=PgMEVZSgGsPOsQSa8oHYAQ&usg=AFQjCNG_6iFUkILO3C3g016esutdxToubw&sig2=ZzyexeNzFcGpUTT2sv5fUw
+
+
+
+ALTERNATIVES
+══════════════════════════════════════════════════════════════════════════════
+
+  IBATIS
+
+    iBATIS is a persistence framework which automates the mapping between SQL
+    databases and objects in Java, .NET, and Ruby on Rails. In Java, the
+    objects are POJOs (Plain Old Java Objects). The mappings are decoupled
+    from the application logic by packaging the SQL statements in XML
+    configuration files. The result is a significant reduction in the amount
+    of code that a developer needs to access a relational database using lower
+    level APIs like JDBC and ODBC.
+
+    http://en.wikipedia.org/wiki/IBATIS
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

@@ -1,0 +1,155 @@
+SLF4J (Simple Logging Facade for Java / http://www.slf4j.org/)
+══════════════════════════════════════════════════════════════════════════════
+
+  Always Use SLF4J instead of log4j or java.logging.
+
+  With SLF4J, you can call the logger with the {} expression.  Doing so
+  save processing because the object are not rendered unless the level
+  is actually active.
+
+    logger.trace("Msg:  {},  Exit code:  {}", msg, code);
+
+  To achieve the same efficiency with Log4j logger, one needs to write the
+  following, more verbose code:
+
+    if (logger.isTraceEnabled())
+      logger.trace("Msg:  " + msg + "  Exit code:  " + code);
+
+  SLF4J is written by Ceki Gülcü, the creator of Log4J.
+
+  Read:  http://stackoverflow.com/questions/869945/how-to-send-java-util-logging-to-log4j
+
+
+  Code
+  ────────────────────────────────────────────────────────────────────────────
+
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+
+       private static final Logger logger =
+        LoggerFactory.getLogger(LangUtil.getInvokingClassName().replaceAll(".*\\.", ""));
+
+      log4j.xml:
+
+        <logger name="MyClassNameHere">
+            <level value="INFO" />
+        </logger>
+
+
+      To figure out what log4j file is being used and other
+
+
+
+  Maven / pom.xml
+  ────────────────────────────────────────────────────────────────────────────
+
+    <properties>
+        <slf4j.version>1.8.0-alpha2</slf4j.version>
+        <log4j.version>2.11.0</log4j.version>
+    </properties>
+
+    <!-- Logging -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+
+
+
+  VERSION 2 log4j2.xml (basic)
+  ────────────────────────────────────────────────────────────────────────────
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="WARN">
+      <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+
+          <!-- Warning:  This PatternLayout make use of %C and %M to print out
+                         the name of the class and method from which the logger is called.
+                         This is somewhat expensive, so for intense applications, one might
+                         want to remove this -->
+
+          <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %C.%M() - %msg%n"/>
+
+        </Console>
+      </Appenders>
+      <Loggers>
+        <Root level="debug">
+          <AppenderRef ref="Console"/>
+        </Root>
+      </Loggers>
+    </Configuration>
+
+
+  VERSION 1 log4j.xml
+  ────────────────────────────────────────────────────────────────────────────
+
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+    <log4j:configuration debug="true"
+      xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+      <appender name="console" class="org.apache.log4j.ConsoleAppender">
+          <layout class="org.apache.log4j.PatternLayout">
+        <param name="ConversionPattern" 
+          value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+          </layout>
+      </appender>
+
+      <root>
+        <level value="DEBUG" />
+        <appender-ref ref="console" />
+      </root>
+
+    </log4j:configuration>
+
+
+DOUBLE LOGS
+══════════════════════════════════════════════════════════════════════════════
+
+  http://stackoverflow.com/questions/5699309/log4j-logging-twice
+
+  Add 'additivity="false"' to logger.
+
+  <logger name="com.some.class" additivity="false">
+      <level value="TRACE"/>
+      <appender-ref ref="console"/>
+  </logger>
+
+
+
+PRINT CONFIGURATION
+══════════════════════════════════════════════════════════════════════════════
+
+  To get log4j print out all its configuration, add as a JVM
+  option the following:
+
+    -Dlog4j.debug=true
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

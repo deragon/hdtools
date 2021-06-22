@@ -1,0 +1,91 @@
+Documentation
+══════════════════════════════════════════════════════════════════════════════
+
+  - .hans.deragon/.env/docs/programming/pro_spring_batch.pdf
+
+  - Transaction, Skip policy and retry policy (good)
+
+    https://blog.codecentric.de/en/2012/03/transactions-in-spring-batch-part-3-skip-and-retry/
+
+
+@AfterStep
+══════════════════════════════════════════════════════════════════════════════
+
+  If an exception is raised in a @AfterStep annotated function, the exception
+  is logged but does not abort the job.  To abort the job, one must catch
+  the exception and ensure that ExitStatus.FAILED is returned
+
+  @AfterStep
+  public ExitStatus afterStep() {
+      try {
+          logger.info("afterStep() called.");
+          [... working code ...]
+          return ExitStatus.COMPLETED;
+      } catch (Exception exception) {
+          logger.error("afterStep() exception thrown.", exception);
+          return ExitStatus.FAILED;
+      }
+
+
+JOB EXECUTION ID
+══════════════════════════════════════════════════════════════════════════════
+
+  In a processor:
+
+    private long jobExecutionId;
+
+    @BeforeStep
+    public void beforeStep(StepExecution stepExecution) {
+        jobExecutionId = stepExecution.getJobExecutionId();
+
+        parameter = chunkContext.getStepContext().getJobExecutionContext().get(ExecuteAggregationScriptStepConfig.HDFS_WORK_DIR);
+    }
+
+
+  In a tasklet:
+
+    public RepeatStatus execute(
+      StepContribution contribution, ChunkContext chunkContext)
+    {
+
+      final long jobExecutionId =
+        chunkContext.getStepContext().getStepExecution().getJobExecutionId();
+    }
+
+
+
+SAVING DATA IN THE EXECUTION CONTEXT:
+══════════════════════════════════════════════════════════════════════════════
+
+  From a tasklet or step:
+
+    chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put(REPORT_FILE_NAME, filenameDownloadedByEndUser);
+
+
+  Item Skip
+  ────────────────────────────────────────────────────────────────────────────
+
+    One of the greatest things in Spring Batch is the ability to skip an item
+    that is causing problems. This feature can easily prevent a phone call in
+    the middle of the night to deal with a production problem if the item can
+    be addressed the next day. Configuring the ability to skip an item is
+    similar to configuring retry logic. All you need to do is use the
+    skip-limit attribute on the chunk tag and specify the exceptions that
+    should cause an item to be skipped. Listing 4-55 demonstrates how to
+    configure a step to allow a maximum of 10 items to be skipped via
+    skip-limit. It then states that any item that causes any subclass of
+    java.lang.Exception except for java.lang.NullPointerException is allowed
+    to be skipped. Any item that throws a NullPointerException causes the step
+    to end in error.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

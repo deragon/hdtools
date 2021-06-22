@@ -1,0 +1,385 @@
+POM.XML
+══════════════════════════════════════════════════════════════════════════════
+
+    As of 2017-05-15:
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>2.7.22</version>
+      <scope>test</scope>
+    </dependency>
+    <!--   Mockito recommends to use hamcrest 'Matchers'.  It has
+           deprecated its own.
+    -->
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <version>1.3</version>
+      <scope>test</scope>
+    </dependency>
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - @DisplayName - Describe your test with proper sentences.
+                   available only in Junit 5
+
+  - To force a failure:  fail()
+
+
+
+assertThat() INSTEAD OF assertEquals()
+══════════════════════════════════════════════════════════════════════════════
+
+  The Benefits of Using assertThat over other Assert Methods in Unit Tests
+
+    https://objectpartners.com/2013/09/18/the-benefits-of-using-assertthat-over-other-assert-methods-in-unit-tests/
+
+  Usage:
+
+      import static org.junit.Assert.assertThat;
+      import static org.hamcrest.core.Is.is;
+
+      assertThat(testString, is("value expected"));
+
+
+
+AUTOWIRED
+══════════════════════════════════════════════════════════════════════════════
+
+
+  Use ReflectionTestUtils.setField() to set a field within a class to a
+  specific value/object.  Works for @Autowired fields.
+
+
+    import org.springframework.test.util.ReflectionTestUtils;
+
+    ...
+
+    @InjectMocks
+    private MyClassType classUnderTest;
+
+    ...
+
+    @Test
+    public void test()
+    {
+      ReflectionTestUtils.setField(
+        classUnderTest, "<fieldName>", new ObjectToFillTheAutowiredFieldWith())
+    }
+
+
+
+CHAIN / BUILDER STUBING
+══════════════════════════════════════════════════════════════════════════════
+
+  To stub something like:
+
+    mockedChunkContext.getStepContext().getStepExecution()....
+
+  Simply do:
+
+    import static org.mockito.Mockito.*;
+    ChunkContext mockedChunkContext = mock(ChunkContext.class, RETURNS_DEEP_STUBS);
+    when(mockedChunkContext.getStepContext().getStepExecution().getJobParameters().getString("param")).thenReturn("01234456789");
+
+
+
+MOCKITO & TESTS
+══════════════════════════════════════════════════════════════════════════════
+
+  MOCK VS SPY
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/28295625/mockito-spy-vs-mock
+
+    A mock in mockito is a normal mock in other mocking frameworks (allows you
+    to stub invocations; that is, return specific values out of method calls).
+
+    A spy in mockito is a partial mock in other mocking frameworks (part of
+    the object will be mocked and part will use real method invocations).
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    Both can be used to mock methods or fields. The difference is that in
+    mock, you are creating a complete mock or fake object while in spy, there
+    is the real object and you just spying or stubbing specific methods of it.
+
+    While in spy objects, of course, since it is a real method, when you are
+    not stubbing the method, then it will call the real method behavior. If
+    you want to change and mock the method, then you need to stub it.
+
+
+  PJ
+  ────────────────────────────────────────────────────────────────────────────
+
+  Excellent example:
+
+    gvim /cygdrive/c/Users/hderago1/ypgprojects/ypg-etl-boostability-seo/trunk/ypg-etl-boostability-seo-aws/src/test/java/com/ypg/analytics/etl/boostability/seo/aws/integration/FileStorageServiceIntegrationTest.java
+
+    - Mock URL
+    - Mock inside field of a class with injection
+
+
+// Path to object in classpath.
+
+xmlInputFile = Paths.get(ClassLoader.getSystemResource
+  ("com/xyz/analytics/etl/campaign/dimension/load/97874 - 99716.xml").toURI()).toString();
+
+EXEMPLES
+
+  import org.mockito.Matchers;
+  when(errorListenerMerchantAdvertiserProduct.generateFilenameForUnknownItem(null,Matchers.any(UUID.class))).thenReturn("no-item-<uuid would be here>");
+
+  ExecutionContext executionContext = new ExecutionContext();
+  executionContext.put(BatchExecutionContextEntries.EXECUTION_REJECTED_SUBDIRECTORY_PATH_KEY, rejectedDir);
+
+  StepExecution stepExecution = mock(StepExecution.class);
+  when(stepExecution.getExecutionContext()).thenReturn(executionContext);
+  when(stepExecution.getJobExecutionId()).thenReturn(12345L);
+
+
+  VOID:  MOCK A FUNCTION THAT RETURNS VOID
+  ────────────────────────────────────────────────────────────────────────────
+
+    For some reason, mocking a function that returns void is not possible with
+    the when(class.function()).then() construct; it would not compile.  Here
+    is how to achieve this:
+
+      Mockito.doNothing().when(mockedClass).mockedClassFunction(any(Object.class));
+
+    Example:
+
+      Mockito.doNothing().when(mockedStepContribution).setExitStatus(any(ExitStatus.class));
+
+
+  VOID:  CALL THE REAL FUNCTION WHICH RETURNS VOID
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://stackoverflow.com/questions/39881717/mockito-thencallrealmethod-on-void-function
+
+    doCallRealMethod().when(<mockedObject>).<mockedObject.functionReturningVoid>();
+
+
+
+MOCK A MEMBER FUNCTION WITHIN THE TESTED CLASS
+══════════════════════════════════════════════════════════════════════════════
+
+  Use @Spy
+
+    @InjectMocks @Spy
+    private ExecuteAggregationScriptStepConfig classUnderTest;
+
+    @Test
+    public vois test()
+    {
+      // Now that we have @Spy, we can mock the function getClassPath()
+      // If @Spy is not active on the classUnderTest, an exception would
+      // occur.
+      when(classUnderTest.getClassPath()).thenReturn("<fake classpath>"));
+      String fullPathFor = classUnderTest.findFullPathFor("joda-time");
+      assertThat(fullPathFor, is("<some valid classpath>"));
+    }
+
+
+MOCK ANY OBJECT
+══════════════════════════════════════════════════════════════════════════════
+
+  Given function:
+
+    myMethod( Date )
+
+  Use matcher:
+
+    any(Date.class)
+
+  Example:
+
+    import org.mockito.Matchers;
+    verify(entityToVerify, never()).func(anyString(), any(Date.class));
+
+
+MOCK AN ARRAY
+══════════════════════════════════════════════════════════════════════════════
+
+  Given function:
+
+    myMethod( byte[] )
+
+  Use matcher:
+
+    any(byte[].class)
+
+  See:  http://stackoverflow.com/questions/10066590/mockito-matcher-and-array-of-primitives
+
+
+
+MOCKING FIELDS
+══════════════════════════════════════════════════════════════════════════════
+
+  There are no real means to mock a field.  One elegant solution
+  is to setup a getter() function to the field and mock that function.
+
+  The other is to use reflection, as shown below.
+
+
+  EASIEST USING ORG.APACHE.COMMONS / COMMONS-LANG3
+  ──────────────────────────────────────────────────────────────────────────
+
+    import org.apache.commons.lang3.reflect.FieldUtils;
+    ...
+
+    MAJ maj = new MAJ();
+    FieldUtils.writeField(maj, "updateDate", LocalDateTime.parse("9999-12-31 23:59:59", iso8601TimeStampFormat));
+    // That is it!  Field set to "9999-12-31 23:59:59".
+
+    pom.xml:
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.4</version>
+        <scope>test</scope>
+      </dependency>
+
+
+
+  SPRING:  REFLECTION USED TO INJECT A VALUE INTO A @VALUE FIELD:
+  ──────────────────────────────────────────────────────────────────────────
+
+    ReflectionTestUtils.setField(<Objcect injected>, "<field name>", "<field value>");
+
+  Example
+
+    public class Test {
+
+      @InjectMocks
+      private SeoCampaignDocumentsDownloadProcessor processor = new SeoCampaignDocumentsDownloadProcessor();
+
+      @Test
+      test() {
+      ReflectionTestUtils.setField(processor, "keyPrefix", "dev/report");
+      }
+    }
+
+
+FORCE AN EXCEPTION TO BE TROWN
+══════════════════════════════════════════════════════════════════════════════
+
+  import org.mockito.Mockito;
+
+  // This causses mockObject.mockObjectFunction() to throw a "Exception"
+  // whenever it is called.
+  Mockito.doThrow(new Exception()).when(mockObject).mockObjectFunction();
+
+
+LOGGER - LOG4J - VERIFY log was generated
+══════════════════════════════════════════════════════════════════════════════
+
+  Log4jTestAppender log4jTestAppender = new Log4jTestAppender();
+  Logger rootLogger = Logger.getRootLogger();
+  rootLogger.addAppender(log4jTestAppender);
+
+  List<LoggingEvent> loggingEvents = log4jTestAppender.getLoggingEvents();
+  assertThat(loggingEvents, Matchers.<LoggingEvent>hasItems(
+    allOf(
+      hasProperty("message",
+        containsString("cache miss for ad group id 93748633")),
+      hasProperty("level", is(Level.DEBUG))
+    )
+    ,
+    allOf(
+      hasProperty("message",
+        containsString("store hit for SimpleKey [93748633,ACQUISIO")),
+      hasProperty("level", is(Level.DEBUG))
+    )
+  ));
+
+  ----
+
+  import java.util.ArrayList;
+  import java.util.List;
+  import org.apache.log4j.AppenderSkeleton;
+  import org.apache.log4j.Level;
+  import org.apache.log4j.spi.LoggingEvent;
+
+  public class Log4jTestAppender extends AppenderSkeleton
+  {
+    private final List<LoggingEvent> loggingEvents = new ArrayList();
+
+    public Log4jTestAppender() {}
+
+    public List<LoggingEvent> getLoggingEvents()
+    {
+      return this.loggingEvents;
+    }
+
+    public List<LoggingEvent> getLoggingEvents(Level level)
+    {
+      List<LoggingEvent> events = new ArrayList();
+      for (LoggingEvent loggingEvent : this.loggingEvents) {
+        if (loggingEvent.getLevel().equals(level)) {
+          events.add(loggingEvent);
+        }
+      }
+      return events;
+    }
+
+    protected void append(LoggingEvent event)
+    {
+      this.loggingEvents.add(event);
+    }
+
+    public void close() {}
+
+    public boolean requiresLayout()
+    {
+      return false;
+    }
+  }
+
+
+CATCH EXCEPTION AND ARGUMENT TO LOGGER - LOG4J
+══════════════════════════════════════════════════════════════════════════════
+
+  @Mock
+  private Logger logger;
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public someTest()
+  {
+    ArgumentCaptor<String> loggerCaptor =
+      ArgumentCaptor.forClass(String.class);
+
+    thrown.expect(RuntimeException.class);
+    thrown.expectMessage("<<some exception>>");
+    try {
+      SomeClassInjectedWithMocks.someFunction(); // RunTimeException thrown.
+    } finally {
+      verify(logger).error("<<logger error text>>");
+    }
+  }
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

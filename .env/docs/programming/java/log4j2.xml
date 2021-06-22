@@ -1,0 +1,62 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <!-- Bonne documentation à: https://logging.apache.org/log4j/2.x/manual/appenders.html -->
+
+    <Console name="Console" target="SYSTEM_OUT">
+      <!-- https://logging.apache.org/log4j/log4j-2.1/manual/layouts.html -->
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %C.%M() - %msg%n"/>
+    </Console>
+    <!-- RollingRandomAccessFile plus rapide que RollingFile
+         Voir:  https://stackoverflow.com/questions/27836850/what-is-the-difference-between-rollingfile-and-rollingrandomaccessfile-in-log4j2 -->
+
+
+
+<!--
+
+  Comment by Hans Deragon 2018-09-12 11:26:03
+
+  It is impossible to have the latest log file containing a timestamp, with
+  any Rolling* appender.  If you add a timestamp stamp to the fileName, it
+  will simply not rolling log files anymore and the logs will accumulate,
+  never to be deleted.
+
+-->
+    <RollingRandomAccessFile
+        name="LogFile"
+
+        fileName="${env:EDV_LOG}/edv-console-encrypttablefields/edv-console-encrypttablefields-latest.log"
+        filePattern="${env:EDV_LOG}/edv-console-encrypttablefields/edv-console-encrypttablefields-${date:yyyyMMdd}T${date:HHmmss}.log">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %C.%M() - %msg%n"/>
+      <Policies>
+        <OnStartupTriggeringPolicy/>
+      </Policies>
+      <DefaultRolloverStrategy>
+        <Delete basePath="${env:EDV_LOG}/edv-console-encrypttablefields" maxDepth="1">
+          <IfFileName glob="*.log">
+
+            <!-- Keep 5 files/instances of the logs. -->
+            <IfAccumulatedFileCount exceeds="5"/>
+            <!--
+                 OR (choose one or the other conditiion)
+            -->
+            <!-- On conserve un mois (31 jours) de logs, assum. -->
+            <IfLastModified age="31d"/>
+
+          <IfFileName/>
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingRandomAccessFile>
+  </Appenders>
+  <Loggers>
+    <Root level="warn">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="LogFile"/>
+    </Root>
+    <Logger name="com.exemple" level="info" additivity="false">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="LogFile"/>
+    </Logger>
+  </Loggers>
+</Configuration>

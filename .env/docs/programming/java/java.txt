@@ -1,0 +1,1712 @@
+JAVA FOR ORACLE NOT FREE ANYMORE SINCE 2018
+══════════════════════════════════════════════════════════════════════════════
+
+  Download OpenJDK easily ->  See:  https://adoptopenjdk.net/
+
+  Read:  https://www.lakesidesoftware.com/blog/java-did-what-understanding-how-2019-java-licensing-changes-impact-you
+
+
+
+LAMBDA
+══════════════════════════════════════════════════════════════════════════════
+
+  Excellent -> https://www.freecodecamp.org/news/learn-these-4-things-and-working-with-lambda-expressions-b0ab36e0fffc/
+
+
+
+ARRAYS
+══════════════════════════════════════════════════════════════════════════════
+
+  STATIC INITIALIZATION:
+
+  String[] stringArray = { "A", "B", "..." };
+
+  // Convert Array to ArrayList
+  ... = new ArrayList<Element>(Arrays.asList(array))
+
+  fct(new String[] { "string1", "string2" });
+  void fct(String[] args) { ... }
+
+
+  public static final XmlDataStorage[] databaseDataStorages = new XmlDataStorage[] {
+    new XmlDataStorage( new XmlDataStorage.Data[] {
+        new XmlDataStorage.Data("user", "DB User"),
+        new XmlDataStorage.Data("driver", "DB driver"),
+        new XmlDataStorage.Data("attributes", "DB info"),
+        new XmlDataStorage.Data("maxNumberConnections", "DB Nb de connexion") })};
+
+  LOOPING
+  ────────────────────────────────────────────────────────────────────────────
+
+    for(int index=0; index < array.length; index++)
+
+    NOTE:
+
+      Foreach loops cannot be used with raw arrays.
+      for(Type entry : stringArray) { }  // Does not work.
+
+
+
+HASHTABLE VS HASHMAP
+══════════════════════════════════════════════════════════════════════════════
+
+  Use HashMap all the time.
+
+  If you need it to be thread safe (because it is not), use:
+
+     Map m = Collections.synchronizedMap(hashMap);
+
+  From:  http://www.javatpoint.com/difference-between-hashmap-and-hashtable
+
+    HashMap vs Hashtable
+
+    1) HashMap is non synchronized. It is not-thread safe
+       and can't be shared between many threads without proper
+       synchronization code. | Hashtable is synchronized. It is
+       thread-safe and can be shared with many threads.
+
+    2) HashMap allows one null key and multiple null values.         | Hashtable doesn't allow any null key or value.
+    3) HashMap is a new class introduced in JDK 1.2.                 | Hashtable is a legacy class.
+    4) HashMap is fast.                                              | Hashtable is slow.
+    5) We can make the HashMap as synchronized by calling this code  |
+       Map m = Collections.synchronizedMap(hashMap);                 | Hashtable is internally synchronized and can't be unsynchronized.
+    6) HashMap is traversed by Iterator.                             | Hashtable is traversed by Enumerator and Iterator.
+    7) Iterator in HashMap is fail-fast.                             | Enumerator in Hashtable is not fail-fast.
+    8) HashMap inherits AbstractMap class.                           | Hashtable inherits Dictionary class.
+
+
+
+REGEX
+══════════════════════════════════════════════════════════════════════════════
+
+    String text;
+    Pattern pattern = Pattern.compile("<regex>");
+    Matcher matcher = pattern.matcher(text);
+
+    while(matcher.find()) // Attempts to find the next subsequence of the input sequence that matches the pattern.
+    {
+      String group1 = matcher.group(1);
+    }
+
+
+
+CLASSLOADERS
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://www.logicbig.com/how-to/java/different-ways-to-load-resources.html
+
+  this.getClass().getResource(resourceName): It tries to find the resource in
+  the same package as 'this' class unless we use absolute path starting with
+  '/'
+
+  Thread.currentThread().getContextClassLoader().getResource(resourceName): A
+  ClassLoader can be passed (shared) when creating a new thread using
+  Thread.setContextClassLoader, so that different thread contexts can load
+  each other classes/resources. If not set, the default is the ClassLoader
+  context of the parent Thread. This method is not appropriate if we want to
+  load resources inside the packages unless we use complete paths starting
+  from root.
+
+  ClassLoader.getSystemClassLoader().getResource(resourceName) :
+  ClassLoader.getSystemClassLoader() gives the class loader used to start the
+  application. we have to use complete path for the resources starting from
+  root.
+
+
+
+MISC
+══════════════════════════════════════════════════════════════════════════════
+
+  - URL Encode / Decode (Remplacement %20 <-> ' ')
+
+      URLEncoder.encode(<string>, "UTF-8")
+      URLDecoder.decode(<string>, "UTF-8")
+
+  - List files in a resource directory:
+
+    URL pdfDirectoryURL = ClassLoader.getSystemClassLoader().getResource(<path without starting '/'>);
+    File[] pathNames = new File(URLDecoder.decode(pdfDirectoryURL.getFile(), "UTF-8")).listFiles();
+    for (File pathName : pathNames) ...
+
+  - PWD / Current directory
+
+    #1
+
+      System.out.println("PWD = " + System.getProperty("user.dir"));
+
+    #2
+
+      Path currentRelativePath = Paths.get("");
+      System.out.println("PWD = " + currentRelativePath.toAbsolutePath().toString());
+
+  - FileUtils.getBasename(String fileAndPath)
+
+  - Reading / writing files:
+
+      http://www.studytrails.com/java-io/character-file-reading-writing.jsp
+
+  - rmdir -r:
+
+      import org.apache.commons.io.FileUtils;
+      FileUtils.deleteDirectory(new File("<directory>"));
+      // or
+      FileUtils.deleteQuietly(new File("<directory>"));
+
+  - (new File(outputDir)).mkdirs();  // Equivalent to mkdir -p (yep, -p incl.)
+
+  - Print arrays:  In Java 5 Arrays.toString(arr) or Arrays.deepToString(arr)
+    for arrays within arrays.
+
+  - Thread.sleep(<millisec>);
+
+  - Locale.setDefault(Locale.US); // Force OJDBC messages to be in English.
+
+  - Path / File convert / conversion:  File.toPath() and Path.toFile()
+
+  - Escape/replace '\r', '\n', '\t', etc... with "\\r", "\\n", "\\t", ...
+
+      String escapedString = StringEscapeUtils.escapeJava(String stringToEscape);
+
+      See:  https://commons.apache.org/proper/commons-lang/javadocs/api-3.1/org/apache/commons/lang3/StringEscapeUtils.html#escapeJava(java.lang.String)
+
+  - Frédéric Barnabé: Coding a web application with REST services is sooo
+    easy! Coding a web application with jQuery is better than nothing, but
+    it's still fucking javascript...
+
+
+  - How to get the path of a running JAR file?
+
+    // http://stackoverflow.com/questions/320542/how-to-get-the-path-of-a-running-jar-file
+    String path = <current clas>.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+
+
+  - HttpClient timeouts:
+
+      http://www.baeldung.com/httpclient-timeout
+
+  - Convert String to Hex (string2hex)
+
+    String stringHex = DatatypeConverter.printHexBinary(string.getBytes("UTF-8"));
+
+
+DEEP COPY
+══════════════════════════════════════════════════════════════════════════════
+
+  Good read:  http://javatechniques.com/blog/faster-deep-copies-of-java-objects/
+    The java.lang.Object root superclass defines a clone() method that will,
+    assuming the subclass implements the java.lang.Cloneable interface, return
+    a copy of the object. While Java classes are free to override this method
+    to do more complex kinds of cloning, the default behavior of clone() is to
+    return a shallow copy of the object. This means that the values of all of
+    the original object’s fields are copied to the fields of the new object.
+
+
+  Libraries:
+
+    Cloning:  http://code.google.com/p/cloning/
+
+
+
+ENUM
+══════════════════════════════════════════════════════════════════════════════
+
+  Simple
+  ────────────────────────────────────────────────────────────────────────────
+
+    enum Level { LOW, MEDIUM, HIGH }
+
+    if(level == Level.LOW)...
+
+
+  Complex
+  ────────────────────────────────────────────────────────────────────────────
+
+    public enum cvsIndexEntries {
+
+      DUMMY(0), FILENAME(1), REVISION(2), FIELD(3), FLAGS(4), BRANCH(5);
+
+      private int mIndex = 0;
+
+      cvsIndexEntries(int index) {
+        mIndex = index;
+      }
+
+      int index() {
+        return mIndex;
+      }
+    }
+
+
+
+STRING
+══════════════════════════════════════════════════════════════════════════════
+
+  MULTILINE À LA PYTHON """
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://stackoverflow.com/questions/878573/java-multiline-string
+
+    import org.apache.commons.lang.StringUtils;
+
+    System.out.println(StringUtils.join(new String[]{
+            "it was the age of wisdom, it was the age of foolishness",
+            "it was the epoch of belief, it was the epoch of incredulity",
+            "it was the season of Light, it was the season of Darkness",
+            "it was the spring of hope, it was the winter of despair",
+            "we had everything before us, we had nothing before us"
+    }, "\n"));
+
+
+
+  FETCH JAVA CLASS
+  --------------------------------------------------------------------
+
+    this.class.getName().replaceAll(".*\\.", "");
+
+    ou
+
+    String className = this.getClass().getName();
+    className = className.substring(className.lastIndexOf('.')+1);
+
+
+  INDENT
+  --------------------------------------------------------------------
+
+    From:  http://stackoverflow.com/questions/15888934/how-to-indent-a-multi-line-paragraph-being-written-to-the-console-in-java
+
+    As a simple option, you could use String.replaceAll() as follows:
+
+    String output = <your string here>
+    String indented = output.replaceAll("(?m)^", "\t");
+
+    If you're unfamiliar with Java regular expressions, it works as follows:
+
+    - (?m) enables multiline mode. This means each line in output is
+      considered individually, instead of treating output as a single line
+      (which is the default).
+
+    - ^ is a regex matching the start of each line.
+
+    - \t causes each match of the preceding regex (i.e. the start of each
+      line) to be replaced by a tab character.
+
+
+
+STACKTRACE
+══════════════════════════════════════════════════════════════════════════════
+
+  #1
+
+    StringWriter sw = new StringWriter();
+    exception.printStackTrace(new PrintWriter(sw));
+    sw.toString(); // stack trace as a string
+
+  #2
+
+    import org.apache.commons.lang.exception.ExceptionUtils;
+    String stackTrace = ExceptionUtils.getFullStackTrace(exception);
+
+  LOG4J
+
+    logger.error("Error:  <msg here>", exception);
+
+
+
+FORMATING / PADDING
+══════════════════════════════════════════════════════════════════════════════
+
+  Padding
+
+    http://stackoverflow.com/questions/275711/add-leading-zeroes-to-number-in-java
+
+    String.format("%03d", num)
+
+    -----
+
+    Since 1.5, String.format() can be used to left/right pad a given string.
+
+    public static String padRight(String s, int n) {
+         return String.format("%1$-" + n + "s", s);
+    }
+
+    public static String padLeft(String s, int n) {
+        return String.format("%1$" + n + "s", s);
+    }
+
+
+
+  How to format numbers with white spaces between thousands.
+
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+    symbols.setGroupingSeparator(' ');
+    symbols.setDecimalSeparator('.');
+    DecimalFormat decimalFormat = new DecimalFormat("###,###.00", symbols);
+
+    Output:  123 456 789.00
+
+
+  ISO 8601
+  ────────────────────────────────────────────────────────────────────────────
+
+    DateFormat in a Multithreading Environment:
+    http://www.javacodegeeks.com/2010/07/java-best-practices-dateformat-in.html
+
+    Override system / default timezone by calling JVM with
+    '-Duser.timezone=UTC' (works in Inteliji Idea).
+
+
+    Print date
+    ──────────────────────────────────────────────────────────────────────────
+
+      ZonedDateTime - Plus universel.  JDK 1.8 et +
+      ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+          DateTimeFormatter iso8601TimeStampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS z");// 2017-02-10 16:44:43.759000 EST
+          final String dateExcecution = ZonedDateTime.now().format(iso8601TimeStampFormat);
+
+      LocalDateTime - Il n'y a pas de notion de timezone.  JDK 1.8 et +
+      ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+          DateTimeFormatter iso8601TimeStampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");// 2017-02-10 16:44:43.759000
+          final String dateExcecution = LocalDateTime.now().format(iso8601TimeStampFormat);
+
+      java.util.Date & java.sql.TimeStamp
+      ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+          timestamp.toLocalDateTime.format(iso8601TimeStampFormat);
+
+
+  ────────────────────────────────────────────────────────────────────────────
+
+
+      Legacy
+      ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+      # 1
+
+        // This example prints the timezone in two formats.
+        SimpleDateFormat iso8601TimeStampFormat =
+          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z X");  // 2016-02-08 11:48:58 EST -05
+        String strDate = iso8601TimeStampFormat.format(LocalDateTime.now());  // Now.
+        System.out.println(strDate);
+
+      # 2
+
+        String format = "<some path>/{0,date,YYYY/MM/dd}";
+        String formatted = MessageFormat.format(format, new Date());
+        System.out.println(formatted);
+
+      # 3
+
+        String format = "<some path>/%1$tY/%1$tm/%1$td";
+        String formatted =  String.format(format, new Date());
+        System.out.println(formatted);
+
+      # Print in a different timezone:
+
+      iso8601TimeStampFormat.setTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
+      System.out.println(iso8601TimeStampFormat.format(new Date())); // Bangkok
+
+
+    Parse date
+    ──────────────────────────────────────────────────────────────────────────
+
+      # 1
+
+      DateTimeFormatter dbUnitTimeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSS");
+      DateTimeFormatter dbUnitDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+      LocalDateTime timestamp = LocalDateTime.parse(, dbUnitTimeStamp);
+      LocalDateTime datetime  = LocalDateTime.parse(, dbUnitDate);
+
+      # 2
+
+      SimpleDateFormat dbUnitTimestamp = \
+        new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.SSSSSSS");
+
+      # 3
+
+      // Set timezone, in case not defined in strDate
+      iso8601TimeStampFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      Date date = iso8601TimeStampFormat.parse(strDate);
+
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+
+      String strDate = iso8601TimeStampFormat.format(calendar.getTime());
+
+      # 4
+      java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf("2007-09-23 10:10:10.0");
+
+
+
+GOOD LIBRARIES
+══════════════════════════════════════════════════════════════════════════════
+
+  ITEXT http://itextpdf.com/
+    Excellente libraire pour produire des PDFs entre autres.
+    Licence:  AGPL ou commercial.
+
+
+
+SORT
+══════════════════════════════════════════════════════════════════════════════
+
+  HashMap keySet
+
+    You cannot sort a HashMap keySet directly.  You need to convert it to
+    a list:
+
+      List list = new LinkedList(hashMap.keySet());
+      Collections.sort(list);
+      System.out.println(list);
+
+
+
+LIST CONTENT OF DIRECTORY
+══════════════════════════════════════════════════════════════════════════════
+
+  // Recursively search all subdirectories of srcDir for files matching
+  // the RegexFileFilter provided.
+  import org.apache.commons.io.FileUtils;
+  Collection<File> files = FileUtils.listFiles(
+          new File(srcDir),
+          new RegexFileFilter("^(.*?)"),
+          TrueFileFilter.INSTANCE
+  );
+
+
+
+FILES CODE EXAMPLES
+══════════════════════════════════════════════════════════════════════════════
+
+
+  // Read all lines of a Ascii/Unicode file:
+  List<String> lines = Files.readAllLines(Paths.get(srcDataFileName), StandardCharsets.UTF_8);
+
+  // Read file as a String:  http://stackoverflow.com/questions/1656797/how-to-read-a-file-into-string-in-java
+  public static String fetchFileContent(String filePath) throws URISyntaxException, IOException {
+    return new String(Files.readAllBytes(fileNameToPath(filePath)), Charset.forName("UTF-8"));  // "ISO-8859-1" also available.
+  }
+
+  // Read file content as String from classpath
+  public static String getFileContentFromClasspath(String filename) throws IOException, URISyntaxException {
+    URL url = <put name of current class here>.class.getClassLoader().geturl(filename);
+    return new String(Files.readAllBytes(Paths.get(url.toURI())), StandardCharsets.UTF_8);
+  }
+
+  StringWriter writer = new StringWriter();
+  IOUtils.copy(inputStream, writer, StandardCharsets.UTF_8);
+  String content = writer.toString();
+
+
+  // Read from an InputStream:  http://stackoverflow.com/questions/309424/read-convert-an-inputstream-to-a-string
+  // NB: does not close inputStream, you can use IOUtils.closeQuietly for that
+  String content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+
+  // Write lines to a temporary file
+
+  File temp = File.createTempFile("part-r-00000-test-", "");
+  temp.deleteOnExit();
+  BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(temp));
+  Iterator<String> iterator = lines.iterator();
+  while (iterator.hasNext()) {
+      bufferedWriter.write(line + "\n");
+  }
+
+
+
+LOOPS
+══════════════════════════════════════════════════════════════════════════════
+
+
+  foreach loop
+  ────────────────────────────────────────────────────────────────────────────
+
+    'foreach' is the term used for this kind of loop and to search the web
+    about it.
+
+    for(Type entry: entries)
+    {
+    }
+
+    You cannot use this type of foreach construct with raw arrays like
+    Object[].  You must make use of Collectibles.
+
+
+  http://docs.oracle.com/javase/1.5.0/docs/guide/language/foreach.html
+
+
+  # 1
+
+    // Iterate through a Map/HashMap
+    for(Map.Entry<String, String> entry : map.entrySet())
+    {
+        System.out.println(entry.getKey() + "/" + entry.getValue());
+    }
+
+  #2
+
+    // Iterate through a HashMap
+    public static void printMap(Map mp) {
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry)it.next();
+            System.out.println(pairs.getKey() + " = " + pairs.getValue());
+        }
+    }
+
+
+
+LOGGING / LOG4J
+══════════════════════════════════════════════════════════════════════════════
+
+  Voir log4j.txt
+
+
+
+GETOPTS
+══════════════════════════════════════════════════════════════════════════════
+
+  MAVEN POM CONFIGURATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    <dependency>
+      <groupId>gnu.getopt</groupId>
+      <artifactId>java-getopt</artifactId>
+      <version>1.0.13</version>
+    </dependency>
+
+
+
+  CODE
+  ------------------------------------------------------------
+
+    private static void parseArgs(String[] args)
+    {
+        LongOpt[] longopts = new LongOpt[] {
+          new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
+          new LongOpt("env", LongOpt.REQUIRED_ARGUMENT, null, 'o')
+        };
+
+        Getopt getopt = new Getopt("setItemACL", args, "he:", longopts);
+        getopt.setOpterr(true); // We'll not do our own error handling
+
+        int option;
+        while((option = getopt.getopt()) != -1)
+        {
+          switch(option)
+          {
+            case 'e':
+              environment = getopt.getOptarg();
+              break;
+
+            case 'h':
+              usage(); // See function below
+              break;
+          }
+        }
+
+        StringBuilder error = new StringBuilder();
+
+        if(environment == null)
+        {
+          error.append("  - Environment missing.  Please use the '-e|--env option.");
+        }
+
+        if(error.length() != 0)
+        {
+          System.err.println("ERROR:  The following mandatory options are absent.  Command aborted.\n\n" + error.toString());
+          System.exit(1);
+        }
+
+        for (int index = getopt.getOptind(); index < args.length ; index++)
+           System.out.println("Non option argv element: " + args[index] + "\n");
+
+        if(pathsToProcess.size() == 0)
+            error.append("  - X missing.  Please add some on the command line.");
+
+        if(error.length() != 0)
+        {
+          System.err.println("ERROR:  The following mandatory options are absent.  Command aborted.\n\n" + error.toString());
+          System.exit(1);
+        }
+    }
+
+
+    // USAGE & LOAD THE CONTENT OF A FILE IN A STRING
+    private static void usage() throws IOException, URISyntaxException {
+        InputStream    inputStream = <this class>.class.getResourceAsStream("/<file>.txt");
+        BufferedReader reader      = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+        String rawText = IOUtils.toString(reader);
+        String formattedText = rawText.replace("${APPLICATION_NAME}", APPLICATION_NAME);
+        System.out.println(formattedText);
+        System.exit(0);
+    }
+
+
+
+EXECUTION
+══════════════════════════════════════════════════════════════════════════════
+
+  -Xms128m               # Minimum Heap memory
+  -Xmx1g                 # Maximum Heap memory
+  -XX:PermSize=64m       # PermGen Size
+  -XX:MaxPermSize=256m   # Maximum PermGen Size
+
+  -Xms128m -Xmx1g -XX:PermSize=64m -XX:MaxPermSize=256m
+
+
+
+  EXECUTABLE WITH -jar OR -cp/-classpath
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/11922681/differences-between-java-cp-and-java-jar
+
+--> -cp/-classpath
+
+      java -classpath target/*-with-dependencies.jar com.<company>.<class>
+
+      USE THIS.  It allows external .properties files to be loaded, allowing
+      customization per environment.
+
+    -jar
+
+      java -jar target/*-with-dependencies.jar com.<company>.<class>
+
+      Requires an executable jar file and the classpath for that application
+      has to be defined inside the jar's manifest (all other classpath
+      declaration will be silently ignored...). So with the second version
+      you'd have to look into the jar, read the manifest and try to find out
+      if the classpath entries are valid from where the jar is stored...
+      That's avoidable.
+
+      IMPOSSIBLE TO HAVE A .properties FILE OUTSIDE THE JAR, THUS IMPOSSIBLE
+      TO HAVE DIFFERENT CONFIGURATION FILES ACCORDING TO THE ENVIRONMENT.
+
+      MANIFEST FILE REQUIRED IN THIS CASE.
+
+
+
+  INCLUDING ALL THE JARS IN A DIRECTORY WITHIN THE JAVA CLASSPATH
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/219585/including-all-the-jars-in-a-directory-within-the-java-classpath
+
+    Using Java 6 or later, the classpath option supports wildcards. Note the
+    following:
+
+    Use straight quotes (")
+    Use *, not *.jar
+
+
+
+OPEN AND READ ANY FILE IN A .WAR FILE OF A WEB APPLICATION WITH JAVA
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.digizol.org/2007/04/open-file-war-web-application-java.html
+
+
+
+JAXB
+══════════════════════════════════════════════════════════════════════════════
+
+  Java Architecture for XML Binding (JAXB) allows Java developers to map
+  Java classes to XML representations. JAXB provides two main features: the
+  ability to marshal Java objects into XML and the inverse, i.e. to
+  unmarshal XML back into Java objects. In other words, JAXB allows storing
+  and retrieving data in memory in any XML format, without the need to
+  implement a specific set of XML loading and saving routines for the
+  program's class structure. It is similar to xsd.exe and XmlSerializer in
+  the .NET Framework.
+
+  https://en.wikipedia.org/wiki/Java_Architecture_for_XML_Binding
+
+
+  MARSHAL
+  ────────────────────────────────────────────────────────────────────────────
+
+    Marshaller marshaller =
+      JAXBContext.newInstance(Example.class).createMarshaller();
+
+    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+    // Force UTF8 encoding
+    BufferedWriter bufferedWriter = new BufferedWriter(
+      new OutputStreamWriter(
+      new FileOutputStream("file".xml"), StandardCharsets.UTF_8));
+
+    // If Example has @XmlRootElement
+    marshaller.marshal(Example.class, bufferedWriter);
+
+    // If Example has no @XmlRootElement
+    marshaller.marshal(
+      new JAXBElement(new QName("uri","local"), Example.class, response),
+      bufferedWriter);
+
+
+  UNMARSHAL
+  ────────────────────────────────────────────────────────────────────────────
+
+    Unmarshaller unmarshaller =
+      JAXBContext.newInstance(Example.class).createUnmarshaller();
+
+    // If Example has @XmlRootElement
+    Example type = ((Example) unmarshaller.unmarshal(resource.getURL()));
+
+    // If Example has no @XmlRootElement
+    JAXBElement<Example> root =
+      unmarshaller.unmarshal(new StreamSource(<File here>), Example.class);
+    Example example = root.getValue();
+
+
+  JAXB - MARSHAL & UNMARSHAL WITH MISSING @XmlRootElement ANNOTATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://www.source4code.info/2013/07/jaxb-marshal-unmarshal-with-missing.html
+
+
+  TROUBLESHOOTING
+  ──────────────────────────────────────────────────────────────────────────
+
+    java.lang.ClassCastException: com.sun.xml.bind.v2.runtime.JAXBContextImpl cannot be cast to com.sun.xml.internal.bind.api.JAXBRIContext
+
+    From:  http://stackoverflow.com/questions/14162159/supplying-a-different-version-of-jaxb-for-jax-ws-in-java-1-6
+
+    I was stuck on this problem but was able to use the "work around" listed
+    in this forum Q&A by setting a system property like so:
+
+    System.setProperty("javax.xml.bind.JAXBContext",
+                       "com.sun.xml.internal.bind.v2.ContextFactory");
+
+
+WEB
+══════════════════════════════════════════════════════════════════════════════
+
+  Voir programming/java-web.txt pour de l'information additionnel sur
+  la programmation Java/Web.
+
+
+
+DATE
+══════════════════════════════════════════════════════════════════════════════
+
+  DATE MANIPULATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    #1
+
+      Calendar rawDate = Calendar.getInstance();
+      rawDate.setTime(iso8601TimeStampFormat.parse(dateAsString));
+      if (rawDate.get(Calendar.YEAR) <2000) ...
+
+    #2
+
+      Calendar calendar = Calendar.getInstance();
+      calendar.set(9999, Calendar.DECEMBER, 31, 0, 0, 0);
+      MAXIMAL_END_DATE = calendar.getTime();
+
+
+  NOW - CURRENT TIME
+  ────────────────────────────────────────────────────────────────────────────
+
+    #1
+
+      Calendar cal = Calendar.getInstance();
+      Date currentTime = cal.getTime();
+
+
+    #2
+
+      System.currentTimeMillis() // Current time.
+
+
+  MESURE TIME / DURATION OF EXECUTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    long startTimeInNanoSeconds = System.nanoTime();
+    ArrayList<String> data = functionToTime(()
+    int nbOfItemsProcessed = data.size();
+    long endTimeInNanoSeconds = System.nanoTime();
+    long durationInNanoSeconds = (endTimeInNanoSeconds - startTimeInNanoSeconds);
+
+    final long MILLION = 1000000;
+    final long BILLION = 1000000000;
+    Calendar startCalendar = Calendar.getInstance();
+    startCalendar.setTimeInMillis(startTimeInNanoSeconds / MILLION);  // Divide by MILLION to convert to ms.
+    Calendar endCalendar = Calendar.getInstance();
+    endCalendar.setTimeInMillis(endTimeInNanoSeconds / MILLION);  // Divide by MILLION to convert to ms.
+
+    SimpleDateFormat durationSDF = new SimpleDateFormat("HH:mm:ss:SSS z");
+    durationSDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+    String durationHuman = durationSDF.format(new Date(durationInNanoSeconds / MILLION));
+    String startHuman = iso8601TimeStampFormat.format(startCalendar.getTime());
+    String endHuman = iso8601TimeStampFormat.format(endCalendar.getTime());
+
+    System.out.println(String.format(
+            "\n" +
+            "Start:     %s\n" +
+            "End:       %s\n" +
+            "Duration:  %s or %s ns\n" +
+            "Items:     %d\n" +
+            "Rate:      %d/s  %d/m  %d/h\n",
+            startHuman, endHuman, durationHuman, durationInNanoSeconds,
+            nbOfItemsProcessed,
+            BILLION * nbOfItemsProcessed / durationInNanoSeconds,
+            BILLION * nbOfItemsProcessed / durationInNanoSeconds * 60,
+            BILLION * nbOfItemsProcessed / durationInNanoSeconds * 60 * 60)
+    );
+
+
+
+JAVADOC / COMMENTS
+══════════════════════════════════════════════════════════════════════════════
+
+  Voir:  http://www.oracle.com/technetwork/java/javase/documentation/index-137868.html
+
+  /**
+   * Returns an Image object that can then be painted on the screen.
+   * The url argument must specify an absolute {@link URL}. The name
+   * argument is a specifier that is relative to the url argument.
+   * <p>
+   * This method always returns immediately, whether or not the
+   * image exists. When this applet attempts to draw the image on
+   * the screen, the data will be loaded. The graphics primitives
+   * that draw the image will incrementally paint on the screen.
+   *
+   * @param  url  an absolute URL giving the base location of the image
+   * @param  name the location of the image, relative to the url argument
+   * @return      the image at the specified URL
+   * @see         Image
+   */
+
+
+
+RESOURCES / PROPERTIES
+══════════════════════════════════════════════════════════════════════════════
+
+  PROPERTIES CAN ONLY BE OF ISO-8859-1 FORMAT, NOT UTF-8 For JDK <= 1.8
+  ────────────────────────────────────────────────────────────────────────────
+
+    Note:  JDK >= 1.9 supports properties files in UTF-8 format.
+
+      See: https://docs.oracle.com/javase/9/intl/internationalization-enhancements-jdk-9.htm#JSINT-GUID-974CF488-23E8-4963-A322-82006A7A14C7
+        Section 'UTF-8 Properties Files'
+
+    From:  https://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
+
+      'public void load(InputStream inStream) throws IOException
+
+      Reads a property list (key and element pairs) from the input byte
+      stream. The input stream is in a simple line-oriented format as
+      specified in load(Reader) and is assumed to use the ISO 8859-1 character
+      encoding; that is each byte is one Latin1 character. Characters not in
+      Latin1, and certain special characters, are represented in keys and
+      elements using Unicode escapes as defined in section 3.3 of The Java™
+      Language Specification.'
+
+      So, you'd need to save them as ISO-8859-1. If you have any characters
+      beyond ISO-8859-1 range and you can't use \uXXXX off top of head and
+      you're thus forced to save the file as UTF-8, then you'd need to use the
+      native2ascii tool to convert an UTF-8 saved properties file to an
+      ISO-8859-1 saved properties file wherein all uncovered characters are
+      converted into \uXXXX format. The below example converts a UTF-8 encoded
+      properties file text_utf8.properties to a valid ISO-8859-1 encoded
+      properties file text.properties.
+
+        native2ascii -encoding UTF-8 text_utf8.properties text.properties
+
+
+  Get the path to resources
+  ────────────────────────────────────────────────────────────────────────────
+
+    Get the path from which relative resources are being fetched from:
+
+    this.getClass().getClassLoader().getResource("").getPath();
+
+
+  Fetch
+  ────────────────────────────────────────────────────────────────────────────
+
+  #1
+
+    Implemented in biz.deragon.library.properties.PropertiesManager
+
+    /**
+    *
+    * Load a properties file from the classpath.
+    *
+    * From http://stackoverflow.com/questions/18125481/loading-properties-file-gives-null
+    *
+    */
+    private Properties getPropertiesFromClasspath(String propFileName)
+      throws IOException
+    {
+        // loading xmlProfileGen.properties from the classpath
+        Properties props = new Properties();
+        InputStream inputStream = this.getClass().getClassLoader()
+            .getResourceAsStream(propFileName);
+
+        if (inputStream == null) {
+            throw new FileNotFoundException("Property file '" + propFileName
+                + "' not found in the classpath");
+        }
+
+        props.load(inputStream);
+        inputStream.close();
+
+        return props;
+    }
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    /**
+     * Search for the file within the filesystem and classpath.  Return a PATH object.
+     *
+     * @param filePath Relative or absolute path to the file, within the filesystem or the classpath.
+     * @return
+     * @throws URISyntaxException
+     */
+    public static Path fileNameToPath(String filePath) throws URISyntaxException, FileNotFoundException {
+      Path path = Paths.get(filePath);
+
+      if (!path.toFile().exists()) {
+        URL resource = DatabaseUtils.class.getClassLoader().getResource(filePath);
+        if (resource == null)
+          throw new FileNotFoundException(filePath);
+
+        path = Paths.get(resource.toURI());
+      }
+
+      return path;
+    }
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    # Important:  Start with a '/', or else getResource() will prefix the string
+    #             with the this class package!  Doing so, it will not find
+
+    Path path = Paths.get(getClass().getResource(
+      "/relative path to file starting from a path of classpath/filename").toURI());
+       ↑
+       Put the /!!!  Example:  /file/myfile.txt
+
+    Troubleshooting when null is returned:
+
+      If getClass().getResource() is not called with a '/' at the beginning of
+      the resource's name, getResource() attemps a resolveName() and will prefix
+      the passed string with the package name of the class.  The resource
+      will thus not be found and null will be returned.
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    Do not put a '/' in front, or else it will not find the resource in the classpath.
+
+    Path path = Paths.get(ClassLoader.getSystemResource
+      ("relative path with no slash/filename").toURI());
+
+
+
+TECHNICS
+══════════════════════════════════════════════════════════════════════════════
+
+  JavaBeans
+
+    JavaBeans are reusable software components for Java. They are classes that
+    encapsulate many objects into a single object (the bean). They are
+    serializable, have a 0-argument constructor, and allow access to properties
+    using getter and setter methods.
+
+
+  JAXB - XML marshal / unmarshal class
+
+    Java Architecture for XML Binding (JAXB) allows Java developers to map
+    Java classes to XML representations. JAXB provides two main features: the
+    ability to marshal Java objects into XML and the inverse, i.e. to
+    unmarshal XML back into Java objects. In other words, JAXB allows storing
+    and retrieving data in memory in any XML format, without the need to
+    implement a specific set of XML loading and saving routines for the
+    program's class structure.
+
+
+  JAXWS
+
+    Les JDKs d'Oracle fournissent des interfaces et definition pour JAXWS,
+    mais aucune implémentation.  Il existe plusieurs implémentations sur le
+    web mais ceux qu'Alexandre Hétû-Rivard suggère car ils s'intègrent le
+    mieux avec Spring sont org.apache.cxf:
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>2.7.7</version>
+        </dependency>
+
+
+  Session configuration
+  ------------------------------------------------------------
+
+    In WEB-INF/web.xml
+
+    <session-config>
+      <session-timeout>20</session-timeout> <!-- Expressed in minutes -->
+    </session-config>
+
+
+
+SPRING
+══════════════════════════════════════════════════════════════════════════════
+
+  Dependency Injection vs Factory Pattern
+
+    http://stackoverflow.com/questions/557742/dependency-injection-vs-factory-pattern
+
+
+  ANNOTATIONS
+  ────────────────────────────────────────────────────────────────────────────
+
+    @Configuration (inherits from, and thus is also a @Component)
+
+      Indicates that a class declares one or more @Bean methods and may be
+      processed by the Spring container to generate bean definitions and
+      service requests for those beans at runtime.
+
+    @Component
+
+      Indicates that an annotated class is a "component". Such classes are
+      considered as candidates for auto-detection when using annotation-based
+      configuration and classpath scanning.
+
+    @Autowired vs @Inject vs @Resources
+
+      @Autowired et @Inject sont synomyne et peuvent être interchangés.
+      @Inject est préférable car c'est le keyword utilisé par le standard
+      JSR-330 ou JSR-299 (je n'ai pas vérifié lequel).
+
+      @Resources est pratiquement pareil que les autres.  Mais lire la
+      conclusion de:
+
+      http://blogs.sourceallies.com/2011/08/spring-injection-with-resource-and-autowired/#more-2350
+
+
+
+  APPLICATIONCONTEXT
+  ────────────────────────────────────────────────────────────────────────────
+
+    ApplicationContext appContext = new ClassPathXmlApplicationContext("classpath:./spring/applicationContext.xml");
+
+
+
+  EXPLANATION
+  ────────────────────────────────────────────────────────────────────────────
+
+  http://stackoverflow.com/questions/3153546/how-does-autowiring-work-in-spring
+
+    First, and most important - all spring beans are managed - they "live"
+    inside a container, called "application context".
+
+    Second, each application has an entry point to that context. Web
+    applications have a Servlet, JSF uses a el-resolver, etc. Also, there is a
+    place where the application context is bootstrapped and all beans -
+    autowired. In web applications this can be a startup listener.
+
+    Autowiring happens by placing an instance of one bean into the desired
+    field in an instance of another bean. Both classes should be beans, i.e.
+    they should be defined to live in the application context.
+
+    What is "living" in the application context? This means that the context
+    instantiates the objects, not you. I.e. - you never make new
+    UserServiceImpl()
+    - the container finds each injection point and sets an instance there.
+
+    In your controllers, you just have the following:
+
+      @Controller // defines that this class is a spring bean
+      @RequestMapping("/users")
+      public class SomeController {
+
+          // tells the application context to inject an instance of UserService here
+          @Autowired
+          private UserService userService;
+
+          @RequestMapping("/login")
+          public void login(@RequestParam("username") String username,
+                 @RequestParam("password") password) {
+
+              // the UserServiceImpl is already injected and you can use it
+              userService.login(username, password);
+
+          }
+      }
+
+    A few notes:
+
+    - in your applicationContext.xml you should enable the
+      <context:component-scan> so that classes are scanned for the
+      @Controller, @Service, etc. annotations.
+
+    - the entry point for a spring-mvc application is the DispatcherServlet,
+      but it is hidden from you, and hence the direct interaction and
+      bootstrapping of the application context happens behind the scene.
+
+    - UserServiceImpl should also be defined as bean - either using <bean
+      id=".." class=".."> or using the @Service annotation. Since it will be
+      the only implementor or UserService, it will be injected.
+
+    - apart from the @Autowired annotation, spring can use xml-configurable
+      autowiring.  In that case all fields that have a name or type matching
+      the one of an existing bean is automatically gets a bean injected. In
+      fact, that was the initial idea of autowiring - to have fields injected
+      with dependencies without any configuration.
+
+
+
+SPRING MVC
+══════════════════════════════════════════════════════════════════════════════
+
+  TO READ
+  ────────────────────────────────────────────────────────────────────────────
+
+  - Creating Standalone Web Applications with Spring Boot
+
+    https://www.developer.com/java/data/creating-standalone-web-applications-with-spring-boot.html
+
+    Explains very well how Spring MVC works.
+
+
+
+SPRING BATCH
+══════════════════════════════════════════════════════════════════════════════
+
+  See java-springbatch.txt
+
+
+
+WICKET (UI FRAMEWORK FOR WEBPAGES)
+══════════════════════════════════════════════════════════════════════════════
+
+  http://en.wikipedia.org/wiki/Apache_Wicket
+
+  Ten Things Every Wicket Programmer Needs to Know - À lire:
+
+   http://wickettraining.com/ten-things-every-wicket-programmer-should-know.html
+
+  Sessions in Wicket
+
+    http://basementcoders.com/2008/10/sessions-in-wicket/
+
+  http://www.devproof.org/wicket_best_practice
+
+
+
+JQUERY
+══════════════════════════════════════════════════════════════════════════════
+
+  gwtquery        http://code.google.com/p/gwtquery/  Meilleur que jQuery
+  JSF + SEAM  Axa standard, vieux
+
+
+
+FIND
+══════════════════════════════════════════════════════════════════════════════
+
+  #1 Best - DirectoryStream makes lazy search; good for directories with
+            huge number of files.
+
+   private Path find(Path directory, final String fileName) throws IOException
+   {
+
+        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory);
+
+        for (Path path : directoryStream) {
+            if (path.getFileName().toString().equals(fileName)) {
+                directoryStream.close();
+                return path.normalize();
+            }
+            else if (new File(path.toString()).isDirectory()) {
+                path = find(path, fileName);
+                if (path != null)
+                    return path;
+            }
+        }
+
+        directoryStream.close();
+        return null;
+    }
+
+  #2
+
+    private String find(File dir, final String fileName)
+    {
+
+        File[] matches = dir.listFiles();
+
+        for (File match : matches)
+        {
+            if(Files.isDirectory(Paths.get(match.getAbsolutePath()))) {
+                String path = find(match, fileName);
+                if (path != null)
+                    return path;
+            }
+            else if(match.getName().equals(fileName))
+                return match.getAbsolutePath();
+        }
+
+        return null;
+    }
+
+
+
+MD5SUM
+══════════════════════════════════════════════════════════════════════════════
+
+  #1
+
+    // Exact same output as 'md5sum' on a Linux machine.
+    String md5 = DigestUtils.md5Hex(new FileInputStream(pathToFileAsString));
+
+  #2
+
+    import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+    import java.security.DigestInputStream;
+    import java.security.MessageDigest;
+    import java.security.NoSuchAlgorithmException;
+
+    // Exact same output as 'md5sum' on a Linux machine, except for
+    // case.
+    private String md5sum(Path path)
+       throws IOException, NoSuchAlgorithmException
+    {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      try (InputStream is = Files.newInputStream(path)) {
+          DigestInputStream dis = new DigestInputStream(is, md);
+          while(dis.read() != -1) {}
+      }
+      return (new HexBinaryAdapter()).marshal(md.digest());
+    }
+
+
+
+INTELLIJI IDEA
+══════════════════════════════════════════════════════════════════════════════
+
+  SETUP LANGUAGE SOURCE
+  ────────────────────────────────────────────────────────────────────────────
+
+    Error:(12, 68) java: diamond operator is not supported in -source 1.6 (use -source 7 or higher to enable diamond operator)
+
+    Correct language in ->
+      File / Project Structure / Project / [ Project language level ]
+
+
+  AUTOSCOLL / TARGET TO FILE
+  ────────────────────────────────────────────────────────────────────────────
+
+
+    In the projec view, select the "gear" icon and select
+    'Autoscroll from source'.
+
+    See:  http://stackoverflow.com/questions/11051692/how-to-make-scroll-from-source-feature-always-enabled
+
+  MISC
+  ────────────────────────────────────────────────────────────────────────────
+
+    - Formating disabling, for Eclipse and Inteliji IDEA.
+
+      // @formatter:off
+      // @formatter:on
+
+
+
+CHARACTER ENCODING / CHARACTER SET / UTF-8 UTF8 LATIN1 ISO-8859-1
+══════════════════════════════════════════════════════════════════════════════
+
+  COMPILING
+  ────────────────────────────────────────────────────────────────────────────
+
+    mvn -Dfile.encoding=UTF-8 -Dproject.build.sourceEncoding=UTF-8
+
+    It is imperative that when compiling, the following options are used on
+    maven:
+
+      -Dfile.encoding=UTF-8 -Dproject.build.sourceEncoding=UTF-8
+
+    Example:
+
+      mvn -Dfile.encoding=UTF-8 -Dproject.build.sourceEncoding=UTF-8 clean compile assembly:single
+
+    On a Windows workstation, failing to specify
+    -Dproject.build.sourceEncoding=UTF-8 particularly causes double encoding
+    to occur on any file generated by my test program, regardless the forced
+    UTF8 encoding incantation used.  Without this option, the code in the
+    'PROGRAMMING' sub-section below will still generate double encoding.
+
+    Ref:
+    http://stackoverflow.com/questions/10842635/mvn-compile-not-using-utf-8-encoding
+
+    Double encoding:
+
+      http://stackoverflow.com/questions/7861803/utf-8-strings-in-a-mysql-database-got-messed-up-after-configuration-change
+      http://stackoverflow.com/questions/8499852/xmldocument-mis-reads-utf-8-e-acute-character
+
+
+  PROGRAMMING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Ensure that compilation is properly done as described in section
+    'COMPILING' above.
+
+    writer = new BufferedWriter(new OutputStreamWriter(
+               new FileOutputStream("filename here"), "UTF-8"));
+
+
+    XML
+    ──────────────────────────────────────────────────────────────────────────
+
+      Regarding reading XML files, we must provide the files as binary to the
+      XML parser; the XML parser will itself figure out the encoding of the XML
+      file and adapt accordingly.
+
+
+  EXECUTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Always run with:  -Dfile.encoding=UTF-8
+
+    Example:  java -Dfile.encoding=UTF-8 -jar "<somefile.jar>"
+
+
+
+CONSTRAINT VALIDATION
+══════════════════════════════════════════════════════════════════════════════
+
+  Read:  http://docs.oracle.com/javaee/6/tutorial/doc/gircz.html
+
+
+
+DATABASE
+══════════════════════════════════════════════════════════════════════════════
+
+  Get URL
+  ────────────────────────────────────────────────────────────────────────────
+
+    Datasource dataSource;
+    dataSource.getConnection().getMetaData().getURL();
+
+
+
+GENERICS
+══════════════════════════════════════════════════════════════════════════════
+
+  Wildcards (Unknown type)
+  ────────────────────────────────────────────────────────────────────────────
+
+    In generics, the wildcard character is ? to specify that the type is
+    unknown.
+
+    From:  https://docs.oracle.com/javase/tutorial/extra/generics/wildcards.html
+
+    So what is the supertype of all kinds of collections? It's written
+    Collection<?> (pronounced "collection of unknown"), that is, a collection
+    whose element type matches anything. It's called a wildcard type for
+    obvious reasons. We can write:
+
+    void printCollection(Collection<?> c) {
+        for (Object e : c) {
+            System.out.println(e);
+        }
+    }
+
+
+  Instantiating object of type parameter
+  ────────────────────────────────────────────────────────────────────────────
+    From:  http://stackoverflow.com/questions/299998/instantiating-object-of-type-parameter
+
+    I have got a template class as follows:
+
+      class MyClass<T>
+      {
+          T field;
+          public void myMethod()
+          {
+             field = new T(); // gives compiler error
+          }
+      }
+
+    How do I create a new instance of T in my class?
+
+    You need to provide a Class object (or a constructor) to your object, and
+    use reflection. After type erasure, all that is known about T is that it
+    is some subclass of Object.
+
+      class MyClass<T> {
+
+        private final Constructor<? extends T> ctor;
+
+        private T field;
+
+        MyClass(Class<? extends T> impl) {
+          this.ctor = impl.getConstructor();
+        }
+
+        public void myMethod() throws Exception {
+          field = ctor.newInstance();
+        }
+
+      }
+
+
+
+TOOLS
+══════════════════════════════════════════════════════════════════════════════
+
+  DEBUGGING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Remote debugging:
+    java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 ...
+
+    Java VisualVM (visualvm.exe)
+
+
+  SOAPUI - https://www.soapui.org/downloads/soapui.html
+  ────────────────────────────────────────────────────────────────────────────
+
+    Outil pour tester des services SOAP (Web services en Java).
+
+
+  OTHER
+  ────────────────────────────────────────────────────────────────────────────
+
+    LOOSEJAR
+
+    loosejar is a simple Java Agent that can be used to discover unnecessary
+    jars lying on application classpath. It performs per classloader JVM heap
+    analysis and displays its results. loosejar can be safely used during
+    development, QA, UAT or even in production as it doesn't modify the state
+    of the JVM at all and adds no overhead.
+
+    https://code.google.com/p/loosejar/
+
+
+  EHCACHE
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://ehcache.org/documentation/2.8/recipes/spring-annotations
+    https://code.google.com/p/ehcache-spring-annotations/
+ -> http://www.mkyong.com/spring/spring-caching-and-ehcache-example/
+    http://ehcache.org/ehcache.xml
+
+
+TUTORIALS
+══════════════════════════════════════════════════════════════════════════════
+
+  Java Tutorials: Overloading is compile-time binding
+    http://skeletoncoder.blogspot.ca/2006/09/java-tutorials-overloading-is-compile.html
+
+
+
+REFLECTION
+══════════════════════════════════════════════════════════════════════════════
+
+  FUNCTION TO FILL AN OBJECT FIELDS WITH PSEUDO DATA
+  ────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * This function fills an object's non final, non static fields with values.
+     * <p/>
+     * For string fields, they are filled with the fields name between "<>".
+     * For numeric fields, they are filled with the 32 bits hashcode of
+     * their name.
+     * For date fields, they are filled starting with today, plus one
+     * day added for each other date fields.
+     * Boolean fields are set to "true".
+     *
+     * @param object The object to fill the fields with.
+     * @return The same object received as parameter, with the fields set.
+     * @throws IllegalAccessException If thrown, this is a bug; we cannot access
+     *         the field for some reason.
+     */
+    private Object fillObject(Object object) throws IllegalAccessException {
+        Field[] declaredFields = object.getClass().getDeclaredFields();
+        Calendar calendar = Calendar.getInstance();
+
+        for (Field field : declaredFields) {
+            field.setAccessible(true);
+            int modifiers = field.getModifiers();
+            if ( ((modifiers & Modifier.STATIC) == Modifier.STATIC) ||
+                 ((modifiers & Modifier.FINAL) == Modifier.FINAL)) {
+                continue;
+            }
+            Class type = field.getType();
+            if (type == String.class)
+                field.set(object, "<" + field.getName() + ">");
+            else if (type == Integer.class)
+                field.set(object, field.getName().hashCode());
+            else if (type == Long.class)
+                field.set(object, (long) field.getName().hashCode());
+            else if (type == Float.class)
+                field.set(object, (float) field.getName().hashCode());
+            else if (type == Double.class)
+                field.set(object, (double) field.getName().hashCode());
+            else if (type == Boolean.class)
+                field.set(object, true);
+            else if (type == Date.class) {
+                field.set(object, calendar.getTime());
+                calendar.add(Calendar.DATE, 1);
+            }
+        }
+
+        return object;
+    }
+
+
+ODD / LOW LEVEL STUFF
+══════════════════════════════════════════════════════════════════════════════
+
+  Never use com.sun.* classes.
+
+    * http://www.oracle.com/technetwork/java/faq-sun-packages-142232.html
+
+    * http://stackoverflow.com/questions/4065401/using-internal-sun-classes-with-javac
+
+      When javac is compiling code it doesn't link against rt.jar by default.
+      Instead it uses special symbol file lib/ct.sym with class stubs.
+
+      Surprisingly this file contains many but not all of internal sun
+      classes. In my case one of those more-internal-than-usual classes was
+      sun.awt.event.IgnorePaintEvent.
+
+      And the answer to my question is: javac -XDignore.symbol.file
+
+      That's what javac uses for compiling rt.jar.
+
+
+
+PRINTING A NICE LIST
+══════════════════════════════════════════════════════════════════════════════
+
+  final String separator = ", ";
+  for(SearchEngineModel searchEngineModel : searchEngineModels)
+  {
+      sb.append(separator);
+      sb.append(searchEngineModel.getName());
+  }
+
+  // Now for a few aesthetic manipulations.
+  sb.delete(0, separator.length());  // Deleting first ", ".
+
+  // Replacing last ", " with " and ".
+  int lastSeparatorBeginPos = sb.lastIndexOf(separator);
+  sb.replace(lastSeparatorBeginPos, lastSeparatorBeginPos+separator.length(), " and ");
+
+  logger.info("Loaded from DB search engines definitions for " + sb.toString() + ".");
+
+
+
+REST API CLIENTS
+══════════════════════════════════════════════════════════════════════════════
+
+  Unirest http://kong.github.io/unirest-java
+  ────────────────────────────────────────────────────────────────────────────
+
+    Utilisé chez mon client en 2019.  Pas mal bon et simple.
+
+
+
+JSON
+══════════════════════════════════════════════════════════════════════════════
+
+  LA LIBRAIRIE 'JACKSON' EST PLUS FLEXIBLE QUE 'GSON'.
+  ────────────────────────────────────────────────────────────────────────────
+
+
+  JACKSON
+  ────────────────────────────────────────────────────────────────────────────
+
+    EXAMPLE
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      static class JsonSequences {
+        static class JsonSequence {
+          public String name;
+          public Integer resetValue;
+
+          @JsonCreator
+          public JsonSequence(@JsonProperty("name") String name, @JsonProperty("resetValue")  Integer resetValue) {
+            this.name = name;
+            this.resetValue = resetValue;
+          }
+
+          public JsonSequence(String name, int resetValue) {
+            this.name = name;
+            this.resetValue = resetValue;
+          }
+
+          public JsonSequence() {
+          }
+        }
+
+        public JsonSequence[] sequences;
+
+        public JsonSequences(JsonSequence[] sequences) {
+          this.sequences = sequences;
+        }
+
+        public JsonSequences() {
+          this.sequences = null;
+        }
+      }
+
+      public static void main(String[] args) throws Exception {
+
+        JsonSequences test = new JsonSequences();
+        test.sequences = new JsonSequences.JsonSequence[1];
+        test.sequences[0] = new JsonSequences.JsonSequence();
+        test.sequences[0].name = "<name here>"
+        test.sequences[0].resetValue = 2;
+        ObjectMapper mapper = new ObjectMapper();
+        String s = mapper.writeValueAsString(test);
+        JsonSequences jsonSequences = mapper.readValue(s, JsonSequences.class);
+
+        for (JsonSequences.JsonSequence sequence : jsonSequences.sequences) {
+          System.out.println(mapper.writeValueAsString(sequence));
+        }
+      }
+
+    Maven
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.8.6</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>2.8.6</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.8.6</version>
+      </dependency>
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
