@@ -1,0 +1,119 @@
+JOLT
+══════════════════════════════════════════════════════════════════════════════
+
+  QUICK REFERENCE
+  ────────────────────────────────────────────────────────────────────────────
+
+    - https://community.cloudera.com/t5/Community-Articles/Jolt-quick-reference-for-Nifi-Jolt-Processors/ta-p/244350
+
+
+  ONLINE TESTER
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://jolt-demo.appspot.com/#inception
+
+
+  RULES / GOOD TO KNOW
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://community.cloudera.com/t5/Support-Questions/jolttransformjson-transform-some-elements-but-keep-others/td-p/132920
+
+    In a JOLT spec, if you don't explicitly provide a transformation for a
+    particular field, it will be excluded. So you can include matching rules
+    for the fields you care about (i.e. those that have a certain value), the
+    rest will be discarded. Check the "Filter data from an Array, based on a
+    leaf level value" example at the JOLT Demo online app.
+
+    To get all the original field, use:   "*": "&"
+
+    In the example below, the field callStartTime is copied into
+    a new field called callStartDay and the rest of the fields are
+    survinving.
+
+      [
+        {
+          "operation": "shift",
+          "spec": {
+            "callStartTime": ["callStartTime", "callStartDay"],
+            "*": "&"
+          }
+        }
+      ]
+
+
+  OTHER TECHNICS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Some form of substring
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      https://github.com/bazaarvoice/jolt/issues/345
+
+
+  MULTIPLICATION IS NOT IMPLEMENTED
+  ────────────────────────────────────────────────────────────────────────────
+
+  As of 2020-10-16 , operation '=devide' exist, but not '=multiply'!  To
+  accomplish a multiplication, one as to us =divide with a number that
+  is the reverse of the multiplication factor.
+
+  See:  https://github.com/bazaarvoice/jolt/issues/832
+
+  Example #1:
+
+          "MultipliedBy100": "=divide(@(1,initialValue),0.01)"
+
+  Example #2:
+
+    Remove the HH:MM:SS from a timestamp (expressed as milliseconds since
+    1970-01-01 00:00:00.000) by dividing by the number of milliseconds in a
+    day (86400000), convert to long to loose the reminder (fraction), divide
+    again by a small which actually is 1/86400000 = 1.1574074074074073e-08,
+    actually performing a multiplication by 86400000 and finally, converting
+    the number from a Double to Long.
+
+      [
+        {
+          "operation": "shift",
+          "spec": {
+            "callStartTime": ["callStartTime", "callStartDay"],
+            "*": "&"
+          }
+        },
+        {
+          "operation": "modify-overwrite-beta",
+          "spec": {
+            "callStartDay": "=divide(@(1,callStartDay),86400000)"
+          }
+        },
+        {
+          "operation": "modify-overwrite-beta",
+          "spec": {
+            "callStartDay": "=toLong(@(1,callStartDay))"
+          }
+        },
+        {
+          "operation": "modify-overwrite-beta",
+          "spec": {
+            "callStartDay": "=divide(@(1,callStartDay),1.1574074074074073e-08)"
+          }
+        },
+        {
+          "operation": "modify-overwrite-beta",
+          "spec": {
+            "callStartDay": "=toLong(@(1,callStartDay))"
+          }
+        }
+      ]
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
