@@ -16,5 +16,5 @@
 # Client environment definitions.  These two definitions are the only
 # one allowed under ${HDENVDIR}, for convenience.  Any other definition
 # should be in defined in a source file under ${HD_CORP_DIR}.
-export HD_CORP_NAME="<nice name here>"                    # Nicely formated official name.
-export HD_CORP_IDENTIFIER="<lowercase identifier here>"   # Identifier is used for directory names.
+#export HD_CORP_NAME="<nice name here>"                    # Nicely formated official name.
+#export HD_CORP_IDENTIFIER="<lowercase identifier here>"   # Identifier is used for directory names.
