@@ -1,0 +1,503 @@
+UNICODE UTF-8 UTF8
+══════════════════════════════════════════════════════════════════════════════
+
+👍😀
+
+1F600	😀	grinning face
+1F601	😁	grinning face with smiling eyes
+1F602	😂	face with tears of joy
+1F603	😃	smiling face with open mouth (c.f. ☺)
+1F604	😄	smiling face with open mouth and smiling eyes
+1F605	😅	smiling face with open mouth and cold sweat
+1F606	😆	smiling face with open mouth and tightly-closed eyes
+1F607	😇	smiling face with halo
+1F608	😈	smiling face with horns (c.f. 👿 "imp")
+1F609	😉	winking face
+1F60A	😊	smiling face with smiling eyes
+1F60B	😋	face savouring delicious food
+1F60C	😌	relieved face
+1F60D	😍	smiling face with heart-shaped eyes
+1F60E	😎	smiling face with sunglasses
+1F60F	😏	smirking face
+1F610	😐	neutral face (also used for "west wind" 西 in some Mahjong annotation)
+1F611	😑	expressionless face
+1F612	😒	unamused face
+1F613	😓	face with cold sweat
+1F614	😔	pensive face
+1F615	😕	confused face
+1F616	😖	confounded face
+1F617	😗	kissing face
+1F618	😘	face throwing a kiss
+1F619	😙	kissing face with smiling eyes
+1F61A	😚	kissing face with closed eyes
+1F61B	😛	face with stuck-out tongue
+1F61C	😜	face with stuck-out tongue and winking eye
+1F61D	😝	face with stuck-out tongue and tightly-closed eyes
+1F61E	😞	disappointed face
+1F61F	😟	worried face
+1F620	😠	angry face
+1F621	😡	pouting face
+1F622	😢	crying face
+1F623	😣	persevering face
+1F624	😤	Unicode: face with look of triumph, Apple: huffing with anger face
+1F625	😥	disappointed but relieved face
+1F626	😦	frowning face with open mouth
+1F627	😧	anguished face
+1F628	😨	fearful face
+1F629	😩	weary face
+1F62A	😪	sleepy face
+1F62B	😫	tired face
+1F62C	😬	grimacing face
+1F62D	😭	loudly crying face
+1F62E	😮	face with open mouth
+1F62F	😯	hushed face
+1F630	😰	face with open mouth and cold sweat
+1F631	😱	face screaming in fear
+1F632	😲	astonished face
+1F633	😳	flushed face
+1F634	😴	sleeping face
+1F635	😵	dizzy face
+1F636	😶	face without mouth (c.f. ⚇ "white circle with two dots")
+1F637	😷	face with medical mask
+1F638	😸	grinning cat face with smiling eyes
+1F639	😹	cat face with tears of joy
+1F63A	😺	smiling cat face with open mouth
+1F63B	😻	smiling cat face with heart-shape eyes
+1F63C	😼	cat face with wry smile
+1F63D	😽	kissing cat face with closed eyes
+1F63E	😾	pouting cat face
+1F63F	😿	crying cat face
+1F640	🙀	weary cat face
+1F641	🙁	slightly frowning face
+1F642	🙂	slightly smiling face
+1F643	🙃	upside-down face
+1F644	🙄	face with rolling eyes
+1F645	🙅	face with "no good" gesture, with lower arms crossed, derived from the japanese gesture for "no". Intended as gender-neutral but represented as a woman on most platforms (Apple name: "Woman Gesturing No").
+1F646	🙆	face with "ok" gesture, described as a person with arms raised above the head forming a "circle", interpreted as "OK sign" (derived from the japanese gesture for "OK"). Intended as gender-neutral but represented as a woman on most platforms (Apple name: "Woman Gesturing OK").
+1F647	🙇	person bowing (dogeza), depicted as a man on most platforms (Apple name: "Man Bowing")
+1F648	🙈	see-no-evil monkey
+1F649	🙉	hear-no-evil monkey
+1F64A	🙊	speak-no-evil monkey
+1F64B	🙋	happy person raising one hand, a person raising one hand as if to answer a question, intended as gender-neutral but represented as a woman on most platforms (Apple name: "Happy Woman Raising One Hand")
+1F64C	🙌	person raising both hands in celebration, on many platforms depicted as just the raised hands (Apple name: "Hands Raised in Celebration")
+1F64D	🙍	person frowning
+1F64E	🙎	person with pouting face
+
+  👍👎 Thumbs up / down
+  Vim dig:  0M→● (bullet)
+
+  🇨🇦 🇺🇸
+
+  https://en.wikibooks.org/wiki/Unicode/List_of_useful_symbols
+  ༼ つ ◕_◕ ༽つ
+
+  Useful/Interesting codes:
+
+  → ← hard space    ‑ Non breaking hyphen/dash
+  ◄►
+
+  🐔👍 (pull request)
+
+   ✓ ✖ ✘    ✓ ✕ ✗  ❌  █ ⛀⛁⛂⛃
+  ┏━▶ ◀━┓ ▲ ━┓ ┏━ ▲ ▲ ┃
+  ┣━▶ ◀━┫ ┃  ┃ ┃  ┃ ┃ ┃
+  ┗━▶ ◀━┛ ┗━ ▼ ▼ ━┛ ┃ ▼
+  ▶ ◀   ⏩ ⏪ ⏫ ⏬ ► ◄ ➤
+  ↰   ↱   ↲   ↳   ↴
+  ➜ 279C   ➔ 2794    ➟ 279F    ➤ 27A4    ➥ 27A6 ↳ ➾
+  • 2022   ‣ 2023    ⚪26AA    ⚫26AB    ○ 25CF    ● 25CB    ▶ 25B6
+  × 00D7   ÷ 00F7    ≠ 2260    ≈ 2248    ≤ 2264    ≥ 2265    ¤ 00A4
+  π¶
+  †‡ (daggers)
+  📁(folder) 1F4C1   № ou Nº (Numéro) 【】
+
+    The ™ and ® marks have no legal significance or meaning in Canada. Thus
+    there are no repercussions to using these marks. Surprisingly neither the
+    ™ nor the ® mark appears in official Canadian Trademark Law.
+
+  ℃  Celcius  €  Euro
+  ☕ Café (hot beverage)  💤 Sleep  🐔 Chicken  🥔 Potato
+  🤯 Mindblowing   👶 Baby
+  🏖️ Vacation      🌈 Rainbow         📡 Radar
+  🎆 Fireworks     🎉 Party Popper    🎊 Confetti Ball
+  🥂 Clinking Glasses  🍾 Bottle of Champagne  🔫 Gun/Pistol
+
+  💻Personal Computer                          🖪 Black Hard Shell Floppy Disk
+  🖥Desktop Computer                           🖫 White Hard Shell Floppy Disk
+  🖧 Three Networked Computers                  🖬 Soft Shell Floppy Disk
+  🖳 Old Personal Computer                      🖴 Hard Disk
+  ☰ Burger Menu
+  ◉ Radio on
+  ◯ Radio off
+
+  ❏ 274F   ─ 2504    ━ 2505    ▬ 25AC
+  ▚ 259A   ▞ 259E    © 00A9    ® 00AE    ™ 2122
+  ☠ 2620   シ30B7    ₵ 20B5    € 20AC    ⋘ 22D8    ⋙ 22D9
+  ♥ 2665   ♡ 2661    ❤ 2764    ° 00B0 (degree)
+
+  🔗 (web link) 📧 (email) ✉ (enveloppe)
+  🌊(wave)
+  ? 1F44B  ∞ 221E (infinit)    ↔ 2194 (double arrow)   ¤ 00A4 (currency)
+  ⏪23EA   ⏩23E9    ⏫23EB    ⏬23EC   ∕ (division slash)
+  💍 💯
+  █ 2588
+  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)
+  ⛁ 26C1 (database)
+  ß 00DF -> compose + s + s
+
+  ─ Line
+  ═ Double line
+  ⁕ Flower Punctuation Mark
+  ⚘ Flower
+  🌻Sunflower
+  🎕 Bouquet of Flowers
+  🎴Flower Playing Cards
+  💮White Flower
+  🥀Wilted Flower
+  🎉Party Popper
+  🆓 Free
+  ⌘ ✲ ⎈ ^ ⌃ ❖ ⌘ ⎇ ⌥ ◆ ◇ ✦ ✧ ⇧ ⇪ 🄰 🅰 ⇪ ⇫ ⇬ ⇮ ⇯ 🔠 🔡 ⇭ 🔢 🔤 ↩ ↵ ⏎ ⮰ ⌤ ⎆ ▤ ☰ 𝌆
+  ⎄ ⭾ ↹ ⇄ ⇤ ⇥ ↤ ↦ ⎋ ⌫ ⟵ ⌦ ⎀ ⎚ ⌧ ↖ ↘ ⇤ ⇥ ⤒ ⤓ ⇱ ⇲ ⇞ ⇟ △ ▽ ▲ ▼ ⎗ ⎘ ↑ ↓ ← → ◀ ▶ ▲
+  ▼ ◁ ▷ △ ▽ ⇦ ⇨ ⇧ ⇩ ⬅ ➡ ⬆ ⬇ ⎉ ⎊ ⎙ ⍰ ❓ ❔ ℹ 🛈 ☾ ⏏ ✉ 🏠 🏡 ⌂ ✂ ✄ ⎌ ↶ ↷ ⟲ ⟳ ↺ ↻
+  🔍 🔎 🔅 🔆 🔇 🔈 🔉 🔊 🕨 🕩 🕪 ◼ ⏯ ⏮ ⏭ ⏪ ⏩ ⏫ ⏬
+
+  ␀ 2400 null                  ␉ 2409 horizontal tabulation
+  ␆ 2406 acknowledge           ␊ 240A line feed
+  ␈ 2408 backspace             ␍ 240D carriage return
+
+  Characters:   «» ¡¿ ¢£¤¥¦§¨©ª¬­®¯°±´µ¶·¸☠␣
+  Super/sub:    ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱ  ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎
+  Fractions:  ½  ¼  ¾  ⅐  ⅑  ⅒  ⅓  ⅔  ⅕  ⅖  ⅗  ⅘  ⅙  ⅚  ⅛  ⅜  ⅝  ⅞  ⅟
+  Roman:      Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅸ Ⅹ Ⅺ Ⅻ Ⅼ Ⅽ Ⅾ Ⅿ  / ⅰ ⅱ ⅲ ⅳ ⅵ ⅶ ⅷ ⅸ ⅹ ⅺ ⅻ ⅼ ⅽ ⅾ ⅿ
+  Music:      ♪ ♫ 🎶 🎼 🎹 🎻 🎷 🎸 🎺 🥁 🎙 🎚 🎛 🎤 🎧 📻
+              ♪ di du ♫ dum dum ♪ di dum dum ♫ (musique d'ascenseur) :)
+  Art:  ¯\_(ツ)_/¯
+
+  From:  http://en.wikipedia.org/wiki/List_of_Unicode_characters#Supplemental_Arrows-A
+
+
+  ARROWS
+  ────────────────────────────────────────────────────────────────────────────
+
+            0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+    U+219x  ←   ↑   →   ↓   ↔   ↕   ↖   ↗   ↘   ↙   ↚   ↛   ↜   ↝   ↞   ↟
+    U+21Ax  ↠   ↡   ↢   ↣   ↤   ↥   ↦   ↧   ↨   ↩   ↪   ↫   ↬   ↭   ↮   ↯
+    U+21Bx  ↰   ↱   ↲   ↳   ↴   ↵   ↶   ↷   ↸   ↹   ↺   ↻   ↼   ↽   ↾   ↿
+    U+21Cx  ⇀   ⇁   ⇂   ⇃   ⇄   ⇅   ⇆   ⇇   ⇈   ⇉   ⇊   ⇋   ⇌   ⇍   ⇎   ⇏
+    U+21Dx  ⇐   ⇑   ⇒   ⇓   ⇔   ⇕   ⇖   ⇗   ⇘   ⇙   ⇚   ⇛   ⇜   ⇝   ⇞   ⇟
+    U+21Ex  ⇠   ⇡   ⇢   ⇣   ⇤   ⇥   ⇦   ⇧   ⇨   ⇩   ⇪   ⇫   ⇬   ⇭   ⇮   ⇯
+    U+21Fx  ⇰   ⇱   ⇲   ⇳   ⇴   ⇵   ⇶   ⇷   ⇸   ⇹   ⇺   ⇻   ⇼   ⇽   ⇾   ⇿
+
+
+  BOX DRAWING
+  ────────────────────────────────────────────────────────────────────────────
+
+            0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+    U+250x  ─   ━   │   ┃   ┄   ┅   ┆   ┇   ┈   ┉   ┊   ┋   ┌   ┍   ┎   ┏
+    U+251x  ┐   ┑   ┒   ┓   └   ┕   ┖   ┗   ┘   ┙   ┚   ┛   ├   ┝   ┞   ┟
+    U+252x  ┠   ┡   ┢   ┣   ┤   ┥   ┦   ┧   ┨   ┩   ┪   ┫   ┬   ┭   ┮   ┯
+    U+253x  ┰   ┱   ┲   ┳   ┴   ┵   ┶   ┷   ┸   ┹   ┺   ┻   ┼   ┽   ┾   ┿
+    U+254x  ╀   ╁   ╂   ╃   ╄   ╅   ╆   ╇   ╈   ╉   ╊   ╋   ╌   ╍   ╎   ╏
+    U+255x  ═   ║   ╒   ╓   ╔   ╕   ╖   ╗   ╘   ╙   ╚   ╛   ╜   ╝   ╞   ╟
+    U+256x  ╠   ╡   ╢   ╣   ╤   ╥   ╦   ╧   ╨   ╩   ╪   ╫   ╬   ╭   ╮   ╯
+    U+257x  ╰   ╱   ╲   ╳   ╴   ╵   ╶   ╷   ╸   ╹   ╺   ╻   ╼   ╽   ╾   ╿
+
+
+  BLOCK ELEMENTS
+  ────────────────────────────────────────────────────────────────────────────
+
+            0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+    U+258x  ▀   ▁   ▂   ▃   ▄   ▅   ▆   ▇   █   ▉   ▊   ▋   ▌   ▍   ▎   ▏
+    U+259x  ▐   ░   ▒   ▓   ▔   ▕   ▖   ▗   ▘   ▙   ▚   ▛   ▜   ▝   ▞   ▟
+
+
+
+  LATIN SUPERSCRIPTS AND SUBSCRIPTS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Letter                 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+    Superscript capital    ᴬ ᴮ   ᴰ ᴱ   ᴳ ᴴ ᴵ ᴶ ᴷ ᴸ ᴹ ᴺ ᴼ ᴾ   ᴿ   ᵀ ᵁ ⱽ ᵂ
+    Superscript small cap                  ᶦ     ᶫ   ᶰ             ᶸ
+    Superscript minuscule  ᵃ ᵇ ᶜ ᵈ ᵉ ᶠ ᵍ ʰ ⁱ ʲ ᵏ ˡ ᵐ ⁿ ᵒ ᵖ   ʳ ˢ ᵗ ᵘ ᵛ ʷ ˣ ʸ ᶻ
+    Subscript minuscule    ₐ       ₑ     ₕ ᵢ ⱼ ₖ ₗ ₘ ₙ ₒ ₚ   ᵣ ₛ ₜ ᵤ ᵥ   ₓ
+    Overscript small cap               ◌ᷛ         ◌ᷞ ◌ᷟ ◌ᷡ       ◌ᷢ
+    Overscript minuscule   ◌ͣ ◌ᷨ ◌ͨ ◌ͩ ◌ͤ ◌ᷫ ◌ᷚ ◌ͪ ◌ͥ   ◌ᷜ ◌ᷝ ◌ͫ ◌ᷠ ◌ͦ ◌ᷮ   ◌ͬ ◌ᷤ ◌ͭ ◌ͧ ◌ͮ ◌ᷱ ◌ͯ   ◌ᷦ
+
+    https://en.wikipedia.org/wiki/Unicode_subscripts_and_superscripts
+
+
+  MATH
+  ────────────────────────────────────────────────────────────────────────────
+
+            0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+    U+00Bx          x²  x³                      x¹
+    U+207x  x⁰  xⁱ          x⁴  x⁵  x⁶  x⁷  x⁸  x⁹  x⁺  x⁻  x⁼  x⁽  x⁾  xⁿ
+    U+208x  x₀  x₁  x₂  x₃  x₄  x₅  x₆  x₇  x₈  x₉  x₊  x₋  x₌  x₍  x₎
+    U+209x  xₐ  xₑ  xₒ  xₓ  xₔ  xₕ  xₖ  xₗ  xₘ  xₙ  xₚ  xₛ  xₜ
+
+
+
+INPUT & COMPATIBILITY
+══════════════════════════════════════════════════════════════════════════════
+
+
+  LINUX
+  ────────────────────────────────────────────────────────────────────────────
+
+    To enter a Unicode character: Ctrl+Shift+U + <Unicode code>
+    Compose key is "menu" on the lower right of the keyboard
+
+
+
+  WINDOWS
+  ────────────────────────────────────────────────────────────────────────────
+
+      http://en.wikipedia.org/wiki/Unicode_input
+
+    Télécharger l'outil suivant:
+
+      http://www.babelstone.co.uk/Software/BabelMap.html
+
+
+    Illegal characters in filenames
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    ꞉ A789 (Modifier Letter Colon) double colon, pour que les fichiers soient
+           visibles sous Samba et utilisable sous Windows, pour remplacer le
+           ':' de la table ASCII réserver pour les drives.
+
+
+
+CONVERSION
+══════════════════════════════════════════════════════════════════════════════
+
+  iconv -f LATIN1 -t UTF8 input.iso-8859-1.txt > input.utf-8.txt
+
+  Ajouter -c pour:
+
+    When this option is given, characters that cannot be converted are
+    silently discarded, instead of leading to a conversion error.
+
+  Excellent site pour debugger l'encodage:
+
+    http://rishida.net/tools/conversion/
+
+
+
+VIM
+══════════════════════════════════════════════════════════════════════════════
+
+  CHARACTER ENCODING TRICKS FOR VIM
+
+    From:  http://spin.atomicobject.com/2011/06/21/character-encoding-tricks-for-vim/
+
+    - keystroke: g8
+
+      This command displays the hexadecimal value of the bytes used to
+      represent the character under the cursor.
+
+
+
+GEOMETRIC SHAPES
+══════════════════════════════════════════════════════════════════════════════
+
+  Code  Result  Description
+  U+25A0  ■   Black square
+  U+25A1  □   White square
+  U+25A2  ▢   White square with rounded corners
+  U+25A3  ▣   White square containing small black square
+  U+25A4  ▤   Square with horizontal fill
+  U+25A5  ▥   Square with vertical fill
+  U+25A6  ▦   Square with orthogonal crosshatch fill
+  U+25A7  ▧   Square with upper left to lower right fill
+  U+25A8  ▨   Square with upper right to lower left fill
+  U+25A9  ▩   Square with diagonal crosshatch fill
+  U+25AA  ▪   Black small square
+  U+25AB  ▫   White small square
+  U+25AC  ▬   Black rectangle
+  U+25AD  ▭   White rectangle
+  U+25AE  ▮   Black vertical rectangle
+  U+25AF  ▯   White vertical rectangle
+  U+25B0  ▰   Black parallelogram
+  U+25B1  ▱   White parallelogram
+  U+25B2  ▲   Black up-pointing triangle
+  U+25B3  △   White up-pointing triangle
+  U+25B4  ▴   Black up-pointing small triangle
+  U+25B5  ▵   White up-pointing small triangle
+  U+25B6  ▶   Black right-pointing triangle
+  U+25B7  ▷   White right-pointing triangle
+  U+25B8  ▸   Black right-pointing small triangle
+  U+25B9  ▹   White right-pointing small triangle
+  U+25BA  ►   Black right-pointing pointer
+  U+25BB  ▻   White right-pointing pointer
+  U+25BC  ▼   Black down-pointing triangle
+  U+25BD  ▽   White down-pointing triangle
+  U+25BE  ▾   Black down-pointing small triangle
+  U+25BF  ▿   White down-pointing small triangle
+  U+25C0  ◀   Black left-pointing triangle
+  U+25C1  ◁   White left-pointing triangle
+  U+25C2  ◂   Black left-pointing small triangle
+  U+25C3  ◃   White left-pointing small triangle
+  U+25C4  ◄   Black left-pointing pointer
+  U+25C5  ◅   White left-pointing pointer
+  U+25C6  ◆   Black diamond
+  U+25C7  ◇   White diamond
+  U+25C8  ◈   White diamond containing small black diamond
+  U+25C9  ◉   Fisheye
+  U+25CA  ◊   Lozenge
+  U+25CB  ○   White circle
+  U+25CC  ◌   Dotted circle
+  U+25CD  ◍   Circle with vertical fill
+  U+25CE  ◎   Bullseye
+  U+25CF  ●   Black circle
+  U+25D0  ◐   Circle with left half black
+  U+25D1  ◑   Circle with right half black
+  U+25D2  ◒   Circle with lower half black
+  U+25D3  ◓   Circle with upper half black
+  U+25D4  ◔   Circle with upper right quadrant black
+  U+25D5  ◕   Circle with all but upper left quadrant black
+  U+25D6  ◖   Left half circle black
+  U+25D7  ◗   Right half black circle
+  U+25D8  ◘   Inverse bullet
+  U+25D9  ◙   Inverse white circle
+  U+25DA  ◚   Upper half inverse white circle
+  U+25DB  ◛   Lower half inverse white circle
+  U+25DC  ◜   Upper left quadrant circular arc
+  U+25DD  ◝   Upper right quadrant circular arc
+  U+25DE  ◞   Lower right quadrant circular arc
+  U+25DF  ◟   Lower left quadrant circular arc
+  U+25E0  ◠   Upper half circle
+  U+25E1  ◡   Lower half circle
+  U+25E2  ◢   Black lower right triangle
+  U+25E3  ◣   Black lower left triangle
+  U+25E4  ◤   Black upper left triangle
+  U+25E5  ◥   Black upper right triangle
+  U+25E6  ◦   White bullet
+  U+25E7  ◧   Square with left half black
+  U+25E8  ◨   Square with right half black
+  U+25E9  ◩   Square with upper left diagonal half black
+  U+25EA  ◪   Square with lower right diagonal half black
+  U+25EB  ◫   White square with vertical bisecting line
+  U+25EC  ◬   White up-pointing triangle with dot
+  U+25ED  ◭   Up-pointing triangle with left half black
+  U+25EE  ◮   Up-pointing triangle with right half black
+  U+25EF  ◯   Large circle
+  U+25F0  ◰   White square with upper left quadrant
+  U+25F1  ◱   White square with lower left quadrant
+  U+25F2  ◲   White square with lower right quadrant
+  U+25F3  ◳   White square with upper right quadrant
+  U+25F4  ◴   White circle with upper left quadrant
+  U+25F5  ◵   White circle with lower left quadrant
+  U+25F6  ◶   White circle with lower right quadrant
+  U+25F7  ◷   White circle with upper right quadrant
+  U+25F8  ◸   Upper left triangle
+  U+25F9  ◹   Upper right triangle
+  U+25FA  ◺   Lower-left triangle
+  U+25FB  ◻   White medium square
+  U+25FC  ◼   Black medium square
+  U+25FD  ◽   White medium small square
+  U+25FE  ◾   Black medium small square
+  U+25FF  ◿   Lower right triangle
+
+
+
+FONTS
+══════════════════════════════════════════════════════════════════════════════
+
+  http://hivelogic.com/articles/top-10-programming-fonts
+
+  WINDOWS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Deja Vue Sans Mono shows most of the code above.
+      - https://dejavu-fonts.github.io/
+
+
+
+SOFTWARE
+══════════════════════════════════════════════════════════════════════════════
+
+  Windows
+
+    BabelMap:  http://www.babelstone.co.uk/Software/BabelMap.html
+
+
+
+SPINNERS
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/2685435/cooler-ascii-spinners
+
+  ← ↖ ↑ ↗ → ↘ ↓ ↙
+  ▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃ ▁
+  ▉▊▋▌▍▎▏▎▍▌▋▊▉
+  ▖ ▘ ▝ ▗
+  ┤ ┘ ┴ └ ├ ┌ ┬ ┐
+  ◢ ◣ ◤ ◥
+  ◰ ◳ ◲ ◱
+  ◴ ◷ ◶ ◵
+  ◐ ◓ ◑ ◒
+  ◡◡ ⊙⊙ ◠◠
+  ⣾⣽⣻⢿⡿⣟⣯⣷ ⠁⠂⠄⡀⢀⠠⠐⠈ The entire braille block, even in random order
+
+
+
+BOM
+══════════════════════════════════════════════════════════════════════════════
+
+  DEFINITION
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://en.wikipedia.org/wiki/Byte_order_mark
+
+    The byte order mark (BOM) is a Unicode character, U+FEFF BYTE ORDER MARK
+    (BOM), whose appearance as a magic number at the start of a text stream
+    can signal several things to a program reading the text:[1]
+
+    - The byte order, or endianness, of the text stream;
+    - The fact that the text stream's encoding is Unicode, to a high level of
+      confidence;
+    - Which Unicode encoding the text stream is encoded as.
+
+
+  Remove BOM
+  ────────────────────────────────────────────────────────────────────────────
+
+    sed -i '1s/^\xEF\xBB\xBF//' "${FILENAME}"
+
+    Some tools cannot read UTF-8 files with BOM (such as
+    'python3 -m json.tool "${FILENAME}"', thus it can be removed.
+
+
+  Why there should be no BOM (The case against BOM)
+  ────────────────────────────────────────────────────────────────────────────
+
+    The most convincing argument to me on why BOM should NOT be included (see
+    all the above comments for accusations going both ways about whether
+    needing it, or not, is "buggy"), is that without a BOM it is possible to
+    concatenate multiple text files directly. This is an operation supported
+    by normal ASCII files and it is reasonable to expect the same behavior
+    from UTF files. The BOM may be at the beginning, but tack a few together
+    and now you've got BOM's sandwiched inside, making cleanup a nightmare
+    just because someone performed a routine operation in a generic way.
+
+    It can also cause problem with streaming.
+
+
+
+FACES
+══════════════════════════════════════════════════════════════════════════════
+
+  (˙ ͜ʟ˙ )
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
