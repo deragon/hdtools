@@ -1,0 +1,66 @@
+LOOGGING / DEBUG GROOVY
+══════════════════════════════════════════════════════════════════════════════
+
+  groovy \
+    -Divy.message.logger.level=4 -Droovy.grape.report.downloads=true \
+    <file.groovy>
+
+
+
+CODE EXAMPLE
+══════════════════════════════════════════════════════════════════════════════
+
+  See:  ${HDENVDIR}/bin/bigdata/hdnifitestel.groovy
+
+
+
+GROOVY INTERNAL / LOCAL REPOSITORY SETUP - DEPENCENCY MANAGEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  Read:  http://docs.groovy-lang.org/latest/html/documentation/grape.html
+
+  Grape are elements describing a dependency.
+
+  In your code (*.groovy file), simply add a @Grab command to include a
+  dependency.  As you see, you do not define here a dependency in the
+  equivalent of a pom.xml, but directly in the code.
+
+    @Grab(group='org.apache.nifi', module='nifi-expression-language', version='1.4.0')
+
+  Read:  Using Grape with a custom repository server
+         http://blog.ehrnhoefer.com/2019-05-04-grape-custom-repository/
+
+  Configuration used in 2019:
+
+    cat ~/.groovy/grapeConfig.xml
+<ivysettings>
+  <settings defaultResolver="downloadGrapes"/>
+  <resolvers>
+    <chain name="downloadGrapes">
+      <!--
+      <filesystem name="cachedGrapes">
+        <ivy pattern="${user.home}/.groovy/grapes/[organisation]/[module]/ivy-[revision].xml"/>
+        <artifact pattern="${user.home}/.groovy/grapes/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+      </filesystem>
+      -->
+      <ibiblio name="local" root="file:${user.home}/.m2/repository/" m2compatible="true"/>
+      <!-- <ibiblio name="codehaus" root="http://repository.codehaus.org/" m2compatible="true"/> -->
+      <!-- <ibiblio name="central" root="http://central.maven.org/maven2/" m2compatible="true"/> -->
+      <!-- <ibiblio name="java.net2" root="http://download.java.net/maven/2/" m2compatible="true"/> -->
+      <!-- <ibiblio name="hyracs&#45;releases" root="http://obelix.ics.uci.edu/nexus/content/groups/hyracks&#45;public&#45;releases/" m2compatible="true"/> -->
+      <!-- <ibiblio name="apache-snapshots" root="http://repository.apache.org/snapshots/" m2compatible="true"/> -->
+    </chain>
+  </resolvers>
+</ivysettings>
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
