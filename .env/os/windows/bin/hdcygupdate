@@ -17,5 +17,5 @@ If you need to configure the setup of Cygwin, simply edit the following file:
 Now launching:  ${CMD}
 
 EOM
-
-${CMD}
+"${CMD}" &
+disown
