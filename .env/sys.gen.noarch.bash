@@ -165,7 +165,7 @@ hderror()
 if [ "${HD_OS_FAMILY}" != "Linux" -a \
      "${HD_OS_FAMILY}" != "Cygwin" -a \
      "${HD_OS_FAMILY}" != "Darwin" ]; then
-  alias hostname=${HDENVDIR}/bin/hdhostname
+  alias hostname="${HDENVDIR}/bin/hdhostname"
   alias killall="echo -e \"killall is dangerous on any other platform than Linux.\nIt is disabled here.  Escape it if you really want to use this command.\""
 fi
 
@@ -570,15 +570,15 @@ alias hd-find-executables='find . -name "*" -perm +111 -type f'
 alias hd-vinfo='info --vi-keys'
 alias hd-utf2iso8859-1='recode -v UTF-8..ISO-8859-1'
 alias hd-iso8859-12utf='recode -v ISO-8859-1..UTF-8'
-alias addcurpath='export PATH=`pwd`:$PATH;export PATH=`${HDENVDIR}/bin/minpath ${PATH}`'
+alias addcurpath='export PATH=`pwd`:$PATH;export PATH="$("${HDENVDIR}/bin/minpath" "${PATH}")"'
 alias hup='killall -HUP'
 alias hd-dns-test='ping www.toile.qc.ca'
 alias surf='hd-decompose'
 
 alias netosdetect='nmap -A -T aggressive -p "[-65535]" -P0'
 
-alias cdenv='cdprint ${HDENVDIR}'
-alias cdbin='cdprint ${HDENVDIR}/bin'
+alias cdenv='cdprint "${HDENVDIR}"'
+alias cdbin='cdprint "${HDENVDIR}/bin"'
 
 # WARNING:
 #
@@ -698,8 +698,8 @@ cdprint()
 }
 exportfunction cdprint
 
-catw()     { cat `which $@`; }
-cdwhich()  { cd `dirname \`which $@\``; }
+catw()     { cat "$(which "$@")"; }
+cdwhich()  { cd "$(dirname "$(which "$@")")"; }
 
 alias delsar='echo "delsar est remplacé par hd-sar-rm."'
 alias hd-sar-rm='find . -name "*.sar" -print -exec rm {} \;'
