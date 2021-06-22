@@ -1,0 +1,286 @@
+TO READ
+══════════════════════════════════════════════════════════════════════════════
+
+  - https://spark.apache.org/docs/latest/rdd-programming-guide.html
+
+
+
+SHELL
+══════════════════════════════════════════════════════════════════════════════
+
+  spark-shell  # Shell using local resources.
+  spark-shell --master yarn --deploy-mode client  # Shell using the cluster.
+
+
+
+FILTERS
+══════════════════════════════════════════════════════════════════════════════
+
+  val is_match_true = parsed.filter("is_match is true")
+  val is_match_true_count = parsed.filter("is_match is true").count()
+
+
+
+IMPORTANT TO KNOW
+══════════════════════════════════════════════════════════════════════════════
+
+  • Once an action completes, its RDDs disappear (by design (1))
+    - If you need one again, it's recomputed.
+
+  • You can tell Spark to persist an RDD to keep it in memory
+    - Useful for reusing an RDD that's expensive to create.
+
+  • SparkSession is a replacement for the now deprecated SQLContext object
+    that was originally introduced in Spark 1.3. Like SQLContext ,
+    SparkSession is a wrapper around the SparkContext object, which you can
+    access directly from the SparkSession : spark.sparkContext
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - A DataFrame simply represents a table of data with rows and columns.
+    i.e. Dataframe == Dataset[Row]
+
+  - Action and caching.
+
+  - Do not encapsulatte accumulators in
+
+
+
+RDD, DATAFRAME AND DATASET
+══════════════════════════════════════════════════════════════════════════════
+
+  RDD
+  ────────────────────────────────────────────────────────────────────────────
+
+    Its building block of Spark. No matter which abstraction Dataframe or
+    Dataset we use, internally final computation is done on RDDs.
+
+    RDD is lazily evaluated immutable parallel collection of objects exposed
+    with lambda functions.
+
+    The best part about RDD is that it is simple. It provides familiar OOPs
+    style APIs with compile time safety. We can load any data from a
+    source, convert them into RDD and store in memory to compute results. RDD
+    can be easily cached if same set of data needs to recomputed.
+
+    But the disadvantage is performance limitations. Being in-memory jvm
+    objects, RDDs involve overhead of Garbage Collection and Java(or little
+    better Kryo) Serialization which are expensive when data grows.
+
+
+  DataFrames
+  ────────────────────────────────────────────────────────────────────────────
+
+    From Advanced Analytices with Spark, 2nd edition
+
+      A data frame is simply an alias for the Dataset[Row] type!  Dataset[T]
+      is a new addition to the Spark 2.0 APIs and generalizes the DataFrame
+      type that was introduced in Spark 1.3 to be able to handle a richer set
+      of data types than just instances of the Row class
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    DataFrames gives a schema view of data basically, it is an abstraction. In
+    dataframes, view of data is organized as columns with column name and
+    types info. In addition, we can say data in dataframe is as same as the
+    table in relational database.
+
+    As similar as RDD, execution in dataframe too is lazy triggered. Moreover,
+    to allow efficient processing datasets is structure as a distributed
+    collection of data. Spark also uses catalyst optimizer along with
+    dataframes.
+
+    Dataframe came as a major performance improvement over RDD but not without
+    some downsides.  This led to development of Dataset which is an effort  to
+    unify best of RDD and data frame.  In future, Dataset will eventually
+    replace RDD and Dataframe to become the only API spark users should be
+    caring about while writing code.Lets understand them in detail one by one.
+
+
+
+  DataSets
+  ────────────────────────────────────────────────────────────────────────────
+
+    In Spark, datasets are an extension of dataframes. Basically, it earns two
+    different APIs characteristics, such as strongly typed and untyped.
+    Datasets are by default a collection of strongly typed JVM objects, unlike
+    dataframes. Moreover, it uses Spark’s Catalyst optimizer. For exposing
+    expressions & data field to a query planner.
+
+
+
+OPTIMIZATION
+══════════════════════════════════════════════════════════════════════════════
+
+  repartition() vs coalesce()
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/31610971/spark-repartition-vs-coalesce
+
+    Keep in mind that repartitioning your data is a fairly expensive
+    operation. Spark also has an optimized version of repartition() called
+    coalesce() that allows avoiding data movement, but only if you are
+    decreasing the number of RDD partitions.
+
+    Answer:
+
+      The coalesce method reduces the number of partitions in a DataFrame.
+      Coalesce avoids a full shuffle. If it's known that the number is
+      decreasing then the executor can safely keep data on the minimum number
+      of partitions, only moving the data off the extra nodes, onto the nodes
+      that we kept.
+
+      So, it would go something like this:
+
+        Node 1 = 1,2,3
+        Node 2 = 4,5,6
+        Node 3 = 7,8,9
+        Node 4 = 10,11,12
+
+      Then coalesce down to 2 partitions:
+
+        Node 1 = 1,2,3 + (10,11,12)
+        Node 3 = 7,8,9 + (4,5,6)
+
+      Notice that Node 1 and Node 3 did not require its original data to move.
+
+      The repartition algorithm does a full shuffle and creates new partitions
+      with data that's distributed evenly.
+
+
+
+SCALA INSTEAD OF PYTHON OR R (AS OF 2019)
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  Advanced Analytics with Spark, 2nd Edition
+
+    There are libraries and wrappers for Spark that allow you to use it from R
+    or Python.  The Python wrapper, which is called PySpark, is actually quite
+    good; we’ll cover some examples that involve using it in Chapter 11. But
+    the vast majority of our examples will be written in Scala, because we
+    think that learning how to work with Spark in the same language in which
+    the underlying framework is written has a number of advan‐ tages, such as
+    the following:
+
+    It reduces performance overhead.
+
+      Whenever we’re running an algorithm in R or Python on top of a JVM-based
+      language like Scala, we have to do some work to pass code and data
+      across the different environments, and oftentimes, things can get lost
+      in translation. When you’re writing data analysis algorithms in Spark
+      with the Scala API, you can be far more confident that your program will
+      run as intended.
+
+    It gives you access to the latest and greatest.
+
+      All of Spark’s machine learning, stream processing, and graph analytics
+      libraries are written in Scala, and the Python and R bindings tend to
+      get support this new functionality much later. If you want to take
+      advantage of all the features that Spark has to offer (without waiting
+      for a port to other language bindings), you will need to learn at least
+      a little bit of Scala; and if you want to be able to extend those
+      functions to solve new problems you encounter, you’ll need to learn a
+      little bit more.
+
+    It will help you understand the Spark philosophy.
+
+      Even when you’re using Spark from Python or R, the APIs reflect the
+      underlying computation philosophy that Spark inherited from the language
+      in which it was developed—Scala. If you know how to use Spark in
+      Scala—even if you primarily use it from other languages—you’ll have a
+      better understanding of the system and will be in a better position to
+      “think in Spark.”
+
+
+GLOSSARY
+══════════════════════════════════════════════════════════════════════════════
+
+  DSL       domain-specific language
+
+
+
+SPARK ON WINDOWS
+══════════════════════════════════════════════════════════════════════════════
+
+  To run Spark on Windows:  https://medium.com/big-data-engineering/how-to-install-apache-spark-2-x-in-your-pc-e2047246ffc3
+
+
+
+AVRO SCHEMA - MAP KEYS AS CHARSEQUENCE INSTEAD OF STRING
+══════════════════════════════════════════════════════════════════════════════
+
+  For Spark, it is better when Avro schema set the type to:
+
+    "avro.java.string": "String"
+
+  The default, for historical and backward compatibility, is CharSequence.
+  However, when processing the schema in Java or Scala, getting the keys
+  of a map as CharSequence is not ideal and difficult to handle.
+  Setting the type to "String" makes it much easier to program.
+
+  Example of a full declaration in an Avro schema:
+
+  {
+    "name" : "<my field>",
+    "type" : [ "null", {
+      "type" : "map",
+      "values" : {
+        "type" : "string",
+        "avro.java.string" : "String"
+      },
+      "avro.java.string" : "String"
+    } ],
+    "doc" : "Generic map of attributes for this event",
+    "default" : null
+  }
+
+  Read:
+
+    https://programmersought.com/article/25722405863/
+    https://stackoverflow.com/questions/19728853/apache-avro-map-uses-charsequence-as-key
+
+
+
+SPARK AND HIVE
+══════════════════════════════════════════════════════════════════════════════
+
+  Good read:  https://spark.apache.org/docs/latest/sql-data-sources-hive-tables.html
+
+
+
+SPARK STREAMING
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/36385708/does-spark-streaming-spark-work-like-a-while-loop-in-the-main-method#:~:text=Spark%20Streaming%20does%20not%20do,RDDs%20at%20every%20batch%20interval.
+
+  No. Spark Streaming does not do a "while loop" on a "main". Spark Streaming
+  uses a scheduler to trigger registered output operators at the batch
+  interval provided.
+
+
+  NetworkWordCount.scala EXAMPLE (VERY GOOD)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Check example at:  https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark/examples/streaming/NetworkWordCount.scala
+
+    Important lines:
+      val ssc = new StreamingContext(sparkConf, Seconds(1))
+        ┗━▶ This line sets the batch window to 1 second.
+      ...
+      ssc.awaitTermination()
+        ┗━▶ Starts the batch loop.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

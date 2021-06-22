@@ -1,0 +1,169 @@
+LECTURE
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  Google search 'hortonworks vs amazon'
+         https://www.google.ca/search?q=hortonworks+vs+amazon&hl=en
+
+  - Cloudera and Hortonworks merger means Hadoop’s influence is declining
+
+    https://venturebeat.com/2018/10/06/cloudera-and-hortonworks-merger-means-hadoops-influence-is-declining/
+
+
+  - https://www.whizlabs.com/blog/cloudera-and-hortonworks-merger/
+
+
+  Europe Frightened By US 'Cloud Act', Fearing National Security Risks
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://news.slashdot.org/story/19/03/02/0534227/europe-frightened-by-us-cloud-act-fearing-national-security-risks
+
+    Under the act, all U.S. cloud service providers, from Microsoft and IBM to
+    Amazon -- when ordered -- have to provide American authorities with data
+    stored on their servers, regardless of where it's housed. With those
+    providers controlling much of the cloud market in Europe, the act could
+    potentially give the US the right to access information on large swaths of
+    the region's people and companies.
+
+
+HADOOP
+══════════════════════════════════════════════════════════════════════════════
+
+  - $ hadoop version # Obtain Hadoop version
+
+
+
+Matt Turck FirstMark Big Data Landscape 2018 Final
+══════════════════════════════════════════════════════════════════════════════
+
+  http://mattturck.com/wp-content/uploads/2018/07/Matt_Turck_FirstMark_Big_Data_Landscape_2018_Final.png
+
+
+
+BI - Analayse graphique
+══════════════════════════════════════════════════════════════════════════════
+
+  Superset, un remplaçant de Tableau
+  ────────────────────────────────────────────────────────────────────────────
+
+    Suggéré par Daryl Heinz, formateur Big Data passé chez Vidéotron le
+    2018-10-31.
+
+    https://github.com/apache/incubator-superset  # Remplaçant de Tableau
+
+
+
+APACHE PHOENIX
+══════════════════════════════════════════════════════════════════════════════
+
+  Better than Hive because Hive must create code and uses Yarn to execute a
+  select, while Phoenix is a direct skin to hbase, not using Yarn, much
+  faster.
+
+
+
+Ranger
+══════════════════════════════════════════════════════════════════════════════
+
+  Gère les droits et les groupes à travers tous les composantes de Apache, HDP
+  HDF, etc...  C'est avec cette composante que l'on doit faire la sécurité.
+
+
+
+Medtron
+══════════════════════════════════════════════════════════════════════════════
+
+  Centralize security analysis, sending alerts.
+
+
+
+LARGE DATA SETS TO PLAY WITH AND PERFORM TESTS
+══════════════════════════════════════════════════════════════════════════════
+
+  MILLION SONG DATASET
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://labrosa.ee.columbia.edu/millionsong/
+
+    The Million Song Dataset is a freely-available collection of audio
+    features and metadata for a million contemporary popular music tracks.
+
+    Its purposes are:
+
+    - To encourage research on algorithms that scale to commercial sizes
+    - To provide a reference dataset for evaluating research
+    - As a shortcut alternative to creating a large dataset with APIs (e.g.
+      The Echo Nest's)
+    - To help new researchers get started in the MIR field
+
+
+
+AVRO CONCATENATION / SMALL FILE PROBLEM
+══════════════════════════════════════════════════════════════════════════════
+
+  From: https://jobs.zalando.com/tech/blog/solving-many-small-files-avro/?gh_src=4n3gxh1
+
+  While Hadoop is capable processing large amounts of data it typically works
+  best with a small number of large files, and not with a large number of
+  small files. A small file is one which is smaller than the Hadoop
+  Distributed File System (HDFS) block size (default 64MB). In MapReduce,
+  every map task handles computation on a single input block. Having many
+  small files means that there will be a lot of map tasks, and each map task
+  will handle small amounts of data. This creates a larger memory overhead and
+  slows down the job. Additionally, when using HDFS backed by AWS S3, listing
+  objects can take quite a long time and even longer when lots of objects
+  exist.
+
+
+  SOLUTIONS
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://github.com/edwardcapriolo/filecrush
+
+
+
+ORC / AVRO / PARQUET
+══════════════════════════════════════════════════════════════════════════════
+
+  Très bon:
+
+    2020:  https://www.adaltas.com/en/2020/07/23/benchmark-study-of-different-file-format/
+    2018:  https://www.datanami.com/2018/05/16/big-data-file-formats-demystified/
+
+  PARQUET
+  ────────────────────────────────────────────────────────────────────────────
+
+  - En 2019, c'est le format qui support le moins bien les changements de
+    schémas.
+
+
+
+THEORY
+══════════════════════════════════════════════════════════════════════════════
+
+  The Byzantine Generals’ Problem / Byzantine fault
+  ────────────────────────────────────────────────────────────────────────────
+
+    A Byzantine fault (also interactive consistency, source congruency, error
+    avalanche, Byzantine agreement problem, Byzantine generals problem, and
+    Byzantine failure[1]) is a condition of a computer system, particularly
+    distributed computing systems, where components may fail and there is
+    imperfect information on whether a component has failed. The term takes
+    its name from an allegory, the "Byzantine Generals' Problem",[2] developed
+    to describe this condition, where actors must agree on a concerted
+    strategy to avoid catastrophic system failure, but some of the actors are
+    unreliable.
+
+    - https://medium.com/all-things-ledger/the-byzantine-generals-problem-168553f31480
+    - https://en.wikipedia.org/wiki/Byzantine_fault
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

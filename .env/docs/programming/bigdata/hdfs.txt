@@ -1,0 +1,53 @@
+LECTURE
+══════════════════════════════════════════════════════════════════════════════
+
+  - Top 5 Reasons for Choosing S3 over HDFS
+    https://databricks.com/blog/2017/05/31/top-5-reasons-for-choosing-s3-over-hdfs.html
+
+
+
+BLOCK SIZE
+══════════════════════════════════════════════════════════════════════════════
+
+  - Best practices between size block, size file and replication factor in HDFS
+
+    https://community.hortonworks.com/questions/16278/best-practises-beetwen-size-block-size-file-and-re.html
+
+  - What should be the size of the file in HDFS for best MapReduce job
+    performance
+
+    https://stackoverflow.com/questions/30309766/what-should-be-the-size-of-the-file-in-hdfs-for-best-mapreduce-job-performance
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  java.io.IOException: File <somefile> could only be replicated to 0 nodes instead of minReplication (=1).
+  ────────────────────────────────────────────────────────────────────────────
+
+    Full Error:
+
+      java.io.IOException: File <somefile> could only be replicated to 0 nodes instead of minReplication (=1). There are 3 datanode(s) running and 3 node(s) are excluded in this operation. at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget(BlockManager.java:1325)
+
+    Solution:
+
+      Probable cause:
+
+      HDFS is full.  Check with 'hadoop fs df' how much space is left.  Yes, it
+      sucks that hadoop simply does not report a nice "no space left." error
+      message.
+
+    See:  https://stackoverflow.com/questions/15571584/writing-to-hdfs-could-only-be-replicated-to-0-nodes-instead-of-minreplication
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

@@ -1,0 +1,261 @@
+HBASE SHELL
+══════════════════════════════════════════════════════════════════════════════
+
+  $ hbase shell
+  ────────────────────────────────────────────────────────────────────────────
+
+    Good doc --> http://hadooptutorial.info/hbase-shell-commands-in-practice
+
+    IMPORTANT:  THE SHELL IS RUBY BASED!  You can code in ruby directly in it.
+
+      Example:
+
+        a=list # Save list of tables in variables 'a'
+        puts a  # Print the list nicely, one table per line.
+
+
+    $ hbase shell # Start the shell of HBase
+
+    list  # List all table names.
+    scan '<table name>'  # List the whole content of the table.
+    scan '<table name>', {'LIMIT' => 2}
+    scan '<table name>', {COLUMNS => '0',LIMIT =>10, FILTER =>"ValueFilter( =, 'substring:111111111')"}
+    deleteall '<table name>', '<row key id>'
+
+    get '<table name>', '<row key>'  # Do not forget the comma that separates the <table name> and <row id>.
+    get '<table name>', "<row key in binary>"  # BINARY KEY:  Use Double quotes to identify a key that is in binary.  \x?? are then interpreted, instead of being taken literally.
+
+    get 'EMPL_TRIAL_ENRICH', '2a2185d1b7818bb0-44:1C:12:F2:5B:CF'
+    get 'EMPL_TRIAL_ENRICH', "\x00\x0C064978c5-c50b-4ede-83f9-d2af6d36c140\x00\x01"
+
+    t = get_table 'cons_iaaa_cdp:test_party_eid'
+    b = get_table 'cons_iaaa_cdp:iaaa_cdpparty_eid'
+    t.scan
+    t.get 'ffeefcaf7fdfc581-44:1C:12:F2:2A:4C'
+    t.count
+
+    count '<table name>'
+
+    Pour faire un compte plus rapide de table large, utiliser le script
+
+    truncate '<table name>'
+
+
+  DDL
+  ────────────────────────────────────────────────────────────────────────────
+
+    READ:  https://mapr.com/docs/archive/mapr50/Getting-Started-with-HBase_22906909.html
+
+      HBase tables are organized by column, rather than by row. Furthermore,
+      the columns are organized in groups called column families. When
+      creating an HBase table, you must define the column families before
+      inserting any data. Column families should not be changed often, nor
+      should there be too many of them, so it is important to think carefully
+      about what column families will be useful for your particular data. Each
+      column family, however, can contain a very large number of columns.
+      Columns are named using the format family:qualifier.
+
+      Unlike columns in a relational database, which reserve empty space for
+      columns with no values, HBase columns simply don't exist for rows where
+      they have no values. This not only saves space, but means that different
+      rows need not have the same columns; you can use whatever columns you
+      need for your data on a per-row basis.
+
+    describle '<table name>'
+    create '<table name>', {NAME => '<column name>', VERSIONS => 1}
+
+    create 'iaaacdp:hanstest1', { NAME => 'columnfamily1' }, { NAME => 'columnfamily2' }, { NAME => 'columnfamily3' }
+
+    put <'tablename'>,<'rowname'>,<'columnvalue'>,<'value'>
+
+    put 'iaaacdp:hanstest1', '1', 'columnfamily1:column1', 'somevalue at 11'
+    put 'iaaacdp:hanstest1', '1', 'columnfamily1:column2', 'somevalue at 12'
+    put 'iaaacdp:hanstest1', '1', 'columnfamily2:column1', 'somevalue at 21'
+    put 'iaaacdp:hanstest1', '1', 'columnfamily2:column2', 'somevalue at 22'
+    put 'iaaacdp:hanstest1', '1', 'columnfamily3:column3', 'somevalue at 33'
+
+    get  'iaaacdp:hanstest1', '1'
+    scan 'iaaacdp:hanstest1', { COLUMN => 'columnfamily1' }
+
+    disable 'iaaacdp:hanstest1'  # A table needs to be disabled before getting dropped.
+    drop    'iaaacdp:hanstest1'  # Au revoir, 'hanstest1'.
+
+
+  RENAME A TABLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/27966072/how-do-you-rename-a-table-in-hbase
+
+    To rename a table in HBase, apparently you have to use snapshots. So, you
+    take a snapshot of the table and then clone it as a different name.
+
+      disable 'tableName'
+      snapshot tableName', 'tableSnapshot'
+      clone_snapshot 'tableSnapshot', 'newTableName'
+      delete_snapshot 'tableSnapshot'
+      drop 'tableName'
+
+      snapshot 'iaaacdp:iaaacdp_party', 'iaaacdp-iaaacdp_party-20191115T194750'
+
+
+  SNAPSHOTS
+  ────────────────────────────────────────────────────────────────────────────
+
+      list_snapshots
+      clone_snapshot 'tableSnapshot', 'newTableName'
+      delete_snapshot 'tableSnapshot'
+
+    Restoration
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      To perform a restoration, the table must be first disabled and then, very
+      important reenable after the restore.
+
+      disable          'tableSnapshot'
+      restore_snapshot 'tableSnapshot'
+      enable           'tableSnapshot'
+
+
+LECTURES / READINGS
+══════════════════════════════════════════════════════════════════════════════
+
+  - https://dzone.com/articles/understanding-hbase-and-bigtab
+
+
+HIGH AVAILABILITY / HA
+══════════════════════════════════════════════════════════════════════════════
+
+  Historically, HBase had only one master and it was the single poing of
+  failure (SPOF).  However, now it is easily solved by adding a 2nd, standby
+  master server.
+
+  From:  https://docs.cloudera.com/HDPDocuments/Ambari-2.7.3.0/managing-high-availability/amb_managing_high_availability.pdf
+
+    Ambari enables simple setup of multiple HBase Masters.  To help you
+    achieve redundancy for high availability in a production environment,
+    Apache HBase supports deployment of multiple HBase Masters in a cluster.
+    If you are working in an HDP 2.2 or later environment, Apache Ambari
+    enables simple setup of multiple HBase Masters. Hortonworks recommends
+    that you use Ambari to configure multiple HBase Masters.
+
+    During the Apache HBase service installation and depending on your
+    component assignment, Ambari installs and configures one HBase Master
+    component and multiple RegionServer components. To configure high
+    availability for the HBase service, you can run two or more HBase Master
+    components. HBase uses ZooKeeper for coordination of the active Master in
+    a cluster running two or more HBase Masters. This means, when active HBase
+    Master fails, the client will be automatically routed to standby Master.
+
+
+
+TABLE IN HIVE EXPORTED INTO HBASE
+══════════════════════════════════════════════════════════════════════════════
+
+  It is possible and easy to create an external table in hive that points
+  directly into a table in Hbase.  Thus, an insert in Hive causes the data to
+  be immediatly available in Hbase.
+
+  The following function create a table in hive named 'hanshive1' which shows
+  up in Hbase as 'hanshbase1'.
+
+  1) Create the table in HIVE.  Example:
+
+    CREATE TABLE hanshive1(rowkey STRING, a STRING, b STRING)
+    STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+    WITH SERDEPROPERTIES ('hbase.columns.mapping' = ':key,f:c1,f:c2')
+    TBLPROPERTIES ('hbase.table.name' = '<hbase namespace here>:hanshbase1');
+
+  2) Insert data in Hive
+
+    INSERT INTO hanshive1 VALUES ('key1', 'colarow1', 'colbrow1');
+
+  3) Check data in Hive
+
+    select * from hanshive1;
+    +-------------------+--------------+--------------+--+
+    | hanshive1.rowkey  | hanshive1.a  | hanshive1.b  |
+    +-------------------+--------------+--------------+--+
+    | key1              | colarow1     | colbrow1     |
+    +-------------------+--------------+--------------+--+
+    1 row selected (0.87 seconds)
+
+  4) Start HBase shell and check the data:
+
+    hbase shell
+
+    > scan '<hbase namespace here>:hanshbase1'
+    ROW                                    COLUMN+CELL
+     key1                                  column=f:c1, timestamp=1579892681100, value=colarow1
+     key1                                  column=f:c2, timestamp=1579892681100, value=colbrow1
+    1 row(s) in 0.3340 seconds
+
+    create 'iaaacdp:hanstest1', 'columnfamily1', 'columnfamily2', 'columnfamily3'
+
+    put 'iaaacdp:hanstest1', '1', 'columnfamily1:column1', '1'
+    put 'iaaacdp:hanstest1', '1', 'columnfamily2:column2', '2'
+    put 'iaaacdp:hanstest1', '1', 'columnfamily3:column3', '3'
+
+    scan 'iaaacdp:hanstest1'
+
+    create external table hanstest1(key int, column1 string, column2 string, column3 string)
+    STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' WITH SERDEPROPERTIES
+    ("hbase.columns.mapping"=":key,columnfamily1:column1,columnfamily2:column2,columnfamily3:column3")
+    TBLPROPERTIES ("hbase.table.name"="iaaacdp:hanstest1");
+
+    scan '', {'LIMIT' => 2}
+
+    CREATE EXTERNAL TABLE hivehbasetable(
+      key INT, id INT, username STRING, password STRING, email STRING)
+      STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+      WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,id:id,name:username,name:password,email:email")
+      TBLPROPERTIES("hbase.table.name" = "hbasetable");
+
+
+    CREATE EXTERNAL TABLE iaaacdp_iaaaaad_party
+    STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+    TBLPROPERTIES ('hbase.table.name' = 'iaaacdp:iaaaaad_party');
+
+
+
+COMPETITION / ALTERNATIVES
+══════════════════════════════════════════════════════════════════════════════
+
+  APACHE CASSANDRA
+  ────────────────────────────────────────────────────────────────────────────
+
+    Read: https://www.scnsoft.com/blog/cassandra-vs-hbase
+
+
+RUBY, ADVANCE
+══════════════════════════════════════════════════════════════════════════════
+
+  Pour scanner la table et convertir le binaire dans 'hbase shell', exécutez ce code:
+
+  $ hbase shell
+  config = org.apache.hadoop.hbase.HBaseConfiguration.create
+  table = org.apache.hadoop.hbase.client.HTable.new(config, 'iaaacdp:iaaacdp_party')
+  scanner = table.getScanner(org.apache.hadoop.hbase.client.Scan.new())
+
+  scanner.each do |row|
+    row.getMap.entrySet.each do |value|
+      value.getValue.entrySet.each do |value2|
+        value2.getValue.entrySet.each do |value3|
+          key = value3.getKey
+          finalValue = String.from_java_bytes(value3.getValue)
+          puts "'#{key}' :: '#{finalValue}'"
+        end
+      end
+    end
+  end
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

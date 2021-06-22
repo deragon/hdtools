@@ -1,0 +1,517 @@
+CMD
+══════════════════════════════════════════════════════════════════════════════
+
+  beeline -u <HIVE_URL>  # There is no variable that exists as of 2019 that
+                         # can be set to avoid entering the URL.  Simply build
+                         # an alias instead.
+
+  beeline -u <HIVE_URL> -f <file.sql>
+
+  hive      # (Old, not used in modern Hadoop clusters)
+
+
+
+SQL
+══════════════════════════════════════════════════════════════════════════════
+
+  cast('1970-01-01 00:00:00' as timestamp) -- Convert string to timestamp.
+
+
+  -- Current date:
+  select from_unixtime(unix_timestamp(current_date, 'yyyyMMdd'),'yyyy-MM-dd');
+
+  -- Date filter
+  select count(*) from tune where (timestampfieldinmilli DIV 1000) >= unix_timestamp("2019-02-02 00:00:00")
+
+  -- Group by day
+  select count(*), date(from_unixtime(unix_timestamp DIV 1000)) from staging.playback group by date(from_unixtime(unix_timestamp DIV 1000));
+
+  select * from (select count(*), date(from_unixtime(unix_timestamp DIV 1000)) as day from staging.playback group by date(from_unixtime(unix_timestamp DIV 1000)) ) subtable order by day;
+
+  select * from <table> limit 5;
+
+  To quit beeline, type CTRL-D or:  !quit
+
+
+  -- Current time as string
+  select cast(from_unixtime(unix_timestamp(cast(current_timestamp() as string), 'yyyy-MM-dd HH:mm:ss'),'yyyy-MM-dd HH:mm:ss') as string);
+
+  select (cast(current_timestamp() as string));
+
+
+  TIME MANIPULATION
+  ────────────────────────────────────────────────────────────────────────────
+
+      -- Set end_ts 120 seconds after start_ts.  
+      -- start_ts and end are of type `timestamp` in the table.
+      update <table> set status = 'complete', end_ts = from_unixtime(unix_timestamp(start_ts)+120) where id = '<id>'
+
+
+  UPSERT
+  ────────────────────────────────────────────────────────────────────────────
+
+    Use 'Merge into', but there is a caveat.  You must perform a join with
+    another table.  Cannot simply upsert a row if the does not already exist
+    within the table.
+
+    Read:  https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DML#LanguageManualDML-Merge
+
+
+  SUBQUERIES LIMITATIONS
+  ────────────────────────────────────────────────────────────────────────────
+
+    READ:  https://cwiki.apache.org/confluence/display/Hive/Subqueries+in+SELECT
+
+
+    NESTED QUERIES NEED TO BE NAMED
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    select * from (select ...);  -- Fail!  Subquery is not named.
+    select * from (select ...) mytable;  -- Success!
+
+
+    Complex queries with subqueries.
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      NOTICE that with select, 'id = ...' is used whule 'id in ...' is used for the update.  Using
+      'id = ...' for the update causes an error; go figure why.
+
+      select * from <table> where id = (select max(id) from <table> where stream_name='rdkb');
+
+      -- Update <table> with status at 'complete' and end_ts set 120 seconds later than start_ts
+      -- where id is the maximum of the table. start_ts and end_ts are of type `timestamp`.
+      update <table> set status = 'complete', end_ts = from_unixtime(unix_timestamp(start_ts)+120) where id in (select max(id) from <table> where stream_name='rdkb');
+
+
+    COUNT OF MULTIPLE TABLES
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      select * from (
+        (select count(*) from db1.table1) as t1_count,
+        (select count(*) from db2.table2) as t2_count,
+        (select count(*) from db3.table3) as t3_count
+      );
+
+
+  MISCELLEANOUS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Hive How to select all but one column?
+    https://stackoverflow.com/questions/51227890/hive-how-to-select-all-but-one-column
+
+
+
+  MAPS
+  ────────────────────────────────────────────────────────────────────────────
+
+    When a field is defined as a map() type in Hive, you cannot simply test
+    it if it is empty with the 'is not null' statement like.
+
+      select fieldAsMap from <table> where fieldAsMap is not null; -- Does not work.
+
+    You must explode the map in a lateral view and check the key:
+
+      select fieldAsMap
+      from <table> as t
+      lateral view explode(t.fieldAsMap) lv as k,v where k is not null
+      and event_dt='2020-11-23'
+      limit 5;
+
+    See:  https://stackoverflow.com/questions/13015074/hive-how-to-test-and-find-for-null-map-entries
+
+
+
+DDL (Data Definition Language) / COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  See:  https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL
+
+  show databses;               -- List all databases.
+  use <database name>;         -- Specify which database to use.
+
+  show tables;                 -- List all tables in the current database.
+  desc formated <table name>;  -- Show the definition of the fields of the table.
+
+  -- Following !set statements remove all decorative headers and sets the
+  -- output format in such a manner that the output can be reinjected into
+  -- beeline as is.
+  --
+  -- See:  https://stackoverflow.com/questions/43596438/how-to-print-hive-beeline-output-without-header-and-non-tabular-form
+  !set showheader false
+  !set outputformat tsv2
+  show create table <table name>;  -- Show the DDL of the table.
+
+
+  Internal (managed) & external tables
+  ────────────────────────────────────────────────────────────────────────────
+
+    The main difference between internal and external tables is that internal
+    tables are managed by hive.  This means that the files used to store the
+    data are created and deleted by hive.  In the case of an external table, a
+    'drop table <table name>' will not cause any file (and thus any data) to
+    be deleted.
+
+    Structure wise, an internal table stored with ORC formatted files makes
+    use of pure ORC, non special ORC files.  One can create an external
+    table pointing to the ORC formatted files of the internal table and the
+    exte
+
+
+
+HIVE VARIABLES
+══════════════════════════════════════════════════════════════════════════════
+
+  Set a variable
+
+    set hivevar:mystring = "Hello world!";
+
+  Print / echo the content of a hive variable:
+
+    set hivevar:mystring;
+    | hivevar:mystring="Hello world!" |
+
+  Use variable
+
+    -- Do not put quotes around "<put table name here>"; it will generate a
+    -- syntax error.
+    set hivevar:table_name = <put table name here>;
+    show partitions ${hivevar:table_name};
+
+
+  WARNING
+  ────────────────────────────────────────────────────────────────────────────
+
+    As of 2020-09-21, Hive 3.1.0.
+
+    Hive variables are nothing but a text replacement mechanism.  The
+    replacement is done before parsing and execution.
+
+    set hivevar:exec_ts=(select last_exec_ts from my_control_table);
+    set hivevar:exec_ts;
+    | hivevar:exec_ts=(select last_exec_ts from my_control_table) |
+
+    In the example above, the select is not executed!  It is a pure string
+    replacement.  Thus if hivevar:exec_ts is used at multiple places, it will
+    be executed multiple times, CAUSING POTENTIALLY A PERFORMANCE HIT.
+
+    See:  https://stackoverflow.com/questions/42887401/storing-result-of-query-in-hive-variable
+
+
+    WORKAROUND
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Programmatically, run the query once in your program, save the result in
+      variable of the chosen language.
+
+      For example, passing a query result as an argument to another query can
+      be done from the shell, e.g. -
+
+        hive --hivevar x=$(hive -e 'select 1+2') -e 'select ${hivevar:x}*100'
+
+
+ORC
+══════════════════════════════════════════════════════════════════════════════
+
+  ORC support transactions, not Avro
+
+  Hive 3.0 will have support for insertion, deletion of new columns in middle
+  of the ORC table.
+
+  How to see contents of Hive orc files in linux
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/20847024/how-to-see-contents-of-hive-orc-files-in-linux
+
+      hive --orcfiledump <hdfs-location-of-orc-file>
+
+    There is now also a native executable for Linux and MacOS that prints the
+    contents of the orc file in JSON. See the ORC project
+    (http://orc.apache.org/) and build the C++ tools.
+
+      % orc-contents examples/TestOrcFile.test1.orc
+
+    There is also a native metadata tool:
+
+      % orc-metadata ../examples/TestOrcFile.test1.orc
+
+    The ORC project also has a standalone uber jar that can do the same from Java.
+
+      % java -jar orc-tools-1.2.3-uber.jar data myfile.orc
+
+
+
+HPL/SQL - Procedural SQL on Hadoop, NoSQL and RDBMS
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.hplsql.org/home
+
+
+
+PARAMETERS
+══════════════════════════════════════════════════════════════════════════════
+
+  -- Show columns names when doing a select, for display/output.
+  set hive.cli.print.header=true;
+
+  -- Show currently used database, for display/output.
+  set hive.cli.print.current.db=true;
+
+
+
+HADOOP CONFIGURATION
+══════════════════════════════════════════════════════════════════════════════
+
+  - Main file:  hive-site.xml
+
+
+
+PARTITION
+══════════════════════════════════════════════════════════════════════════════
+
+  PARAMETER SETTINGS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Prior creating a partitioned table, one must set some parameters.  The
+    following commands can be prepended to the SQL file containing the code
+    that will create the partitioned table (code found in section 'PARTITIONED
+    TABLE CREATION' below for example)
+
+    -- Active les partitions dynamiques.
+    set hive.exec.dynamic.partition=true;
+    set hive.exec.dynamic.partition.mode=nonstrict;
+
+    -- Le nombre maximume de partitions crées dynamiquement est de 2920, soit
+    -- 365 * 8 années, le nombre d'années que l'on va garder les données.  Le nombre
+    -- d'années serait en fait 7, mais on se garde une marge d'erreur.
+    set hive.exec.max.dynamic.partitions=2920;
+    set hive.exec.max.dynamic.partitions.pernode=2920;
+
+
+  PARTITIONED TABLE CREATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Hive by default expects partitions to be in subdirectories named via the convention s3://test.com/partitionid=partitionvalue. For example
+
+    s3://test.com/dt=2014-03-05
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    Search for 'partition' to figure out where partitioning keywords are used
+    below
+
+      drop table if exists mytable;
+
+      create table `mytable` (
+        `unix_timestamp`  bigint,
+        `timestamp`       string,
+        `uuid`            string,
+        `latency`         int,
+        `isstartup`       boolean)
+      partitioned by (event_dt string);
+
+      insert into table <dst_table>
+      partition (event_dt = '< date in the form yyyy-MM-dd, generally >')
+      select header.`timestamp` as `unix_timestamp`
+            ,from_unixtime(header.`timestamp` DIV 1000) as `timestamp`
+            ,header.uuid
+            ,latency
+            ,isstartup
+            ,from_unixtime(header.`timestamp` DIV 1000, "yyyyMMdd") as `event_dt`
+      from <src_table>
+      where upper(tunestatus) <> 'NOT_SUCCESS_OR_FAILURE';
+
+      select count(*) from mytable where event_dt=20190126;
+
+
+  REPAIR PARTITIONS USING MSCK REPAIR
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.5/using-hiveql/content/hive-msck-repair.html
+
+    The MSCK REPAIR TABLE command was designed to manually add partitions that
+    are added to or removed from the file system, such as HDFS or S3, but are
+    not present in the metastore.
+
+    This task assumes you created a partitioned external table named emp_part
+    that stores partitions outside the warehouse. You remove one of the
+    partition directories on the file system. This action renders the
+    metastore inconsistent with the file system. You repair the discrepancy
+    manually to synchronize the metastore with the file system, HDFS for
+    example.
+
+    set hivevar:table_name = <put table name here>;
+    show partitions ${hivevar:table_name};
+    msck repair ${hivevar:table_name};
+
+
+
+PARAMETERS
+══════════════════════════════════════════════════════════════════════════════
+
+  HOW TO FETCH RUN TIME PARAMETERS IN HIVE FROM HIVE CLI AND BEELINE?
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://community.hortonworks.com/content/supportkb/175076/how-to-fetch-run-time-parameters-in-hive-from-hive.html
+
+    The command set -v prints all Hadoop, Hive, MR and Tez configuration
+    variables used at query runtime, which can be helpful to check all the
+    config parameters in one go. Following are the ways to capture the same
+    from different Hive Clients:
+
+    From Hive CLI, run the following:
+
+      hive -e set -v;
+
+    From Beeline without Kerberos, run the following:
+
+      beeline --outputformat=csv2 -u "jdbc:hive2://localhost:10000/default" -n hive -p '' -e 'set -v' > set.out
+
+    From Beeline with Kerberos, run the following:
+
+      beeline --outputformat=csv2 -u "jdbc:hive2://localhost:10000/default;principal=hive/_HOST@HDP.REALM" -n hive -p '' -e 'set -v' > set.out
+
+    From Ambari Hive View, run the following:
+    set -v;
+
+
+  SETTINGS - PER SESSION AND PERSISTING FOR ALL SESSIONS
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://cwiki.apache.org/confluence/display/Hive/AdminManual+Configuration#AdminManualConfiguration-ConfiguringHive
+
+    A number of configuration variables in Hive can be used by the
+    administrator to change the behavior for their installations and user
+    sessions. These variables can be configured in any of the following ways,
+    shown in the order of preference:
+
+    Using the set command in the CLI or Beeline for setting session level
+    values for the configuration variable for all statements subsequent to the
+    set command. For example, the following command sets the scratch directory
+    (which is used by Hive to store temporary output and plans) to /tmp/mydir
+    for all subsequent statements:
+
+      set hive.exec.scratchdir=/tmp/mydir;
+
+    Using the --hiveconf option of the hive command (in the CLI) orDetentionProduitOperations.csv.disabled beeline command for the entire session. For example:
+
+      bin/hive --hiveconf hive.exec.scratchdir=/tmp/mydir
+
+    In hive-site.xml. This is used for setting values for the entire Hive configuration (see hive-site.xml and hive-default.xml.template below). For example:
+
+      <property>
+        <name>hive.exec.scratchdir</name>
+        <value>/tmp/mydir</value>
+        <description>Scratch space for Hive jobs</description>
+      </property>
+
+    In server-specific configuration files (supported starting Hive 0.14). You
+    can set metastore-specific configuration values in hivemetastore-site.xml,
+    and HiveServer2-specific configuration values in hiveserver2-site.xml.
+    The server-specific configuration file is useful in two situations:
+
+    - You want a different configuration for one type of server (for example –
+      enabling authorization only in HiveServer2 and not CLI).
+
+    - You want to set a configuration value only in a server-specific
+      configuration file (for example – setting the metastore database
+      password only in the metastore server configuration file).
+      HiveMetastore server reads hive-site.xml as well as
+      hivemetastore-site.xml configuration files that are available in the
+      $HIVE_CONF_DIR or in the classpath. If the metastore is being used in
+      embedded mode (i.e., hive.metastore.uris is not set or empty) in hive
+      commandline or HiveServer2, the hivemetastore-site.xml gets loaded by
+      the parent process as well.  The value of hive.metastore.uris is
+      examined to determine this, and the value should be set appropriately in
+      hive-site.xml .  Certain metastore configuration parameters like
+      hive.metastore.sasl.enabled, hive.metastore.kerberos.principal,
+      hive.metastore.execute.setugi, and
+      hive.metastore.thrift.framed.transport.enabled are used by the metastore
+      client as well as server. For such common parameters it is better to set
+      the values in hive-site.xml, that will help in keeping them consistent.
+
+      HiveServer2 reads hive-site.xml as well as hiveserver2-site.xml that are available in the $HIVE_CONF_DIR or in the classpath.
+      If HiveServer2 is using the metastore in embedded mode, hivemetastore-site.xml also is loaded.
+
+      The order of precedence of the config files is as follows (later one has higher precedence) –
+      hive-site.xml -> hivemetastore-site.xml -> hiveserver2-site.xml -> '-hiveconf' commandline parameters.
+
+
+
+DEVELOPMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  UNIT TESTING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Library to try:  https://github.com/klarna/HiveRunner
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - beeline --version  # Fetch version of Hive.
+  - hive --version     # Fetch version of Hive.
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Table insclause-0 has X columns, but query has X+1 columns.
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/35812477/inserting-into-hive-table-non-partitioned-table-to-partitioned-table-cannot
+
+    RTFM -- Hive is not Oracle. In Hive the partitioning "columns" are managed
+    as metadata >> THEY ARE NOT INCLUDED IN THE DATA FILES, instead they are
+    used as sub-directory names. So your partitioned table has just 2 real
+    columns, and you must feed just 2 columns with your SELECT.
+
+    In other words, in your sub select statement, you must not include the
+    field that is used for partitioning.
+
+
+
+LECTURES
+══════════════════════════════════════════════════════════════════════════════
+
+  - Integrating Apache Hive with Kafka, Spark, and BI
+    https://docs.hortonworks.com/HDPDocuments/HDP3/HDP-3.1.0/integrating-hive/content/hive-kafka-integration.html
+
+  - Extreme Parallel Processing (XPP) For Hive (Bon)
+    http://technology.finra.org/code/extreme-processing-for-larger-systems-xpp.html
+
+
+
+HIVE EXTERNAL TABLE TO HBASE
+══════════════════════════════════════════════════════════════════════════════
+
+  See 'hbase.txt' where the instructions are to be found.
+
+
+
+UDF User defined functions
+══════════════════════════════════════════════════════════════════════════════
+
+  Super easy example:   https://stackoverflow.com/questions/30399544/add-minutes-to-datetime-in-hive
+  Article:              https://dzone.com/articles/writing-custom-hive-udf-andudaf
+
+
+
+HIVE EXTERNAL TABLE TO ELASTICSEARCH
+══════════════════════════════════════════════════════════════════════════════
+
+  See:  https://www.elastic.co/guide/en/elasticsearch/hadoop/current/hive.html
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

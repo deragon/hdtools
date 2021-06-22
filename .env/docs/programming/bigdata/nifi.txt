@@ -1,0 +1,72 @@
+
+
+
+Nifi
+══════════════════════════════════════════════════════════════════════════════
+
+  According to Frank from Hortonworks.
+
+  Should not be used for enrichment, since the processors to do so are
+  limited.   Should be used for routing, splitting data and transfer data from
+  multiple sources into a lake.
+
+  ────────────────────────────────────────────────────────────────────────────
+
+  Nifi Processors and other Nifi components can be versionned with Nifi's
+  registry.
+
+  Nifi supports Flow Based Programming (FBP)
+
+  Dependencies of Nifi:
+
+    Zookeeper
+
+
+
+CONCURRENT TASKS / concurrency
+══════════════════════════════════════════════════════════════════════════════
+
+  https://docs.cloudera.com/cfm/1.1.0/nifi-tuning/topics/cfm-tuning-concurrent-tasks.html
+
+
+
+NIFI REGISTRY AND DEPLOYMENT INTO PRODUCTION
+══════════════════════════════════════════════════════════════════════════════
+
+  Read:  https://bryanbende.com/development/2018/01/19/apache-nifi-how-do-i-deploy-my-flow
+
+
+
+À LIRE
+══════════════════════════════════════════════════════════════════════════════
+
+  - Understanding NiFi processor's "Run Duration" functionality.
+
+    https://community.hortonworks.com/articles/221807/understanding-nifi-processors-run-duration-functio.html
+
+  - Flow Development Life Cycle with NiFi registries
+
+    (How to deploy from DEV to PROD using Nifi Registry)
+    https://medium.com/@abdelkrim.hadjidj/fdlc-towards-flow-development-life-cycle-with-nifi-registries-82e1ee866fab
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  Currently, there is no way in NiFi to extract attributes directly from Avro.
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/42496657/apache-nifi-extract-attributes-from-avro
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

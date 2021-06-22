@@ -1,0 +1,295 @@
+ALTERNATIVES TO OOZIE
+══════════════════════════════════════════════════════════════════════════════
+
+  - Prefect, even better than Airflow apparently.
+    https://docs.prefect.io/guide/welcome/what_is_prefect.html
+
+  - Airflow, better than Oozie.
+
+  La raison principale pourquoi Oozie est tellement encore utilisé en 2019
+  malgré de meilleurs outils, c'est que c'est le seul encore qui supporte
+  Kerberos, un must pour la question de sécurité.
+
+
+
+OOZIE URL
+══════════════════════════════════════════════════════════════════════════════
+
+  ${OOZIE_URL}
+  ────────────────────────────────────────────────────────────────────────────
+
+    Always set ${OOZIE_URL} to avoid entering it at every command.
+
+      Example:  export OOZIE_URL="http://localhost:8080/oozie"
+
+                Often localhost is not working and a true FQDN must be
+                provided.
+
+    From the Oozie official documentation:
+
+      All oozie CLI sub-commands expect the -oozie OOZIE_URL option indicating
+      the URL of the Oozie system to run the command against.
+
+      If the -oozie option is not specified, the oozie CLI will look for the
+      OOZIE_URL environment variable and uses it if set.
+
+      If the option is not provided and the environment variable is not set,
+      the oozie CLI will fail.
+
+
+
+BASIC
+══════════════════════════════════════════════════════════════════════════════
+
+  LIST ALL JOBS
+  ────────────────────────────────────────────────────────────────────────────
+
+    For listing all workflow jobs use the following commands:
+
+      oozie jobs
+      oozie jobs -jobtype wf
+      oozie jobs -filter user=deragonh  # For a specific user
+
+    For listing all coordinator jobs:
+
+      oozie jobs -jobtype coordinator
+
+
+  COMMANDS FOR SPECIFIC JOB
+  ────────────────────────────────────────────────────────────────────────────
+
+    # 'job.properties' lies within the local Linux filesystem.  In this example,
+    # in the current directory.
+    #
+    # In 'job.properties', the parameter
+    # 'oozie.wf.application.path=<hdfs:///workflow file.xml>' must be set to
+    # specify the XML file describing the workflow.
+
+    # "localhost" n'est pas toujours le bon FQDN.  Dépendamment de
+    # l'environnement, il faut le FQDN d'un véritable serveur.
+    export OOZIE_URL="http://localhost:8080/oozie"
+    oozie job -config job.properties -run
+    oozie job -kill "${OOZIE_JOB_ID}"
+    oozie job -log "${OOZIE_JOB_ID}"
+
+    From:  https://stackoverflow.com/questions/12096678/stop-oozie-workflow-execution
+
+      0) Start job from scrach           : oozie job -config job.properties -run
+
+      1) Submit job                      : oozie job -config job.properties -submit job: "${OOZIE_JOB_ID}"
+      6) Re-run workflow                 : oozie job -config job.properties -rerun       "${OOZIE_JOB_ID}"
+      2) Run job                         : oozie job -start   "${OOZIE_JOB_ID}"
+      3) Check the status                : oozie job -info    "${OOZIE_JOB_ID}"
+      4) Suspend workflow                : oozie job -suspend "${OOZIE_JOB_ID}"
+      5) Resume workflow                 : oozie job -resume  "${OOZIE_JOB_ID}"
+      7) Should you need to kill the job : oozie job -kill    "${OOZIE_JOB_ID}"
+      8) View server logs                : oozie job -logs    "${OOZIE_JOB_ID}"
+
+      Logs are available on the Oozie server at:  /var/log/oozie
+
+
+  GET MAP REDUCE LOGS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Once a job failed, you can execute the following:
+
+      oozie job -info "${OOZIE_JOB_ID}" -verbose
+
+
+
+Job ID : 0044226-200914104621252-oozie-oozi-W
+------------------------------------------------------------------------------------------------------------------------------------
+Workflow Name : wf_rdkb
+App Path      : /user/<userid>/workflow.xml
+Status        : KILLED
+Run           : 0
+User          : <userid>
+Group         : -
+Created       : 2020-09-22 12:37:48 GMT
+Started       : 2020-09-22 12:37:48 GMT
+Last Modified : 2020-09-22 12:38:16 GMT
+Ended         : 2020-09-22 12:38:16 GMT
+CoordAction ID: -
+
+Actions
+------------------------------------------------------------------------------------------------------------------------------------
+ID      Console URL     Error Code      Error Message   External ID     External Status Name    Retries Tracker URI     Type    Started Status  Ended
+------------------------------------------------------------------------------------------------------------------------------------
+0044226-200914104621252-oozie-oozi-W@:start:    -       -       -       -       OK      :start: 0       -       :START: 2020-09-22 12:37:48 GMT OK      2020-09-22 12:37:48 GMT
+------------------------------------------------------------------------------------------------------------------------------------
+0044226-200914104621252-oozie-oozi-W@start_rdkb https://<mapreduceurlhere>:8090/proxy/application_1600286805027_8534/ 2       Main class [org.apache.oozie.action.hadoop.Hive2Main], exit code [2]    job_1600286805027_8534  FAILED/KILLED   start_rdkb      0       <someserver>:8025       hive2   2020-09-22 12:37:48 GMT ERROR   2020-09-22 12:38:16 GMT
+------------------------------------------------------------------------------------------------------------------------------------
+0044226-200914104621252-oozie-oozi-W@fail       -       E0729   WF failed, error message[Main class [org.apache.oozie.action.hadoop.Hive2Main], exit code [2]]  -       OK     fail     0       -       :KILL:  2020-09-22 12:38:16 GMT OK      2020-09-22 12:38:16 GMT
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+  MISCELLANEOUS
+  ────────────────────────────────────────────────────────────────────────────
+
+      oozie admin -version  # Fetch build version.
+
+
+
+ENABLE DEBUG LEVEL IN LOGS
+══════════════════════════════════════════════════════════════════════════════
+
+  Withwin an action java configuration, add the following 'property'
+  entries:
+
+    <action name="<my action>">
+      <java>
+        <configuration>
+          <property>
+              <name>mapreduce.map.log.level</name>
+              <value>DEBUG</value>
+          </property>
+          <property>
+              <name>mapreduce.reduce.log.level</name>
+              <value>DEBUG</value>
+          </property>
+          ....
+
+  Probably these properties can be added to action of a type different
+  than <java>.
+
+
+
+HOW TO RE-RUN OOZIE FAILED JOB
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/37363072/how-to-re-run-oozie-failed-job
+
+  oozie job --oozie <oozie_url> -rerun <job_id> -config <job.properties>
+
+
+
+TIMESTAMPS OF EXECUTION OF EACH INDIVIDUAL ACTION
+══════════════════════════════════════════════════════════════════════════════
+
+  Unfortunately, as of 2019-06-17, there does not seam to be any means to
+  get the list of timestamps of execution of each individual action from
+  the tools.  Following is a receipe that shows how to parse the log file
+  and get this information.
+
+  NOTE:  hdooziejoblistactions script exists and does exaclty what is shown
+         here below.
+
+  OOZIE_JOB_ID="0000012-190612105307733-oozie-oozi-W"
+  [dzz5328@lacprd-en20 test1] oozie job -log "${OOZIE_JOB_ID}" | perl -ne 'print if s/INFO.*@(\S+)\].*(job.*_\d+).*/\1 \2/g' | sort -u -k 4 | column -t
+  2019-06-14  15:31:12,387  prepare-environment                    job_1560350817446_0140
+  2019-06-14  15:31:44,449  prepare-graph                          job_1560350817446_0141
+  2019-06-14  15:33:11,055  init-assembler                         job_1560350817446_0142
+  2019-06-14  15:33:45,158  assembler                              job_1560350817446_0143
+  2019-06-14  20:11:53,852  assembler                              job_1560350817446_0144
+  2019-06-14  20:11:59,434  prepare-quality-sync                   job_1560350817446_0145
+  2019-06-14  20:12:42,432  quality-scans-sync                     job_1560350817446_0146
+  2019-06-15  07:37:53,817  run-source-record-data-change-publish  job_1560350817446_0148
+  2019-06-15  07:57:01,203  graph-sync-create-vertices             job_1560350817446_0150
+  2019-06-15  09:52:15,774  graph-sync-create-edges                job_1560350817446_0152
+  2019-06-15  10:06:58,473  prepare-duke-match                     job_1560350817446_0154
+  2019-06-15  10:07:39,468  pm-idx-sie                             job_1560350817446_0155
+  2019-06-15  11:27:25,004  pm-sie                                 job_1560350817446_0157
+  2019-06-16  11:36:29,942  webchat-sie                            job_1560350817446_0159
+  2019-06-16  11:39:28,835  email-sie                              job_1560350817446_0161
+  2019-06-16  11:42:28,225  init-eid-management                    job_1560350817446_0163
+  2019-06-16  11:43:12,474  eid-management                         job_1560350817446_0164
+  2019-06-16  17:07:13,027  eid-deduplication-management           job_1560350817446_0167
+  2019-06-16  17:09:26,665  run-eid-post-enrichments               job_1560350817446_0169
+  2019-06-16  19:59:59,258  next-interaction                       job_1560350817446_0171
+  2019-06-16  22:01:34,808  run-eid-data-change-publish            job_1560350817446_0173
+  2019-06-16  23:29:24,918  init-search-index                      job_1560350817446_0175
+  2019-06-16  23:30:05,894  build-eid-eager-index                  job_1560350817446_0176
+
+
+
+HOW TO INSTRUCT AN OOZIE JOB TO RETRY BEFORE FAILING.
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/38304821/how-to-auto-rerun-of-failed-action-in-oozie
+
+  Most of the time, when an action fails in the Oozie workflow, you need to
+  debug and fix the error and rerun the workflow. But there are times, when
+  you want Oozie to retry the action after an interval, for fixed number of
+  times before failing the workflow. You can specify the retry-max and
+  retry-interval in the action definition.
+
+  Examples of User-Retry in a workflow action is :
+
+    <workflow-app xmlns="uri:oozie:workflow:0.5" name="wf-name">
+    <action name="a" retry-max="2" retry-interval="1">
+    ....
+    </action>
+
+  You can find the more information about the [User-Retry for Workflow
+  Actions](https://oozie.apache.org/docs/4.2.0/WorkflowFunctionalSpec.html#a18_User-Retry_for_Workflow_Actions_since_Oozie_3.1)
+  in the link.
+
+
+
+COORDINATORS
+══════════════════════════════════════════════════════════════════════════════
+
+  Datasets, input-events and output-events explained:
+
+      https://community.cloudera.com/t5/Support-Questions/oozie-Input-events-clarification/td-p/155688
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  NULLPOINTEREXCEPTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    If starting a workflow or coordinator and a NullPointerException occurs,
+    it is because the oozie.wf.application.path or
+    oozie.coord.application.path is not set properly, pointing to an non
+    existing file.
+
+    java.lang.RuntimeException: java.lang.NullPointerException
+    at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1242)
+    at sun.net.www.protocol.http.HttpURLConnection.getHeaderField(HttpURLConnection.java:2714)
+    at java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:477)
+    at org.apache.oozie.client.OozieClient$JobSubmit.call(OozieClient.java:678)
+    at org.apache.oozie.client.OozieClient$JobSubmit.call(OozieClient.java:653)
+    at org.apache.oozie.client.OozieClient$ClientCallable.call(OozieClient.java:548)
+    at org.apache.oozie.client.OozieClient.dryrun(OozieClient.java:817)
+    at org.apache.oozie.cli.OozieCLI.jobCommand(OozieCLI.java:958)
+    at org.apache.oozie.cli.OozieCLI.processCommand(OozieCLI.java:662)
+    at org.apache.oozie.cli.OozieCLI.run(OozieCLI.java:615)
+    at org.apache.oozie.cli.OozieCLI.main(OozieCLI.java:218)
+    Caused by: java.lang.NullPointerException
+    at java.io.ByteArrayInputStream.<init>(ByteArrayInputStream.java:106)
+    at sun.misc.CharacterEncoder.encode(CharacterEncoder.java:188)
+    at sun.net.www.protocol.http.NegotiateAuthentication.setHeaders(NegotiateAuthentication.java:156)
+    at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1482)
+    at java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:468)
+    ... 8 more
+    java.lang.NullPointerException
+
+
+
+PIG SCRIPT
+══════════════════════════════════════════════════════════════════════════════
+
+  For a pig script to work with different features available on Hadoop, such
+  as Hive for instance, the worfklow must be instructed to add the required
+  libraries to the classpath.  This is done with the ShareLib feature.  In the
+  properties files used to call the workflow, add the lines blow (here in this
+  example, support for pig, hcatalog and hive are added):
+
+    # Both next entries from:  http://blog.cloudera.com/blog/2014/05/how-to-use-the-sharelib-in-apache-oozie-cdh-5/
+    oozie.use.system.libpath=true
+    oozie.action.sharelib.for.pig=pig,hcatalog,hive
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

@@ -1,0 +1,29 @@
+ORC-TOOLS
+══════════════════════════════════════════════════════════════════════════════
+
+  DOWNLOAD AND BUILD
+  ────────────────────────────────────────────────────────────────────────────
+
+    Download the latest release from:  https://orc.apache.org/docs/releases.html
+
+    Uncompress the file and go to the java directory.
+
+    Run:
+
+      mvn clean package
+
+    Execute (always use the "uber" jar; it contains the main() function):
+
+      java -jar 'target\orc-tools-1.6.4-uber.jar' -help
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

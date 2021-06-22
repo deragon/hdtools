@@ -1,0 +1,37 @@
+KAFKA
+══════════════════════════════════════════════════════════════════════════════
+
+List of commands:  https://gist.github.com/ursuad/e5b8542024a15e4db601f34906b30bb5
+
+/usr/hdp/current/kafka-broker/bin/kafka-console-consumer.sh --bootstrap-server "${HOSTNAME}:9092" --topic "${TOPIC_NAME}" --from-beginning --security-protocol SASL_SSL
+
+
+
+LIMITATIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  From: https://dzone.com/articles/life-beyond-kafka-with-apache-pulsar?edition=521360&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202019-10-09
+
+  Kafka is not known to work well when there are thousands of topics and
+  partitions even if the data is not massive. 
+
+
+
+ALTERNATIVES
+══════════════════════════════════════════════════════════════════════════════
+
+  Pulsar:  https://pulsar.apache.org/
+
+    2.5x faster than Kafka + 40% less latency.  Read:  https://dzone.com/articles/life-beyond-kafka-with-apache-pulsar?edition=521360&utm_source=Weekly%20Digest&utm_medium=email&utm_campaign=Weekly%20Digest%202019-10-09
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

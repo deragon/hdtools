@@ -1,0 +1,153 @@
+TECHNOLOGY
+══════════════════════════════════════════════════════════════════════════════
+
+  HADOOP      Base infrastructure
+
+  MAPREDUCE   MAPing is associating a field type to some data.  You load
+              and MAP data into HADOOP for further processing.
+              REDUCING is aggregation of data; suming, averaging, etc...
+
+  HIVE        SQL query engine, but slower than Impala.
+              Can query AVRO database format.
+              For Java unit testing, use HiveRunner (https://github.com/klarna/HiveRunner)
+
+  IMPALA      SQL query engine, with quick response for creating reports.
+              Can query AVRO database format.
+
+              Created by Cloudera.
+
+              Impala is faster than Apache Hive but that does not mean
+              that it is the one stop SQL solution for all big data
+              problems. Impala is memory intensive and does not run
+              effectively for heavy data operations like joins because it
+              is not possible to push in everything into the memory. This
+              is when Hive comes to the rescue. If an application has
+              batch processing kind of needs over big data then
+              organizations must opt for Hive. If they need real time
+              processing of ad-hoc queries on subset of data then Impala
+              is a better choice.
+
+  PRESTO      SQL query engine competing against Impala, quite fast,
+              created by Facebook.
+
+  PIG         A batch process scripting language to conduct MAPREDUCE.
+              Also named Pigscript.
+              For Java unit testing, use PigTest (http://pig.apache.org/docs/r0.15.0/test.html#pigunit)
+
+  PARQUET     A columnar base database format.
+
+  AVRO        A row base database binary format.
+              Can be queried with Hive and Impala.
+
+  OOZIE       A workflow and coordinator (crontab like)
+              framework.  This framework alows you to program when an
+              Impala, Hive, Pigscript or shell command should be
+              executed.  Dependency management available (i.e. ETL2 does
+              not start until ETL1 is finished).
+
+              Oozie is command line, but a GUI named HUE can be used.
+
+  HUE         A GUI to HIVE, HDFS and OOZIE.
+
+  Streaming   Hadoop Streaming is the canonical way of supplying any
+              executable to Hadoop as a mapper or reducer, including
+              standard Unix tools or Python scripts.
+
+              Ex:  http://www.michael-noll.com/tutorials/writing-an-hadoop-mapreduce-program-in-python/
+
+              However, Java implementation of a Mapper and Reducer is
+              way faster than any Python implementation.
+
+              See:  http://blog.cloudera.com/blog/2013/01/a-guide-to-python-frameworks-for-hadoop/
+
+  YARN        YARN is essentially a system for managing distributed
+              applications. It consists of a central ResourceManager, which
+              arbitrates all available cluster resources, and a per-node
+              NodeManager, which takes direction from the ResourceManager and
+              is responsible for managing resources available on a single
+              node.
+
+              Read:  https://blog.cloudera.com/apache-hadoop-yarn-concepts-and-applications/
+
+              Yarn commands described at:
+
+                https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YarnCommands.html
+
+
+
+GLOSSAIRE / ACRONYMES
+══════════════════════════════════════════════════════════════════════════════
+
+    USD         User Defined Function
+
+
+
+AUTRES
+══════════════════════════════════════════════════════════════════════════════
+
+  Transfert de fichiers entre HDFS et filesystem local:
+
+    hadoop fs -get (hget)
+    hadoop fs -get (hput)
+
+  - hdfs getconf -confKey fs.defaultFS  # Fetch HFDS NodeName
+
+
+
+IMPALA VS HIVE
+══════════════════════════════════════════════════════════════════════════════
+
+  http://stackoverflow.com/questions/16755599/how-does-impala-provide-faster-query-response-compared-to-hive
+
+  https://vision.cloudera.com/impala-v-hive/
+
+
+
+PIG VS HIVE
+══════════════════════════════════════════════════════════════════════════════
+
+  https://developer.yahoo.com/blogs/hadoop/comparing-pig-latin-sql-constructing-data-processing-pipelines-444.html
+
+
+
+PERFORMANCE
+══════════════════════════════════════════════════════════════════════════════
+
+  Java vs C - Good read (Java is faster)
+  Check answer from Anony-Mousse:  http://stackoverflow.com/questions/25479646/hadoop-java-vs-c-c-on-cpu-intensive-tasks
+
+  Java consumes more watts than C
+  http://www.trendcaller.com/2009/05/hadoop-should-target-cllvm-not-java.html
+
+
+
+JAVA
+══════════════════════════════════════════════════════════════════════════════
+
+  RUN JAVA CLASSES WITHIN THE HADOOP CLUSTER - HADOOP_CLASSPATH NEEDS TO BE SET
+  ────────────────────────────────────────────────────────────────────────────
+
+    If you run Java classes under a Hadoop cluster, you must set
+    HADOOP_CLASSPATH so it can find the classes to execute.  Following is an
+    example.
+
+      export HADOOP_CLASSPATH="${HOME}/avro-tools.jar"
+
+    Here is an example of one of the error messages than can occur if you have
+    not HADOOP_CLASSPATH set:
+
+      $ hadoop jar "${HOME}/avro-tools.jar" concat hdfs:///<file1.avro> hdfs:///<file2.avro> hdfs:///<concatenated.avro>
+
+      Exception in thread "main" java.lang.IllegalAccessError: class org.apache.hadoop.hdfs.web.HftpFileSystem cannot access its superinterface org.apache.hadoop.hdfs.web.TokenAspect$TokenManagementDelegator
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

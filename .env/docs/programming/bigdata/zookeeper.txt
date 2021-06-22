@@ -1,0 +1,70 @@
+LIST PATHS
+══════════════════════════════════════════════════════════════════════════════
+
+  # zkCli.sh
+  ls /
+  [hbase, zookeeper]
+
+
+
+GET DATA
+══════════════════════════════════════════════════════════════════════════════
+
+
+  Here, as an example, we fetch all the data related to hbase.  There seams to
+  be no way to ask to recursively go through all the paths, thus we
+  explicitely give them below.
+
+
+    zkCli.sh <<EOM
+    get /hbase/backup-masters
+    get /hbase/draining
+    get /hbase/flush-table-proc
+    get /hbase/hbaseid
+    get /hbase/master
+    get /hbase/master-maintenance
+    get /hbase/meta-region-server
+    get /hbase/namespace
+    get /hbase/online-snapshot
+    get /hbase/recovering-regions
+    get /hbase/region-in-transition
+    get /hbase/replication
+    get /hbase/rs
+    get /hbase/running
+    get /hbase/splitWAL
+    get /hbase/switch
+    get /hbase/table
+    get /hbase/table-lock
+EOM
+
+
+
+ZOOKEEPER SOUS WINDOWS
+══════════════════════════════════════════════════════════════════════════════
+
+  ATTENTION:
+
+     ÇA NE MARCHE PAS SOUS WINDOWS.  './zkServer.sh start' va démarrer
+     sans erreur, mais zookeeper n'aura pas vraiment démarrer.
+
+     Pas sûr que c'est possible de faire fonctionner Zookeeper sous Windows.
+
+  tarx zookeeper-3.4.13.tar.gz
+  cd zookeeper-3.4.13
+  cd conf
+  cp zoo_sample.cfg zoo.cfg
+  cd ..
+  cd bin
+  ./zkServer.sh start
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
