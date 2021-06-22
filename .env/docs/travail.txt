@@ -1,0 +1,35 @@
+DÉFINITION D'UN ANALYSTE D'AFFAIRE, ARCHITECTE FONCTIONNEL
+ET ANALYSTE FONCTIONNEL
+══════════════════════════════════════════════════════════════════════════════
+
+  M. Adey.  07-02-2012 21h49 HNE - http://www.agentsolo.com/ca/fr/blog/kat/analyste-d-affaires-analyste-fonctionnel-conseiller-en-amelioration-des-processus-d-affaires
+
+  Pour ma part et par expérience, un analyste d'affaire travail principalement
+  avec les utilisateurs afin de déterminer les spécifications qui proviennent
+  de la ligne d'affaire (ex :le client effectue une demande auprès de
+  l.institution et doit remplir le formulaire A) Il produira par la suite un
+  document architecture d'affaire. Un architecte fonctionnel prendra la relève
+  et produira une parit e de la solution logiciel. Ce ne sont pas tous les
+  processus d'affaire qui sont informatisé. Le système sera découpé et des
+  "module, processus, sous-système" seront alors remis a un analyste
+  fonctionnel qui fera les spécifications fonctionnel de facon plus précise
+  (les formats d'écrans, validation, essais fonctionnels). Ce dernier assurera
+  le liens entre les utilisateurs du système et les programmeurs afin de
+  livrer l'application selon tous les spécifications d'affaire et
+  fonctionnels.
+
+  Un conseiller en amélioration des processus pourra intervenir et tentera de
+  règler les problème au niveau "affaire" avant que ce ne soir rendu en
+  spécification.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
