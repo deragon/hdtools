@@ -1,0 +1,24 @@
+Loi canadienne correspondante:  198
+
+
+From:  https://insights.sei.cmu.edu/devops/2015/09/-a-devops-a-day-keeps-the-auditors-away-and-helps-organizations-stay-in-compliance-with-federal-regu.html
+
+...one of the main tenets of SOX compliance is making sure no single employee
+can unilaterally deploy a software code change into production. DevOps
+automation techniques and technologies, such as continuous integration (CI),
+continuous delivery (CD), and infrastructure as code (IaC), can appear on the
+surface to throw a shop out of SOX compliance. This blog post examines how
+DevOps automation can help organizations not only stay compliant, but actually
+increase their compliance.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
