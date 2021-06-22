@@ -69,9 +69,7 @@ else
   # HD_CORP_IDENTIFIER should be defined after calling
   # "${HDENVDIR}/personal/env.personal.sh".
   if [ ! -z "${HD_CORP_IDENTIFIER}" ]; then
-    HD_CORP_DIR="${HDENVBASE}/.${HD_CORP_IDENTIFIER}"
     if [ -d "${HD_CORP_DIR}" ]; then
-      export HD_CORP_DIR
       add2path PATH -b "${HD_CORP_DIR}/bin"
       alias cdcorp='cdprint "${HD_CORP_DIR}"'
       alias corp='gvim "${HD_CORP_DIR}/corp.txt"'
@@ -95,19 +93,19 @@ else
   PATH="${PATH}:."
 
   if [ -e "${HDENVDIR}/bin/minpath" ]; then
-    PATH=`${HDENVDIR}/bin/minpath "${PATH}"`  # For sh compatible shells
+    PATH="$("${HDENVDIR}/bin/minpath" "${PATH}")"  # For sh compatible shells
     if [ ! -z "${MANPATH}" ]; then
-      MANPATH=`${HDENVDIR}/bin/minpath ${MANPATH}`  # For sh compatible shells
+      MANPATH="$("${HDENVDIR}/bin/minpath" "${MANPATH}")"  # For sh compatible shells
 
       # Default man path are included if MANPATH starts with ':'
       MANPATH=":${MANPATH}"
     fi
 
-    PYTHONPATH=`${HDENVDIR}/bin/minpath "${PYTHONPATH}"`
+    PYTHONPATH="$("${HDENVDIR}/bin/minpath" "${PYTHONPATH}")"
     if [ "${HD_OS_FAMILY}" = "Cygwin" -o "${HD_OS_FAMILY}" = "MinGW" ]; then
-      CLASSPATH=`${HDENVDIR}/bin/minpath -f -d ";" "${CLASSPATH}"`
+      CLASSPATH="$("${HDENVDIR}/bin/minpath" -f -d ";" "${CLASSPATH}")"
     else
-      CLASSPATH=`${HDENVDIR}/bin/minpath -f "${CLASSPATH}"`
+      CLASSPATH="$("${HDENVDIR}/bin/minpath" -f "${CLASSPATH}")"
     fi
   fi
 
