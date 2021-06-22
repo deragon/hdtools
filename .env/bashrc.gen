@@ -25,7 +25,7 @@
 #   export HD_ENV_LOAD="1"  # To force loading if user is not "Hans".
 #   export HD_CORP_IDENTIFIER="<corp identifier here>"
 #   export HDENVDIR="${HOME}/.hans.deragon/.env"
-#   [ -d ${HDENVDIR} ] && . "${HDENVDIR}/bashrc.gen"
+#   [ -d "${HDENVDIR}" ] && . "${HDENVDIR}/bashrc.gen"
 #
 #
 #   On systems where loading all the time is not welcomed, the alias
@@ -35,8 +35,8 @@
 #   # ----------------------------------------------------------------------
 #   # Alias pour charger l'environnement de Hans Deragon.  N'affecte en rien
 #   # l'environnement s'il n'est pas appelé.
-#   alias gohd="source /home/deragonh/.hans.deragon/.desjardins/gohd"
-#   [ "$(echo "$(host ${SSH_CLIENT/ */})" | sed -E 's/.*(vl[^\.]+).*/\1/g')" = "vl146562" ] && gohd
+#   alias gohd="source /home/"*dera"*"/.hans.deragon/corp-"*"/gohd"
+#   [ "$(echo "$(host ${SSH_CLIENT/ */})" | sed -E 's/.*(vl[^\.]+).*/\1/g')" = "<hostname to match>" ] && gohd
 
 
 
@@ -47,10 +47,18 @@
 hdenv_minimum()
 {
   export HDENVDIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
-  export HD_CORP_DIR="${HDENVDIR/\/.env}/.${HD_CORP_IDENTIFIER}"
+  export HD_CORP_DIR="$(echo "${HDENVDIR/\/.env}/.corp-"*)"
+
+  if [ -z "${HD_CORP_IDENTIFIER}" ]; then
+    if [ -d "${HD_CORP_DIR}" ]; then
+      # Extrapolating corporation identifier from ${HD_CORP_DIR}.
+      export HD_CORP_IDENTIFIER="${HD_CORP_DIR/\/*corp-}"
+    fi
+  fi
 
   if [ ! -z "${HD_CORP_IDENTIFIER}" -a -z "${HD_CORP_DIR}" ]; then
     tty -s && echo "bashrc.gen - Error:  .${HD_CORP_DIR} (\${HD_CORP_DIR}) does not exist."
+    unset HD_CORP_DIR
     return 2
   fi
 
@@ -99,8 +107,6 @@ hdenv()
 
 [ -r "${HDENVDIR}/personal/env.personal.detect.sh" ] && \
   source "${HDENVDIR}/personal/env.personal.detect.sh"
-
-source "${HDENVDIR}/env.corp.sh"
 
 hdenv_minimum  # Loading minimal configuration for all processes.
 
