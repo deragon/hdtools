@@ -11,5 +11,5 @@
 SETUP_EXE="setup-x86_64.exe"
 cd /
 mv "${SETUP_EXE}" "${SETUP_EXE}.old"
-wget --no-check-certificate https://cygwin.com/${SETUP_EXE}
+wget --secure-protocol tlsv1 --no-check-certificate "https://cygwin.com/${SETUP_EXE}"
 chmod +x "${SETUP_EXE}"
