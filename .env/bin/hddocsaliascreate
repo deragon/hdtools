@@ -61,7 +61,7 @@ for root, dirs, files in os.walk(doc_dirs):
             # Path.stem() removes the extension.
             alias_name=Path(re.sub('[^\w|\.|\-|+|=]', '¤', file_basename, flags=re.IGNORECASE)).stem
 
-            print("alias hdd" + alias_name + "='hdgvim " + fullpath + "';")
+            print("alias hdd" + alias_name + "='hdgvim \"" + fullpath + "\"';")
 
 print("""
 alias hddbashtemplate='hdgvim "${HDENVDIR}/bin/hd-create-script-template.sh"';
