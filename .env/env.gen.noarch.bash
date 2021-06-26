@@ -150,7 +150,7 @@ hd_html_cleanup()
 exportfunction hd_html_cleanup
 
 export HDDOCSDIR="${HDENVDIR}/docs"
-alias cddocs='cdprint ${HDDOCSDIR}'
+alias cddocs='cdprint "${HDDOCSDIR}"'
 alias docs='f "${HDDOCSDIR}"'
 alias cdbd='cdprint ${HDDOCSDIR}/programming/bigdata'
 alias cdprg='cdprint ${HDDOCSDIR}/programming'
