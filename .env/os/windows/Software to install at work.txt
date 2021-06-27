@@ -1,0 +1,88 @@
+Cygwin
+══════════════════════════════════════════════════════════════════════════════
+
+  No admin setup simply run:
+
+    setup-x86_64.exe --no-admin
+
+  This will install a fully working Cygwin in any of the user home directory.
+  The only difference between admin and no admin setup is that the admin setup
+  will install a copy of Cygwin that will be available for all users of the PC.
+  This points is usually mute since a laptop is given to a single user.
+
+
+SETUP HOME DIRECTORY TO SAME AS THE ONE OF WINDOWS
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/1494658/how-can-i-change-my-cygwin-home-folder-after-installation/1494721
+
+  The recommended way to do this is to add a custom db_home setting to
+  /etc/nsswitch.conf. A common wish when doing this is to make your Cygwin
+  home directory equal to your Windows user profile directory. This setting
+  will do that:
+
+    db_home: /cygdrive/c/Users/%U
+
+
+  Note that on the web, the following is often recommended on the web, but
+  can cause problem.  This causes some application like ssh to use the
+  home directory define in Active Directory instead of ${HOME}:
+
+    db_home: windows
+
+  To ensure that all of Cygwin uses the local drive home directory, set
+  up '/cygdrive/c/Users/%U' as described above.
+
+  See the comment of Corinna Vinschen from Cygwin:
+
+    "Not if there's another home dir set in AD."
+
+    https://sourceware.org/legacy-ml/cygwin/2015-12/msg00234.html
+
+  Full thread:
+
+    http://cygwin.1069669.n5.nabble.com/With-nsswitch-db-home-of-cygdrive-c-U-ssh-can-t-seem-to-use-ssh-folder-td123339.html
+
+
+
+Chrome
+══════════════════════════════════════════════════════════════════════════════
+
+  Bookmarks to add:
+
+    Google - FR     https://www.google.ca/webhp?hl=fr
+    Google - EN     https://www.google.ca/webhp?hl=fr
+    Generate Data   http://generatedata.com            # Génere des CSV avec full de données fictives mais de nature réelle.
+
+
+
+CopyQ - Clipboard manager with advanced features
+══════════════════════════════════════════════════════════════════════════════
+
+  https://sourceforge.net/projects/copyq/
+
+  No admin setup:
+
+    - Download the zip version
+    - Extract it into any directory.
+    - Under Cygwin, run from the extracted directory the following command:
+
+        find . -name '*.dll' -o -name '*.exe' | xargs chmod +x
+
+      All executable must have the executable bit set to get CopyQ working.
+      Extracting the files from the zip file does not set the bit, thus
+      the above command.
+
+    - Run from Cygwin or Windows Explorer:  copyq.exe
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
