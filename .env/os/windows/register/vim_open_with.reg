@@ -1,0 +1,6 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\*\shell\vim]
+@="Open with Vim"
+[HKEY_CLASSES_ROOT\*\shell\vim\command]
+@="C:\\Program Files (x86)\\Vim\\vim80\\gvim.exe %1"
