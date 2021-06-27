@@ -1,0 +1,13 @@
+BoldAsFont=yes
+BackgroundColour=0,0,0
+FontHeight=10
+FontIsBold=yes
+Font=DejaVu Sans Mono
+Rows=60
+ForegroundColour=191,191,191
+CursorType=block
+Term=xterm-256color
+Scrollbar=right
+FontWeight=700
+BoldAsColour=no
+AllowBlinking=yes
