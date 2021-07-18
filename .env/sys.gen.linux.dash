@@ -21,6 +21,7 @@ setVarIfDirsExist HD_SOFTWARE_NODIST_ARCH_DIR "${HD_SOFTWARE_NODIST_ARCH_DIR}/no
   PATH=${HD_SOFTWARE_NODIST_ARCH_DIR}/bin:${PATH}
 
 alias syslog='msg /var/log/syslog'
+alias kernlog='msg /var/log/kern.log'
 
 #PATH=${PATH}:${HD_SOFTWARE_BASE_DIR}/citrix
 #export ICAROOT=${HD_SOFTWARE_NODIST_ARCH_DIR}/citrix
