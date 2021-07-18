@@ -1,0 +1,132 @@
+SITES
+══════════════════════════════════════════════════════════════════════════════
+
+  https://fr.techdico.com/
+
+
+
+LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
+══════════════════════════════════════════════════════════════════════════════
+
+  backdoor                   -> porte dérobée
+  bug                        -> vermine
+  credentials                -> données de connexion
+  enjoy                      -> prenez plaisir / savourez / appréciez / jouissiez
+  feature                    -> fonctionnalité
+  framework                  -> infrastructure logicielle / cadriciel
+  legacy system              -> système patrimonial / système hérité https://fr.wikipedia.org/wiki/syst%c3%a8me_h%c3%a9rit%c3%a9
+  merge                      -> fusionnement
+  mindset                    -> attitude / mentalité / façon de faire
+  mismatch                   -> décalage, inadéquation, disparité, non-concordance, non-appariement, déséquilibre
+  near real time             -> quasi temps réel
+  open source                -> code source libre / code source ouvert
+  package                    -> paquet
+  packaging                  -> emballage
+  packing                    -> emballer
+  release                    -> révision?  mise à jour du logiciel?
+  release manager            -> gestionnaire de mises en production
+  repository                 -> dépôt
+  scan                       -> balayage / analyse
+  software release           -> publication de logiciel
+  workaround                 -> contournement / solution de contournement
+  workflow                   -> flux de travail
+  business data              -> donnée métier
+  out of scope               -> hors [sujet|champ|portée], en-dehors du périmètre
+  out of the box             -> clé en main
+  customisation              -> personnalisation
+  foreign key                -> clé étrangère
+  log                        -> journal
+  logging                    -> enregistrer
+  parse                      -> analyser, décortiquer
+  parser                     -> analyseur syntaxique, décortiqueur(?)
+  onboarding                 -> accompagnement, processus d'intégration
+
+
+Acronyms
+══════════════════════════════════════════════════════════════════════════════
+
+  REPL                      -> Read Eval Print Loop
+  ART                       -> Automated Regression Testing
+  NFT                       -> Non Functional Testing
+  SDLC                      -> Software Development Life Cycle
+  ITSM                      -> IT service management
+  ITIL                      -> (formerly Information Technology Infrastructure Library)
+  RBAC                      -> Role-based access control
+
+
+
+Mr., Mrs., Ms. and Miss
+══════════════════════════════════════════════════════════════════════════════
+
+  --> Ms. & Mr. à utiliser
+
+✓ Ms.   is a title used before a surname of full name of a female whether she
+        is married or not. Ms. has been in use since the 1950s, it is a
+        portmanteau of the words Miss and Missus.
+
+  Mrs.  is a title used before a surname or full name of a married female. Mrs.
+        is an abbreviation for the word Missus.
+
+  Miss  is a title used before a surname or full name of an unmarried female.
+        Miss is an abbreviation of mistress.
+
+✓ Mr.   is a title used before a surname or full name of a male, whether he is
+        married or not. Mr. is an abbreviation for Mister.
+
+  Read:  https://grammarist.com/usage/mr-mrs-ms-and-miss/
+
+
+
+BRACKETS & BRACES
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://english.stackexchange.com/questions/3379/bracket-vs-brace
+
+  "Brackets" is used interchangeably for various symbols:
+
+  - angle brackets for <>
+  - round brackets for ()
+  - curly brackets for {}
+  - square brackets for []
+
+  and more, some of which are only used in certain regions or cultures
+
+  The more specific "braces" and "parentheses" are almost never used for other
+  than {} and (), respectively. Mathematics has several more (subtle)
+  variations in addition and is formalized more than other fields.
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+  I am not sure about other contexts, but in texts about programming you will
+  often find these terms used as follows:
+
+  braces: {}    parentheses: ()    brackets: []    angle brackets: <>
+
+
+
+REPLACEMENTS / ALTERNATIVES
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://www.cnet.com/news/twitter-engineers-replace-racially-loaded-tech-terms-like-master-slave/
+
+  - Whitelist becomes allowlist.
+  - Blacklist becomes denylist.
+  - Master/slave becomes leader/follower, primary/replica or primary/standby.
+  - Grandfathered becomes legacy status.
+  - Gendered pronouns (for example "guys") become folks, people, you all, y'all.
+  - Gendered pronouns (for example "he" or "his") become they or their.
+  - Man hours becomes person hours or engineer hours.
+  - Sanity check becomes quick check, confidence check or coherence check.
+  - Dummy value becomes placeholder value or sample value.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
