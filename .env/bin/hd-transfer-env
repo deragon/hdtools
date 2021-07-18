@@ -66,8 +66,6 @@ IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
                           # we separate FILES properly.
 
 DSTS=("$@") # If you want the number of elements of $@, use $#
-DST="${DSTS[0]}"
-
 
 
 # VALIDATION
@@ -75,19 +73,20 @@ DST="${DSTS[0]}"
 
 ERRORS=""
 
-if [ -z "${DST}" ] ;then
-  ERRORS="${ERRORS} - Destination is required as an argument.  Aborting."
+if ((${#DSTS[*]} == 0)); then
+  ERRORS="${ERRORS} - Destination is required as an argument.  Aborting.\n"
 fi
 
 for SRC in \
+  "${HDENVBASE}" \
   "${HOME}/.hans.deragon" \
   "${HOME}/Seafile/Hans/.hans.deragon" \
-  null; do
+  ""; do
   [ -d "${SRC}" ] && break
 done
 
-if [ "${SRC}" == "null" ]; then
-  ERRORS="${ERRORS} - Could not setup source directory.  Aborting."
+if [ -z "${SRC}" ]; then
+  ERRORS="${ERRORS} - Could not setup source directory.  Aborting.\n"
 fi
 
 if [ ! -z "${ERRORS}" ]; then
@@ -95,30 +94,6 @@ if [ ! -z "${ERRORS}" ]; then
   echo -e "${ERRORS}"
   echo -e "Command aborted."
   exit 1
-fi
-
-if [ ! -d "${DST}" ]; then
-
-  # Destination is not a directory, but a remote machine, probably.
-
-  HOST="${DST/:*}"
-  PORT="${DST/*:}"
-
-  if [ ! -z "${PORT}" -a "${PORT}" != "${HOST}" ]; then
-    SSH_CMD="-e \"ssh -p ${PORT}\""
-  fi
-
-  DST="${HOST}:"
-  DST="${DST/::/:}" # It is possible that we added one ':' too many, so we
-                    # remove it.
-
-  ping -w 1 "${DST}" >/dev/null 2>&1
-
-  if (( ! $? )); then
-    echo "${DST} does not ping.  Aborting."
-    exit 1
-  fi
-
 fi
 
 RSYNC_OPTIONS="
@@ -167,8 +142,6 @@ RSYNC_OPTIONS="
   --exclude='${SCRIPT_NAME}' \
 "
 
-#echo "\${RSYNC_OPTIONS}=${RSYNC_OPTIONS}"
-
 if [[ "${OPTIONS}" == *"excludeprivate"* ]]; then
   RSYNC_OPTIONS="${RSYNC_OPTIONS}
   --exclude='*private*' \
@@ -176,12 +149,43 @@ if [[ "${OPTIONS}" == *"excludeprivate"* ]]; then
 "
 fi
 
-eval rsync -av \
-  ${RSYNC_OPTIONS} \
-  --delete \
-  --delete-excluded \
-  --timeout=20 \
-  ${SSH_CMD} \
-  "${SRC}" "${DST}" \
+if [ ! -z "${PORT}" -a "${PORT}" != "${HOST}" ]; then
+  SSH_CMD="-e \"ssh -p ${PORT}\""
+fi
 
-  #--dry-run \
+
+for DST in ${DSTS[@]}; do
+
+  if [ ! -d "${DST}" ]; then
+
+    # Destination is not a directory, but a remote machine, probably.
+
+    HOST="${DST/:*}"
+    PORT="${DST/*:}"
+
+    DST="${HOST}:"
+    DST="${DST/::/:}" # It is possible that we added one ':' too many, so we
+                      # remove it.
+
+    ping -w 1 "${DST}" >/dev/null 2>&1
+
+    if (( ! $? )); then
+      echo "${DST} does not ping.  Aborting."
+      exit 1
+    fi
+
+  fi
+
+  #echo "\${RSYNC_OPTIONS}=${RSYNC_OPTIONS}"
+
+  eval rsync -av \
+    ${RSYNC_OPTIONS} \
+    --delete \
+    --delete-excluded \
+    --timeout=20 \
+    ${SSH_CMD} \
+    "\"${SRC}\"" "${DST}" \
+
+    #--dry-run \
+
+done
