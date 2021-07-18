@@ -1,16 +1,6 @@
 #!/bin/bash
 
-# ─ Copyright Notice ───────────────────────────────────────────────────
-#
-# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
-#
-# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
-#
-# It is released under the GPL 3 licence which can be found at:
-#
-#     https://www.gnu.org/licenses/gpl-3.0.en.html
-#
-# ─────────────────────────────────────────────────── Copyright Notice ─
+# ─ Hans Deragon has no copyright on this file ─────────────────────────
 
 # From:  https://github.com/PotatoLabs/git-redate
 
@@ -75,12 +65,13 @@ while read commit; do
         DATE_NO_SPACE="$(echo "${date}")"
     fi
     COMMIT_ENV=$(cat <<-END
-        if [ "\${GIT_COMMIT}" = "${hash}" ];
+        if [ "\${GIT_COMMIT}" = ${hash} ];
         then
             export GIT_AUTHOR_DATE="$DATE_NO_SPACE"
             export GIT_COMMITTER_DATE="$DATE_NO_SPACE";
         fi;
-  END
+
+END
     )
     ENVFILTER="$ENVFILTER$COMMIT_ENV"
 done < $tmpfile
