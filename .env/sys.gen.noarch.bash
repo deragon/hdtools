@@ -226,7 +226,7 @@ if (( ${HD_BASH_INTERACTIVE} )); then
   # users (users with a username other than "root" but
   # with a HD_USERID of 0) would not be catched.
   if hdisroot ; then
-    HD_SCREEN_COLORSET_USER="\[${HD_SCREEN_EFFECT_REVERSE}${HD_SCREEN_COLOR_RED}\]"
+    HD_SCREEN_COLORSET_USER="\[${HD_SCREEN_COLOR_WHITE_ON_RED}\]"
   elif [[ "${HD_USERS_EQUIVALENCE[@]}" =~ "${USER,,}" ]]; then
     # ${USER} matches one of the userids that are related to the current person.
     # We show the userid in green in this circumstance.
