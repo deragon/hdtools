@@ -15,7 +15,7 @@
 # Works with symlinks
 SCRIPT_NAME="${0/*\/}" # Basename, efficient form
 SCRIPT_PATH_REL=`dirname "${0}"`
-SCRIPT_PATH_ABS=`( \cd "${SCRIPT_PATH_REL}" && pwd )`
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
 
 sep()
 {

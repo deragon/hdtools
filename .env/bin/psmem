@@ -13,7 +13,7 @@
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
 SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
-SCRIPT_PATH_ABS=`dirname $(readlink -f "${BASH_SOURCE[0]}")` # Fetch real directory, not symlink.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
 
 SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
 SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
