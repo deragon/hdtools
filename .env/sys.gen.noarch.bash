@@ -63,7 +63,7 @@ hd_term_title_auto()
 {
   local TITLE_PREFIX
   if (( ! ${HD_IS_REMOTE} )) && [ "${PWD}" == "${HOME}" ]; then
-    TITLE_PREFIX="HOME - "
+    TITLE_PREFIX="🏠"
   else
     TITLE_PREFIX="${HD_TITLE}${PWD/*\/}"
   fi
