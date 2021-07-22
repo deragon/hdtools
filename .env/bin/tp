@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # ─ Copyright Notice ───────────────────────────────────────────────────
 #
@@ -11,8 +12,6 @@
 #     https://www.gnu.org/licenses/gpl-3.0.en.html
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
-
-# -*- coding: utf-8 -*-
 
 import os.path
 import sys
@@ -82,17 +81,29 @@ args = parser.parse_args()
 errors=""
 
 port = None
-pattern = re.compile("([^:]+):*(.+)*")
+pattern = re.compile("(.*?//)*([^:]+)(?::*(\d+))*(/.*)*$")
 matches = pattern.match(args.hostport[0])
 if matches != None:
-    hostname=matches.group(1)
-    port=matches.group(2)
+    protocol = matches.group(1)
+    hostname = matches.group(2)
+    port     = matches.group(3)
+else:
+    protocol = None
+    hostname = args.hostport[0]
+    port     = None
 
 if not port:
     try:
         port=args.hostport[1]
     except IndexError:
-        errors += "\n  - The port must be an integer.  You provided '" + str(args.hostport[1]) + "'"
+        if protocol == None:
+            errors += "\n  - You failed to provide a port number."
+        elif "http:" in protocol:
+            port=80
+        elif "https:" in protocol:
+            port=443
+        else:
+            errors += "\n  - You failed to provide a port number."
 
 if port:
     try:
@@ -105,10 +116,6 @@ if args.timeout:
         args.timeout = int(args.timeout)
     except ValueError:
       errors += "\n  - The timeout must be an integer, expressing seconds."
-
-
-#if args.hardlink == True and args.softlink == True:
-  #errors += "\n  --hardlink and --softlink are mutually exclusive.  You must chose one."
 
 if len(errors) > 0:
     print("\x1B[1;37;41mERROR:\x1B[0m  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
