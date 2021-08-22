@@ -86,7 +86,7 @@ fi
 
 if (( UPGRADE_PIP )); then
   echo "Upgrading pip."
-  eval "${CMD} pip"
+  eval "${CMD} --upgrade pip"
 else
   eval "${CMD} \$@"
 fi
