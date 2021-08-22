@@ -47,6 +47,7 @@
     -P wget \
     -P zip \
     -P make \
+    -P libiconv \
 
 
 # gettext provides:  envsubst
