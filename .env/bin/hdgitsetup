@@ -176,7 +176,7 @@ if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
     "Please set the variable using a Cygwin path style (/cygdrive/c...).\n" \
     "Without a proper editor, vim under Cygwin will not work well..\n"
   else
-    git config --global core.editor $(hdcanonical -G "${HD_GVIM}")
+    git config --global core.editor "$(hdcanonical -G "${HD_GVIM}") -u '${HDVIMRC}'"
   fi
 
   diff_setup_cygwin
