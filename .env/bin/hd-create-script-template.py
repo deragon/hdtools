@@ -70,6 +70,10 @@ parser = argparse.ArgumentParser(description="""
 \x1B[1;30;43m SLIGHT DANGER \x1B[0m
 \x1B[1;37;41m DANGER \x1B[0m
 
+\x1B[1;37;42m SAUF \x1B[0m
+\x1B[1;30;43m LÉGER DANGER \x1B[0m
+\x1B[1;37;41m DANGER \x1B[0m
+
 Read a .ini file and export its full content in variables that Bash can make use of.
 
 For example, run:
@@ -104,7 +108,8 @@ parser.add_argument('files', metavar='files', type=str, nargs='+',
 
 parser.add_argument('-l', '--log-level', dest='loglevel', default='info',
        choices=['debug', 'info', 'warning', 'error', 'critical'],
-       help='Debug level logs enabled.')
+       help='Set logs level.  Default is \'info\'.')
+#       help='Niveau des logs.  Défaut est \'info\'.')
 
 args = parser.parse_args()
 
@@ -252,6 +257,18 @@ for file in args.files:
             # Thus, we load everything since it makes things easier.
             text="".join(fd.readlines())
 
+
+# Snippet to print over a line the index we are at.
+# import curses
+# setupterm()
+# index=1000
+# print(title, end="")
+# indexpos=len(title)+10
+# For...
+#    print("\r" + curses.tparm(curses.tigetstr("cuf"), indexpos, 0).decode("UTF8") + str(index), end="")
+
+
+
 # Old
 index=0
 for root, dirs, files in os.walk(args.inputdir):
@@ -348,12 +365,17 @@ def mainwrapper():
         timeExecutedHours, timeExecutedRemainder = divmod(timeExecuted.seconds, 3600)
         timeExecutedMinutes, timeExecutedSeconds = divmod(timeExecutedRemainder, 60)
 
-        timeStartString = datetime.timeStart.strftime("%Y-%m-%d %H:%M:%S")
-        timeEndString   = datetime.timeEnd.strftime("%Y-%m-%d %H:%M:%S")
+        timeStartString = timeStart.strftime("%Y-%m-%d %H:%M:%S")
+        timeEndString   = timeEnd.strftime("%Y-%m-%d %H:%M:%S")
 
         print("\nStarted:   " + timeStartString)
         print("Ended:     " + timeEndString)
         print("Executed:  {0:02}:{1:02}:{2:02}".format(\
+                timeExecutedHours, timeExecutedMinutes, timeExecutedSeconds))
+
+        print("\nDébuté:    " + timeStartString)
+        print("Terminé:   " + timeEndString)
+        print("Exécution:  {0:02}:{1:02}:{2:02}".format(\
                 timeExecutedHours, timeExecutedMinutes, timeExecutedSeconds))
 
     except Exception as exception:
