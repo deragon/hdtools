@@ -38,6 +38,7 @@ for HDENVDIR in "${HDENVDIR}" ~hans/.hans.deragon/.env ~hans/.env; do
 done
 export HDENVDIR
 
+add2path PATH "${HOME}/bin"
 add2path PATH "${HDENVDIR}/bin"
 add2path PATH "${HDENVDIR}/bin/bigdata"
 add2path PATH "${HDENVDIR}/bin/3rdparty"
