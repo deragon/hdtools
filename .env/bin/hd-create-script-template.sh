@@ -24,6 +24,11 @@ usage()
 {
   echo -e "
 \e[1;37;42m SAFE \e[0m
+\e[1;30;43m SLIGHT DANGER \e[0m
+\e[1;37;41m DANGER \e[0m
+
+\e[1;37;42m SAUF \e[0m
+\e[1;30;43m LÉGER DANGER \e[0m
 \e[1;37;41m DANGER \e[0m
 
 Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <file>+
