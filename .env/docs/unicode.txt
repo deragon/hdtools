@@ -171,6 +171,7 @@ UNICODE UTF-8 UTF8
   Roman:      Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅸ Ⅹ Ⅺ Ⅻ Ⅼ Ⅽ Ⅾ Ⅿ  / ⅰ ⅱ ⅲ ⅳ ⅵ ⅶ ⅷ ⅸ ⅹ ⅺ ⅻ ⅼ ⅽ ⅾ ⅿ
   Music:      ♪ ♫ 🎶 🎼 🎹 🎻 🎷 🎸 🎺 🥁 🎙 🎚 🎛 🎤 🎧 📻
               ♪ di du ♫ dum dum ♪ di dum dum ♫ (musique d'ascenseur) :)
+              ♪ Bonne fête à toi, ♪ ♫ Les cadeaux sont à moi! ♪ ♫ ♪ Bonne fête, ♪♪ Bonne fête, ♪ ♫ ♪ Bonne fête à toi ♪
   Art:  ¯\_(ツ)_/¯
 
   From:  http://en.wikipedia.org/wiki/List_of_Unicode_characters#Supplemental_Arrows-A
