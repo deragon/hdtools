@@ -1,0 +1,949 @@
+List of good librairies:  https://awesome-python.com/
+
+STRING MANIPULATION
+══════════════════════════════════════════════════════════════════════════════
+
+  - "mystring" in stringvar   # Check if strinvar contains "mystring".
+
+
+  REPLACE A STRING WITH ANOTHER USING REGEX
+  ────────────────────────────────────────────────────────────────────────────
+
+    result = re.sub(r"(\d.*?)\s(\d.*?)", r"\g<1> \g<2>", string1)
+
+    re.sub(".*need", "Accomplished", "Full string that need replacement.")
+    'Accomplished replacement.'
+
+    str.replace("old", "new" [, max])
+    re.sub(r"\|(\d)_", r"|C\g<1>_", mystringvar)  # Replace with groups.
+
+      From:  https://stackoverflow.com/questions/5984633/python-re-sub-group-number-after-number
+
+      In addition to character escapes and backreferences as described above,
+      \g will use the substring matched by the group named name, as defined by
+      the (?P...) syntax. \g uses the corresponding group number; \g<2> is
+      therefore equivalent to \2, but isn’t ambiguous in a replacement such as
+      \g<2>0. \20 would be interpreted as a reference to group 20, not a
+      reference to group 2 followed by the literal character '0'. The
+      backreference \g<0> substitutes in the entire substring matched by the
+      RE.
+
+
+  F-STRING FORMATING (PYTHON 3)
+  ────────────────────────────────────────────────────────────────────────────
+
+    var1=123
+    var2="16 padding."
+    print(f" >>{var1:6}<< →  >>{var2:>16}<< >>{var2:*<16}<<\n")
+
+    Left and right padding is determined with < and >.
+
+    Format:
+
+      [[fill]align][sign][#][0][minimumwidth][.precision][type]
+
+    See:  https://www.python.org/dev/peps/pep-3101/
+
+
+    Indirect
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    user="<username>"
+    stringmsg="Login by user:  {0}"
+    print(stringmsg.format(user))
+
+
+  INDENTATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    stringToIndent="line #1\nline #2\nline #3\n"
+    stringIndented=''.join("  "+line for line in stringToIndent.splitlines(True)))
+
+
+FORMATING & PADDING
+══════════════════════════════════════════════════════════════════════════════
+
+  READ:  https://mkaz.blog/code/python-string-format-cookbook/
+
+  Two decimal places for floating point:
+
+    number=32.302942
+    print(f"{number:2.2f}")
+    32.30
+
+
+  ONLY IN PYTHON > 2.6
+
+  Padding with leading zeroes:
+
+      str="
+      "{:0>16}".format(str)
+
+        0  is the padding character
+        >  state to pad to the left (push string to the right)
+        16 Number of padding to perform.  Here, 16 character padding.
+
+  Example:
+
+    (not sure if this example still holds with Python 3)
+
+    timeEndString =   "{0}-{1:02}-{2:02} {3:02}:{4:02}:{5:02}".format(
+                        timeEnd.year, \
+                        timeEnd.month, \
+                        timeEnd.day, \
+                        timeEnd.hour, \
+                        timeEnd.minute, \
+                        timeEnd.second)
+
+
+
+ARRAY / LIST / DICTIONNARY (HASH)
+══════════════════════════════════════════════════════════════════════════════
+
+  Dictionary (hash tables)
+
+    dictionnary = {} # Dictionnary / hash table created.
+    dictionnary = {1: 2, 3: 4, 4:3, 2:1, 0:0}
+    dictionnary['key'] = 'value' # This is the equivalent of a put() function.
+    sorted(dictionnary.keys())
+    dictionnary.pop('key')  # Remove item.  KeyError if not existing.
+
+    if "key1" in dictionnary:  # Test if key is in dictionnary.
+
+    for key, value in dictionnary.items():  # Python 3
+    for key, value in dictionnary.iteritems(): # Python 2
+
+    # Go through dictionnary sorted by keys.
+    for key in sorted dictionnary.keys():
+      value=dictionnary[key]
+
+    Pretty dictionnary:
+
+      import json
+
+      # 'ensure_ascii = False' keeps UTF-8 characters as is, i.e. 'é' shows as
+      # such.  If set to false, UTF-8 characters are replaced with unicode
+      # codes, such as \u00e9 for 'é'.
+      print("json = " + json.dumps(dict, sort_keys=True, indent=2, ensure_ascii=False ))
+
+      dict = json.loads(json_string)
+
+  List (Arrays)
+
+    list = []
+    len(list)
+    list.append(<data>)
+    list.extends(listB) # Same as 'list + listB' (concatenate lists).
+    list.sort()
+
+    # list within an list
+    list = [
+      [ 'URL1' , "http://url1.example.com" ],
+      [ 'URL2' , "http://url2.example.com" ],
+      [ 'URL3' , "http://url3.example.com" ]
+    ]
+
+    newlist = [ applyFunctionToItem(item) for item in list ]  # Lambda iteration
+
+    print(" ".join(list))
+
+    for item in list:
+      print(item)
+
+    for index, item in enumerate(my_list):
+      print(index, item)
+
+    # List Comprehension to iterate through a list in Python
+    [print(x) for x in lst]
+
+    To empty a list (with keeping a reference to it, a must when the list was
+    passed to a function; we do not want to reassign a new list to the local
+    variable, but empty the list that was passed):
+
+      del list[:]
+      list.clear() # Python >3.3
+
+
+  SET
+  ────────────────────────────────────────────────────────────────────────────
+
+    Set Operations:  http://www.linuxtopia.org/online_books/programming_books/python_programming/python_ch16s03.html
+
+    aSet = set()
+    aSet.add(<data>)
+
+
+
+FILE READING (READ FILE)
+FILE WRITING (WRITE FILE)
+══════════════════════════════════════════════════════════════════════════════
+
+  READ WHOLE FILE CONTENT
+  ────────────────────────────────────────────────────────────────────────────
+
+    fd=open("<filename>", "r")
+    content=fd.read()
+    fd.close()
+
+
+  READ EACH LINE OF A FILE AND STORE THEM IN A LIST
+  ────────────────────────────────────────────────────────────────────────────
+
+    lines = [ i.strip() for i in open("somefile") ]  # Strips lines
+    lines = open(file).readlines()  # Lines remain intact.
+
+    for line in lines:
+      <something>
+
+    fileOutput = open(filename + ".new" ,'w')
+    fileOutput.write(output)
+    fileOutput.close()
+
+
+
+PYTHONIC WAY
+══════════════════════════════════════════════════════════════════════════════
+
+  Search the web for "list comprehensions", "set comprehensions" and
+  "dictionary comprehensions" to get explanation on the weird, pythnoic way
+  to write expressions such as:
+
+  - https://towardsdatascience.com/how-to-be-pythonic-and-why-you-should-care-188d63a5037e
+  - https://python-3-patterns-idioms-test.readthedocs.io/en/latest/Comprehensions.html
+  - https://towardsdatascience.com/python-basics-list-comprehensions-631278f22c40
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - Convert hex to int:   print int("0xdeadbeef", 16)
+    (Need to specify base, i.e. 16.)
+
+  - Print without Linefeed/LF:  print("Hello", end='')
+
+  - Convert int to hex:  print hex(255)
+
+  - Perl's chomp() equivalent:  "string\n".rstrip()
+
+  - Environment variables:   print os.environ['HOME']
+
+  - os.path.sep # Get the path separator ('/' or '\').
+
+  - Test if file exists:  import os.path;os.path.isfile(fname)
+
+  ∙ Fork
+
+    pid = os.fork()
+    if pid == 0:
+        # We are in the child process.
+        print "%d (child) just was created by %d." % (os.getpid(), os.getppid())
+    else:
+        # We are in the parent process.
+        print "%d (parent) just created %d." % (os.getpid(), pid)
+
+  ∙ python -m trace -t <script.py>  # bash -x equivalent.
+
+  ∙ python -m trace --trace --ignore-dir /usr/lib/python2.7 --ignore-dir /usr/lib/pymodules  # bash -x equivalent.  See:  https://stackoverflow.com/questions/15760381/what-is-the-python-equivalent-of-set-x-in-shell
+
+  ∙ Convert binary type <-> UTF-8
+
+    >>> b'Un test en fran\xc3\xa7ais'.decode('utf-8')
+    'Un test en français'
+
+    >>> 'Un test en français'.encode()
+    b'Un test en fran\xc3\xa7ais'
+
+  ∙ python3 -m http.server # Simple HTTP server listening on port/socket 8000
+
+  ∙ 2to3 -w ${PYTHON_SCRIPT}" # Conversion from Python 2 to Python 3.  Backup saved as "${PYTHON_SCRIPT}.bak"
+
+  ∙ EXCEL / SPREADSHEET / CHIFFRIER -> https://pypi.python.org/pypi/xlwt
+
+  ∙ Detect empty lines or comments:
+
+    isEmtpyOrCommentPattern = re.compile("^(\s*(#.*)*)$")
+    if isEmtpyOrCommentPattern.match(line) != None:
+      continue
+
+  ∙ Uppercase:  string.upper()
+  ∙ Lowercase:  string.lower()
+
+  GTK 3
+  ────────────────────────────────────────────────────────────────────────────
+
+    - http://python-gtk-3-tutorial.readthedocs.io/en/latest/builder.html
+
+
+  EXECUTING A MODULE
+  ────────────────────────────────────────────────────────────────────────────
+
+    From the CLI:  python -m "<module name>"
+
+    Programatically:
+
+      import runpy
+      runpy.run_module("<module name>", run_name="__main__")
+
+
+  XML
+  ────────────────────────────────────────────────────────────────────────────
+
+    Exemple:  "${HDENVDIR}/bin/hdxmlparse"
+    Doc:      https://docs.python.org/2/library/xml.etree.elementtree.html
+
+
+    Parse a pom.xml and get version of the project:
+
+      # The namespace is required for Python <= 3.7.  For Python >= 3.8, you
+      # could replace the find statement with ... .find('{*}version') ...
+
+      POM_NAMESPACE="$(perl -ne 'print if s/.*xmlns="(.*)"/\1/g' pom.xml)"
+      POM_VERSION="$(python3 -c "import xml.etree.ElementTree as xml;print(xml.parse('pom.xml').getroot().find('{${POM_NAMESPACE}}version').text)")"
+
+
+  Perl ne / perlne equivalent
+  ────────────────────────────────────────────────────────────────────────────
+
+    # perl -ne "print if s/<search>/<replace>/g"
+    def perlne(search, replace, file):
+      lines = [ line.strip() for line in open(file) ]
+      perln(search, replace, lines)
+
+    def perlne(search, replace, lines):
+
+      answer = []
+
+      #print "search:   " + search
+      #print "replace:  " + replace
+
+      for line in lines:
+        result = re.sub(search, replace, line, flags=re.IGNORECASE)
+
+        if result != line:
+          answer.append(result)
+
+      return answer
+
+
+  MD5SUM
+  ────────────────────────────────────────────────────────────────────────────
+
+    import hashlib
+    md5sum = hashlib.md5()
+    md5sum.update("String from which the MD5SUM is being calculated.")
+    print md5sum.hexdigest()
+
+
+
+TRIM
+══════════════════════════════════════════════════════════════════════════════
+
+  From http://stackoverflow.com/questions/1185524/how-to-trim-whitespace-including-tabs
+
+  Whitespace on the both sides:
+
+    s = "  \t a string example\t  "
+    s = s.strip()
+
+  Whitespace on the right side:
+
+    s = s.rstrip()
+
+  Whitespace on the left side:
+
+    s = s.lstrip()
+
+  As thedz points out, you can provide an argument to strip arbitrary
+  characters to any of these functions like this:
+
+  s = s.strip(' \t\n\r')
+
+  This will strip any space, \t, \n, or \r characters from the left-hand side,
+  right-hand side, or both sides of the string.
+
+
+
+
+LOGGING
+══════════════════════════════════════════════════════════════════════════════
+
+  ENABLE LOGGING FOR ALL MODULES
+  ────────────────────────────────────────────────────────────────────────────
+
+    To enable full trace for all modules, simply have in your main():
+
+      import logging
+      logging.basicConfig(level=logging.DEBUG)
+      logging.info("<Text here>")
+
+    AND, VERY IMPORTANT, THAT NO OTHER LOGGING CONFIGURATION IS DONE!
+    Commment out anything that looks like the following for instance:
+
+      #logging.config.fileConfig(logfile, defaults=None, disable_existing_loggers=True)
+                                                         ^^^^ Might cause problems
+
+
+  INTRODUCTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Very good:  https://docs.python-guide.org/writing/logging/
+
+    import logging
+
+    ...
+
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)-12s %(levelname)-8s %(message)s')  # Need to be set.
+
+    logger = logging.getLogger('lambda_handler')
+    logger.setLevel(logging.DEBUG)  # Not enough.  Need to set handler or logging.basicConfig(...).
+    logger.debug(record['eventID'])
+
+
+  LOGGING FILE EXAMPLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    Code loading 'empl_trial_enrich-update.log.ini'
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      logging.config.fileConfig("empl_trial_enrich-update.log.ini",
+               defaults=None, disable_existing_loggers=True)
+
+      logger = logging.getLogger("empl_trial_enrich-update")
+      logger.debug("debug")
+
+
+    empl_trial_enrich-update.log.ini
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      [loggers]
+      keys=root,empl_trial_enrich-update
+
+      [formatters]
+      keys=main
+
+      [handlers]
+      keys=stdout,file
+
+      [logger_root]
+      level=DEBUG
+      handlers=stdout,file
+
+      [logger_empl_trial_enrich-update]
+      level=DEBUG
+      handlers=stdout,file
+      propagate=0
+      qualname=empl_trial_enrich-update
+
+      [handler_stdout]
+      class=StreamHandler
+      level=NOTSET
+      formatter=main
+      args=(sys.stdout,)
+
+      [handler_file_NOTUSED]
+      class=FileHandler
+      level=NOTSET
+      formatter=main
+      args=('/tmp/empl_trial_enrich-update/log/empl_trial_enrich-update.log', 'w')
+
+      [handler_file]
+      class=handlers.RotatingFileHandler
+      level=NOTSET
+      formatter=main
+      args=('/tmp/empl_trial_enrich-update/log/empl_trial_enrich-update.log', 'w', 0, 5, 'UTF-8')
+
+      [formatter_main]
+      format=%(asctime)s - %(name)-12s %(levelname)-8s %(message)s
+      datefmt=
+      class=logging.Formatter
+
+
+  Caveats / problems / shortcommins
+  ────────────────────────────────────────────────────────────────────────────
+
+    There is no handler that exists which permits the creation of a log file
+    at each start of execution and have a rotation of the logs.
+
+    There seams to be a solution at:
+
+      https://stackoverflow.com/questions/44635896/python-logging-new-log-file-every-time-application-runs
+
+    ...but what happens is that the rotated files always have 0 bytes...  Old
+    file is not rotated properly.
+
+
+
+CONFIG FILE - .ini - Standard Python
+══════════════════════════════════════════════════════════════════════════════
+
+  Code
+  ────────────────────────────────────────────────────────────────────────────
+
+    from configparser import SafeConfigParser
+
+    config = SafeConfigParser(os.environ)
+    config.read('empl_trial_enrich-update.ini')
+
+    database = config["Phoenix"]["hostname"]
+
+
+  Config file .ini
+  ────────────────────────────────────────────────────────────────────────────
+
+    [Phoenix]
+      hostname            = localhost
+      port                = 8765
+      # $(HOME)s is replaced with os.environ['HOME']
+      jar                 = %(HOME)s/jars/<somejarfile>.jar
+
+    [Generic]
+      RowsToFetchPerBatch = 1024
+
+
+
+SCRIPT STARTUP
+══════════════════════════════════════════════════════════════════════════════
+
+  #!/usr/bin/env python3
+  # -*- coding: utf-8 -*-
+  # Defining encoding explained at http://www.python.org/dev/peps/pep-0263/
+
+  See the rest in "${HOME}.hans.deragon\.env\bin\hd-create-script-template.py"
+
+
+
+DATE & TIMESTAMP
+══════════════════════════════════════════════════════════════════════════════
+
+  PARSE DATE
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://stackoverflow.com/questions/127803/how-to-parse-an-iso-8601-formatted-date-in-python
+
+    >>> import dateutil.parser
+    >>> dateutil.parser.parse('2008-09-03T20:56:35.450686Z') # RFC 3339 format
+    datetime.datetime(2008, 9, 3, 20, 56, 35, 450686, tzinfo=tzutc())
+    >>> dateutil.parser.parse('2008-09-03T20:56:35.450686') # ISO 8601 extended format
+    datetime.datetime(2008, 9, 3, 20, 56, 35, 450686)
+    >>> dateutil.parser.parse('20080903T205635.450686') # ISO 8601 basic format
+    datetime.datetime(2008, 9, 3, 20, 56, 35, 450686)
+    >>> dateutil.parser.parse('20080903') # ISO 8601 basic format, date only
+    datetime.datetime(2008, 9, 3, 0, 0)
+
+
+  LOOP THROUGH A RANGE OF DATES
+  ────────────────────────────────────────────────────────────────────────────
+
+    # -*- coding: utf-8 -*-
+
+    from datetime import datetime, timedelta
+    from dateutil.parser import parse
+    import sys
+
+    start_date = parse(sys.argv[1])
+    now        = datetime.now()
+
+    while start_date < now:
+      print start_date
+      start_date = start_date + timedelta(days=1)
+
+
+  TIMEZONE
+  ────────────────────────────────────────────────────────────────────────────
+
+    As of Python 3.7 / 2018-11-18, timezones in Python are still a mess.
+    For an example how to use them, see script hd-photo-date.
+
+
+
+ARGUMENTS (GETOPT ALTERNATIVE)
+══════════════════════════════════════════════════════════════════════════════
+
+# See:  http://docs.python.org/2/library/argparse.html
+
+import argparse
+
+parser = argparse.ArgumentParser(
+  description='Show repeating lines from STDIN only once.')
+
+parser.add_argument('inputdir', metavar='inputdir', type=str,
+                   help='Input directory.')
+parser.add_argument('--file', "-f", dest='file', default=None,
+                    help='write output to \'<file>\'')
+
+args = parser.parse_args()
+
+if args.file == None:
+  outputFD=sys.stdout
+else:
+  print "Writing output to stdout and '" + args.file + "'."
+  outputFD=open(args.file, 'w')
+
+# Print to file or stdout
+print >>outputFD, "Something to print here."
+
+
+
+SLEEP
+══════════════════════════════════════════════════════════════════════════════
+
+  import time
+  time.sleep(x) # in seconds
+
+
+
+QRCODE
+══════════════════════════════════════════════════════════════════════════════
+
+  import pyqrcodeng
+  fd=open("/home/hans/Seafile/Hans/.hans.deragon/.env/bin/sshp", "r")
+  content=fd.read()
+  # Below can t
+  #url = pyqrcodeng.create(content, mode="binary", version=40, error="L")
+  url = pyqrcodeng.create(content, mode="binary", error="L")
+  url.term()
+
+
+REGULAR EXPRESSIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  import re
+  uid_re=re.compile("uid=(\w+)")
+  uid_matches=uid_re.search("mail=null:uid=hderagon:attr1=null")
+  uid_matches.group(1)
+
+
+  Get the python regex parse tree to debug your regex.
+  ────────────────────────────────────────────────────────────────────────────
+
+    Regular expressions are a great feature of python, but debugging them can
+    be a pain, and it's all too easy to get a regex wrong.
+
+    Fortunately, python can print the regex parse tree, by passing the
+    undocumented, experimental, hidden flag re.DEBUG (actually, 128) to
+    re.compile.
+
+    >>> re.compile("^\[font(?:=(?P<size>[-+][0-9]{1,2}))?\](.*?)[/font]",
+        re.DEBUG)
+
+
+  In Python you can split a regular expression over multiple lines, name your
+  matches and insert comments.
+  ────────────────────────────────────────────────────────────────────────────
+
+    Example verbose syntax (from Dive into Python):
+
+    >>> pattern = """
+    ... ^                   # beginning of string
+    ... M{0,4}              # thousands - 0 to 4 M's
+    ... (CM|CD|D?C{0,3})    # hundreds - 900 (CM), 400 (CD), 0-300 (0 to 3 C's),
+    ...                     #            or 500-800 (D, followed by 0 to 3 C's)
+    ... (XC|XL|L?X{0,3})    # tens - 90 (XC), 40 (XL), 0-30 (0 to 3 X's),
+    ...                     #        or 50-80 (L, followed by 0 to 3 X's)
+    ... (IX|IV|V?I{0,3})    # ones - 9 (IX), 4 (IV), 0-3 (0 to 3 I's),
+    ...                     #        or 5-8 (V, followed by 0 to 3 I's)
+    ... $                   # end of string
+    ... """
+    >>> re.search(pattern, 'M', re.VERBOSE)
+
+
+
+USEFULL COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  os.makedirs("<directory>")  # mkdir equivalent
+  os.link(src, dst) # Hard Link
+  array = string.split() # split
+
+
+  TTY ROWS AND COLUMS, AS INT
+  ────────────────────────────────────────────────────────────────────────────
+
+    import os
+    rows, columns = map(int, os.popen('stty size', 'r').read().split())
+
+    Python >3.3:
+    import shutil
+    shutil.get_terminal_size((80, 20))       # fallback
+    # output:  os.terminal_size(columns=87, lines=23)   # named-tuple
+
+
+
+DATE
+══════════════════════════════════════════════════════════════════════════════
+
+  now=datetime.now()
+
+  # Format YYYY-MM-DD
+  iso8601today = str(now.year) + "-" + \
+                 "{0:02}".format(now.month) + "-" + \
+                 "{0:02}".format(now.day)
+
+  # Format YYYY-MM-DD HH:MM:SS
+  iso8601today = str(now.year) + "-" + \
+                 "{0:02}".format(now.month) + "-" + \
+                 "{0:02}".format(now.day) + " " + \
+                 "{0:02}".format(now.hour) + ":" + \
+                 "{0:02}".format(now.minute) + ":" + \
+                 "{0:02}".format(now.second)
+
+
+DEBUG / LIST OF FUNCTIONS OF A MODULE/CLASS
+══════════════════════════════════════════════════════════════════════════════
+
+  python -m trace --trace ./script.py >trace.out 2>&1
+
+  # List all errno available
+  import errno
+  import inspect
+  inspect.getmembers(errno)
+
+  for member in inspect.getmembers(logger):
+      print(member)
+
+
+EXCEPTIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  # List all errno available
+  import errno
+  import inspect
+  inspect.getmembers(errno)
+
+  import os
+  import errno
+
+  try:
+    # Code here
+  except Exception as exception:
+    print(exception)
+
+  try:
+    # Code here
+  except OSError as oserror:
+    if oserror.errno != errno.ENOENT:  # No such file or directory
+      raise
+    if oserror.errno != errno.EEXIST:  # Already exists
+      raise
+
+  # Stacktrace
+  import traceback
+
+  try:
+    1/0
+  except:
+    # Important to save the traceback immediately after the exception
+    # was trown.
+    stacktrace = traceback.format_exc()
+
+
+
+EFFICIENCY / PERFORMANCE
+══════════════════════════════════════════════════════════════════════════════
+
+  Searches through sets 'set(<data)' is an order of magnitude faster than
+  through at list '[]'.
+
+  Ref:  http://stackoverflow.com/questions/2701173/most-efficient-way-for-a-lookup-search-in-a-huge-list-python
+        http://stackoverflow.com/questions/3949310/how-is-cpythons-set-implemented
+
+
+
+LECTURES INTÉRESSANTES
+══════════════════════════════════════════════════════════════════════════════
+
+  http://stackoverflow.com/questions/101268/hidden-features-of-python
+
+
+
+CODING STANDARDS
+══════════════════════════════════════════════════════════════════════════════
+
+  Coding standard documented as PEP 8:  https://www.python.org/dev/peps/pep-0008
+
+  From: https://stackoverflow.com/questions/14328406/tool-to-convert-python-code-to-be-pep8-compliant
+
+  Tools to check for errors and coding standard:  PyLint (https://pylint.readthedocs.io)
+  Tools to convert a file to PEP 8:
+
+    autopep8 "${PYTHON_SCRIPT}" # Use -i for inplace replacement instead of STDOUT
+
+
+
+DATABASE
+══════════════════════════════════════════════════════════════════════════════
+
+  PEP 249 -- Python Database API Specification v2.0
+  https://www.python.org/dev/peps/pep-0249
+  ────────────────────────────────────────────────────────────────────────────
+
+    This API has been defined to encourage similarity between the Python
+    modules that are used to access databases. By doing this, we hope to
+    achieve a consistency leading to more easily understood modules, code that
+    is generally more portable across databases, and a broader reach of
+    database connectivity from Python.
+
+
+
+PIP / MODULES/PACKAGES DOWNLOADS
+══════════════════════════════════════════════════════════════════════════════
+
+  PIP
+  ────────────────────────────────────────────────────────────────────────────
+
+    Site:  https://pypi.python.org/pypi
+
+    When using pip, modules are installed on the current python version
+    used as returned with `which python`.  This means that if python 2 is
+    the current version, modules will be installed for python 2.  To get
+    modules installed with another version of python, you better use
+    the format below:
+
+    Usage:
+
+      python -m pip install <module>     # Install system-wide.
+      python3 -m pip install <module>    # Install system-wide.
+      python3.5 -m pip install <module   # Install system-wide.
+      python3.6 -m pip install <module>  # Install system-wide.
+
+      python3   -m pip install --user <module>  # Install in user home directory.
+      python3.5 -m pip install --user <module>  # Install in user home directory.
+      python3.6 -m pip install --user <module>  # Install in user home directory.
+
+    Get Packages
+
+      To use a package from this index either "pip install package" (get pip) or
+      download, unpack and "python setup.py install" it. Browse all packages or
+      use the search box above.
+
+    - pip3 list # List all Python modules installed and their version number.
+
+    - To install a python module from source (Git for instance):
+
+        python3 setup.py install # As root, install as system-wide
+        python3 setup.py install --user  # As user, install in user ~/.local
+
+    - Pour installer un package Python sous ${DIR}:
+
+        python setup.py install --prefix=${DIR}
+
+    - If pip itself is not installed:
+
+      https://pip.pypa.io/en/stable/installing/
+
+      curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+      python get-pip.py --user
+
+
+  EXPAND PYTHON SEARCH PATH TO OTHER SOURCE / MODULES
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://stackoverflow.com/questions/3144089/expand-python-search-path-to-other-source
+
+    Here are a few possible ways to do this:
+
+    - Set the environment variable PYTHONPATH to a colon-separated list of
+      directories to search for imported modules.
+
+    - In your program, use sys.path.append('/path/to/search') to add the names
+      of directories you want Python to search for imported modules. sys.path
+      is just the list of directories Python searches every time it gets asked
+      to import a module, and you can alter it as needed (although I wouldn't
+      recommend removing any of the standard directories!). Any directories
+      you put in the environment variable PYTHONPATH will be inserted into
+      sys.path when Python starts up.
+
+    - Use site.addsitedir to add a directory to sys.path. The difference
+      between this and just plain appending is that when you use addsitedir,
+      it also looks for .pth files within that directory and uses them to
+      possibly add additional directories to sys.path based on the contents of
+      the files. See the documentation for more detail.
+
+
+
+PROJECT CREATION
+══════════════════════════════════════════════════════════════════════════════
+
+  python -m pip install
+  python -m pip install virtualenv
+  python -m pip install virtualenvwrapper
+
+  # Note:  Dans "${HOME}/.hans.deragon/.env/env.gen.noarch.bash",
+  # 'source virtualenvwrapper.sh' est déjà exécuté, donc il n'est pas
+  # nécessaire de le faire manellement.
+  source <PATH TO...>/virtualenvwrapper.sh
+
+  mkvirtualenv env1
+
+  workon # List all available environment
+  workon env1
+
+  echo $VIRTUAL_ENV # Show directory where the environment lies.
+
+
+  PACKAGING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Very good:  https://docs.python-guide.org/shipping/packaging/
+    Read:       https://packaging.python.org/tutorials/packaging-projects/
+
+
+  requirements.txt generation
+  ────────────────────────────────────────────────────────────────────────────
+
+    pip freeze > requirements.txt
+
+
+
+INSTALLATION
+══════════════════════════════════════════════════════════════════════════════
+
+  Standard installation:
+
+    python3 -m pip install -r requirements.txt  # Install all dependency of a project
+    pip3 install -r requirements.txt  # Install all dependency of a project.
+
+  If you do not have the permissions to install them as root, then add
+  the '--user' option to install the dependencies on the user's home
+  directory:
+
+    python3 -m pip install --user -r requirements.txt  # Install all dependency of a project
+
+
+
+TESTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Example:  https://realpython.com/python-continuous-integration/#write-unit-tests
+
+
+
+
+COMPILATION OF C CODE (FOR BINDINGS FOR EXAMPLE)
+══════════════════════════════════════════════════════════════════════════════
+
+  If ever you need to compile C code (like for bindings to a C library),
+  the following command will return all the gcc include argument that
+  are necessary.
+
+    python3-config --includes
+
+
+
+WRITING GAMES
+══════════════════════════════════════════════════════════════════════════════
+
+  Bon -> https://opensource.com/article/18/4/easy-2d-game-creation-python-and-arcade
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
