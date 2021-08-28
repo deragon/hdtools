@@ -1,0 +1,87 @@
+OPINION NÉGATIVE SUR SOAPUI
+══════════════════════════════════════════════════════════════════════════════
+
+  De : Hans Deragon
+  Envoyé : 8 juillet 2020 08:34
+
+  Après avoir travaillé avec SoapUI pendant près de deux mois, voici mes
+  observations et surtout, mes opinions.
+
+  SoapUI est un GUI.  Or, élaborer des tests consiste souvent à une forme de
+  programmation.  Je n’ai rien de positif à dire sur SoapUI.  Sérieusement,
+  RIEN.  Par contre, je trouve plusieurs points négatifs.  Je ne trouve pas que
+  le paradigme GUI augmente ma productivité, au contraire.
+
+  • Souvent, je dois fouiller et chercher dans différentes boîtes de dialogue
+    pour trouver l’information et le moyen de changer un paramètre.  Click,
+    click, ferme fenêtre, click, click, click, cherche sur le web, click, click,
+    ouvre une nouvelle fenêtre, etc…
+
+  • Impossible de faire de recherche dans une réponse; je dois toujours copier
+    la sortie dans mon éditeur de texte.
+
+  • Impossible de faire une recherche d’une chaîne de caractère à travers tout
+    le projet.
+
+  • Impossible de découpler un projet en plusieurs tests diviser dans des
+    fichiers séparés.  Tous se retrouve dans un seul fichier unique, comme par
+    exemple reservationManagement-soapui-project.xml.
+
+  • Un diff en git est très difficile à lire car tout le code se trouve exprimé
+    dans un fichier XML généré.
+
+  • XML (le code généré) change à chaque sauvegarde même si aucune logique, rien
+    n’a été changé par le développeur.  Ouvrez un projet, ne changer rien; ne
+    touchez à rien; faites CTRL-S et constatez que le fichier source a changé.
+    C’est fatiguant de faire le suivi avec Git pour savoir quel fichier a
+    vraiment besoin d’être commis ou pas; est-ce que le fichier a changé car
+    j’ai changé un petit paramètre ou juste à cause du caprice de SoapUI?  Le
+    diff ne peut pas être lu rapidement; plein de chose a  changé.
+
+  • Impossible de travailler sur deux billets portant sur le même API en même
+    temps, car à cause de la structure XML avec tout entremêler et se trouvant
+    dans le même fichier généré, impossible de faire un merge avec Git.
+
+  • Présentement, deux seules personnes savent utiliser SoapUI dans notre
+    équipe, moi et @Felix Gaillard Desrosiers.   Je ne vois pas la pertinence de
+    former d’autres personnes sur cet outil honnêtement.  Ce serait plus
+    productif que nous passions tous à Robot pour tous nos tests (il n’y aura
+    que moi à former sur Robot).
+
+  Essentiellement, pour bien faire notre travail, un langage de programmation
+  avec un cadriciel (framework) comme Robot est parfait.  Le path des erreurs et
+  les tests unitaires pourront être codé avec, sans problème. Toute l’équipe
+  pourrait alors y participer et nous n’auront qu’un cadriciel à supporter.
+
+  SoapUI est l’exemple parfait pourquoi aucun langage de programmation sérieux
+  n’a pas passé à un GUI.   Pensons à tous les langages récents comme GO et
+  Rust… toujours codé en texte, pas de GUI car personne n’a trouvé un moyen
+  d’augmenter la productivité de coder par un GUI.  On peut être assisté par un
+  éditeur de texte sophistiqué GUI, oui, mais on garde la liberté de tout
+  changer dans le code comme on le désire avec du texte.  On peut faire des
+  diffs facilement aussi et des merges.
+
+
+DIFF AVEC LES FICHIERS DE PROJETS DE SOAPUI
+══════════════════════════════════════════════════════════════════════════════
+
+  Les fichiers de projet en format XML de SoapUI sont généralement difficile à
+  lire pour un humain car il ne sont pas passé par un formatteur.  Mais il est
+  possible de les passer à travers un comme 'xmllint' et recharger le projet
+  dans SoapUI avec la touche F5.  SoapUI va alors garder le beau format par la
+  suite à chaque sauvegarde suivante.
+
+  Ceci a pour but de rendre les diffs dans Git beaucoup plus facile à réaliser
+  et lire.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
