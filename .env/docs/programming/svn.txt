@@ -1,0 +1,259 @@
+DOCUMENTATION
+══════════════════════════════════════════════════════════════════════════════
+
+  Version Control with Subversion
+  ────────────────────────────────────────────────────────────────────────────
+
+    A free book about the ubiquitous Apache™ Subversion® version control
+    system and written by some of the developers of Subversion itself.
+
+    http://svnbook.red-bean.com/index.en.html
+
+
+
+CONCEPTS
+══════════════════════════════════════════════════════════════════════════════
+
+  ALWAYS CREATE REPOSITORIES WITH
+
+    trunk/
+    branches/
+    tags/
+
+  SUB-PROJECT WITHIN A REPOSITORY
+
+    Once a repository is created, you can actually create multiple sub-project
+    within.  For instance, your SVN admin provided you with:
+
+      https://example.com/svn/infrastructure
+
+    You could create:
+
+      https://example.com/svn/infrastructure/trunk
+      https://example.com/svn/infrastructure/branches
+      https://example.com/svn/infrastructure/tags
+
+    But you can also create sub project within:
+
+      https://example.com/svn/infrastructure/webservers/trunk
+      https://example.com/svn/infrastructure/webservers/branches
+      https://example.com/svn/infrastructure/webservers/tags
+      https://example.com/svn/infrastructure/appservers/trunk
+      https://example.com/svn/infrastructure/appservers/branches
+      https://example.com/svn/infrastructure/appservers/tags
+
+    Going forward, just use the subproject URL for your operations.  For
+    example:  https://example.com/svn/infrastructure/appservers
+
+    See:  http://www.abbeyworkshop.com/howto/misc/svn01/
+          http://svn.haxx.se/users/archive-2007-10/0600.shtml
+
+
+
+BRANCHES
+══════════════════════════════════════════════════════════════════════════════
+
+  Creation:  svn copy http://.../trunk http://.../branches/<new branch name>
+
+
+
+COMMON COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  LIST FILE CHANGED:  svn status
+
+  CHECKOUT
+
+    svn co http://<url to svn repo> [name of local repo]
+
+
+  LOG (SHOW CHANGES)
+
+    List of all the changes between a particular revision and the head.
+      includes the list of files that have been changed.
+
+    -v == verbose is required for listing the filenames.
+
+      svn log -v -r 220872:HEAD
+
+    -r does not take tags.  You must provide the revision number associated
+       with the tag.  Read the following for how to do this:
+
+       svn log -v --stop-on-copy <URL to tag>
+
+       The revision will then show.  Use that.
+
+
+        http://www.bernzilla.com/item.php?id=613
+
+
+  RESET
+  ────────────────────────────────────────────────────────────────────────────
+
+    Command that would “reset” a working copy exactly to the state that’s
+    stored in the repository.
+
+    svn revert --recursive .
+
+
+
+IGNORING FILES
+══════════════════════════════════════════════════════════════════════════════
+
+  Global
+
+    Synopsis:  svn propedit svn:global-ignores <directory>
+    Example:   svn propedit svn:global-ignores .
+
+    svn propget svn:global-ignores .
+
+  Per directory (old way)
+
+    Synopsis:  svn propedit svn:ignore <directory>
+    Example:   svn propedit svn:ignore .
+
+    svn propget svn:ignore .  # List content of the property for current path.
+
+
+
+MERGING
+══════════════════════════════════════════════════════════════════════════════
+
+  svn co http://tux.ericsson.se/svn/lmwf/releases/1.1 1.1
+  cd 1.1
+  svn merge -r 370:HEAD http://tux.ericsson.se/svn/lmwf/trunk
+                ^   ^
+                |   ---- B) Last revision of trunk
+                -------- A) Revision number of the last merge
+                            CANNOT BE HEAD; does not work... :(
+
+  It is important when merging files to have a comment that indicates when
+  the last merge was performed.  Else, you would not know what to put for
+  A), the revision number of the last merge.  See "Tracking Merges
+  Manually" in the svn doc.
+
+  Example for a specific file:
+
+    cd /sp/home/hans/devel/lmwf/lmwf.2.1/post/scripts/15_cron
+    svn merge -r 820:HEAD http://tux.ericsson.se/svn/lmwf/trunk/post/scripts/15_cron/lmw.TEMPLATE.cron
+
+
+
+TAGGING
+══════════════════════════════════════════════════════════════════════════════
+
+  See http://svnbook.red-bean.com/en/1.1/ch04s06.html
+  and Autopoweroff svn-tag script.
+
+    svn copy \
+      https://<URL OF PROJECT>/trunk \
+      https://<URL OF PROJECT>/tags/1.43 \
+      -m "Version 1.43" \
+      -r <REVISION> # This line is optional
+
+  Read the comment of a tag:
+
+    svn log https://<URL TO THE PROJECT>/tags/1.41
+
+
+
+ERRORS
+══════════════════════════════════════════════════════════════════════════════
+Commit error:
+
+  If the following error occurs:
+
+    svn: CHECKOUT of '/svn/<file>': 409 Conflict (http://tux.ericsson.se)
+
+  simply run:
+
+    svn update
+
+  and retry.
+
+
+
+MANAGING REPOSITORIES
+══════════════════════════════════════════════════════════════════════════════
+
+  Change password for user:  htpasswd -m svn-auth-file <user>
+
+
+This directory contains Subversion repositories.
+
+
+CREATION OF A NEW REPOSITORY:
+
+To create a new repository, run the command:
+
+  svnadmin create <repo_name>
+  chown -R apache:apache <repo_name>
+
+It is important to change the ownership to "apache", since these repositories
+must be accessed from the web dav interface.
+
+
+IMPORTING NEW CODE TO A REPOSITORY
+
+To import a new set of installation scripts, create the following
+directory structure:
+
+  lmwf.<site>/post
+
+svnadmin create /home/HDerago1/svn/test/repo/testrepo
+
+# Very important to repeat the directory we 
+svn import ypg-etl-aws file:///home/HDerago1/svn/test/repo/testrepo/ypg-etl-aws
+            ^^^ what we check in                                     ^^^ need to repeat. Does not need to have been created before.
+
+
+
+
+Fill the hierarchy and then import the content using the command:
+
+  # This imports recursively all files under lmwf.<site>
+  svn import lmwf.<site> http://tux.ericsson.se/svn/lmwf.<site>
+
+  # This imports only the file said, no recursion performed.
+  svn import -N lmwf.<site> http://tux.ericsson.se/svn/lmwf.<site>
+
+  FETCHING AN EXISTING REPOSITRY
+  ────────────────────────────────────────────────────────────────────────────
+
+  The command to fetch from an existing directory is:
+
+    svn co http://tux.ericsson.se/svn/lmwf.<site> lmwf.<site>
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+ How to create and apply a patch with Subversion
+
+  https://ariejan.net/2007/07/03/how-to-create-and-apply-a-patch-with-subversion
+
+
+
+SOURCEFORGE
+══════════════════════════════════════════════════════════════════════════════
+
+  DOWNLOAD SF SVN REPOSITORY
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://gist.github.com/stwalkerster/976886
+
+    SFNETPROJECT="autopoweroff"
+    rsync -aq $SFNETPROJECT.svn.sourceforge.net::svn/$SFNETPROJECT/* sfnet
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
