@@ -1,0 +1,1986 @@
+STRING MANIUPLATIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  SUBSTRINGS
+  ────────────────────────────────────────────────────────────────────────────
+
+      "${VAR:1}"            # Chop first character.
+      "${VAR:1:3}"          # VAR[1:3]
+      "${VAR:1:${#VAR}-3}"  # VAR[1:length(VAR-3)]
+      "${VAR: -1}"          # Last character (note; the space is important!)
+      "${VAR::-1}"          # Chop last character.
+
+
+  TEST IF STRING CONTAINS SOME TEXT
+  ────────────────────────────────────────────────────────────────────────────
+
+    Method #1:
+
+      if [[ "${string}" == *"Contains this"* ]]; then echo "Contains it!"; fi
+
+    Method #2:
+
+      match="string"
+        (a="some strong content"; [[ "$a" =~ "${match}" ]] && echo "matched" )
+      matched
+
+
+  UPPER/LOWERCASE, EFFICIENT FORM (BASH VERSION >=4):
+  ────────────────────────────────────────────────────────────────────────────
+
+      ID="AbCd"
+      ID_LC="${ID,,}"
+      ID_UC="${ID^^}"
+
+
+
+ARRAYS
+══════════════════════════════════════════════════════════════════════════════
+
+  declare -a ENTRIES=(${VARIABLE_WITH_ENTRIES_SEPERATED_WITH_LF});
+  declare -a ENTRIES=($(find .))
+  declare -a ENTRIES=() # empty array
+  declare -a ENTRIES=(
+  "entry #1"
+  "entry #2"
+  )
+
+  echo ">>${ENTRIES[*]}<<"        # Print array content with \n between
+  echo ">>${ENTRIES[@]}<<"        # Print array content without \n between
+  echo "${!ENTRIES[*]}"           # List all keys in the ENTRIES
+  echo "${#ENTRIES[*]}"           # Number of elements in the ENTRIES.
+  echo "${ENTRIES[0]}"            # Element 0 of the ENTRIES
+  echo "${ENTRIES[@]:1:3}"        # Slice:  Elements 1 to 3.
+  echo "${ENTRIES[@]:3}"          # Slice:  Elements 3 to the end of the arary.
+    Slicing:  See https://gist.github.com/steakknife/8294792
+
+  printf '%s\n' "${ENTRIES[@]}"   # Print all values on separate lines.
+
+  printf -v STRING ',%s' "${ENTRIES[@]}"; STRING=${STRING:1}; echo "${STRING}"  # Join all elements, separted by ','.
+
+  printf -v <VARNAME> '%s\n' "${ENTRIES[@]}"   # Save all values on separate lines into variable <VARNAME>.
+  printf "%02d\n" $number         # Pad with 0.
+    Example:  for (( i = 1; i <= 20; i++)); do printf "%02d\n" $i ; done
+
+  ENTRIES[0]="data 0"
+  ENTRIES[1]="data 12"
+  ENTRIES[2]="data 234"
+  ENTRIES+=("data 4567")  # Equivalent of push / put; add element at end of array.
+  ENTRIES=("data -1" "${ENTRIES[@]}" "data 3")   # Add elements at beginning and end of array.
+
+  Read:  https://unix.stackexchange.com/questions/328882/how-to-add-remove-an-element-to-from-the-array-in-bash
+
+  ENTRIES["data3"]="data 3" << MARCHE PAS!!!!!! Pas un hash map
+
+  # Load lines from a file - one line == one array entry
+  # Pipe (|) does not work here.  Use "< <(...)"
+  readarray FILES < <(find "${RECURSIVEPATH}" -type f -name "*.pdf")
+
+  # Pass all arguments to a command, all quotes so spaces are well handled.
+  # See:  https://stackoverflow.com/questions/7454526/variable-containing-multiple-args-with-quotes-in-bash
+  <command> "${ENTRIES[@]}"
+
+  for ITEM in "${ENTRIES[@]}"; do  # Quotes are important to handle spaces.
+  done
+
+  for (( INDEX=0; INDEX<${#ENTRIES[*]}; INDEX++ )); do
+  done
+
+  # Test if string is in array / array contains string.
+  if [[ "${ENTRIES[@]}" =~ "file1" ]]; then
+    # Perform code when match is found.
+  fi
+
+  IMPORTANT:  ARRAYS CANNOT BE EXPORTED.
+
+    http://stackoverflow.com/questions/5564418/exporting-an-array-in-bash-script
+
+
+  LENGTH OF LONGEST STRING IN AN ARRAY
+  ────────────────────────────────────────────────────────────────────────────
+
+    # Using nulls so entries with spaces are well handled by xargs.
+    printf '%s\0' "${ENTRIES[@]}" | xargs --null --replace="{}" -n 1 bash -c 'echo "{}" | wc --chars' | sort -n | tail -1
+
+
+  BASH ARGURMENTS $@
+  ────────────────────────────────────────────────────────────────────────────
+
+    Quick recipes
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      - "$@"   All entries, but individually quotes for taking spaces into
+               account.
+      - $#     Number of arguments
+
+      - set -- <arg1> <arg2>
+
+          Reconfigures $@ to <arg1> <arg2>
+
+      - Assigment $@ to a variable
+
+        ENTRIES=("$@")  # Make it an array.
+
+        # This multi-line assignment will also work with below for loop
+        # below.  It:
+        ENTRIES="
+        Ligne 1
+        Ligne 2
+        "
+
+        for ENTRY in ${ENTRIES[@]}; do
+          echo "Processing ${ENTRY}"
+        done;
+
+
+    Long explanations
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    If a bash scripts receive arguments and wants to pass it to another,
+    absolutely untouched, do not use $*, but instead "$@" which quote
+    them all.
+
+    From `man bash`:
+
+         @      Expands  to  the positional parameters, starting from one.  When
+                the  expansion  occurs  within  double  quotes,  each  parameter
+                expands to a separate word.  That is, "$@" is equivalent to "$1"
+                "$2" ...  If the double-quoted expansion occurs within  a  word,
+                the  expansion  of  the  first  parameter  is  joined  with  the
+                beginning part of the original word, and the  expansion  of  the
+                last  parameter  is  joined  with  the last part of the original
+                word.  When there are no  positional  parameters,  "$@"  and  $@
+                expand to nothing (i.e., they are removed).
+
+
+
+EVAL VARIABLES
+══════════════════════════════════════════════════════════════════════════════
+
+  BEST:
+
+      envsubst < something.txt
+
+      envsubst is part of the package gettext, available in Cygwin.
+
+      See:  http://stackoverflow.com/questions/10683349/forcing-bash-to-expand-variables-in-a-string-loaded-from-a-file
+
+  2nd BEST
+
+    echo -e "$(eval "echo -e \"`<DMD-DIM-Brand-Coordinator.properties`\"")"
+                                ^ < character is important!
+    But not ideal.
+
+    See:  http://stackoverflow.com/questions/10683349/forcing-bash-to-expand-variables-in-a-string-loaded-from-a-file
+
+  ----
+
+  You have the following line.
+
+    <MIRACHIST_PLPolicies xmlns:ns1="http://www.ibm.com/xmlns/db2/cm/api/1.0/schema" DocumentName="MIRAQCAP58315-MIRAMIRAIIS-1116093" DocumentSource="MIRAMIRAIIS" SourceLastUpdated="2011-06-01T14:20:10.000" MIRACBrokerAgent="Some broker" MIRACCompany="MIRA" PostalZIPCode="H7R5L3" CityTown="Laval" MIRACClientName="Some Client" MIRACPolicyViewType="Transaction View" MIRACTransactionType="Current Term Maintenance" TransactionEffectiveDate="2013-08-23" ProcessTS="2013-06-01T00:00:00.000" PolicyExpiringDate="2015-05-23" PolicyEffectiveDate="2013-05-23" MIRACLOB="Personal Auto" MIRACPolicyNo="MIRA324233895">
+
+  The following list of commands will split the line in multiple lines but
+  will preserve the double quotes despite having spaces within them, and will
+  evaluate all the variables.  NOTE:  You have to call Perl twice; putting
+  the two replace commands in the same Perl command would simply not work,
+  unfortunately.
+
+  GOOD CODE:
+
+    eval `perl -ne 'print if s/<MIRACHIST_CLPolicies xmlns:ns1=".*?" (.*)>/\1/g' "${xml}" | perl -ne 'print if s/(\S+=".*?")+\s*/\1\n/g'`
+
+
+    echo ${DocumentName}
+
+  BAD CODE:
+
+    For some unkown reason, the following using only one perl command
+    will not work.
+
+    eval `perl -ne 'print if s/<MIRACHIST_CLPolicies xmlns:ns1=".*?" (.*)>/\1/g;s/(\S+=".*?")+\s*/\1\n/g' "${xml}"
+
+
+
+CONCATENATING FILES
+══════════════════════════════════════════════════════════════════════════════
+
+  # The 'awk' statement separates concatenated files with LF.  We must add
+  # LF because sometimes developers tend to not end the properties files
+  # with LF, and thus when concatenated with 'cat', the first entry of the
+  # second file will be appended to the last entry of the first file.
+  awk 'FNR==1{print ""}1' ${FILES}
+
+
+
+PIPE
+══════════════════════════════════════════════════════════════════════════════
+
+  CONCATENATE / MERGE MULTIPLE INPUT STREAMS
+  ────────────────────────────────────────────────────────────────────────────
+
+    cat <(<command1>) <(<command2>) | ...
+
+    Example:
+
+      cat <(echo "Line #1") <(echo "Line #2") | fgrep Line
+
+
+
+ARITHMETIC
+══════════════════════════════════════════════════════════════════════════════
+
+  IFS='
+  '
+  index=0
+  cat <file> |
+  while read -r LINE
+  do
+    ((index=index+1))
+    (( index % 100 == 0 )) && echo -n "."
+
+    ...
+  done
+
+
+  Boolean
+  ────────────────────────────────────────────────────────────────────────────
+
+    Reverse:  isSomething=$(( ! ${isNotSomthing} ))
+
+
+
+SED
+══════════════════════════════════════════════════════════════════════════════
+
+  Commandes
+  ────────────────────────────────────────────────────────────────────────────
+
+    - Imprimer seulement si un match est fait
+      (équivalent de perl -ne 'print if s/...')
+
+      sed -rn "s/<text to replace>(group1)/<replacment text>\1/gp"`
+            ↑ Do not print                            ↑ print if match
+
+    - Sed on content of a variable, not from a file nor stdin:
+
+      sed -r "s/a/b/g" <<< "${LINE}"
+
+
+
+  Particularité
+  ────────────────────────────────────────────────────────────────────────────
+
+    - \d n'existe pas.  Il faut utiliser [[:digit:]]
+    - UTF8 bien supporté, contrairement à Perl
+
+
+  Sed multiline
+  ────────────────────────────────────────────────────────────────────────────
+
+    Sed is not meant to do multiline properly.  Use perl instead; much easier.
+
+      perl -0777 -pe 's/line1\nline2/line1-line2 joined/igs' "${FILE}" # multileine
+
+    Still, below is a way to replace all '\n' with '¤' using sed.
+
+      sed --regexp-extended ':a;N;$!ba;s/\n/¤/g;'
+
+
+
+DATE
+══════════════════════════════════════════════════════════════════════════════
+
+  DATE PARSING
+  ────────────────────────────────────────────────────────────────────────────
+
+    # Pure parsing
+    DATE="2016-02-25 18:16"
+    date -d "${DATE}"
+
+    # Parsing and format conversion
+    DATE="2016-02-25 18:16"
+    date -d "${DATE}" +"%Y-%m-%d %H:%M:%S 000"
+    2016-02-25 18:16:00 000
+
+    date -d "5 min" +"%Y-%m-%d %H:%M:%S 000"  # Date in 5 mins.
+
+
+  DATE ARITHMETICS / MATH
+  ────────────────────────────────────────────────────────────────────────────
+
+    Date of yesterday:     date -d "-1 day" +"%Y%m%d"
+    Date of previous day:  date -d "2015-01-01 -1 day" +"%Y%m%d"
+                           DAY_BEFORE=`date -d "${DATE} -1 day" +"%Y-%m-%d"`
+                           date -d '12 hours ago' +%Y-%m-%d
+
+
+    Array of previous dates:
+
+      declare -a DATES
+
+      DATES[0]="${DATE}"
+
+      for (( index=1; index < 10; index++ )); do
+        DATES[$index]=`date -d "${DATE} -${index} day" +"%Y-%m-%d"`
+        echo "\${DATES[${index}]}=${DATES[${index}]}"
+      done
+
+  - How to calculate time difference in bash script?
+
+      http://stackoverflow.com/questions/8903239/how-to-calculate-time-difference-in-bash-script
+
+
+  TIMEZONE
+  ────────────────────────────────────────────────────────────────────────────
+
+    To force a timezone, simply set the TZ variable prior calling `date`.
+
+    TZ="UTC" date +"%F %T"
+
+
+
+
+PERL
+══════════════════════════════════════════════════════════════════════════════
+
+  UTF-8 support
+  ────────────────────────────────────────────────────────────────────────────
+
+    Perl support mal UTF8 (2017-06-01).  Les options suivantes aident
+    cependant:
+
+      perl -CSD -Mutf8 -pe '...'
+
+
+  AUTRES
+  ────────────────────────────────────────────────────────────────────────────
+
+    OUT=`perl -e "\\\$_=\"${SOMEVARIABLEHERE}\"; print if s/<regex here>/.../g"`
+
+    perl -ne "print if /^ll.*soa0.*/"
+    perl -ne "print if s/\[(\d+)\].*?Running.*/\1/g"`
+
+
+
+INDENT OUTPUT
+══════════════════════════════════════════════════════════════════════════════
+
+  No buffering.  Works great:
+
+  <someprocess> | sed 's/^/  /g'  # Indent output with two spaces.
+
+
+
+SPLIT A VARIABLE (STRING)
+══════════════════════════════════════════════════════════════════════════════
+
+  Meilleure façon.  Elle marche même si des entrées dans $ENTRY contient
+  des espaces.
+
+  # Note that since IFS="-" is not followed with a ';', it only applies
+  # to the read function.  The IFS variable keeps its original value
+  # after the statement; no need to save the entry and restore it.
+  IFS="-" read -ra ARRAY <<< "${ENTRY}"
+  IFS=":" read -ra PASSWD <<< "`grep "^${HD_USERNAME}:" /etc/passwd`" # Quotes around `` are required!!!  Go figure why.
+
+  NAME="${ARRAY[0]}"
+  DESCRIPTION="${ARRAY[1]}"
+
+  # BAD:  NE MARCHE PAS.  IFS n'est pas appliqué sur le declare.
+  # BAD:  IFS="-" declare -a ARRAY=(${ENTRY});
+
+  ────────────────────────────────────────────────────────────────────────────
+
+  From:  http://stackoverflow.com/questions/2746553/bash-script-read-values-from-stdin-pipe
+
+  Works well.  Read input sepearated by whitespaces.
+
+  read A B < <( echo $LINE )
+
+  RESPECT THE SPACING IN THE LINE.  '< <(' IS CORRECT, ANYTHING ELSE BREAKS
+  IT.
+
+
+  ASSIGN LINES TO AN ARRAY
+  ────────────────────────────────────────────────────────────────────────────
+
+    IFS=$'\n' LINES=($( echo -e "Line 1\nLine 2\nLine 3" ))
+    echo "${LINES[0]} - ${LINES[1]} - ${LINES[2]}"
+
+  ────────────────────────────────────────────────────────────────────────────
+
+  From:  http://stackoverflow.com/questions/918886/split-string-based-on-delimiter-in-bash
+
+  You can set the IFS variable, and then let it parse into an array. When this
+  happens in a command, then the assignment to IFS only takes place to that
+  single command's envionment ( to read ). It then parses the input according
+  to the IFS variable value into an array, which we can then iterate over.
+
+  OLD_IFS="${IFS}"; IFS=';' read -ra SPLIT_ARRAY <<< "$IN"; IFS="${OLD_IFS}"
+  for i in "${SPLIT_ARRAY[@]}"; do
+      # process "$i"
+  done
+
+  ----------------------------------------------------------------------
+
+  # WARNING:  $c and $d are set in a subshell.  They will not persist
+  #           into the parent shell
+  #
+
+  $ a=sdmtl125.axa-canada.com
+  $ `echo $a | ( IFS="." ; read c d; echo "$c -- $d" )
+  sdmtl125 -- axa-canada.com
+
+
+
+READ LINES / LOOP ITERATE THROUGH LINES IN A FILE
+══════════════════════════════════════════════════════════════════════════════
+
+  while IFS='' read -r LINE || [[ -n "${LINE}" ]]; do
+    echo "Text read from file: ${LINE}"
+  done < "${FILENAME}"
+  done < <( <command> )
+
+
+  From:  http://stackoverflow.com/questions/10929453/read-a-file-line-by-line-assigning-the-value-to-a-variable
+
+  Explanation:
+
+  ∙ IFS='' (or IFS=) prevents leading/trailing whitespace from being trimmed.
+  ∙ -r prevents backslash escapes from being interpreted.
+  ∙ || [[ -n $line ]] prevents the last line from being
+    ignored if it doesn't end with a \n (since read returns a
+    non-zero exit code when it encounters EOF).
+
+
+
+LOGS
+══════════════════════════════════════════════════════════════════════════════
+
+  if tty -s; then
+    # Console available, sending output to console and logfile.
+    exec 1> >(tee "${LOGFILE}") 2>&1
+  else
+    # No console, sending output to logfile only.
+    exec 1>"${LOGFILE}"
+  fi
+
+  ────────────────────────────────────────────────────────────────────────────
+
+  exec 3>&1
+  coproc tee "${LOGFILE}" >&3-
+  exec >&${COPROC[1]} 2>&${COPROC[1]}-
+  trap 'exec 2>&- >&-; wait' 0
+
+
+
+TRAP EXIT (AND OTHER SIGNALS)
+══════════════════════════════════════════════════════════════════════════════
+
+  Put somewhere at the beginning of the code the following:
+
+    signalExitHandler()
+    {
+      echo "SIGEXIT received."
+    }
+
+    trap signalExitHandler EXIT
+
+
+
+REDIRECTION OF STDOUT & STDERR
+══════════════════════════════════════════════════════════════════════════════
+
+  if [ ! -z "${FILE}" ]; then
+    # Redirect stdout to a file.
+    exec 3<> "${FILE}"
+    exec 1>&3
+  fi
+
+  echo "blahblah" # Now sent to "${FILE}"
+
+  ────────────────────────────────────────────────────────────────────────────
+
+  From:  https://stackoverflow.com/questions/2342826/how-to-pipe-stderr-and-not-stdout
+
+  In Bash, you can also redirect to a subshell using process substitution:
+
+  command > >(stdlog pipe)  2> >(stderr pipe)
+
+  vimdiff <(unzip -l 'file1.zip') <(unzip -l 'file2.zip')  # Compare the tables of to zip files.
+
+  Read:  http://tldp.org/LDP/abs/html/process-sub.html
+
+
+  Duplicating stdout to stderr
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/3141738/duplicating-stdout-to-stderr
+
+    echo "FooBar" | tee >(cat >&2)
+
+    Tee takes a filename as parameter and duplicates output to this file. With
+    process substitution you can use a process instead of filename >(cat) and
+    you can redirect the output from this process to stderr >(cat >&2).
+
+
+
+HASHTABLES / HASHMAP
+══════════════════════════════════════════════════════════════════════════════
+
+  declare -A APPSELECT
+  APPSELECT=( \
+    ["acc"]="https://uatappselect.ca" \
+    ["sys"]="https://intgappselect.ca" \
+    ["sup"]="https://prepappselect.ca" \
+    ["ppd"]="https://prepappselect.ca" \
+    ["frm"]="" \
+    ["prd"]="" \
+  )
+
+  echo "${APPSELECT[${ENV}]}"
+
+  IMPORTANT:  ARRAYS CANNOT BE EXPORTED.
+
+    http://stackoverflow.com/questions/5564418/exporting-an-array-in-bash-script
+
+
+
+EMBEDDED PYTHON
+══════════════════════════════════════════════════════════════════════════════
+
+  START_DATE=2016-02-13
+
+  python - "${DATE}" << EOP
+  # -*- coding: utf-8 -*-
+  import sys
+  date_as_string = sys.argv[1]
+  EOP
+
+
+
+FLATTENING A FILE
+══════════════════════════════════════════════════════════════════════════════
+
+  If you have a file with data of an entry spread across multiple lines
+  such as the following output of an ldapsearch command for instance:
+
+    dn: uid=THIVID01,ou=People,o=externes,o=axa.ca
+    postalAddress:: MzESTEVUT04sIFFDDQpHMEMgMUowDQ==
+    givenName: DANIELLE
+    sn: THIVIERGE
+    telephoneNumber: 418-364-6211
+    objectClass: top
+    objectClass: person
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    objectClass: axacapeople
+    objectClass: solcorpingenium
+    cn: DANIELLE THIVIERGE
+    uid: THIVID01
+    userPassword:: e1NIQX1wMDA2RnJOUFl6SE1Dc3U0cGxQRDNRcG5UeG89
+    axacauidorig:
+    axacaimorgmembership: ou=People,o=externes,o=axa.ca
+    preferredLanguage: fr
+    NsRole: cn=ebz-www-inv,o=axa.ca
+    NsRole: cn=ebz-www-qc_vie,o=axa.ca
+    NsRole: cn=sad axa assurances,o=axa.ca
+    NsRole: cn=tp-gvc,o=axa.ca
+    employeeType: externes
+
+    dn: uid=BLAISM02,ou=People,o=externes,o=axa.ca
+    solcorpIngeniumAccesslistId:: IA==
+    postalAddress:: MzUsIFJVRSBCRUxNT05UDQpBWUxNRVIsIFFDDQpKOUggMk04DQoNCg0=
+    initials:: IA==
+    givenName: MICHEL S
+    [...deleted lines...]
+
+  It is impossible to perform a grep on this directly, but the following will
+  do it:
+
+      # Best solution
+      egrep "^dn:|^NsRole" inputfile.txt | \
+      sed ':a;N;$!ba;s/\n/<|>/g;s/dn:/\ndn:/g'
+
+      # The first sed command flatens everything in a single line with '<|>'
+      # as a distinct separator between each field.  The second one force a \n
+      # at every "dn:" string.  THe result is the following:
+
+      # tr solution - Pour de très gros fichiers car sed peux flancher
+      egrep "^dn:|^NsRole" inputfile.txt | \
+      tr '\n' '\v' | perl -pe 's/dn:/\ndn:/g;s/\v/<\|>/g'
+
+
+
+  Result:
+
+    [...deleted lines...]
+    dn: uid=ARBOUE01,ou=People,o=externes,o=axa.ca NsRole: cn=edsbrkrptclient,o=axa.ca NsRole: cn=edsclient,o=axa.ca
+    dn: uid=GRONDM03,ou=People,o=externes,o=axa.ca NsRole: cn=edsbrkrptclient,o=axa.ca NsRole: cn=edsclient,o=axa.ca
+    [...deleted lines...]
+
+  Now this output can be greped for searching specific entries.
+
+  Ref:  http://stackoverflow.com/questions/1251999/sed-how-can-i-replace-a-newline-n
+
+
+
+TRIM A VARIABLE (STRING)
+══════════════════════════════════════════════════════════════════════════════
+
+
+  Solution #1
+  ────────────────────────────────────────────────────────────────────────────
+
+    # From: https://stackoverflow.com/questions/19345872/how-to-remove-a-newline-from-a-string-in-bash
+
+    variable1="${variable1//[$'\t\r\n']}"  # Trim
+
+
+  Solution #2
+  ────────────────────────────────────────────────────────────────────────────
+
+  Voir:  http://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-bash-variable
+
+  Mais ma solution est la plus robuste, mais une des plus lentes.  Certaines
+  des solutions proposées sur la page web ne fonctionnent pas dans toutes
+  les circonstances ou ne trim qu'un caractère aux extrémités. - Hans
+
+  trim()
+  {
+    echo $1 | perl -pe "s/^\s*(.*?)\s*$/\1/g"
+  }
+
+  USER_ID=`trim "${SPLIT_ARRAY[0]}"`
+  WEB_APPL_ID=`trim "${SPLIT_ARRAY[1]}"`
+
+
+
+PADDING - PRINT TEXT AT A SPECIFIC COLUMN USING SPACES
+══════════════════════════════════════════════════════════════════════════════
+
+  SEPARATOR <<<< BON (TITLE)
+  ────────────────────────────────────────────────────────────────────────────
+
+    TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+    LINE="═══════════════════════════════════════════════════════════════════════════════"
+    TEXT="═ Hans Deragon "$(date "+${TIMESTAMP_FORMAT_HUMAN}")
+    SEPARATOR=$(printf "%s %s\n" "${TEXT}" "${LINE:${#TEXT}}")
+
+    Used in hdlogseparator
+
+
+  SIMPLE PADDING - GOOD
+  ────────────────────────────────────────────────────────────────────────────
+
+    To switch between left and right padding, add a '-' after the '%'
+
+    Right padding (align text to left):  printf '%- 8d' 1234
+    Left padding (align text to right):  printf '% 8d' 1234
+
+    # Pads 30 characters of the 1st arg, left alignement.
+    # Example "Time to convert:                03:00"
+    padRight()
+    {
+      STRING1="${1}"
+      shift
+      printf "%- 30s  %s\n" "${STRING1}:" "${*}"
+    }
+
+
+  PADDING WITH SOMETHING ELSE THAN SPACES
+  ────────────────────────────────────────────────────────────────────────────
+
+    # printf can only pad with spaces.
+    # We padd with spaces first, then perl is called to replace
+    # the spaces with '-', and ¤ with a space we
+    let COL_PAD=COLUMNS-`tput cols`
+    TMP_TEXT="${TEXT// /¤}"
+    printf "\n%-${COL_PAD}s\n" "${TMP_TEXT}¤" | perl -pe 's/ /═/g;s/¤kjjkk/ /g'
+
+
+
+  ERASE LINE AND REPRINT:  BEST SOLUTION <<-----
+  ────────────────────────────────────────────────────────────────────────────
+
+    # No flickering solution.
+    for file in `find .`; do
+      MSG="Processing ${file}"
+
+      # Since the user can dynamically change the size of the terminal at any
+      # time, it is preferrable to fetch the current COLUMNS size each
+      # time we are about to erase.  It works well when the windows is
+      # resized larger, but there is a bug is it is resized smaller.
+      let NBOFSPACES=`tput cols`-${#MSG}
+
+      # Print message, followed by spaces required to erase the rest of
+      # the line.
+      printf "\r%s% ${NBOFSPACES}s" "${MSG}" ""
+    done
+
+
+  ERASE LINE AND REPRINT:  WORST SOLUTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    # The "30" value here is the position where the "Some text"
+    # should appear.
+    SPACES="                                        "
+    echo "${VAR}${SPACES:0:((30-${#VAR}))}Some text"
+
+    ZEROS="0000000000"
+    NBSTR="${ZEROS:0:((2-${#INDEX}))}${INDEX}"
+
+
+
+PRINT TEXT WITH VARIABLE SUBSTITUTION - TEMPLATE - GABARIT
+══════════════════════════════════════════════════════════════════════════════
+
+
+  MAIL_TEMPLATE='Var1=${Var1}'
+  MAIL_TEMPLATE=$(cat "mail-template.txt")
+  MAIL_MESSAGE=`eval "echo -en \"${MAIL_TEMPLATE}\""`
+
+
+
+MULTILINE / MULTI LINE / REPLACE / SUBSTITUTION WITH PYTHON
+══════════════════════════════════════════════════════════════════════════════
+
+  GENERAL REPLACEMENT (GOOD)
+  ────────────────────────────────────────────────────────────────────────────
+
+    echo -e "Line #1\nLine #1\nLine #2\nLine #3\nLine #4\nLine #5\n" |
+      python -c 'import re, os, sys; print re.sub("(.|\n)*Line #2.*\n((?:.|\n)+)\nLine #5(.|\n)", r"Remains only:\n\2\nThat is it.", "".join(sys.stdin.readlines()))'
+
+    INPUT:
+
+      Line #1
+      Line #1
+      Line #2
+      Line #3
+      Line #4
+      Line #5
+
+    OUTPUT:
+
+      Remains only:
+      Line #3
+      Line #4
+      That is it.
+
+
+  USING PERL MULTILINE
+  ────────────────────────────────────────────────────────────────────────────
+
+    echo -e 'line0\nline1\nline2\nline3' | \
+      perl -0777 -pe 's/line1\nline2/line1-line2 joined/igs'
+
+    line0
+    line1-line2 joined
+    line3
+
+
+  REPLACE WITH ENVIRONMENT VARIABLES
+  ────────────────────────────────────────────────────────────────────────────
+
+    export TO_REPLACE="
+    ligne 1
+    ligne 2
+    ligne 3
+    "
+
+    template.txt content:
+
+      #!/bin/bash
+
+      echo "Beginning"
+
+      <TO_REPLACE>
+
+      echo "End"
+
+    export TO_REPLACE
+    python -c 'import re, os; print re.sub("<TO_REPLACE>", os.environ["TO_REPLACE"], "".join(open("template.txt", "r").readlines()))'
+
+
+
+PREPEND A TIMESTAMP TO THE OUTPUT OF AN EXECUTABLE
+══════════════════════════════════════════════════════════════════════════════
+
+
+  SOLUTION #1
+  ────────────────────────────────────────────────────────────────────────────
+
+    exec 3>&1
+    coproc tee "${LOGFILE}" >&3-
+    exec >&${COPROC[1]} 2>&${COPROC[1]}-
+    trap 'exec 2>&- >&-; wait' 0
+
+
+  SOLUTION #2
+  ────────────────────────────────────────────────────────────────────────────
+
+
+  # With this little hack, I saved a customer the $1000 a supplier
+  # wanted to charge for adding a timestamp in their log files.
+
+  # WARNING:  ANY VARIABLE USE WITHIN THIS WHILE LOOP WILL NOT SURVIVE
+  #           AFTER IT (after the 'done' statement).
+  #
+  #           The pipe statement creates a subshell, thus creating a new scope
+  #           of any variable within the while loop.
+  #
+  #           See:  http://www.nucleardonkey.net/blog/2007/08/variable_scope_in_bash.html
+
+  ./process | while read LINE; do
+    NOW=`date +"%Y-%m-%d %H:%M:%S|"`
+    echo "${NOW}${LINE}"
+  done
+
+  {
+    <code>
+  } 2>&1 | while read LINE; do
+    NOW=`date +"%Y-%m-%d %H:%M:%S "`
+    echo "${NOW}${LINE}" >>"${LOGFILE}"
+  done
+
+
+EXIT CODE / RETURN CODE HANDLING
+══════════════════════════════════════════════════════════════════════════════
+
+  OFFICIAL EXIT CODES
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://www.redhat.com/sysadmin/exit-codes-demystified
+    https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html
+
+
+  ASSIGN TEST RESULT TO A VARIABLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    # This is done in two steps.  The test, and then collect its own
+    # return code.
+
+    RESULT=$?         # 0 = true, 1 = false
+
+    # To reverse the value:
+    RESULT=$((! $?))  # 1 = true, 0 = false
+
+    if <cmd> ; then echo "<cmd returned 0>"; else echo "<cmd> returned $?"; fi
+
+
+  EXIT STATUS THROUGH A PIPE
+  ────────────────────────────────────────────────────────────────────────────
+
+    man bash and search for PIPESTATUS
+
+    Ex:  someprocess | tee /tmp/logfile.log;  echo ${PIPESTATUS[0]}
+
+    See:  http://groups.google.com/group/comp.unix.shell/browse_thread/thread/ca0f984106f6fae7/078429a3a7148cdd?lnk=st&q=logfile+return+code&rnum=1&hl=en#078429a3a7148cdd
+
+
+
+FILE PERMISSIONS AND GROUP
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.linuxforums.org/security/file_permissions.html
+
+  chmod g+s <group> <directory>  # Any new files created in <directory>
+                                 # will have <group> as group.
+
+
+  File attributes, like access, creation and modify date:
+
+    stat
+    stat -c "%y"  # last modification time, human format.
+
+
+
+DASH
+══════════════════════════════════════════════════════════════════════════════
+
+  dash cannot interpret ${!VARNAME} format.  Thus you always must
+  use 'eval TMP="\$${VARNAME}"' to fetch the value of variable ${VARNAME}
+
+
+
+BEST PRACTICES
+══════════════════════════════════════════════════════════════════════════════
+
+  https://github.com/progrium/bashstyle
+
+
+
+CSV FILE MANIPULATION
+══════════════════════════════════════════════════════════════════════════════
+
+  CVS KIT
+  ────────────────────────────────────────────────────────────────────────────
+
+    An excellent python based tool to manipulate CSV files.
+
+    Doc:  http://csvkit.readthedocs.io/en/0.9.1/tutorial/1_getting_started.html#installing-csvkit
+
+    COMMANDS
+
+      cvslook <file.csv>
+      csvcut -c 2,3 <file.csv>
+      csvcut -n <file.csv> # Liste la première rangée, souvent le nom des champs.
+
+    INSTALLATION
+
+      sudo pip install csvkit  # Excellent outil pour
+
+
+
+  PYTHON CODE
+  ────────────────────────────────────────────────────────────────────────────
+
+    CSV maniuplation with the csv module
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+
+    import csv, sys
+    with open(sys.argv[1], 'rb') as csvfile:
+      rows = csv.reader(csvfile, delimiter=',', quotechar='"')
+      for row in rows:
+        print row[27]
+        #print ', '.join(row)
+
+
+AT COMMAND
+══════════════════════════════════════════════════════════════════════════════
+
+  WARNING
+  ────────────────────────────────────────────────────────────────────────────
+
+    - /bin/sh is used to execute the command, not /bin/bash, nor ${SHELL} or
+      the current terminal's shell being used.
+
+    - The at command does not inherit variables that have not been exported.
+
+
+  SYNTAX
+  ────────────────────────────────────────────────────────────────────────────
+
+    # You cannot change the time / date order.  It has to be HH:MM yyyy-mm-dd.
+
+    echo /sbin/reboot | at 17:00 2015-10-21
+    echo /sbin/poweroff | at 10:15 09/13/07
+
+
+
+MISC USEFUL STUFF
+══════════════════════════════════════════════════════════════════════════════
+
+- Test if interactive console/terminal exists:
+
+  Method #1 - Works with stdout redirection
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/911168/how-to-detect-if-my-shell-script-is-running-through-a-pipe
+    But it does now always work with ssh.  Search for "But they don't always work" at the URL above.
+
+    # Detect if stdout is sent to a console/terminal and add color if so.
+    if [ -t 1 ]; then
+      COLOR_FGWHITE_BGRED="\e[1;37;41m"
+      COLOR_RESET="\e[0m"
+    else
+      COLOR_FGWHITE_BGRED=""
+      COLOR_RESET=""
+    fi
+
+
+  Method #2 - Does not work with stdout redirection
+  ────────────────────────────────────────────────────────────────────────────
+
+    if tty -s; then
+      echo "Interactive terminal exists."
+    fi
+
+- Read a value from STDIN (User input)
+
+  read -p "Enter a value:  " -i "<default value>" -e ANSWER
+  echo "You answered:  ${ANSWER}"
+
+- Variable indirection:
+
+    VARNAME="CLASSPATH"; echo ${!VARNAME} == echo ${CLASSPATH}
+
+- Test if variable contains IP address
+
+  if [ -z "${VARNAME/+([0-9]).+([0-9]).+([0-9]).+([0-9])}" ]; then
+    # is IP
+  fi
+
+- Test for integer:  [[ "${INTEGER}" =~ ^[0-9]+$ ]]
+
+- Add folder/directory to path if not already there:
+
+  [[ ":$PATH:" != *":/path/to/add:"* ]] && PATH="/path/to/add:${PATH}"
+
+- Split file into multiple files with less lines each:
+
+    split -d -l <number of line per file> --additional-suffix=".csv" <input file> <prefix for generated files>
+
+- Tilde ~
+
+  To expand ~ safely, including paths with spaces, do:
+
+  TILDEPATH="~user/some directory with space/blah blah"
+  ABSPATH=`eval echo "${TILDEPATH}"`
+
+- Bas64 encoding / decoding:
+
+  $echo "This is a test." | base64
+  VGhpcyBpcyBhIHRlc3QuCg==
+
+  $echo "VGhpcyBpcyBhIHRlc3QuCg==" | base64 --decode
+  This is a test.
+
+- Root shell:
+
+  http://unix.ittoolbox.com/documents/root-bash-shell-13661
+
+  Q:  Is there a good reason to not have bash as the default login shell
+      for root or other users on Solaris 8, 9, or 10?
+
+  A:  The usual reason is because there are no dependancies for /sbin/sh,
+      while bash has a few.
+
+      So, if you ever run into trouble (e.g. filesystem corruption, or
+      someone deletes a library, etc), you will still be able to login as
+      root if your shell is /sbin/sh and that one file is ok. If your
+      shell was bash or even /bin/sh (instead of sbin), then you might not
+      be able to log in.
+
+- ${RANDOM}
+
+  From man page:
+
+    RANDOM Each time this parameter is referenced, a random integer between 0 and 32767 is generated.
+
+    Usage:  sleep $((RANDOM%60));  # Sleep between 0 and 59s.
+
+- Universally Unique Identifier (Unique Random ID):
+
+    cat /proc/sys/kernel/random/uuid
+
+  See:  http://en.wikipedia.org/wiki/UUID
+
+- IFS:  I* Field Separator:
+
+    Works:
+      See `hd-diff-list` as best example.
+      export IFS=$'\n'
+      export IFS="
+"
+    Does not work:\
+      IFS="\n"
+
+- if [ "${-/*i*/x}" = "x" ]; then
+    # The shell is interactive.
+  else
+    # The shell is not interactive.
+  fi
+
+- echo $((0xFF)) # Convert to decimal (i.e. 255)
+
+- Convert ascii to decimal:
+
+  printf '%d' "'<ascii letter here>"   Ex: printf '%d' "'m" # letter m
+
+  Ref:  http://mywiki.wooledge.org/BashFAQ/071
+
+- for gnome/X dialog creation, call up 'zenity'
+
+- find:
+
+    Delete find given names but exclude regex at the end:
+
+      FILES=`find \
+        . \
+        -regextype posix-extended \
+        \( \
+        -name "build-deploy*.xml" -o \
+        -path "./tools/ant/*" -o \
+        -name "dbconfig-template*.xml" -o \
+        -name "dbpwd-template*.xml" \
+        \) \
+        -a -not \
+        \( \
+          -regex '.*test.*' -o \
+          -regex '.*logo.*' \
+        \) \
+        -prune \
+      `
+
+- Duplicate lines removal, without sorting
+
+  http://stackoverflow.com/questions/9377040/remove-duplicate-entries-using-a-bash-script
+
+  awk '!a[$0]++' input.txt
+
+
+- Sort multiple fields
+
+  -t <separator>
+  -k <begin field #>,<end field #>
+
+  Important:
+
+    If you do not specify the end field, then the whole rest of the line will
+    be used.  Essentially, the other -k following will be ignored.  You must
+    write the command with the beginning and ending fields
+
+  GOOD:   sort -t , -k 3,3 -k 1,1 -k 2,2
+  WRONG:  sort -t , -k 3   -k 1   -k 2
+
+
+- Sort files according to modification date:
+
+  find . -name "<pattern here>" -exec ls --time-style=iso -l {} \; | sort -k 7
+
+
+- Assign heredoc data to a variable
+
+  From:  http://stackoverflow.com/questions/1167746/how-to-assign-a-heredoc-value-to-a-variable-in-bash
+
+  $ read -r -d '' VAR <<EOM
+  abc'asdf"
+  $(dont-execute-this)
+  foo"bar"''
+  EOM
+
+- Assigning multiple lines to a variable:
+
+    VAR="
+    line1
+    line2
+    line3
+    "
+
+    echo "$VAR"  # QUOTES ARE REQUIRED.  `echo ${VAR}` will not work.
+
+- Replace all linefeeds (LF) with a character, except for the last
+  line:
+
+    perl -p00e 's/\n(?!\Z)/ /g' "${INPUT}" >"${OUTPUT}"
+
+- Special characters such as newline and carriage return (\n and \r)
+
+  echo -e "1\n2\n3" | awk '{ printf "%s|", $0 }'
+
+  # Replace all instances of \n in variable with |.
+  export VARIABLE="${VARIABLE//$'\x0a'/|}"
+                             ^^ This // means "REPLACE ALL"
+
+  From:  http://www.linuxjournal.com/article/8919
+
+    Use the $'\xNN' syntax for the non-printing character. Note though
+    that a NULL character does not work:
+
+    $ cat j.sh
+
+    v="hello=yes&world=no"
+
+    v2=${v/&/$'\x0a'}
+    #        ^^^^^^^    change to newline
+    echo -n ">>$v2<<" | hexdump -C
+
+    v2=${v/&/$'\x00'}
+    #        ^^^^^^^    change to null (doesn't work)
+    echo -n ">>$v2<<" | hexdump -C
+
+
+
+- Line buffering (no easy solution)
+
+  http://wiki.bash-hackers.org/mirroring/bashfaq/009
+  http://www.pixelbeat.org/programming/stdio_buffering/
+
+
+- Kill all children process.
+
+    pkill -P $$  # pkill available under Cygwin too.
+                 # Parent process continue to run.
+
+
+- Timeout
+
+  ( [ echo >/dev/tcp/${FQDN}/${PORT} ] && echo open ) &
+  sleep 3
+  JOBS=`jobs | perl -ne "print if s/\[(\d+)\].*?Running.*/\1/g"`
+  if [ "${JOBS}" ]; then
+    kill %${JOBS} >/dev/null 2>&1
+    echo "Could not connect."
+  fi
+
+
+- FILE="${FILE%\/}"  # Remove any trailing '/'.
+
+- Whitespace
+
+  var="${var#"${var%%[![:space:]]*}"}"   # remove leading whitespace characters
+  var="${var%"${var##*[![:space:]]}"}"   # remove trailing whitespace characters
+
+
+- Detach from terminal
+
+  nohup <cmd>
+  Within bash script:  trap "" HUP  # Detach from terminal; same as nohup.
+
+
+- IP address
+
+  CURRENT_IP=`host $(hostname -f) | perl -ne "print if s/.*?(\d+\.\d+\.\d+\.\d+).*/\1/g"`
+
+
+- Load java properties files as variables.
+
+  # Note that '.' is not a valid character in bash variable names, thus
+  # we replace them with '_'.  Comments and empty lines are ignored.
+  eval `sed --regexp-extended 's/\s+//g;s/\./_/g;/^(#.*)*$/d;s/^/export /g;s/$/;/g' "${PROPERTIES_FILE}"`
+
+  - Moreutils:
+
+      Article qui décrit bien:  https://www.ostechnix.com/moreutils-collection-useful-unix-utilities/
+      Officiel site:            https://joeyh.name/code/moreutils/
+
+  - Create a range of numbers:
+
+      # echo { 0..20 }
+      0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+
+  - Exit status within multiple pipes
+
+      echo "${PIPESTATUS[*]}" # Print all exits status from previous pipe.
+
+  - Naming conventions / nomenclature:
+
+    http://unix.stackexchange.com/questions/7351/unix-file-naming-convention?newreg=8fe3ecc9f9704a5f93cb740499595d44
+
+  - How to detect if a script is being sourced.
+
+    [[ "${BASH_SOURCE[0]}" != "${0}" ]] && echo "script ${BASH_SOURCE[0]} is being sourced ..."
+
+    "${BASH_SOURCE[0]}" # Has the actual full path of the sourced file!
+
+    http://stackoverflow.com/questions/2683279/how-to-detect-if-a-script-is-being-sourced
+
+  - Multi-line/Multiline search and replace
+
+    From:  http://ask.xmodulo.com/search-and-replace-multi-line-string.html
+
+    perl -i -0pe 's/<multi-line-string-pattern>/<replacement-string>/' input.txt
+
+  - Alias inheritance:  shopt -s expand_aliases
+    Note that this does not work with non login interactive bash scripts
+    (scripts starting with /bin/bash).
+
+  - Convert computer unit formats:
+
+       numfmt --to=iec-i --suffix=B --padding=7 1 177152 48832200 1975684956
+           1B
+       173KiB
+        47MiB
+       1.9GiB
+
+  - Delete a line containing a string:
+
+      sed -i '/<string to match line to delete>/d' <file>
+
+  - Count the number of scripts within Linux that uses a particular
+    script engine such as Bash, Perl, Python, etc...
+
+    Following is safe to run:
+
+      egrep '^#!' -h /bin/* /usr/bin/* /sbin/* /usr/sbin/* | egrep -v 'Binary' | perl -pe 's/#!\s+/#!/g;s/\s+.*/\n/g' | sort | uniq -c
+
+  - Print only printable characters, filter control non-printable characters:
+
+      sed 's/[^[:print:]]//g' <file>
+
+  - head/tail for midlle of file: sed -n '<begline>,<endline>p' <input file>
+    Exemple:                      sed -n '1000,4000p' somefile
+                                  sed -n '3,$p' <somefile>  # Tail from line #3 to the end.
+                                    # NOTE:  Sed line counts start at 1, not 0.
+
+  - Latin to utf conversion:  iconv -f iso-8859-1 -t utf-8 "${FILE}"
+
+  - Turn off wildcard * interpretation with:  set -f
+
+  - Exit/abort on error:  set -e
+
+  - If <ctrl-a> and <ctrl-e> are not working, in your .bashrc, add:
+    'set -o emacs'.  If you find a 'set -o vi', remove it.  Usually, the
+    default is emacs bindings, but some environments such as AIX have
+    the vi bindings enabled.
+
+    set -o emacs # Emacs binding for bash, the default under Linux.
+
+  - Align (padding) file in columns (works also on stdin):
+
+      # column -s , -t <file.csv>  # Align (padding) file in columns.
+
+  - Detect interactive console
+
+    tty -s && echo "Console active."
+
+  - Lock file:  man flock
+
+  - inotifywait
+
+    inotifywait efficiently waits for changes to files using Linux's
+    inotify(7) interface. It is suitable for waiting for changes to files from
+    shell scripts. It can either exit once an event occurs, or continually
+    execute and output events as they occur.
+
+    WARNING:  inotifywait is not available by default on systems.  I
+              package need to be installed.
+
+              sudo apt install inotify-tools # Ubuntu 18.04 & +
+              sudo yum install inotify-tools # RedHat 7 & +
+
+  - head -n -1 <file>  # Print all lines except the last one.
+  - tail -n +2 <file>  # Print all lines except the first one.
+
+  - File name extension extraction.
+
+    FILENAME_EXT="${FILENAME##*.}" # Extract file extension
+    FILENAME_BASE="${FILENAME%.*}" # Extract file base name
+
+  - List timestamps of a file:
+
+      stat /tmp/example # Under Linux
+
+        * Access / atime - the last time the file was read
+
+        * Modify / mtime - the last time the file was modified (content has been modified)
+
+        * Change / ctime
+
+          The last time meta data of the file was changed (e.g. permissions)
+          ctime is the time recorded when the inode changed.  Cannot be
+          modified with 'touch'.  Use 'stroke'.
+
+          One can reset ctime to a current system time by running chown
+          or chmod over the file.
+
+  - Change the timestamp of a file
+
+    Not that this change the MODIFY time to the time set, and CHANGE time
+    will be set to the moment the touch command is executed.
+
+    echo "This is a test" >/tmp/example
+    touch -t 202102012105 /tmp/example; stat /tmp/example
+    rm /tmp/example
+
+  - Tool to change timestamps, including ctime:
+
+      Gnu stroke:  http://stroke.sourceforge.net/
+
+  - Add column (somme / sum):
+
+    cat <file with numbers in one column> | paste -s -d+ | bc -l
+    awk '{ print $2 }' | paste -s -d+ | bc -l
+
+  - Highlight text:
+
+    cat text.txt | egrep --color "<stringtomatch>|$"
+
+  - Convert ANSI term color codes to html:
+
+      wget https://github.com/pixelb/scripts/blob/master/scripts/ansi2html.sh
+      chmod a+x ansi2html.sh
+      hdtermcolor-256colors.pl | ansi2html.sh
+
+
+
+STARTUP FILES LOADED
+══════════════════════════════════════════════════════════════════════════════
+
+  Documentation applies to GNU bash, version 4.4.12(3)-release and is inspired
+  by its man page.
+
+
+  ORDER INVOKED AS AN INTERACTIVE LOGIN SHELL
+  ────────────────────────────────────────────────────────────────────────────
+
+    The following file is loaded first:
+
+      /etc/profile
+
+    Followed by the first of the following that is readable:
+
+      ~/.bash_profile
+      ~/.bash_login
+      ~/.profile
+
+    Thus, if ~/.bash_profile is missing, but ~/.bash_login and ~/.profile
+    exist, only ~/.bash_login is read; ~/.profile is ignored.
+
+    If ~/.bash_profile exists, the other two files are not read.
+
+    When an interactive shell that is not a login shell is started, bash reads
+    and executes commands from ~/.bashrc, if that file exists.
+
+
+  /etc/profile
+  ────────────────────────────────────────────────────────────────────────────
+
+    run by all Bourne-compatible shells (including bash and dash) when
+    started as a login shell.
+
+    lu par toutes les applications.  Devrais avoir seulement une configuration
+    minimale.  gvim sur Unity hérite les variables qui s'y trouvent.
+
+
+  Replace /bin/sh with /usr/bin/bash during login
+  ────────────────────────────────────────────────────────────────────────────
+
+    If /bin/sh is set as the default shell for the user and this cannot be
+    changed by the sysadmin, then run the following ONCE in the user's
+    account:
+
+      echo -e '# Replace /bin/sh with /usr/bin/bash.  -- Hans Deragon\n[ "${SHELL}" == "/bin/sh" -a -x /usr/bin/bash ] && exec /usr/bin/bash -i -l' >>"${HOME}/.profile"
+
+    In a different terminal (KEEP THE CURRENT SESSION OPEN IN CASE THERE IS A
+    PROBLEM), login again and see if it works well.  Keep the current session
+    open because if things go wrong, you might have locked yourself out of the
+    account.
+
+    This was done at some client, /bin/sh is the standard default shell in
+    Active Directory and corporate policy prevents it to be changed.
+
+
+
+DIFFERENCE BETWEEN LOGIN SHELL AND NON-LOGIN SHELL?
+══════════════════════════════════════════════════════════════════════════════
+
+  From: http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
+
+  WHAT IS A LOGIN OR NON-LOGIN SHELL?
+  ────────────────────────────────────────────────────────────────────────────
+
+    When you login (type username and password) via console, either sitting at
+    the machine, or remotely via ssh: .bash_profile is executed to configure
+    your shell before the initial command prompt.
+
+    But, if you’ve already logged into your machine and open a new terminal
+    window (xterm) inside Gnome or KDE, then .bashrc is executed before the
+    window command prompt. .bashrc is also run when you start a new bash
+    instance by typing /bin/bash in a terminal.
+
+
+ ────────────────────────────────────────────────────────────────────────────
+
+    http://unix.stackexchange.com/questions/38175/difference-between-login-shell-and-non-login-shell
+
+    A login shell is the first process that executes under your user ID when
+    you log in for an interactive session. The login process tells the shell
+    to behave as a login shell with a convention: passing argument 0, which is
+    normally the name of the shell executable, with a - character prepended
+    (e.g. -bash whereas it would normally be bash. Login shells typically read
+    a file that does things like setting environment variables: /etc/profile
+    and ~/.profile for the traditional Bourne shell, ~/.bash_profile
+    additionally for bash†, /etc/zprofile and ~/.zprofile for zsh†,
+    /etc/csh.login and ~/.login for csh, etc.
+
+    When you log in on a text console, or through SSH, or with su -, you get
+    an interactive login shell. When you log in in graphical mode (on an X
+    display manager), you don't get a login shell, instead you get a session
+    manager or a window manager.
+
+
+
+  http://askubuntu.com/questions/247738/why-is-etc-profile-not-invoked-for-non-login-shells
+
+
+
+  - Detect if shell is bash or dash:
+
+    [ -n "${BASH_VERSION}" ]  # If variable is set, it is bash.
+
+  recette
+  ────────────────────────────────────────────────────────────────────────────
+
+    - cat <<EOM >/etc/bash.bashrc
+
+# Comment by Hans Deragon, 2014-10-13 18:45:29 EDT
+HDENVDIR=~hans/.hans.deragon/.env
+[ -r "${HDENVDIR}" ] && source "${HDENVDIR}/bashrc.gen"
+EOM
+
+    - mv "${HOME}/.bashrc" "${HOME}/.bashrc.org"  # Plus besoin
+    - Ne pas toucher /etc/profile et /etc/profile.d.
+
+
+
+PROGRAM START / GETOTPS
+══════════════════════════════════════════════════════════════════════════════
+
+  Voir:
+
+  hd-create-script <script>
+  hd-create-script -p <script>  # Python creation
+
+
+
+XML PARSING
+══════════════════════════════════════════════════════════════════════════════
+
+  - XML / XSL -> Voir xml-xsl.txt
+
+
+  PYTHON XML PARSING SOLUTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Good solution, as it is available out of the box.
+
+    Parse a pom.xml and get version of the project:
+
+      # The namespace is required for Python <= 3.7.  For Python >= 3.8, you
+      # could replace the find statement with ... .find('{*}version') ...
+
+      POM_NAMESPACE="$(perl -ne 'print if s/.*xmlns="(.*)"/\1/g' pom.xml)"
+      POM_VERSION="$(python3 -c "import xml.etree.ElementTree as xml;print(xml.parse('pom.xml').getroot().find('{${POM_NAMESPACE}}version').text)")"
+
+
+  XMLSTARLET
+  ────────────────────────────────────────────────────────────────────────────
+
+    Very good, but requires installation of the tool.
+
+    xmlstarlet el "<file.xml>"                     # Get list of elements.
+    xmlstarlet sel -t -v "<xmlpath>" "<file.xml>"  # Get value of XML element.
+
+    See:  http://xmlstar.sourceforge.net/doc/UG/xmlstarlet-ug.html
+
+
+
+DIFF
+══════════════════════════════════════════════════════════════════════════════
+
+  IGNORE LINES VIA REGULAR EXPRESSION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Example:  Ignore lines with string1, string2 and string3
+
+      diff --ignore-matching-lines='.*"\(string1\|string2\|string3\)".*'
+
+    Note:  '\s' is not recognized by diff's RE engine.
+
+
+
+XARGS
+══════════════════════════════════════════════════════════════════════════════
+
+  PLACEHOLDER TRICKS
+  ────────────────────────────────────────────────────────────────────────────
+
+    If '-I "{}"' option is used, then only one argument is being used (-L 1
+    is simplicity set).
+
+    This can be tested with:
+
+      for nb in {1..8}; do echo $nb; done | xargs -I "{}" echo "Data:  >>{}<<"
+
+    To go around this limitation, the following workaround can be used.
+
+      for nb in {1..8}; do echo $nb; done | xargs -n 2 bash -c 'echo "$0 $1"'
+
+
+  ACCEPTING LINES AS SEPARATORS
+  ────────────────────────────────────────────────────────────────────────────
+
+    cat "<file with spaces in each line>" | xargs -n1 -d "\n" -I "{}" <cmd> '{}'
+
+
+  LIMITS OF XARGS
+  ────────────────────────────────────────────────────────────────────────────
+
+    xargs --show-limits
+
+
+
+NULL BYTE
+══════════════════════════════════════════════════════════════════════════════
+
+
+  REMOVE/DELETE NULLS
+  ────────────────────────────────────────────────────────────────────────────
+
+    sed -i 's/\x0//g' null.txt
+
+
+  ADD/APPEND NULLS
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://unix.stackexchange.com/questions/174016/how-do-i-use-null-bytes-in-bash
+
+    To append a null, use:
+
+      printf '%s\0' "<string>"
+
+    'echo' does not work.  See below for explanation.
+
+
+  COMMENT
+  ────────────────────────────────────────────────────────────────────────────
+
+    Bash uses C-style strings internally, which are terminated by null bytes.
+    This means that a Bash string (such as the value of a variable, or an
+    argument to a command) can never actually contain a null byte. For example,
+    this mini-script:
+
+      foobar=$'foo\0bar'    # foobar='foo' + null byte + 'bar'
+      echo "${#foobar}"     # print length of $foobar
+
+    actually prints 3, because $foobar is actually just 'foo': the bar comes
+    after the end of the string.
+
+    Similarly, echo $'foo\0bar' just prints foo, because echo doesn't know about
+    the \0bar part.
+
+
+
+BASH CALLING ITSELF INFINITELY (troubleshooting)
+══════════════════════════════════════════════════════════════════════════════
+
+  If bash is called recursively when a bash script is called, comment out
+  in .bash_profile:
+
+  # Comment by Hans Deragon, 2007/03/06, 09:31 EST
+  # Setting BASH_ENV causes bash to recursively reload .bashrc in some
+  # circumstances.  Disabling it.
+  #BASH_ENV=$HOME/.bashrc
+
+
+
+VENN DIAGRAM / DIAGRAMME DE VENN
+══════════════════════════════════════════════════════════════════════════════
+
+  COMBINE
+  ────────────────────────────────────────────────────────────────────────────
+
+    La commande 'combine' permet de faire des opération sur des fichier
+    https://joeyh.name/code/moreutils/
+
+    Mais cette commande n'est pas standard et n'est pas disponible sous
+    Cygwin.
+
+
+
+CURSOR MOVEMENTS
+══════════════════════════════════════════════════════════════════════════════
+
+  Escape codes:  http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x361.html
+  tput usage:    http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x405.html
+
+
+
+COLORS and TERMINAL CODES
+══════════════════════════════════════════════════════════════════════════════
+
+  CLEAR SCREEN
+  ────────────────────────────────────────────────────────────────────────────
+
+    $ clear                 # Problem is that it clears the scrollback buffer!!!  Not so good.
+    $ printf '\33[H\33[2J'  # Same as 'clear', but scrollback buffer remains intact!
+
+
+  TERMINAL ANSI COLOR CODES
+  ────────────────────────────────────────────────────────────────────────────
+
+    hdtermcolortest
+    hdtermcolortestwithcodes # <-- Practical, with codes for 'echo -e ""'
+
+    echo -e "\e[1;32;40mGREEN  \e[0;37;40m NORMAL" # Green
+    echo -e "\e[1;33;40mYELLOW \e[0;37;40m NORMAL" # Yellow
+    echo -e "\e[0;31;40mRED    \e[0;37;40m NORMAL" # Red
+    echo -e "\e[0;34;40mBLUE   \e[0;37;40m NORMAL" # Blue
+
+    echo -e "\e[1;37;42mREVERSED GREEN  \e[0;37;40m NORMAL" # Reversed Green
+    echo -e "\e[1;37;43mREVERSED YELLOW \e[0;37;40m NORMAL" # Reversed Yellow
+    echo -e "\e[1;37;41mREVERSED RED    \e[0;37;40m NORMAL" # Reversed Red
+    echo -e "\e[1;37;44mREVERSED BLUE   \e[0;37;40m NORMAL" # Reversed Blue
+
+    echo -e "\e[0mNormal Text"  # RESET all attributes.
+
+    From:  http://pueblo.sourceforge.net/doc/manual/ansi_color_codes.html
+
+      Code: Client: Meaning:
+
+      [0m -- reset; clears all colors and styles (to white on black)
+      [1m -- bold on (see below)
+      [3m -- italics on
+      [4m -- underline on
+      [7m 2.50 inverse on; reverses foreground & background colors
+      [9m 2.50 strikethrough on
+      [22m 2.50 bold off (see below)
+      [23m 2.50 italics off
+      [24m 2.50 underline off
+      [27m 2.50 inverse off
+      [29m 2.50 strikethrough off
+      [30m -- set foreground color to black
+      [31m -- set foreground color to red
+      [32m -- set foreground color to green
+      [33m -- set foreground color to yellow
+      [34m -- set foreground color to blue
+      [35m -- set foreground color to magenta (purple)
+      [36m -- set foreground color to cyan
+      [37m -- set foreground color to white
+      [39m 2.53 set foreground color to default (white)
+      [40m -- set background color to black
+      [41m -- set background color to red
+      [42m -- set background color to green
+      [43m -- set background color to yellow
+      [44m -- set background color to blue
+      [45m -- set background color to magenta (purple)
+      [46m -- set background color to cyan
+      [47m -- set background color to white
+      [49m 2.53 set background color to default (black)
+
+
+
+  DETECT IF OUTPUT IS A TERMINAL OR A PIPE (DISABLE COLOR FOR PIPE)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Detect if output is a terminal or a pipe.  This is useful because
+    when the output is sent through a pipe, we do not want escape codes.
+
+      if [ -t 1 ] ; then
+        # Output to terminal.  We set color on.
+        COLOR_OPTION="always"
+      else
+        # Output to a pipe.  No color, no escape code desired.
+        COLOR_OPTION="none"
+      fi
+      ...
+      egrep -i --color=${COLOR_OPTION} "${STRINGS}" "${FILE}"
+
+
+  MISCELLANEOUS
+  ────────────────────────────────────────────────────────────────────────────
+
+    - export TERM=xterm-mono Disable colors in terminal
+
+
+    CAT command and colors
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Cat does not interpret the ansi codes.  But to get around this, wrap
+      the cat command around an echo:
+
+      From:  https://unix.stackexchange.com/questions/262185/display-file-with-ansi-colors
+
+      IMPORTANT:  EOM must be alone on its own line.  Do not ad the ')"' right
+                  after, but on the next line.
+
+          echo -e "$(cat <<EOM
+\e[1;37;41mERROR:\e[0m  Something went wrong at:
+
+   command with error here
+EOM
+)"
+    Pygments
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Python script that add color to a file given its type.  This is used
+      by hdjsonpretty if available.
+
+        Install:  python3 -m pip install --user Pygments
+        Usage:    pygmentize -l json <file.json>
+
+
+  LS_COLORS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Sur RedHat, pour désactiver pour tout le monde les couleurs lors d'un ls:
+
+    mkdir /etc/aDIR_COLORS-disabled
+    mv /etc/DIR_COLORS* /etc/aDIR_COLORS-disabled
+    mv /etc/aDIR_COLORS-disabled /etc/DIR_COLORS-disabled
+
+
+  gif-for-cli
+  ────────────────────────────────────────────────────────────────────────────
+
+    Superb tool to convert any format (jpg, png, gif) file to ascii file.
+    Use the following command for best effect:
+
+    gif-for-cli -c █ --display-mode truecolor jumpman\ -\ 550x550.jpg
+
+
+  Lecture
+  ────────────────────────────────────────────────────────────────────────────
+
+    - Très intéressant, plein de tests et d'explications:
+
+        https://gist.github.com/XVilka/8346728
+
+
+  Graphics
+  ────────────────────────────────────────────────────────────────────────────
+
+    Works under mintty (Cygwin).  Show a 2D sinusoidal plane:
+
+      export GNUTERM=sixel
+      gnuplot -e "splot [x=-3:3] [y=-3:3] sin(x) * cos(y)"
+
+
+
+  Tools for painting in ascii art
+  ────────────────────────────────────────────────────────────────────────────
+
+    - rexpaint (Windows, works fine under Wine)
+    - playscii (Requires OpenGl)
+
+
+
+ENVIRONNEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  ENVIRONNEMENT HANS DERAGON SUR TOUS LES USAGERS / HDENV
+  ────────────────────────────────────────────────────────────────────────────
+
+    su -
+    cat <<EOF >/etc/profile.d/hansderagon.sh
+export HD_ENV_CORP_IDENTIFIER="axa"
+HDENVDIR="${HOME}/.hans.deragon/.env"
+[ -d ${HDENVDIR} ] && . "${HDENVDIR}/bashrc.gen"
+EOF
+
+    echo -e "\nhdenv" >>"${HOME}/.bashrc"
+
+    # Old way
+    cat <<EOF >"${HOME}/.bashrc"
+export HD_ENV_CORP_IDENTIFIER="axa"
+HDENVDIR="${HOME}/.hans.deragon/.env"
+[ -d ${HDENVDIR} ] && . "${HDENVDIR}/bashrc.gen"
+EOF
+
+
+  ENVIRONMENT MEMORY/SPACE PROBLEMS
+  ────────────────────────────────────────────────────────────────────────────
+
+    env | wc -c  # Shows how much bytes are taken by the environment.
+
+
+
+HEX / BINARY FILE
+══════════════════════════════════════════════════════════════════════════════
+
+  xxd <<-- Très bon
+  ────────────────────────────────────────────────────────────────────────────
+
+    xxd creates a hex dump of a given file or standard input.  It can also
+    convert a hex dump back to its original binary form.
+
+      xxd file.bin
+
+    Convert ascii to binary with xxd -r -p
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      cat <<EOM | xxd -r -p >file.bin
+         02  02  9E  CF  98  CF  EC  59  02  48  30  66  31  38  37  65
+         35  34  2D  39  36  34  35  2D  34  30  61  65  2D  38  36  64
+      EOM
+
+      xxd file.bin
+
+        00000000: 0202 9ecf 98cf ec59 0248 3066 3138 3765  .......Y.H0f187e
+        00000010: 3534 2d39 3634 352d 3430 6165 2d38 3664  54-9645-40ae-86d
+
+
+FUN
+══════════════════════════════════════════════════════════════════════════════
+
+  ANIMATION ASCII
+  ────────────────────────────────────────────────────────────────────────────
+
+    Nyancat
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Inoffensif à rouler.  Compile partout, même Cygwin.
+
+      git clone https://github.com/klange/nyancat.git && cd nyancat && make && cd src && ./nyancat
+
+
+    Asciiquarium
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Installation:
+
+      wget https://raw.githubusercontent.com/cmatsuoka/asciiquarium/master/asciiquarium
+      chmod +x asciiquarium
+      cpan install Term::Animation
+      ./asciiquarium
+
+    Ternimal
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Ternimal (note the spelling) is a program that draws an animated
+      lifeform in the terminal using Unicode block symbols. It works in most
+      terminal emulators and with most monospaced fonts.
+
+      - https://github.com/p-e-w/ternimal
+      - https://www.linuxlinks.com/linux-candy-ternimal-animated-lifeform-terminal/3/ ./asciiquarium
+
+
+
+RSYNC
+══════════════════════════════════════════════════════════════════════════════
+
+ -a == -rlptgoD
+
+        -r, --recursive             recurse into directories
+        -l, --links                 copy symlinks as symlinks
+        -p, --perms                 preserve permissions
+        -t, --times                 preserve modification times
+        -g, --group                 preserve group
+        -o, --owner                 preserve owner (super-user only)
+        -D                          same as --devices --specials
+            --devices
+
+                This option  causes rsync to transfer character and block
+                device files to the remote system to recreate these devices.
+                This option has no effect if the re‐ ceiving rsync is not run
+                as the super-user (see also the --super and --fake-super
+                options).
+
+            --specials
+
+                This option causes rsync to transfer special files such as
+                named sockets and fifos.
+
+
+  -a alternative for Windows SMB:  --recursive --links --times
+
+        -r, --recursive             recurse into directories
+        -l, --links                 copy symlinks as symlinks
+        -t, --times                 preserve modification times
+
+
+
+ADVOCACY FOR BASH
+══════════════════════════════════════════════════════════════════════════════
+
+  That early association between Linux and Bash pretty much sealed the fate of
+  many other shells, including ksh, csh and tcsh. THERE ARE DIE-HARDS STILL
+  USING THOSE SHELLS TODAY, BUT THEY'RE VERY MUCH IN THE MINORITY.
+
+  De:  https://unix.stackexchange.com/questions/145522/what-does-it-mean-to-be-sh-compatible/145524
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
