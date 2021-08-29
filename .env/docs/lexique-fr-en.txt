@@ -42,7 +42,8 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   onboarding                 -> accompagnement, processus d'intégration
 
 
-Acronyms
+
+ACRONYMS
 ══════════════════════════════════════════════════════════════════════════════
 
   REPL                      -> Read Eval Print Loop
@@ -118,6 +119,31 @@ REPLACEMENTS / ALTERNATIVES
   - Man hours becomes person hours or engineer hours.
   - Sanity check becomes quick check, confidence check or coherence check.
   - Dummy value becomes placeholder value or sample value.
+
+
+
+ENGLISH - 's vs '
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://www.englishclub.com/grammar/nouns-possessive.htm
+
+  When we want to show that something belongs to somebody or something, we
+  usually add 's to a singular noun and an apostrophe ' to a plural noun, for
+  example:
+
+    the boy's ball (one boy)
+    the boys' ball (two or more boys)
+
+  Irregular Plurals
+
+    Some nouns have irregular plural forms without s (man > men). To show
+    possession, we usually add 's to the plural form of these nouns:
+
+    singular noun       plural noun
+    my child's dog      my children's dog
+    the man's work      the men's work
+    the mouse's cage    the mice's cage
+    a person's clothes  people's clothes
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
