@@ -1,0 +1,72 @@
+IBM INFOSPHERE DATASTAGE
+══════════════════════════════════════════════════════════════════════════════
+
+  - orchadmin dump -name <*.ds file>  # Dump content of a Dataset file (*.ds).
+    See:  https://www.ibm.com/support/pages/how-do-you-convert-datastage-dataset-sequential-flat-file
+
+
+
+DATASET IN DATASTAGE
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://datastage4you.blogspot.com/2012/12/dataset-in-datastage.html
+
+  Inside a InfoSphere DataStage parallel job, data is moved around in data
+  sets. These carry meta data with them, both column definitions and
+  information about the configuration that was in effect when the data set was
+  created. If for example, you have a stage which limits execution to a subset
+  of available nodes, and the data set was created by a stage using all nodes,
+  InfoSphere DataStage can detect that the data will need repartitioning.
+
+  If required, data sets can be landed as persistent data sets, represented by
+  a Data Set stage .This is the most efficient way of moving data between
+  linked jobs. Persistent data sets are stored in a series of files linked by
+  a control file (note that you should not attempt to manipulate these files
+  using UNIX tools such as RM or MV. Always use the tools provided with
+  InfoSphere DataStage).  there are the two groups of Datasets - persistent
+  and virtual.
+
+  The first type, persistent Datasets are marked with *.ds extensions, while
+  for second type, virtual datasets *.v extension is reserved. (It's important
+  to mention, that no *.v files might be visible in the Unix file system, as
+  long as they exist only virtually, while inhabiting RAM memory. Extesion *.v
+  itself is characteristic strictly for OSH - the Orchestrate language of
+  scripting).
+
+  Further differences are much more significant. Primarily, persistent
+  Datasets are being stored in Unix files using internal Datastage EE format,
+  while virtual Datasets are never stored on disk - they do exist within
+  links, and in EE format, but in RAM memory. Finally, persistent Datasets are
+  readable and rewriteable with the DataSet Stage, and virtual Datasets -
+  might be passed through in memory.
+
+  A data set comprises a descriptor file and a number of other files that are
+  added as the data set grows. These files are stored on multiple disks in
+  your system. A data set is organized in terms of partitions and segments.
+
+  Each partition of a data set is stored on a single processing node. Each
+  data segment contains all the records written by a single job. So a segment
+  can contain files from many partitions, and a partition has files from many
+  segments.
+
+  Firstly, as a single Dataset contains multiple records, it is obvious that
+  all of them must undergo the same processes and modifications. In a word,
+  all of them must go through the same successive stage.  Secondly, it should
+  be expected that different Datasets usually have different schemas,
+  therefore they cannot be treated commonly.
+
+  Alias names of Datasets are
+
+    1) Orchestrate File
+    2) Operating System file
+
+  And Dataset is multiple files. They are
+
+    a) Descriptor File
+    b) Data File
+    c) Control file
+    d) Header Files
+
+  In Descriptor File, we can see the Schema details and address of data.  In
+  Data File, we can see the data in Native format.  And Control and Header
+  files resides in Operating System.
