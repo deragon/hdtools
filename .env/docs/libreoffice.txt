@@ -1,0 +1,127 @@
+EXTENSIONS
+══════════════════════════════════════════════════════════════════════════════
+
+    ∙ 6 useful LibreOffice extensions
+      https://opensource.com/business/15/12/6-useful-libreoffice-extensions
+
+
+
+DEFAULT LANGUAGE - For the entire document
+══════════════════════════════════════════════════════════════════════════════
+
+   Menu Tools → Options → Language Settings → Languages
+   Default languages for documents / Western
+   Select the required language in the drop-down list
+   - For the current document only (enabled)
+   - For the current document only (disabled, if required for all documents)
+   Press OK
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - Compare documents:
+
+    Open the newest version in Writer then EDIT > TRACK CHANGES > COMPARE
+    DOCUMENT then select the older document. 
+
+  - Reset LibreOffice profile
+
+    - Close all instances of LibreOffice
+    - hdbackup -m .config/libreoffice/4/user
+    - Restart LibreOffice; a new profile will be created.
+
+  - Dictionnaries:
+
+      Download outside of LibreOffice:
+
+        https://extensions.libreoffice.org/en/extensions/show/grammalecte
+
+      Then in LibreOffice,
+
+        Tools -> Extension Manager -> Add
+
+        Once added, restart LibreOffice.
+
+
+
+BUGS
+══════════════════════════════════════════════════════════════════════════════
+
+  UPDATE STYLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    Update style from selection does not work
+
+      https://bugs.documentfoundation.org/show_bug.cgi?id=76084
+
+    Update style from selection not working
+
+      https://bugs.documentfoundation.org/show_bug.cgi?id=91207
+
+
+  Bug 80941 - LibreOffice should be installable from a GUI
+  ────────────────────────────────────────────────────────────────────────────
+
+    Status:  RESOLVED WONTFIX
+
+    https://bugs.documentfoundation.org/show_bug.cgi?id=80941
+
+
+
+IMPORT STYLES FROM ANOTHER DOCUMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  You can import styles from another document or template into the current
+  document.
+
+  ∙ Choose View - Styles and Formatting to open the Styles and Formatting
+    sidebar deck.
+
+  ∙ Click the arrow next to the New Style from Selection icon to open the
+    submenu.
+
+  ∙ Choose Load styles.
+
+  ∙ Use the check boxes at the bottom of the dialog to select the style types
+    that you want to import. To replace styles in the current document that
+    have the same name as the ones you are importing, select Overwrite.
+
+  ∙ Do one of the following:
+
+    - Click an entry in the Categories list, then click the template
+      containing the styles that you want to use in the Templates list, and
+      then click OK.
+
+    - Click From File, locate the file containing the styles that you want to
+      use, and then click name, and then click Open.
+
+
+CALC
+══════════════════════════════════════════════════════════════════════════════
+
+  CONVERTIR UN CHAMPS TEXTE (SIGNALÉ AVEC ') EN NOMBRE:
+  ────────────────────────────────────────────────────────────────────────────
+
+    ATTENTION:  The ' showing up in a cell that states that it is a text is
+                not a character that can be removed; it is an actual symbol.
+
+    To change a cell from text to number, do:
+
+      CTRL-H ->  Rechercher >>>(.*)<<<   Remplacer >>>$1<<<
+        Options
+          ✓ 'Sélection active seulement'
+          ✓ 'Expression régulières'
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
