@@ -1,0 +1,11 @@
+MQSERIES - IBM QUEUE MANAGER
+══════════════════════════════════════════════════════════════════════════════
+
+  To query and interact with a queue, run:
+
+    /opt/mqm/bin/runmqsc "${QUEUENAME}"
+
+
+  To test if queues exists, run:
+
+    echo | /opt/mqm/bin/runmqsc "${QUEUENAME}";  echo "runmqsc return code is $? (0 is ok)"
