@@ -1,0 +1,85 @@
+JIRA
+══════════════════════════════════════════════════════════════════════════════
+
+  CHEAT SHEET
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://support.atlassian.com/jira-core-cloud/docs/advanced-search-reference-jql-fields/
+
+    Title - Description and other text fields
+      Just use the master "text" field.
+
+      text ~ "<string to match>"
+
+      * - Wildcard is '*':   Example: .. and text ~ "PROJECT-123-0*"
+      ? - Wildcard for single character is '?'.  Example:  and text ~ "PROJECT-123-??"
+
+
+  JQL USEFUL FILTERS
+  ────────────────────────────────────────────────────────────────────────────
+
+    - List all my opened Jira's.
+
+      assignee = currentUser() AND resolution = Unresolved ORDER BY status, summary, key DESC
+
+
+    - List all non closed, canceled Jiras.
+
+      project = "<project id here>" AND status not in (done, canceled) ORDER BY status, summary, key DESC
+
+
+  JQL WITHOUT AN ISSUE IN THE URL
+  ────────────────────────────────────────────────────────────────────────────
+
+    When creating a search filter using the interface, unfortunately JIRA ads
+    automatically the first ticket in the list in the URL, like the following:
+
+      https://jira.ciename.com/browse/JIRA-1234?jql=project%20%3D%20TAB%20AND%20resolution%20%3D%20Unresolved%20AND%20reporter%20in%20(<userid>)%20ORDER%20BY%20priority%20DESC%2C%20updated%20DESC
+
+    To convert this URL to a generic URL without and issue attached, bookmark
+    the URL generated and modify it by:
+
+      Replace 'browse/JIRA-1234' with 'isssues/'
+
+    Like the following:
+
+    https://jira.ciename.com/issues/?jql=project%20%3D%20TAB%20AND%20resolution%20%3D%20Unresolved%20AND%20reporter%20in%20(<userid>)%20ORDER%20BY%20priority%20DESC%2C%20updated%20DESC
+
+    Note that when this URL is called, JIRA will automatically rewrite it live
+    into the first format, with the issue, but that is ok; your bookmark
+    remains generic.
+
+
+
+CONFLUENCE (ATLASSIAN)
+══════════════════════════════════════════════════════════════════════════════
+
+  How do i search only within a space?
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://community.atlassian.com/t5/Confluence-questions/How-do-i-search-only-within-a-space/qaq-p/348370
+
+    Prehaps just bookmark the constructed search url for the space :
+
+      https://<root>/confluence/dosearchsite.action?cql=space+%3D+%22<space name>%22
+
+    (Confirmé que cela marche, 2019-05-16 13:54:31 EDT).
+
+
+
+ALTERNATIVES TO CONFLUENCE
+══════════════════════════════════════════════════════════════════════════════
+
+  - https://opensource.com/article/20/9/open-source-alternatives-confluence
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
