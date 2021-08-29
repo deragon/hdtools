@@ -238,6 +238,8 @@ UNICODE UTF-8 UTF8
 
 
 
+
+
 INPUT & COMPATIBILITY
 ══════════════════════════════════════════════════════════════════════════════
 
@@ -269,7 +271,7 @@ INPUT & COMPATIBILITY
 
 
 
-CONVERSION
+CONVERSION AND OTHER ENCODING / CODE PAGES
 ══════════════════════════════════════════════════════════════════════════════
 
   iconv -f LATIN1 -t UTF8 input.iso-8859-1.txt > input.utf-8.txt
@@ -282,6 +284,45 @@ CONVERSION
   Excellent site pour debugger l'encodage:
 
     http://rishida.net/tools/conversion/
+
+
+  Code page 850 (stdout from cmd.exe on Windows in Canada)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Read:  https://en.wikipedia.org/wiki/Code_page_850
+
+    iconv -f 850 -t UTF8  # Convert CMD.EXE stdout encoding to UTF-8
+
+
+  Code page 437 - Default Windows code in the US (but not in Canada)
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://en.wikipedia.org/wiki/Code_page_437
+
+    Code page 437 (CCSID 437) is the character set of the original IBM PC
+    (personal computer).[2] It is also known as CP437, OEM-US, OEM 437,[3]
+    PC-8,[4] or DOS Latin US.[5] The set includes all printable ASCII
+    characters, extended codes for accented letters (diacritics), some Greek
+    letters, icons, and line-drawing symbols. It is sometimes referred to as
+    the "OEM font" or "high ASCII", or as "extended ASCII"[4] (one of many
+    mutually incompatible ASCII extensions).
+
+    This character set remains the primary set in the core of any EGA and
+    VGA-compatible graphics card. As such, text shown when a PC reboots,
+    before fonts can be loaded and rendered, is typically rendered using this
+    character set.[note 1] Many file formats developed at the time of the IBM
+    PC are based on code page 437 as well.
+
+
+  CMD.EXE
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://ss64.com/nt/chcp.html
+
+    chcp.com change the active console Code Page. The default code page is
+    determined by the Windows Locale
+
+      chcp.exe 65001 # Set to UTF-8
 
 
 
