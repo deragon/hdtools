@@ -74,7 +74,10 @@ vcsupdate()
     elif [ -e "${ENTRY}/.git" ]; then
       cd "${ENTRY}"
       TITLE=$(printf "Git pull for %-32s on branch:  $(git status --branch --short | perl -ne 'print if s/^## //g')" "${ENTRY/.\//}")
-      title "${TITLE}"
+      set +e
+      GIT_URL="$(hdgurl | sed -nr 's/.*origin:\s+(.+)/\1/gp')"
+      set +e
+      title "${TITLE} - ${GIT_URL}"
       echo
       git pull --all | sed 's/^/  /g'  # Indent output with two spaces.
       echo
