@@ -31,7 +31,7 @@ hd_application_run_executable()
   else
     local IFS="|"
     for EXECUTABLE in ${EXECUTABLES}; do
-      eval "export ${VARNAME}='"`locate -i --regex "[/|\\]${EXECUTABLE}\$" | fgrep -v "obs" | head -1`"'"
+      eval "export ${VARNAME}='"`locate -i --regex "[/|\\]${EXECUTABLE}\$" | egrep -v "(obs|Download/PackageFiles)" | head -1`"'"
       export ${VARNAME}
       if [ -e "${!VARNAME}" ]; then
         hd_application_run_executable "${SUFFIX}" "${TEXT}" "${EXECUTABLE}" "$@"
@@ -357,3 +357,6 @@ hdat()
   ) &
   disown
 }
+
+
+alias hdgroups='id -a | sed -r "s/[, ]/\n/g"'  # Shows groups, one group per liene.
