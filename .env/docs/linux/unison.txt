@@ -1,0 +1,100 @@
+UNISON - https://www.cis.upenn.edu/~bcpierce/unison/
+
+PROFILES
+══════════════════════════════════════════════════════════════════════════════
+
+  Profiles are stored under "~root/.unison", not under
+  "/home/hans/.unison" since this script is executed as root.
+
+
+
+FIRST TIME
+══════════════════════════════════════════════════════════════════════════════
+
+  To many differences show up on the first sync.  You better run unison in
+  mirror mode and have everything copied from the source to the destination.
+
+  Before doing that, perform a backup of the destination and after the
+  mirroring, apply the files that are different from the backup to the
+  destination and rerun unison in normal mode to get things fully
+  synchronize.
+
+  From the manual:
+
+    Including the preference -force root causes Unison to resolve all
+    differences (even non-conflicting changes) in favor of root. This
+    effectively changes Unison from a synchronizer into a mirroring utility.
+    You can also specify -force newer (or -force older) to force Unison to
+    choose the file with the later (earlier) modtime. In this case, the
+    -times preference must also be enabled. This preference is overridden by
+    the forcepartial preference. This preference should be used only if you
+    are sure you know what you are doing!
+
+  Thus, the following command was used to copy .hans.deragon from
+  toile.deragon.biz to the local laptop.
+
+    'unison 2.48.4 text.exe' -silent -force \
+    ssh://hans@toile.deragon.biz//home/hans/Seafile/Hans <profile>
+
+
+
+BUGS
+══════════════════════════════════════════════════════════════════════════════
+
+  Unison from Ubuntu 20.04 is incompatible with Unison from Ubuntu 18.04,
+  Windows or Mac OS X Because of different OCaml compiler.
+  ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    This happens when different version of Unison are installed on the
+    source and destination servers, each compiled with a different
+    version of OCaml compiler.
+
+    https://bugs.launchpad.net/ubuntu/+source/unison/+bug/1875475
+
+    Workaround / solution:
+
+      https://askubuntu.com/questions/1234767/can-i-install-unison-for-ubuntu-18-04-lts-on-ubuntu-20-04-lts
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  LOST CONNECTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Caused by bug about different OCaml compiler (see section "BUGS" above)
+
+    Fix:
+
+      Install same version of Unison and delete the archive files
+      (${HOME}/.unison/ar*) on both servers.  This will cause Unison to
+      compare each file again (takes long) but that will resolve the problem.
+
+
+  ILL-FORMED MESSAGE
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://stackoverflow.com/questions/59181897/unison-fails-with-ill-formed-message-error-same-remote-local-versions
+
+    Unison fails with “ill-formed message” error
+
+    Sigh... the problem here (very non-obvious) is actually with a
+    corrupted/wrong-format syncronization file, created when doing the failed
+    sync in the earlier test.
+
+    The solution is just to go into ~/.unison and delete the archive file
+    that's causing the problem (probably the most recent one). In a pinch,
+    just delete all of the archive files and start over.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
