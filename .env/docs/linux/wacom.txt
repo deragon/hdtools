@@ -1,0 +1,68 @@
+As of 2016-01-05 10:35:42 EST
+
+Which devices are supported?
+
+http://doc.ubuntu-fr.org/wacom
+https://help.ubuntu.com/community/Wacom
+
+http://linuxwacom.sourceforge.net/wiki/index.php/FAQ#Which_devices_are_supported.3F
+
+  Serial devices:
+
+    Intuos series*
+    Cintiq series*
+    TabletPC (with/without touch)
+
+  USB series:
+
+    Graphire series
+    Cintiq (V4 series)
+    CintiqPartner
+    Intuos 1, 2, 3, 4 & 5
+    Intuos and Intuos Pro
+    Cintiq (V5 series)
+    Volito series
+    PenPartner series
+    PL & DTF
+    Bamboo, Bamboo1, & BambooFun
+      Inclus:
+        Wacom Bamboo Fun (CTE-450)
+    Bamboo Pen & Touch
+    TabletPC (with/without touch)
+
+  Bluetooth series:
+
+    Graphire Bluetooth Wireless
+    Intuos4 Wireless
+
+Wacom Graphics Tablet CTH-480
+
+  The tablet works out of the box, but sometime you need to manually load
+  the driver with sudo modprobe wacom before attaching (or switching on if
+  wireless) the tablet.
+
+  Par câble; wireless option vendu séparemment et pas sûr de marcher avec
+  Linux.
+
+  $95
+  http://www.kijiji.ca/v-autre-ordinateurs/ville-de-montreal/wacom-intuos-graphic-tablet-creative-pen-and-touch/1097927909?enableSearchNavigationFlag=true
+
+Wacom Intuos 5 Pen and Touch with Ubuntu 12.04 Just Works!
+  http://ubuntuforums.org/showthread.php?t=2055872
+
+UD-1212-R
+
+  Works since 06.06
+  http://blog.gmane.org/gmane.linux.drivers.wacom/month=20060701/page=5
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
