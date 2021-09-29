@@ -1,0 +1,1097 @@
+À ESSAYER
+══════════════════════════════════════════════════════════════════════════════
+
+  Lazygit:
+
+      https://opensource.com/article/20/3/lazygit?utm_medium=Email&utm_campaign=weekly&sc_cid=7013a000002DY9oAAG
+
+
+
+DOC
+══════════════════════════════════════════════════════════════════════════════
+
+  - https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository
+  - http://learngitbranching.js.org/
+
+
+
+INSPECT REPOSITORY
+══════════════════════════════════════════════════════════════════════════════
+
+  This section discuss about tools to inspect the content of the index of
+  local the local repository, not the files that are lying on the local
+  filesystem.
+
+  - git ls-tree <tree>
+    # ???
+
+  - git ls-files -s "${FILEPATH}"
+    # Show permissions and metadata as saved within the repository.
+
+  - git cat-file -p ${OBJECT_ID_FROM_GIT_LS-FILES}
+    # Fetch raw content of a file given with the Object Id gotten from
+    # 'git ls-files'.
+
+
+
+GIT PULL REQUEST - GIT VS GITHUB
+══════════════════════════════════════════════════════════════════════════════
+
+  http://stackoverflow.com/questions/6235379/how-to-send-pull-request-on-git
+
+
+
+COMMANDES
+══════════════════════════════════════════════════════════════════════════════
+
+  Info / List:    git remote show origin
+  List URL:       git config --get remote.origin.url
+  List remotes:   git remote -v
+  Clone:          git clone --mirror ssh://user@example.com/path/to/repo
+
+  Update:         git remote update
+
+  Undo/Revert:
+
+    To undo a reset:
+
+      git reset --hard              # Whip all local changes.
+      git reset --hard origin/main  # Whip all local changes and sync with remote.  Stronger than 'git pull --force'.
+
+      git checkout HEAD -- <file>   # Undo one file.
+      git reset HEAD@{1}            # Another way, but less hard.
+
+    Unstage:  git reset [<file>]  # If no file provide, all files are
+                                  # unstaged.  However, their changes remain;
+                                  # the files are not reverted to the version
+                                  # stored in the repository.  SAFE
+
+              git checkout <file>
+
+              1) Works well
+              git fetch --all
+              git reset --hard origin/<branch>
+
+              2) Does not work all the ime
+              git checkout -- .;git reset HEAD .  # Undo all changes
+
+
+    Get file of a specific hash #:
+
+      git checkout <hash #> -- file1/to/restore file2/to/restore
+      git reset    <hash #>    file1/to/restore
+
+
+  git add -u   # Stages modified and deleted, without new.
+  git add .    # Stages new and modified, without deleted.
+  git add -A   # Stages all.
+  git rm --cached <file> # Untrack file
+
+  git log --name-status # logs with filenames << Better
+  git log --name-only   # logs with filenames
+  git log -p -- <file>  # Show diffs and log of ALL commits for a specific file.
+
+  When renaming a file, the log history prior the rename gets hidden.  To see
+  the full log of the file including prior a rename, add --follow
+
+  git log --follow "${FILE}" # Show all history of a file, including after renames, if any.
+
+  # git pull does a git fetch followed by a git merge
+  git pull  --all --prune # Fetch everything from all remotes, but no merge.
+  git fetch --all --prune # Fetch everything from all remotes.
+                          # --prune remove local staled branches that
+                          #         does not exist on the remote.
+    Voir:  http://stackoverflow.com/questions/292357/what-are-the-differences-between-git-pull-and-git-fetch
+
+  Abort/avortement:  In vim, quit with error code  :cq
+
+
+  PATCH
+  ────────────────────────────────────────────────────────────────────────────
+
+    Create:  git diff          >${PATCHNAME}.patch  # Unstaged changes
+             git diff --cached >${PATCHNAME}.patch  # Staged changes
+
+             git format-patch commitId#1..commitId#n >${PATCHNAME}.patch
+
+    Apply:   git apply ${PATCHNAME}.patch
+
+      Add --binary if binary files must be part of the patch.
+
+
+  CHECKOUT
+  ────────────────────────────────────────────────────────────────────────────
+
+    # Checkout a single file from another commit or branch
+    git checkout <other branch> -- <path to specific file>
+
+
+
+STASH
+══════════════════════════════════════════════════════════════════════════════
+
+  git stash list
+  git stash save "Message"   # Saving data temporally.
+  git stash apply            # Apply latest stash
+
+
+
+PERMISSIONS UNIX LIKE
+══════════════════════════════════════════════════════════════════════════════
+
+  Git only stores the executable bit.  It does not save the other unix
+  permissions.
+
+  List files and their permissions as saved in the git repository:
+
+    git ls-files -s
+    git ls-files -s "${FILEPATH}"
+
+  Set execution bit:
+
+    git update-index --chmod=+x "${FILE}" ...
+
+    See:  https://stackoverflow.com/questions/21691202/how-to-create-file-execute-mode-permissions-in-git-on-windows
+
+
+
+BRANCHES
+══════════════════════════════════════════════════════════════════════════════
+
+  List of branches with upstream connection
+
+     git branch -vv
+
+  List of branches:
+
+      git branch -a  # -a shows also remote branches.  Important!
+
+  Change branch:
+
+    # Checkout branch connected to remote branch
+    git checkout --track origin/<branch> # <branch is the name of the remote after 'origin'
+    git checkout -b <branch> remotes/origin/<branch> # Explicit, if you want to change the name of the local branch.
+
+
+  New branch:
+
+    # Create new local branch tracking remote branch:
+    # From:  https://riptutorial.com/git/example/2210/check-out-a-new-branch-tracking-a-remote-branch
+
+    git checkout "${BRANCH}"   # Checkout branch already connected to remote branch, or else it creates a new one
+    git checkout --track "origin/${BRANCH}"  # Create local branch of same name.
+    git checkout --track -b "${BRANCH_DIFFNAME}" "origin/${BRANCH}"  # Create local branch of different name.
+
+
+  Rename/mv local branch:  git branch -m <old branch> <new branch>
+  Create branch from current branch:  git checkout -b <branch>
+  Create branch from source branch:   git checkout -b <branch> <source branch>
+  Remote branch is created automatically with:
+    git push <remote-name>(origin) <branch name>
+
+  Create remote branch with different name:
+    git push origin <local branch name>:<remote branch name (without 'origin')>
+
+  Set new upstream branch
+
+    git branch -u remotes/origin/${BRANCH}
+
+    Marche pas:  git branch <branch name> --set-upstream-to remotes/origin/<branch name>
+
+
+  REFRESH / SYNC LIST OF REMOTE BRANCHES
+  ────────────────────────────────────────────────────────────────────────────
+
+    git remote update origin --prune # Safe
+
+
+  Reset local branch to match the remote branch (loose all local changes)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Setting your branch to exactly match the remote branch can be done in two
+    steps:
+
+      git fetch origin
+      git reset --hard origin/${BRANCH}
+
+
+  FORCE LOCAL BRANCH TO TRACK REMOTE BRANCH
+  ────────────────────────────────────────────────────────────────────────────
+
+    git branch -u origin/<branch>
+
+
+  DELETE
+  ────────────────────────────────────────────────────────────────────────────
+
+    git branch --delete <branch>      # Delete local branch
+    git push origin --delete <branch> # Delete remote branch
+
+
+  LIST OF CHANGES SINCE BRANCHING
+  ────────────────────────────────────────────────────────────────────────────
+
+  # Use two dots ('..').
+  git log <branch from which the new branch was created>..<new branch name>
+
+
+  Cleanup local stale branches:
+
+    git remote prune origin
+
+    Ref:  http://stackoverflow.com/questions/5094293/git-remote-branch-deleted-but-still-appears-in-branch-a
+
+  Branches have not real parents
+
+  http://stackoverflow.com/questions/3161204/find-the-parent-branch-of-a-git-branch/3162929#3162929
+
+
+
+WORKTREE
+══════════════════════════════════════════════════════════════════════════════
+
+  CREATE WORKTREE
+  ────────────────────────────────────────────────────────────────────────────
+
+    BRANCH="feature/myfeature"  # May contain '/'.
+    git checkout -b "${BRANCH}" "remotes/origin/${BRANCH}"  # CREATE BRANCH
+    git checkout master
+    git worktree add ../"${BRANCH}" "${BRANCH}"
+    cd ../"${BRANCH}"
+
+
+  LIST
+  ────────────────────────────────────────────────────────────────────────────
+
+    git worktree list
+
+
+
+  REMOVE WORKTREE (DELETE)
+  ────────────────────────────────────────────────────────────────────────────
+
+    cd master
+    BRANCH_DIR=""
+    git worktree remove "${BRANCH_DIR}"
+
+
+
+PUSH
+══════════════════════════════════════════════════════════════════════════════
+
+  Push all branches to remote:
+  $ git push --all
+
+  https://stackoverflow.com/questions/4885999/with-github-how-do-i-push-all-branches-when-adding-an-existing-repo
+
+  git push --all
+  git push --tags
+
+  https://stackoverflow.com/questions/10510462/force-git-push-to-overwrite-remote-files
+  git push -f
+
+
+
+TAGGING / TAGS
+══════════════════════════════════════════════════════════════════════════════
+
+  List tags:  (See https://stackoverflow.com/questions/8796522/git-tag-list-display-commit-sha1-hashes)
+
+    git tag -n9  # With up to 9 lines of annotations.
+    git log --oneline --decorate --tags --no-walk
+    git for-each-ref --sort -v:refname --format '%(objectname) %(objecttype) %(refname) %(*objectname) %(*objecttype) %(*refname)' refs/tags | grep commit
+
+    git show-ref --tags         # List all tags with their respective commit ref#.
+    git rev-list -n 1 "${TAG}"  # List commit ref# associated with the tag.
+    git show "${TAG}"
+
+  Create tag:                 git tag <name of tag> [commit #ref (default HEAD)]
+  Tag switch:                 git checkout tags/<tag>
+  Push all tags to remote:    git push --tags
+  Push single tag to remote:  git push origin <tag_name>
+  Annotated tag:              git tag -a <tag> -m "<msg>"
+
+  Delete local tag:           git tag -d <tag>
+  Delete remote tag:          git push --delete origin <tag>
+  Reset local tags:
+
+      git pull --tags --force
+
+      or
+
+      git fetch origin --tags --force
+
+  Rename:
+
+    git tag new old
+    git tag -d old
+    git push origin :refs/tags/old
+    git push --tags
+
+
+  PROCESS - BEST PRACTICES FOR TAGGING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Always tag the commit that has been pushed into production.  There are
+    two types of workflow which are the following:
+
+    Merge code into 'master' once the PIP (Put In Production) was completed
+    and successful (no rollbacks)
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      In this scenario, the tag should be created on the commit of the
+      branch that was used to release the code, prior the merge into 'master'.
+
+    Merge code into 'master' first, then deploy 'master'.
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      In this scenario, the tag should be created on the commit generated
+      by the merge of the branch into 'master'.
+
+
+    See:
+
+      https://stackoverflow.com/questions/47739701/gitflow-merge-to-master-first-or-after-prod-release
+      https://softwareengineering.stackexchange.com/questions/347525/should-a-release-branch-or-the-master-branch-be-tagged-when-the-gitflow-is-used
+
+
+
+FILE MANIPULATIONS
+══════════════════════════════════════════════════════════════════════════════
+
+    git add <file>
+    git reset <file> # Undo 'git add'
+
+
+  UNDO / RESET FILE
+  ────────────────────────────────────────────────────────────────────────────
+
+    # This restores the file status in the index
+    git reset -- <file>
+
+    # Then check out a copy from the index
+    git checkout -- <file>
+
+    # Restore/undo all files in the local depot.
+    git checkout .
+
+
+
+COMMITS
+══════════════════════════════════════════════════════════════════════════════
+
+  UNDO
+  ────────────────────────────────────────────────────────────────────────────
+
+    git reset HEAD~  # Undo last commit
+
+    For more sophisticated operation, i.e. undo commit which is not the last,
+    read:  https://sethrobertson.github.io/GitFixUm/fixup.html
+
+
+  COMMIT MESSAGE
+  ────────────────────────────────────────────────────────────────────────────
+
+    GitMoji:  Emoji for git commit message:  https://gitmoji.carloscuesta.me/
+
+    50/72 rule → https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+    Under Hans's vim:  <esc>g for 72
+
+    Conventional Commits -> https://www.conventionalcommits.org/
+
+
+
+MERGE / REBASE
+══════════════════════════════════════════════════════════════════════════════
+
+  Rebase (best)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Read:  https://kernowsoul.com/blog/2012/06/20/4-ways-to-avoid-merge-commits-in-git/
+
+    To avoid the merge commit, run rebase instead:
+
+      git pull --rebase origin <remote branch>
+
+
+    LOCAL BRANCHES
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      #Merge changes from ${BRANCH_SRC} to ${BRANCH_TARGET}
+      git rebase ${BRANCH_SRC} ${BRANCH_TARGET}
+
+
+  Merge
+  ────────────────────────────────────────────────────────────────────────────
+
+    git checkout <target branch>
+    git merge <branch to merge into the current branch>
+
+    git merge --abort # Revert / abort merge
+
+    Merge a specific commit and have a chance to edit the commit message:
+
+      git merge <commit hash #> --edit --no-ff
+      git merge <commit hash #> --no-commit --no-ff
+
+
+  MERGE VS REBASE
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://stackoverflow.com/questions/14894768/git-fetch-vs-pull-merge-vs-rebase
+
+    Given the following history:
+
+              C---D---E local
+             /
+        A---B---F---G remote
+
+    merge joins two development histories together. It does this by replaying
+    the changes that occurred on your local branch after it diverged on top of
+    the remote branch, and record the result in a new commit. This operation
+    preserves the ancestry of each commit.
+
+    The effect of a merge will be:
+
+              C---D---E local
+             /         \
+        A---B---F---G---H remote
+
+    rebase will take commits that exist in your local branch and re-apply them
+    on top of the remote branch. This operation re-writes the ancestors of
+    your local commits.
+
+    The effect of a rebase will be:
+
+                      C'--D'--E' local
+                     /
+        A---B---F---G remote
+
+    What's the difference? A merge does not change the ancestry of commits. A
+    rebase rewrites the ancestry of your local commits.
+
+
+  REBASE
+  ────────────────────────────────────────────────────────────────────────────
+
+    git rebase (with no arguments)
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      This means that 'git rebase', alone, defaults to git rebase
+      branch.<name>.remote branch.<name>, as long as there already exists a
+      configured upstream for this branch - otherwise, it aborts.
+
+
+
+CREDENTIALS
+══════════════════════════════════════════════════════════════════════════════
+
+  Best is to use SSH keys.  Sent your public key to the repo and use
+  the ssh:// protocol to clone.  DO NOT USE http:// nor https://.
+
+    git clone ssh://${USERNAME}@${GIT_REPO_URL}
+
+  Example
+
+    git clone ssh://deragon@git.code.sf.net/p/dbunit/code.git
+
+
+  ∙ Enable password caching (1 year of caching with timeout set):
+
+    This is useful when the ssh protocol to the remote is not available and
+    everything is done using http protocole instead (on Linux; see below for
+    Windows).
+
+    git config --global credential.helper "cache --timeout=$((365*24*60*60))"
+
+
+  ∙ Purge / clear credentials in cache
+
+    The Git credential cache runs a daemon process which caches your
+    credentials in memory and hands them out on demand. So killing your
+    git-credential-cache--daemon process throws all these away and results in
+    re-prompting you for your password if you continue to use this as the
+    cache.helper option.
+
+      killall git-credential-cache--daemon
+
+    This is a solution for the common error message:
+
+      Push rejected.
+      expected committer email 'user1@dom1' but found 'user2@dom1'.
+
+    See:  https://stackoverflow.com/questions/15381198/remove-credentials-from-git
+
+
+  WINDOWS
+  ────────────────────────────────────────────────────────────────────────────
+
+    This is useful when the ssh protocol to the remote is not available and
+    everything is done using http protocole instead (on Windows; see above for
+    Linux).
+
+    git config --global credential.helper wincred
+
+    See:  https://stackoverflow.com/questions/11693074/git-credential-cache-is-not-a-git-command
+
+
+
+KEEPING A FORK UP TO DATE - APPLIES TO GITHUB FORKS - UPDATE
+══════════════════════════════════════════════════════════════════════════════
+
+  https://gist.github.com/CristinaSolana/1885435
+
+  1. Clone your fork:
+
+    git clone git@github.com:YOUR-USERNAME/YOUR-FORKED-REPO.git
+
+  2. Add remote from original repository in your forked repository:
+
+    cd into/cloned/fork-repo
+    git remote add upstream git://github.com/ORIGINAL-DEV-USERNAME/REPO-YOU-FORKED-FROM.git
+    git fetch upstream
+
+  3. Updating your fork from original repo to keep up with their changes:
+
+    git pull <remote> <remote branch>
+    git pull upstream master
+
+
+
+EXTRA DOC
+══════════════════════════════════════════════════════════════════════════════
+
+  FETCH VS PULL
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://stackoverflow.com/questions/14894768/git-fetch-vs-pull-merge-vs-rebase
+
+    fetch will download any changes from the remote branch, updating your
+    repository data, but leaving your local branch unchanged.
+
+    pull will perform a fetch and additionally merge the changes into your
+    local branch.
+
+    What's the difference? pull updates you local branch with changes from the
+    pulled branch. A fetch does not advance your local branch.
+
+
+  REMOTE UPDATE VS FETCH
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://stackoverflow.com/questions/14894768/git-fetch-vs-pull-merge-vs-rebase
+
+    Is 'git remote update' the equivalent of git fetch?
+
+    Yes and no. 'git remote update' fetches from all remotes, not just one.
+
+    Without looking at the code to see if remote update is just a shell script
+    (possible) it, basically, runs fetch for each remote. git fetch can be
+    much more granular.
+
+
+
+GUI
+══════════════════════════════════════════════════════════════════════════════
+
+  CYCLIGENT (https://www.cycligent.com/git-tool)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Bof.  J'ai essayé en 2017 et je trouvais qu'il manquait des features,
+    mais je ne me souviens plus desquels.
+
+
+
+HEAD
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://stackoverflow.com/questions/2529971/what-is-the-head-in-git
+
+  HEAD is a reference to the last commit in the currently checked-out branch.
+
+  There is a small exception to this, which is the detached HEAD. A detached
+  HEAD is the situation you end up in whenever you check out a commit (or tag)
+  instead of a branch. In this case, you have to imagine this as a temporary
+  branch without a name; so instead of having a named branch reference, we only
+  have HEAD. It will still allow you to make commits (which will update HEAD),
+  so the above short definition is still true if you think of a detached HEAD
+  as a temporary branch without a name.
+
+
+
+SVN 2 GIT (svn2git)
+══════════════════════════════════════════════════════════════════════════════
+
+  Create list of users from the SVN working copy directory, the one where
+  branches/, tags/ and trunk reside:
+
+  # svn log --xml | grep author | sort -u \
+  | perl -pe 's/.*>(.*?)<.*/$1 = /' | tee users.txt
+
+  The content of users.txt should look like:
+
+    deragonh = Hans Deragon <hans@deragon.biz>
+    (no author) = Aucun Auteur <no-reply@deragon.biz>
+
+  Copy the users.txt file to the directory where you want to create the
+  Git repository.
+
+  Then, in the same directory, run:
+
+    git svn clone --stdlayout --no-metadata --authors-file=users.txt http://svn.example.com/svn/web/myrepo
+
+
+
+HOST GIT REPOSITORY
+══════════════════════════════════════════════════════════════════════════════
+
+  cd <directory where repositories reside (parent directory)>
+  git daemon --base-path="${PWD}" --export-all
+
+
+
+LOGS / COMMENTS
+══════════════════════════════════════════════════════════════════════════════
+
+  Change, ammend
+  ────────────────────────────────────────────────────────────────────────────
+
+    Read:  https://help.github.com/en/github/committing-changes-to-your-project/changing-a-commit-message
+
+
+  Show
+  ────────────────────────────────────────────────────────────────────────────
+
+    git log --name-only      # For full path names of changed files:
+    git log --name-status    # For full path names and status of changed files:
+    git log --all --branches # List all logs for all branches, but no refs/*.
+    git log --all            # List all logs, for all branches, refs/tags & refs/remotes.
+    git log --pretty=format:"%h %s" --graph
+    git log --author="deragon" --all # List only logs related to the user.
+      ┗▶ See:  https://stackoverflow.com/questions/4259996/how-can-i-view-a-git-log-of-just-one-users-commits
+
+
+  Important consideration when writing logs / comments
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://stackoverflow.com/questions/22731126/writing-long-commit-messages-in-git
+
+    The way git displays log messages is that it will take the 1st line and
+    use that in git log --oneline, and then anything else is displayed when
+    using the normal git log, as long as there's a blank line between the
+    first and second parts.
+
+    A standard that a lot of people use it to use the first line as a summary
+    of the changes in the commit, and to keep it at a max of 50 characters in
+    length so that it can fit when using git log --oneline --graph. This is
+    actually the standard that the Linux kernel and git project maintainers
+    themselves use (GitHub promotes it as well).
+
+
+  DbUnit standards
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+    https://wiki.openstack.org/wiki/GitCommitMessages
+
+
+
+CHERRY-PICK
+══════════════════════════════════════════════════════════════════════════════
+
+  git checkout <target branch>
+  git cherry-pick <commit id to pick, from another branch>
+
+
+
+SQUASH
+══════════════════════════════════════════════════════════════════════════════
+
+  https://www.devroom.io/2011/07/05/git-squash-your-latests-commits-into-one/
+    git rebase -i HEAD~3
+
+  https://github.com/todotxt/todo.txt-android/wiki/Squash-All-Commits-Related-to-a-Single-Issue-into-a-Single-Commit
+
+
+
+  HOW DO I SQUASH TWO NON-CONSECUTIVE COMMITS?
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/3921708/how-do-i-squash-two-non-consecutive-commits
+
+    git rebase -i <far enough revision number>
+
+    Now lets reorder D before B and squash D into A.  Git will open an editor,
+    and you see a file like this:
+
+      pick aaaaaaa Commit A
+      pick bbbbbbb Commit B
+      pick ccccccc Commit C
+      pick ddddddd Commit D
+
+    Now you change the file that it looks like this:
+
+      pick aaaaaaa Commit A
+      squash ddddddd Commit D
+      pick bbbbbbb Commit B
+      pick ccccccc Commit C
+
+    And git will now meld the changes of A and D together into one commit, and
+    put B and C afterwards. When you don't want to keep the commit message of
+    D, you can also use the "fix" keyword.
+
+    Finally, push you new branch by forcing it:
+
+      git push origin "${BRANCH}" --force
+
+
+
+AUTOCRLF
+══════════════════════════════════════════════════════════════════════════════
+
+  git config --get-all core.autocrlf  # Get current value.
+  git config --global core.autocrlf <value>  # Set value globally
+
+  Possible values for core.autocrlf:
+
+    true:   convert LF endings into CRLF when you check out code under Windows.
+--> input:  convert CRLF to LF on commit but not the other way around.
+    false:  recording the CRLF in the repository
+
+  Usually, for software meant to run under Linux, 'input' is the best.
+
+
+
+CONFIGURATION
+══════════════════════════════════════════════════════════════════════════════
+
+  LIST CURRENT CONFIGURATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    git config --list          # Show all effective configurations.
+    git config --list --global # Show only global effective configurations.
+
+    git config --list --show-origin          # Show all configuration files being used.
+    git config --list --show-origin --global # Show only global configuration files being used.
+
+    git config --get remote.origin.url  # List URL
+
+
+  SETUPS
+  ────────────────────────────────────────────────────────────────────────────
+
+    git config --global log.date iso # Configure date format in logs.
+
+
+
+DIFF
+══════════════════════════════════════════════════════════════════════════════
+
+  Diff:  git diff -w  # -w for ignore whitespaces
+         git diff --staged
+
+         git difftool -g [file] # GUI diff performed.
+
+  git log -p -- <file>  # Show diffs and log of ALL commits for a specific file.
+
+  Between branches
+  ────────────────────────────────────────────────────────────────────────────
+
+      git diff <branch #1>..<branch #2>  # All diffs
+      git diff --stat        <branch #1>..<branch #2>  # Only list files that changed.  Format #1.
+      git diff --name-status <branch #1>..<branch #2>  # Only list files that changed.  Format #2.
+
+
+      # The next command, the order of the branches is important.  For
+      # example, if ${BRANCH2} was # fully merged into ${BRANCH1}, then the
+      # first line will show nothing (no new commits that were not yet merged
+      # into ${BRANCH1}), but the second one which reverse the order of the
+      # branches will show all commits that have been merged.
+      #
+      # Read:  https://til.hashrocket.com/posts/18139f4f20-list-different-commits-between-two-branches
+
+      BRANCH1="master"
+      BRANCH2="origin/<replaceme>"
+      git log --left-right --graph --cherry-pick --oneline "${BRANCH1}..${BRANCH2}"
+      git log --left-right --graph --cherry-pick --oneline "${BRANCH2}..${BRANCH1}"
+
+
+
+  DIFF TOOL
+  ────────────────────────────────────────────────────────────────────────────
+
+    Configure vimdiff as diff tool to use, with Hans's Vim setup (works on
+    Cygwin too):
+
+cat <<EOF >>"${HOME}/.gitconfig"
+[diff]
+  tool = vimdiff
+[difftool]
+  prompt = false
+[difftool "vimdiff"]
+  cmd = "vimdiff -u \"\${HDVIMRC}\" \"\${LOCAL}\" \"\${REMOTE}\""
+EOF
+
+  Also run (from https://unix.stackexchange.com/questions/313274/how-to-prevent-git-difftool-from-calling-another-vimdiff):
+
+    git config --global difftool.trustExitCode true
+    git config --global mergetool.trustExitCode true
+
+    This fixes:
+
+      The only problem is sometimes there are differences in many files. How
+      do I prevent git from running another vimdiff instance and continuing
+      the diffs queue?.
+
+
+
+GITIGNORE
+══════════════════════════════════════════════════════════════════════════════
+
+  GLOBAL CONFIGURATION (SETUP)
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/7335420/global-git-ignore
+
+    For "${HOME}/.gitignore" to work, run:
+
+      git config --global core.excludesfile '~/.gitignore'
+
+    Under Windows:
+
+      git config --global core.excludesfile "%USERPROFILE%\.gitignore"
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  WINDOWS ISSUES
+  ────────────────────────────────────────────────────────────────────────────
+
+    Ignore file permissions changes on Windows filesystem
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Under Windows, Git often show files having only permissions changes.
+      This is a false reporting and must be disabled with:
+
+        git config --global core.filemode false
+        git config core.filemode false
+
+      Ensure that no core.filemode remain to 'true' anywhere by running the
+      following command.  If there is any 'true', change it to 'false'.
+
+        git config --list --show-origin | fgrep core.filemode
+
+      Under IntelliJ IDEA, this problem manifest itself such that the revert
+      function appears not functioning, i.e. it does nothing and the file
+      remains listed as changed.  Use the command line to fix this and
+      IntelliJ IDEA will correct itself automatically.
+
+      From:  https://superuser.com/questions/647320/git-for-cygwin-and-file-permissions
+
+
+    Filename too long
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      git config --global core.longpaths true
+
+
+    SSH keys
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Git for Windows (https://git-scm.com/download/win) requires access to
+      ssh keys.  These ssh keys must be saved in Git's own directory.  Thus,
+      under Cygwin, run the following commands:
+
+        mkdir '/cygdrive/c/Program Files/Git/.ssh'
+        cp -rp ~/.ssh/id_rsa* '/cygdrive/c/Program Files/Git/.ssh'
+
+
+
+DBUNIT MERGE COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  git checkout master
+  git pull
+  git checkout <branch>
+  git rebase master
+  git checkout master
+  git merge <branch>
+
+
+
+INTELLIJ IDEA
+══════════════════════════════════════════════════════════════════════════════
+
+  How to manage projects under Version Control Systems
+  ────────────────────────────────────────────────────────────────────────────
+
+    If you decide to share IDE project files with other developers, follow
+    these guidelines:
+
+    Directory based project format (.idea directory)
+
+    This format is used by all the recent IDE versions by default. Here is
+    what you need to share:
+
+    All the files under .idea directory in the project root except the
+    workspace.xml and tasks.xml files which store user specific settings All
+    the .iml module files that can be located in different module directories
+    (applies to IntelliJ IDEA)
+
+
+.gitconfig aliases
+══════════════════════════════════════════════════════════════════════════════
+
+  [alias]
+
+      oldest-ancestor = !bash -c 'diff -u <(git rev-list --first-parent "${1:-master}") <(git rev-list --first-parent "${2:-HEAD}") | sed -ne \"s/^ //p\" | head -1' -
+
+
+
+HOW TO MOVE FILES FROM ONE GIT REPO TO ANOTHER (NOT A CLONE), PRESERVING HISTORY
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/1365541/how-to-move-files-from-one-git-repo-to-another-not-a-clone-preserving-history
+
+  If your history is sane, you can take the commits out as patch and apply
+  them in the new repository:
+
+    cd repository
+    git log --pretty=email --patch-with-stat --reverse --full-index --binary -- path/to/file_or_folder > patch
+    cd ../another_repository
+    git am < ../repository/patch
+
+
+
+ORPHAN COMMITS
+══════════════════════════════════════════════════════════════════════════════
+
+  GRAPHICAL VIEW, WORK VERY WELL
+  ────────────────────────────────────────────────────────────────────────────
+
+    It makes use of gitk, which is part ot the standard git package, including
+    the one for windows.
+
+    From:  https://stackoverflow.com/questions/2092810/browse-orphaned-commits-in-git
+
+      Installation
+
+        ! fgrep 'orphank' "${HOME}/.gitconfig" && \
+        echo '[alias] orphank = !gitk --all --date-order `git reflog | cut -c1-7`&' >>"${HOME}/.gitconfig"
+
+      Exécution:
+
+        git orphank
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Ambiguous object name
+  ────────────────────────────────────────────────────────────────────────────
+
+    Description:
+
+      Occurs when you have a local branch names that is named exactly like the
+      remote branch.  For instance, if something can be found in both
+      refs/heads/ and refs/remotes/ then this is ambiguous. You have local
+      branch origin/release_2.6 and remote tracking branch release_2.6 for
+      remote origin.
+
+    Solution:
+
+      Rename the local branch:  git branch -m <old branch name> <new branch name>
+
+
+  GIT OUTPUT UNICODE CHARACTERS AS OCTAL INSTEAD AS UTF-8 (UTF8)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Solution:  git config --global core.quotePath false
+
+    Problem example:
+
+      $ git status
+        modified:   "Mon code \303\240 jour.java"
+
+      $ echo $'"Mon code \303\240 jour.java"'  # How it should show
+      "Mon code à jour.java"
+
+
+    From:  https://git-scm.com/docs/git-config/
+
+      core.quotePath
+
+      Commands that output paths (e.g. ls-files, diff), will quote "unusual"
+      characters in the pathname by enclosing the pathname in double-quotes
+      and escaping those characters with backslashes in the same way C escapes
+      control characters (e.g. \t for TAB, \n for LF, \\ for backslash) or
+      bytes with values larger than 0x80 (e.g. octal \302\265 for "micro" in
+      UTF-8). IF THIS VARIABLE IS SET TO FALSE, BYTES HIGHER THAN 0X80 ARE NOT
+      CONSIDERED "UNUSUAL" ANY MORE. Double-quotes, backslash and control
+      characters are always escaped regardless of the setting of this
+      variable. A simple space character is not considered "unusual". Many
+      commands can output pathnames completely verbatim using the -z option.
+      The default value is true.
+
+
+  SPECIFYING THAT FAST FORWARDING IS THE DEFAULT (NEW SINCE GIT 2.27)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Problem:
+
+      warning: Pulling without specifying how to reconcile divergent branches
+      is discouraged. You can squelch this message by running one of the
+      following commands sometime before your next pull:
+
+    Solution:
+
+      git config --global pull.ff only
+
+    Details:
+
+      https://stackoverflow.com/questions/62653114/how-to-deal-with-this-git-warning-pulling-without-specifying-how-to-reconcile
+
+
+
+GIT FLOW
+══════════════════════════════════════════════════════════════════════════════
+
+  Extension:    https://github.com/nvie/gitflow
+  Philosophie:  https://danielkummer.github.io/git-flow-cheatsheet/
+
+
+
+CYGWIN
+══════════════════════════════════════════════════════════════════════════════
+
+  Configure git to use Cygwin's 'less' command:
+
+    git config --global core.pager "$(hdcanonical -G -w less)"
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  ────────────────────────────────────────────────────────────────────────────
+Tous les scripts exécutables ont la permission '+x'.
+
+La commande exécutée pour rendre tous les scripts exécutables est:
+
+  egrep -Eri '^#!' . | sed 's/:.*//g' | sort -u | \
+    xargs git update-index --chmod=+x
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
