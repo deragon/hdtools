@@ -1,0 +1,22 @@
+To list the hostname the cache is connecting to:
+
+  fs whereis
+
+To figure out the which server the cache uses, list the hostname.  The
+one with the lowest rand number is the one being accessed.
+
+  fs getserverprefs
+
+  See:  http://www.openafs.org/pages/doc/AdminReference/auarf162.htm#HDRFS_SETSERVERPREFS
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
