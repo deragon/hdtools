@@ -34,7 +34,6 @@ EOM
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
 
-
 PORT=8000
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
@@ -46,4 +45,5 @@ while getopts "p:h" OPTCMD; do
 done
 
 echo "Listening to:  http://localhost:${PORT}"
-python -m SimpleHTTPServer "${PORT}"
+#python2 -m SimpleHTTPServer "${PORT}"
+python3 -m http.server "${PORT}"
