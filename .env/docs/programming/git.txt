@@ -5,6 +5,17 @@
 
       https://opensource.com/article/20/3/lazygit?utm_medium=Email&utm_campaign=weekly&sc_cid=7013a000002DY9oAAG
 
+      Mais...
+
+        Ubuntu
+
+          PPA de Ubuntu n'existe plus (deprecated).
+          Homebrew suggéré.  Serait facile aussi de le compiler avec GO.
+
+        Cygwin
+
+          Pas sûr si c'est compatible avec le Git de Cygwin.
+
 
 
 DOC
