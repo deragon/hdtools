@@ -358,5 +358,12 @@ hdat()
   disown
 }
 
-
 alias hdgroups='id -a | sed -r "s/[, ]/\n/g"'  # Shows groups, one group per liene.
+
+# Using ${WSL_DISTRO_NAME} or any other variable does not work under WSL
+# if you switch to another account, such as root with 'su - '.  root will
+# not have the variable ${WSL_...} set.  Thus the only reliable way is to
+# check for the kernel name with 'uname -a'.
+if [[ "$(uname -a)" =~ "microsoft" ]]; then
+  export DISPLAY=$(route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
+fi
