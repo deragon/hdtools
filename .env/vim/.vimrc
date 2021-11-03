@@ -226,6 +226,7 @@ if($HDVIM != "")
   Plugin 'tpope/vim-sensible.git'
   Plugin 'tpope/vim-unimpaired.git'
   Plugin 'vim-scripts/SQLUtilities.git'
+  Plugin 'hashivim/vim-terraform'
 
   " All of your Plugins must be added before the following line
   call vundle#end()            " required
