@@ -551,18 +551,25 @@ set fileencodings=utf-8,latin1
 
 " Generic GUI configuration
 if has("gui_running")
-if &foldmethod == 'diff'
-  " Running gvimdiff here.  Let the system determine the number of columns.
-  "
-  " NOTE:  If gvimdiff is run from a RHEL 4 machine to display remotely
-  "        on a FC4 machine, a "set columns=999" will screw up X and you
-  "        will need to kill the process manually (kill command) and wait
-  "        for X to give you back
-  set columns=999
-else
-  set columns=80
-endif
-set lines=999 " 999 = take all the vertical space.
+  if &foldmethod == 'diff'
+    " Running gvimdiff here.  Let the system determine the number of columns.
+    "
+    " NOTE:  If gvimdiff is run from a RHEL 4 machine to display remotely
+    "        on a FC4 machine, a "set columns=999" will screw up X and you
+    "        will need to kill the process manually (kill command) and wait
+    "        for X to give you back
+    set columns=999
+  else
+    set columns=80
+  endif
+  set lines=999 " 999 = take all the vertical space.
+
+  " Get <S-Insert> working.
+  " From:  https://superuser.com/questions/322947/gvim-shift-insert-dump-s-insert-instead-of-the-clipboard-text
+  " and: https://gist.github.com/thomd/8470834
+  map  <S-Insert>  "+p
+  imap <S-Insert>  <Esc>"+pa
+  cmap <S-Insert>  <C-R>+
 endif
 
 " Following filetype commands set up some special features that allow
@@ -733,12 +740,6 @@ map <esc>dh O# Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_form
 map <esc>ds O-- Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_format_human)<CR><CR>
 " dl for "[D]ate in change[Log] file".
 map <esc>dl I* <C-R>=strftime($HD_TIMESTAMP_FORMAT_CHANGELOG)<CR>, Hans Deragon<CR>
-
-" Need to define Shift-Insert for gvim to work properly.
-map <S-Insert> <MiddleMouse>
-"noremap <S-Insert> <C-r>+
-"imap <S-Insert> <MiddleMouse>
-
 
 map m1 ddpkA:  J0j
 " Assemble all lines of a paragraph into a single line.
