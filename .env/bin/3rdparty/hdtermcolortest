@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Comment by Hans Deragon, 2006/07/25, 16:11 EDT
+# Got script from:
+#
+#   http://chl.be/glmf/www.linuxmag-france.org/old/lm6/lscoul.html
+
+esc="\033["
+
+echo " _ _ _40_ _ _41_ _ _ _42_ _ _43_ _ _ 44_ _ _ _45 _ _ _ 46_ _ _ _47 _"
+
+for fore in 30 31 32 33 34 35 36 37; do
+  line1="$fore "
+  line2="   "
+  line3="   "
+  line4="   "
+  line5="   "
+  line6="   "
+  for back in 40 41 42 43 44 45 46 47; do
+    line1="${line1}${esc}${back};${fore}m Normal ${esc}0m"
+    line2="${line2}${esc}${back};${fore};1m  Bold  ${esc}0m"
+    line3="${line3}${esc}${back};${fore};4m  Under ${esc}0m"
+    line4="${line4}${esc}${back};${fore};5m  Blink ${esc}0m"
+    line5="${line5}${esc}${back};${fore};7m  Rever ${esc}0m"
+    line6="${line6}${esc}${back};${fore};8m  Hide  ${esc}0m"
+  done
+  echo -e "$line1\n$line2\n$line3\n$line4\n$line5\n$line6"
+done
