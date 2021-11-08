@@ -38,13 +38,18 @@ OR
 
 If -d is used, create a directory with the ISO 8601 timestamp.
 
-  -c           Use current time to tag the file instead of its 'modification' time.
-  -m           Rename / move instead of copying the directories.
-  -d           Create directory using the generated ISO 8601 timestamp.
-  -b           .tar.bz2 compression
-  -p <prefix>  Prefix filename with <prefix>.
-  -s <suffix>  Suffix filename with <suffix>.
-  -h           Display this help text.
+  -c              Use current time to tag the file instead of its
+                  'modification' time.
+
+  -m              Rename / move instead of copying the directories.
+  -d              Create directory using the generated ISO 8601 timestamp.
+  -b              .tar.bz2 compression
+  -p <prefix>     Prefix filename with <prefix>.
+  -s <suffix>     Suffix filename with <suffix>.  Note that the suffix
+                  will show up before the extension of the file.
+  -e <suffix>     Suffix filename after the extension with <suffix>.
+                 
+  -h              Display this help text.
 EOM
 }
 
@@ -55,16 +60,17 @@ MOVE=0
 MAKEDIR=0
 BTAR=0
 TIMESTAMP_TYPE="file"
-unset PREFIX SUFFIX
+unset PREFIX SUFFIX ENDSUFFIX
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "bcdmp:s:h" OPTCMD; do
+while getopts "bcdmp:s:e:h" OPTCMD; do
   case "${OPTCMD}" in
     "b")    BTAR=1;;
     "c")    TIMESTAMP_TYPE="now";;
     "p")    PREFIX="${OPTARG}";;
     "s")    SUFFIX="-${OPTARG}";;
+    "e")    ENDSUFFIX=".${OPTARG}";;
     "d")    MAKEDIR=1;;
     "m")    MOVE=1;;
     "h"|*)  usage; exit 1;;
@@ -84,6 +90,10 @@ ERRORS=""
 
 if ((MAKEDIR == 0 && ${#FILES[*]} == 0)); then
   ERRORS="${ERRORS} - You must provide at least one file to backup.\n"
+fi
+
+if [ "${BTAR}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
+  ERRORS="${ERRORS} - -b and -e options are not compatible.  Choose one or the other.\n"
 fi
 
 if [ ! -z "${ERRORS}" ]; then
@@ -172,7 +182,7 @@ else
     [ ! -z "${PREFIX}" ] && PREFIX="${PREFIX}-"
     setTimeStampFile "${FILE_SRC}"
 
-    FILE_DST="${FILE_PATH}${PREFIX}${FILENAME}-${TIMESTAMP_FILE}${SUFFIX}${EXTENSION}"
+    FILE_DST="${FILE_PATH}${PREFIX}${FILENAME}-${TIMESTAMP_FILE}${SUFFIX}${EXTENSION}${ENDSUFFIX}"
 
     if (( ${MOVE} )); then
       echo "Moving ${FILE_SRC} ▶▶ ${FILE_DST}"
