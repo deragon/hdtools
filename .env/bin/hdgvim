@@ -32,6 +32,13 @@ except:
     # the list.
     vim_to_try = [ "gvim", "gvim.exe", "vim", "vim.exe" ]
 
+try:
+    display = os.environ['DISPLAY']
+    if display == "":
+        display = None
+except:
+    display = None
+
 for binary in vim_to_try:
     executable = shutil.which(binary)
     if executable is not None:
@@ -80,7 +87,7 @@ cmd = [ executable ] + finalArgs
 #print("cmd:  " + str(cmd))
 #print("cmd:  " + str(" ".join(cmd)))
 
-if "gvim" in executable.lower():
+if "gvim" in executable.lower() and display != None:
     # 'Popen' is used intead of 'run' because 'Popen' performs a fork and thus
     # allows this Python instance to end.
     if os.fork() != 0:
