@@ -228,27 +228,28 @@ if (( $? == 0 )); then
   #alias hdglog='git log --stat'
   alias hdgpull='git pull --all --prune'
   alias hdgstatus='git status --untracked-files=no'
+
+  hdgvarclear()
+  {
+    unset \
+      GIT_AUTHOR_DATE \
+      GIT_COMMITTER_DATE \
+      HD_GIT_DATE_FAKE_OFFSET \
+      GIT_BACKUP_USERNAME \
+      GIT_BACKUP_EMAIL
+
+    hdgconfigprint
+  }
+
+  hdgfakerestore()
+  {
+    git config --global user.name "${GIT_BACKUP_USERNAME}"
+    git config --global user.email "${GIT_BACKUP_EMAIL}"
+
+    hdgvarclear
+  }
+
 fi
-
-hdgvarclear()
-{
-  unset \
-    GIT_AUTHOR_DATE \
-    GIT_COMMITTER_DATE \
-    HD_GIT_DATE_FAKE_OFFSET \
-    GIT_BACKUP_USERNAME \
-    GIT_BACKUP_EMAIL
-
-  hdgconfigprint
-}
-
-hdgfakerestore()
-{
-  git config --global user.name "${GIT_BACKUP_USERNAME}"
-  git config --global user.email "${GIT_BACKUP_EMAIL}"
-
-  hdgvarclear
-}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
