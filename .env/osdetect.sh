@@ -135,6 +135,10 @@ if [ "${HD_OS_PATCHLEVEL}" != "0" ]; then
   HD_OS_ID="${HD_OS_ID}-${HD_OS_PATCHLEVEL}"
 fi
 
+if [[ "$(uname -a)" =~ "microsoft" ]]; then
+  export HD_OS_FAMILY="Windows Subsystem for Linux (WSL)"
+fi
+
 if [ -z "${HD_OS_FAMILY%%*CYGWIN*}" ]; then
   export HD_OS_ARCH=$(uname -m)
   export HD_OS_FAMILY="Cygwin"
