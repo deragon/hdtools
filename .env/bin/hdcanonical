@@ -145,7 +145,11 @@ for FILEORPATH in $@ "${EXTRAPATH}"; do
     fi
   fi
 
-  if [ "${HD_OS_FAMILY}" == "Cygwin" ]; then
+  if [[ "${HD_OS_FAMILY}" == *"WSL"* ]]; then
+    CANONICAL_PATH="$(wslpath -a -w "${CANONICAL_PATH}")"
+    echo "${CANONICAL_PATH}"
+    printf "%q\n" "${CANONICAL_PATH}"
+  elif [ "${HD_OS_FAMILY}" == "Cygwin" ]; then
     # Need to escape '\', thus the 'sed' command following 'cygpath'.
     CANONICAL_PATH="$(cygpath -w "${CANONICAL_PATH}" | sed 's/\\/\\\\/g')"
     [ "${FORMAT_WINDOWS}" == 1 ] && printPath
