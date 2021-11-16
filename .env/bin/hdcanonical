@@ -86,24 +86,27 @@ else
   COLOR_RESET=""
 fi
 
-printPath()
+printPathNormal()
 {
   NORMAL_PATH="${NETWORK_INFO}${CANONICAL_PATH}"
-  ESCAPED_PATH=$(printf "%q\n" "${NETWORK_INFO}${CANONICAL_PATH}")
-
   echo -e "${NORMAL_PATH}${SUFFIX}"
 }
 
 printPathWithEscape()
 {
-  printPath
-
   # Only print the escaped path if it is different than the normal
   # path.  If we do not do this, the same path would show up twice,
   # which is useless and not desired.
+  ESCAPED_PATH=$(printf "%q\n" "${NETWORK_INFO}${CANONICAL_PATH}")
   if [ "${NORMAL_PATH}" != "${ESCAPED_PATH}" ]; then
     echo -e "${ESCAPED_PATH}${SUFFIX}"
   fi
+}
+
+printPathAllTypes()
+{
+  printPathNormal
+  printPathWithEscape
 }
 
 # Running through remaining arguments
@@ -133,14 +136,14 @@ for FILEORPATH in $@ "${EXTRAPATH}"; do
     SUFFIX=""
   fi
 
-  [ "${FORMAT_NATIVE}" == 1 ] && printPathWithEscape
+  [ "${FORMAT_NATIVE}" == 1 ] && printPathAllTypes
   if (( SHOWIP )); then
     if [ "${HD_OS_FAMILY}" == "Cygwin" ]; then
       echo "Sorry, option -N is not implemented for Cygwin."
     else
       for IP in $(ip address | perl -ne 'print if s%\s+inet\s+(.*)/.*(wlo|eth).*%\1%g'); do
         NETWORK_INFO="${USER}@${IP}:"
-        [ "${FORMAT_NATIVE}" == 1 ] && printPathWithEscape
+        [ "${FORMAT_NATIVE}" == 1 ] && printPathAllTypes
       done
     fi
   fi
@@ -152,12 +155,12 @@ for FILEORPATH in $@ "${EXTRAPATH}"; do
   elif [ "${HD_OS_FAMILY}" == "Cygwin" ]; then
     # Need to escape '\', thus the 'sed' command following 'cygpath'.
     CANONICAL_PATH="$(cygpath -w "${CANONICAL_PATH}" | sed 's/\\/\\\\/g')"
-    [ "${FORMAT_WINDOWS}" == 1 ] && printPath
+    [ "${FORMAT_WINDOWS}" == 1 ] && printPathNormal
 
     # Printing same path with '\' replaced with '/'.  This type of path format
     # is being used by Git for Windows command and Bash.
     CANONICAL_PATH="${CANONICAL_PATH//\\\\//}"
-    [ "${FORMAT_GIT}" == 1 ] && printPath
+    [ "${FORMAT_GIT}" == 1 ] && printPathNormal
 
     if [[ ! "${CANONICAL_PATH}" == "\\\\"* ]] ; then
       # CANONICAL_PATH is not of format UNC (network).  Printing it now
@@ -166,7 +169,7 @@ for FILEORPATH in $@ "${EXTRAPATH}"; do
       NETWORK_DRIVE=$(net use $(echo "${CANONICAL_PATH:0:2}") 2>/dev/null | sed -n -r 's/.*\s+(\\\\.*)/\1/gp' | tr -d '\r')
       if [ ! -z "${NETWORK_DRIVE}" ]; then
         CANONICAL_PATH="${NETWORK_DRIVE}${CANONICAL_PATH:2}"
-        [ "${FORMAT_WINDOWS}" == 1 ] && printPath
+        [ "${FORMAT_WINDOWS}" == 1 ] && printPathNormal
       #else
         # Not a network drive, but a local one.  Showing it.
         # Doing nothing
