@@ -20,8 +20,13 @@ JIRA
 
     - List all my opened Jira's.
 
-      assignee = currentUser() AND resolution = Unresolved ORDER BY status, summary, key DESC
+      Based on "resolution" and ordered by status, summary and key:
 
+        assignee = currentUser() AND resolution = Unresolved ORDER BY status, summary, key DESC
+
+      Based on "statusCategory" and ordered by updated:
+
+        assignee = currentUser() AND statusCategory in ("In Progress","To Do") ORDER BY updated DESC
 
     - List all non closed, canceled Jiras.
 
