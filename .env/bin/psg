@@ -47,23 +47,23 @@ IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
 
 GREP_ARGS="${GREP_ARGS}$@" # If you want the number of elements of $@, use $#
 
-if [ "${HD_OS_FAMILY,,}" = "linux" ]; then
+if [[ "${HD_OS_FAMILY,,}" == *"linux"* ]]; then
   #echo "USER       PID  PPID S %MEM %CPU COMMAND"
   PS='ps'
   OUTPUT=`${PS} -e --format "user pid ppid s nice etime %mem %cpu args" --cols ${MAXCOL}`
-elif [ "${HD_OS_FAMILY,,}" = "cygwin" ]; then
+elif [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
   #echo "     UID     PID    PPID TTY     STIME COMMAND"
   PS='procps'
   #OUTPUT=`${PS} -e --format "user pid ppid s etime %mem %cpu args" --cols ${MAXCOL}`
   OUTPUT=`${PS} -e --format "user pid ppid s etime %mem %cpu args"`
-elif [ "${HD_OS_FAMILY}" = "MinGW" ]; then
+elif [[ "${HD_OS_FAMILY,,}" == *"mingw"* ]]; then
   PS='ps'
   OUTPUT=`${PS}`
-elif [ "${HD_OS_FAMILY}" = "Darwin" -o "${HD_OS_FAMILY}" = "AIX" ]; then
+elif [[ "${HD_OS_FAMILY,,}" == *"darwin"* || "${HD_OS_FAMILY,,}" == *"aix"* ]]; then
   #echo "     UID     PID    PPID   C    STIME    TTY  TIME CMD"
   PS='ps'
   OUTPUT=`${PS} -ef`
-elif [ "${HD_OS_FAMILY}" = "Solaris" ]; then
+elif [[ "${HD_OS_FAMILY,,}" == *"solaris"* ]]; then
   # Setting ps to /bin/ps because for Solaris, we want to avoid having the
   # old /usr/ucb/ps being called.
   PS='ps'
