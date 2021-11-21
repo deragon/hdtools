@@ -36,28 +36,39 @@ else
   # Put calls of source files in double quotes, to account for spaces in
   # ${HDENVDIR} (this happens under cygwin).
   hd_source "${HDENVDIR}/sys.gen.noarch.dash"
-  [ "${HD_OS_FAMILY}" = "Linux"  ] && hd_source "${HDENVDIR}/sys.gen.linux.dash"
-  [ "${HD_OS_FAMILY}" = "Cygwin" -o "${HD_OS_FAMILY}" = "MinGW" ] && hd_source "${HDENVDIR}/os/windows/sys.gen.windows.bash"
-  [ "${HD_OS_FAMILY}" = "Cygwin" ] && hd_source "${HDENVDIR}/os/windows/sys.gen.cygwin.bash"
+
+  # Linux include WSL.
+  [[ "${HD_OS_FAMILY}" == *"Linux"* ]] && \
+    hd_source "${HDENVDIR}/sys.gen.linux.dash"
+
+  if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ||
+        "${HD_OS_FAMILY,,}" == *"mingw"*  ]]; then
+    hd_source "${HDENVDIR}/os/windows/sys.gen.cygwin-mingw.bash"
+    if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
+      hd_source "${HDENVDIR}/os/windows/sys.gen.cygwin.bash"
+    fi
+  fi
 
   hd_source "${HDENVDIR}/sys.gen.noarch.bash"
-  [ -r "${HDENVDIR}/personal/env.personal.sh" ] && hd_source "${HDENVDIR}/personal/env.personal.sh"
+  [ -r "${HDENVDIR}/personal/env.personal.sh" ] && \
+    hd_source "${HDENVDIR}/personal/env.personal.sh"
 
-  #echo "\${MACHTYPE}=${MACHTYPE}"
-  case ${MACHTYPE} in
-    *linux*)
-      hd_source "${HDENVDIR}/env.gen.linux.sh"
-      ;;
-    *cygwin*)  # Windows
+  if [[ "${HD_OS_FAMILY,,}" == *"linux"* ]]; then
+    hd_source "${HDENVDIR}/env.gen.linux.sh"
+  fi
+
+  if [[ "${HD_OS_FAMILY,,}" == *"wsl"* ||
+        "${HD_OS_FAMILY,,}" == *"cygwin"* ||
+        "${HD_OS_FAMILY,,}" == *"mingw"*  ]]; then
+    hd_source "${HDENVDIR}/os/windows/env.gen.windows.sh"
+    if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
       hd_source "${HDENVDIR}/os/windows/env.gen.cygwin.sh"
-      ;;
-    *darwin*)  # Mac OS X
-      hd_source "${HDENVDIR}/os/macosx/env.gen.macosx.sh"
-      ;;
-    *aix*)     # IBM AIX
-      hd_source "${HDENVDIR}/os/aix/env.gen.aix.sh"
-      ;;
-  esac
+    fi
+  elif [[ "${HD_OS_FAMILY,,}" == *"darwin"* ]]; then
+    hd_source "${HDENVDIR}/os/macosx/env.gen.macosx.sh"
+  elif [[ "${HD_OS_FAMILY,,}" == *"aix"* ]]; then
+    hd_source "${HDENVDIR}/os/aix/env.gen.aix.sh"
+  fi
 
   # CORPORATION SETTINGS
   # ──────────────────────────────────────────────────────────────────

@@ -126,7 +126,6 @@ alias cdwintemp='cdprint "${WIN_DIR_TEMP}"'
 
 alias cdwindows='cdprint /cygdrive/c/WINDOWS'
 
-add2path PATH "${HDENVDIR}/os/windows/bin"
 add2path PATH "${WIN_DIR_PROGRAMFILES}/Mozilla Firefox"
 add2path PATH "${WIN_DIR_PROGRAMFILES}/WinZip"
 add2path PATH "${WIN_DIR_PROGRAMFILES}/7-Zip"
@@ -138,13 +137,6 @@ add2path PATH "/cygdrive/c/Windows"
 alias ifconfig='ipconfig'
 alias gvim="hdgvim"
 
-classpathToWindows()
-{
-  export CLASSPATH=`"${HDENVDIR}/os/windows/bin/hdlinux2windowspaths" "${CLASSPATH}"`
-}
-exportfunction classpathToWindows
-export CLASSPATH_SEPARATOR=";"
-classpathToWindows
 
 hd_application_run_executable_windows()
 {
@@ -164,36 +156,6 @@ meld()
     "$(cygpath -w "$(readlink -f "${2}")")"
 }
 
-word()
-{
-  hd_application_run_executable_windows MSWORD "Microsoft Word" WINWORD.EXE "$@"
-}
-
-excel()
-{
-  hd_application_run_executable_windows MSEXCEL "Microsoft Excel" EXCEL.EXE "$@"
-}
-
-chrome()
-{
-  # IMPORTANT:  DO NO APPEND '&' AT THE END BECAUSE IT WILL SPAWN A NEW PROCESS
-  #             AND THEREFORE THE VARIABLE HD_APPL_* WILL NOT BE SET.
-  #
-  #             This will cause a long delay each time this function is called,
-  #             instead of only the first time.
-  hd_application_run_executable_windows CHROME "Google Chrome" CHROME.EXE "$@"
-}
-
-
-for letter in {a..z}; do
-  # The aliases are created only if the drives are available.  This is
-  # done to minimize the size of the environment used by not creating
-  # useless aliases.
-  if [ -d "/cygdrive/${letter}" ]; then
-    eval "alias cd${letter}='cdprint /cygdrive/${letter}'"
-    eval "alias ${letter}:='cdprint /cygdrive/${letter}'"
-  fi
-done
 
 # Comment by Hans Deragon (hans@deragon.biz), 2020-04-08 13:50:07 ric
 # Not sure if this is still relevant.  Cygwin sesams to handle UTF-8 pretty well
@@ -217,16 +179,3 @@ fi
 add2path PATH /usr/libexec/git-core
 
 
-# FILE MANAGERS
-# ════════════════════════════════════════════════════════════════════════════
-
-f()
-{
-  DIRECTORY="$1"
-  [ -z "${DIRECTORY}" ] && DIRECTORY="."
-
-  explorer "${DIRECTORY}" &
-}
-exportfunction f
-
-set +x
