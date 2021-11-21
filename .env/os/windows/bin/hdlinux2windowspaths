@@ -69,12 +69,16 @@ winpath_regex=re.compile("^[a-zA-Z]\:.*")
 newPaths=""
 paths=paths.replace(":/", ";/").replace(".:\\", ".;\\")
 for path in paths.split(";"):
-  # Sometimes, human error introduces two consecutive ";;", causing 'path' to
-  # have zero character.  A valid path is a minimum 1 character, thus the
-  # reason why we check that the length is > 0.
-  if len(path) > 0:
-    path=os.popen("cygpath -w '" + path + "'").read()
-    newPaths=newPaths+";"+path.strip()
+    # Sometimes, human error introduces two consecutive ";;", causing 'path'
+    # to have zero character.  A valid path is a minimum 1 character, thus the
+    # reason why we check that the length is > 0.
+    if len(path) > 0:
+        if "wsl" in os.environ["HD_OS_FAMILY"].lower():
+            cmd="wslpath -a -w"
+        else:
+            cmd="cygpath -w"
+        path=os.popen(cmd + " '" + path + "' 2>&1").read()
+        newPaths=newPaths+";"+path.strip()
 
 newPaths=newPaths[1:]
 print(newPaths)
