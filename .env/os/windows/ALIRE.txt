@@ -13,8 +13,7 @@ Commande qui marche sous un raccourci:
 MESSAGE TOO LONG
 ======================================================================
 
-  De http://archive.netbsd.se/?ml=cygwin&a=2006-03&t=1881882
-  voici la raison du message d'erreur:
+  From:  https://cygwin.cygwin.narkive.com/kQQJ81MO/resource-temporarily-unavailable#post8
 
     In my case I tracked the problem down to a large environment block.
     In windows CreateProcessAsUser you can only pass in an environment
