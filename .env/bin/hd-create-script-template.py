@@ -17,6 +17,7 @@ import sys
 import logging
 
 from datetime import datetime
+import time
 
 import argparse
 
@@ -384,6 +385,9 @@ def mainwrapper():
 
 
 def main():
+
+    iso8601Human    = time.strftime("%Y-%m-%d %H:%M:%S")
+    iso8601Filename = time.strftime("%Y%m%dT%H%M%S")
 
     # completedProcess = subprocess.run(["ls", "-l", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
     # print(completedProcess.stdout.decode('utf-8').rstrip())
