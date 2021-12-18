@@ -27,10 +27,11 @@ usage()
   echo -e "
 \e[1;37;42m SAFE \e[0m  Show the earliest or latest DIRECTORIES in descending orders of the date of their last modification.
 
-Usage:  ${SCRIPT_NAME} [-l|-e] [-f] [-n <# of DIRECTORIES>] [-h] <directory>+
+Usage:  ${SCRIPT_NAME} [-l|-e] [-f] [-n <# of DIRECTORIES>] [-m <maxdepth>] [-h] <directory>+
 
   -l  latest (default)
   -e  earliest
+  -m  <maxdepth> (default ∞)
   -f  Show only file names, one per line.
   -n  Number of DIRECTORIES to show (default 20)
       Set to 0 for NO LIMITS.
@@ -46,15 +47,17 @@ Usage:  ${SCRIPT_NAME} [-l|-e] [-f] [-n <# of DIRECTORIES>] [-h] <directory>+
 NUMBER="20"
 TYPE="latest"
 FILENAMES_ONLY_FILTER=""
+MAXDEPTH="255"
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "lfen:h" OPTCMD; do
+while getopts "lfen:m:h" OPTCMD; do
   case "${OPTCMD}" in
     "l")    TYPE="latest";;
     "f")    FILENAMES_ONLY_FILTER="| cut -d ' ' -f4-";;
     "e")    TYPE="earliest";;
     "n")    NUMBER="${OPTARG}";;
+    "m")    MAXDEPTH="${OPTARG}";;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -97,4 +100,4 @@ else
   HEADTAIL_CMD="tail"
 fi
 
-eval "find \"${DIRECTORIES[@]}\" -type f -print0 | xargs -0 stat --format '%Y :%y %n' | sort -nr | cut -d: -f2- | ${HEADTAIL_CMD} -n "${NUMBER}" ${FILENAMES_ONLY_FILTER}"
+eval "find \"${DIRECTORIES[@]}\" -maxdepth ${MAXDEPTH} -type f -print0 | xargs -0 stat --format '%Y :%y %n' | sort -nr | cut -d: -f2- | ${HEADTAIL_CMD} -n "${NUMBER}" ${FILENAMES_ONLY_FILTER}"
