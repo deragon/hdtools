@@ -728,6 +728,17 @@ EXCEPTIONS
     stacktrace = traceback.format_exc()
 
 
+  CREATE YOUR OWN EXCEPTION AND RAISE (THROW) IT
+  ────────────────────────────────────────────────────────────────────────────
+
+    class MyException(Exception):
+        pass
+
+    raise MyException("My hovercraft is full of eels")
+
+    For more information and how to overide default behavior of "Exception",
+    see:  https://stackoverflow.com/questions/1319615/proper-way-to-declare-custom-exceptions-in-modern-python
+
 
 EFFICIENCY / PERFORMANCE
 ══════════════════════════════════════════════════════════════════════════════
