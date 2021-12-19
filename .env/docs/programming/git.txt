@@ -847,7 +847,14 @@ DIFF
 
   git log -p -- <file>  # Show diffs and log of ALL commits for a specific file.
 
-  Between branches
+
+  Diff between file versions
+  ────────────────────────────────────────────────────────────────────────────
+
+    git diff "${COMMITID1}" "${COMMITID2}" "${FILE}"
+
+
+  Diff between branches
   ────────────────────────────────────────────────────────────────────────────
 
       git diff <branch #1>..<branch #2>  # All diffs
