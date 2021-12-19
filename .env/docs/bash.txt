@@ -259,7 +259,7 @@ SED
       (équivalent de perl -ne 'print if s/...')
 
       sed -rn "s/<text to replace>(group1)/<replacment text>\1/gp"`
-            ↑ Do not print                            ↑ print if match
+            ↑ Do not print                                      ↑ print if match
 
     - Sed on content of a variable, not from a file nor stdin:
 
@@ -1373,9 +1373,11 @@ MISC USEFUL STUFF
     will be set to the moment the touch command is executed.
 
     echo "This is a test" >/tmp/example
-    touch -t 202102012105 /tmp/example; stat /tmp/example
+    # Timestamp below must not contains seconds. Example:  202102012105
+    touch -t "$(date "+%Y%m%d%H%M")" /tmp/example; stat /tmp/example
     rm /tmp/example
 
+    TIMESTAMP_FORMAT_HUMAN="%Y%m%d%H%M
   - Tool to change timestamps, including ctime:
 
       Gnu stroke:  http://stroke.sourceforge.net/
