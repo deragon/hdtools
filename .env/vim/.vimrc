@@ -1030,7 +1030,8 @@ let g:DiffUnit='Char'
 "       screen.  'winpos' must be always wrapped around a 'if
 "       has("gui_running")' statement.
 if has("gui_running")
-  winpos 0 999
+  "winpos 0 999
+  winpos 0 0
 endif
 
 "command! PrettyJson execute "!C:\\cygwin64\\bin\\python3.6m.exe -m json.tool"
