@@ -28,6 +28,15 @@ JIRA
 
         assignee = currentUser() AND statusCategory in ("In Progress","To Do") ORDER BY updated DESC
 
+      Based on "resolution" and "statusCategory", and ordered by status, summary and key:
+
+        assignee = currentUser() AND resolution = Unresolved and statusCategory not in ("Done") ORDER BY status, summary, key DESC
+
+      WARNING:
+
+        statusCategory is case sensitive.  Use 'Done'; 'DONE' or 'done' will fail.
+
+
     - List all non closed, canceled Jiras.
 
       project = "<project id here>" AND status not in (done, canceled) ORDER BY status, summary, key DESC
