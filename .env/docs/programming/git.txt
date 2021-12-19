@@ -422,6 +422,41 @@ COMMITS
 MERGE / REBASE
 ══════════════════════════════════════════════════════════════════════════════
 
+  Azure DevOps options
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://stackoverflow.com/questions/68999790/azure-devops-merge-type-for-release-branch
+
+    Order in preference
+
+      1. Rebase and fast-forward
+      2. Semi-linear merge
+      3. Merge (no fast-forward)
+      4. Squash commit (Never use that...)
+
+    Merge (no fast-forward)
+    Squash commit (Never use that...)
+
+      Squash merging is a merge option that allows you to condense the Git
+      history of topic branches when you complete a pull request. Instead of
+      each commit on the topic branch being added to the history of the
+      default branch, a squash merge adds all the file changes to a single new
+      commit on the default branch.
+
+      A simple way to think about this is that squash merge gives you just the
+      file changes, and a regular merge gives you the file changes and the
+      commit history.
+
+      Ref:  https://docs.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash?view=azure-devops
+
+    Rebase and fast-forward
+    Semi-linear merge
+
+      Rebase target branch onto feature branch, then merge into target branch.
+      There is still a Pull Request Commit added to the target branch.
+      https://stackoverflow.com/questions/59714347/semi-linear-merge/63621528#63621528
+
+
   Rebase (best)
   ────────────────────────────────────────────────────────────────────────────
 
