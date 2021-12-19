@@ -516,6 +516,14 @@ SCRIPT STARTUP
 DATE & TIMESTAMP
 ══════════════════════════════════════════════════════════════════════════════
 
+  DATE / TIMESTAMP / ISO-8601
+  ────────────────────────────────────────────────────────────────────────────
+
+    import time
+    iso8601Human    = time.strftime("%Y-%m-%d %H:%M:%S")
+    iso8601Filename = time.strftime("%Y%m%dT%H%M%S")
+
+
   PARSE DATE
   ────────────────────────────────────────────────────────────────────────────
 
@@ -557,6 +565,15 @@ DATE & TIMESTAMP
 
 
 
+SLEEP
+══════════════════════════════════════════════════════════════════════════════
+
+    import time
+    time.sleep(x) # in seconds
+
+
+
+
 ARGUMENTS (GETOPT ALTERNATIVE)
 ══════════════════════════════════════════════════════════════════════════════
 
@@ -582,14 +599,6 @@ else:
 
 # Print to file or stdout
 print >>outputFD, "Something to print here."
-
-
-
-SLEEP
-══════════════════════════════════════════════════════════════════════════════
-
-  import time
-  time.sleep(x) # in seconds
 
 
 
@@ -670,37 +679,18 @@ USEFULL COMMANDS
 
 
 
-DATE
-══════════════════════════════════════════════════════════════════════════════
-
-  now=datetime.now()
-
-  # Format YYYY-MM-DD
-  iso8601today = str(now.year) + "-" + \
-                 "{0:02}".format(now.month) + "-" + \
-                 "{0:02}".format(now.day)
-
-  # Format YYYY-MM-DD HH:MM:SS
-  iso8601today = str(now.year) + "-" + \
-                 "{0:02}".format(now.month) + "-" + \
-                 "{0:02}".format(now.day) + " " + \
-                 "{0:02}".format(now.hour) + ":" + \
-                 "{0:02}".format(now.minute) + ":" + \
-                 "{0:02}".format(now.second)
-
-
 DEBUG / LIST OF FUNCTIONS OF A MODULE/CLASS
 ══════════════════════════════════════════════════════════════════════════════
 
-  python -m trace --trace ./script.py >trace.out 2>&1
+    python -m trace --trace ./script.py >trace.out 2>&1
 
-  # List all errno available
-  import errno
-  import inspect
-  inspect.getmembers(errno)
+    # List all errno available
+    import errno
+    import inspect
+    inspect.getmembers(errno)
 
-  for member in inspect.getmembers(logger):
-      print(member)
+    for member in inspect.getmembers(logger):
+        print(member)
 
 
 EXCEPTIONS
