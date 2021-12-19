@@ -62,7 +62,14 @@ COMMANDES
 
   Update:         git remote update
 
+  Apply only a section/hunk, number of lines of a file to the staging area:
+
+    git add -p <file>
+
   Undo/Revert:
+
+      git restore --staged .  # Unstage all staged changes.
+      git checkout .          # Recursively undo local changes and revert to files found in current branch.
 
     To undo a reset:
 
