@@ -1,5 +1,48 @@
-AWS - AMAZONE WEB SERVICES
+AWS - AMAZON WEB SERVICES
+
+
+AWS S3
 ══════════════════════════════════════════════════════════════════════════════
+
+  MISCELLANEOUS
+  ────────────────────────────────────────────────────────────────────────────
+
+    - All S3 buckets of the world share the same namespace.  Thus, if one
+      creates a S3 bucket named 'tmp' in their account, nobody
+      else in the world can create a bucket name 'tmp' in their own account.
+
+      This also holds true if you have different AWS accounts for your
+      environments DEV, PRD, etc...
+
+      As a good practice, you can addyour AWS account number as a suffix to
+      the name to avoid any collision.  Example:  'tmp-123456789012'.
+
+
+
+AWS CLI
+══════════════════════════════════════════════════════════════════════════════
+
+
+  aws s3 cp
+  ────────────────────────────────────────────────────────────────────────────
+
+    Copying from one s3 bucket to another s3 bucket
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      - Does not involve any transfer locally to the machine where the
+        'aws s3 cp' command was executed.
+
+      - Tags found on the source object are preserved/copied to the
+        destinationn object.
+
+
+AWS CLOUDFORMATION
+══════════════════════════════════════════════════════════════════════════════
+
+  - Descriptions of resources must be a static String and never can be
+    built from functions such as !Join or !Ref.
+
+      https://stackoverflow.com/questions/39678784/validationerror-when-calling-the-createstack-operation-template-format-error
 
 
 
