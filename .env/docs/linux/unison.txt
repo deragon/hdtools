@@ -87,6 +87,16 @@ TROUBLESHOOTING
     that's causing the problem (probably the most recent one). In a pinch,
     just delete all of the archive files and start over.
 
+
+  END_OF_FILE EXCEPTION RAISED IN LOADING ARCHIVE (THIS INDICATES A BUG!)
+  ────────────────────────────────────────────────────────────────────────────
+
+    When that happened, one of the archive files has a size of 0.  Simply
+    delete the archive on both the server and laptop and resync.
+
+      2021-12-25
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
