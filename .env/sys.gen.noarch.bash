@@ -423,7 +423,7 @@ LS_COLORS="${LS_COLORS}:*.deb=0;35:*.rpm=0;35:*.pkg=0;35:*.jar=0;35:*.war=0;35:*
 LS_COLORS="${LS_COLORS}:*.php=1;32:*.py=1;32:*.ph=1;32:*.h=1;32:*.c=1;32:*.cc=1;32:*.cpp=1;32:*.pas=1;32:*.asm=1;32:*.bas=1;32:*.java=1;32:*.groovy=1;32:*.scala=1;32:*.jsp=1;32:*.js=1;32:*.vim=1;32"
 LS_COLORS="${LS_COLORS}:*.pif=1;34:*.sys=1;34"
 LS_COLORS="${LS_COLORS}:*.gif=1;36:*.jpg=1;36:*.ras=1;36:*.cdr=1;36:*.bmp=1;36:*.pcx=1;36:*.eps=1;36:*.cgm=1;36:*.svg=1;36:*.svgz=1;36:*.png=1;36:*.avi=1;36:*.xcf=1;36:*.pbm=1;36:*.pnm=1;36:*.mp4=1;36:*.mkv=1;36:*.webm=1;36::*.ico=1;36"
-LS_COLORS="${LS_COLORS}:*.ogg=2;36:*.mp3=2;36:*.3gp=2;36:*.flv=2;36"
+LS_COLORS="${LS_COLORS}:*.ogg=2;36:*.mp3=2;36:*.3gp=2;36:*.flv=2;36:*.wav=2;36"
 LS_COLORS="${LS_COLORS}:*.bak=31:*.tmp=31:*.org=31:*.orig=31:*.obsolete=31:*.class=1;31"
 LS_COLORS="${LS_COLORS}:di=1;37:ex=3;33:*.bat=3;33:*.com=3;33:*.exe=3;33"
 LS_COLORS="${LS_COLORS}:*.in=1;33:*.sh=1;33:*.bash=1;33:*.dash=1;33:*.csh=1;33:*.pig=1;33:*.css=1;33:*.sgm=1;33:*.dsl=1;33:*.rtf=1;33:*.sgml=1;33:*.shtml=1;33:*.html=1;33:*.xhtml=1;33:*.htm=1;33:*.php=1;33:*.faq=1;33:*.pdf.bz2=1;33:*.pdf=1;33:*.ps=1;33:*.properties=1;33:*.xml=1;33:*.txt=1;33:*.eml=1;33:*.cfg=1;33:*.conf=1;33:*.rpmnew=1;33:*.rpmsave=1;33:*.xls=1;33:*.xlsx=1;33:*.xlsm=1;33:*.doc=1;33:*.docx=1;33:*.vsd=1;33:*.vsdx=1;33:*.pps=133;:*.ppsx=1;33:*.ppt=1;33:*.pptx=1;33:*.ini=1;33:*.me=1;33:*.w51=1;33:*.sam=1;33:*.frm=1;33:*.sxw=1;33:*.sxc=1;33:*.odt=1;33:*.ods=1;33:*.odp=1;33:*.odg=1;33:*.docbook=1;33:*.sql=1;33:*.hql=1;33:*.out=1;33:*.lst=1;33:*.ldif=1;33:*.log=1;33:*.csv=1;33:*.tsv=1;33:*.md=1;33:*.json=1;33:*.yaml=1;33:*.yml=1;33:*.avsc=1;33:*.avro=1;33:*.epub=1;33:*.mobi=1;33:*.iml=1;33:*.rst=1;33:*.xopp=1;33:*.tf=1;33:*.tfvars=1;33"
