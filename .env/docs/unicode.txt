@@ -532,6 +532,39 @@ FACES
 
   (˙ ͜ʟ˙ )
 
+
+CHRISTMAS
+══════════════════════════════════════════════════════════════════════════════
+
+  🎄🎶⛄
+  🎅 Santa Claus
+  🤶 Mrs. Claus
+  🔥 Fire
+  🎄 Christmas Tree
+  🎁 Wrapped Gift
+  🧦 Socks
+  🔔 Bell
+  🎶 Musical Notes
+  🕯️ Candle
+  🍪 Cookie
+  🥛 Glass of Milk
+  🌟 Glowing Star
+  🦌 Deer
+  ❄️  Snowflake
+  ☃️  Snowman
+  ⛄ Snowman Without Snow
+  👼 Baby Angel
+  🧑 Mx Claus
+  🧝 Elf
+  🧝 Man Elf
+  🧝 Woman Elf
+  👪 Family
+  🍷 Wine Glass
+  🍴 Fork and Knife
+  ⛪ Church
+  🛐 Place of Worship
+  ✝️ Latin Cross
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
