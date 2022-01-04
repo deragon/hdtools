@@ -234,14 +234,14 @@ if (( $? == 0 )); then
     unset \
       GIT_AUTHOR_DATE \
       GIT_COMMITTER_DATE \
-      HD_GIT_DATE_FAKE_OFFSET \
+      HD_GIT_DATE_OFFSET \
       GIT_BACKUP_USERNAME \
       GIT_BACKUP_EMAIL
 
     hdgconfigprint
   }
 
-  hdgfakerestore()
+  hdgrestore()
   {
     git config --global user.name "${GIT_BACKUP_USERNAME}"
     git config --global user.email "${GIT_BACKUP_EMAIL}"
@@ -249,6 +249,30 @@ if (( $? == 0 )); then
     hdgvarclear
   }
 
+  hdgdate()
+  {
+    if [ -z "${HD_GIT_DATE_OFFSET}" -o "$1" == "-r" ]; then
+      echo -en "Enter offset (in hours):  "
+      read HD_GIT_DATE_OFFSET
+      echo
+    fi
+
+    if [ -z "${GIT_BACKUP_USERNAME}" ]; then
+      GIT_BACKUP_USERNAME=$(git config --global user.name)
+    fi
+    git config --global user.name "Hans Deragon"
+
+    if [ -z "${GIT_BACKUP_EMAIL}" ]; then
+      GIT_BACKUP_EMAIL=$(git config --global user.email)
+    fi
+    git config --global user.email hans@deragon.biz
+
+    export GIT_AUTHOR_DATE=$(date -d "+${HD_GIT_DATE_OFFSET} hours" +"%Y-%m-%d %H:%M:%S%z")
+    export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"
+    export HD_GIT_DATE_OFFSET
+
+    hdgconfigprint
+  }
 fi
 
 
