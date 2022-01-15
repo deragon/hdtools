@@ -29,6 +29,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   scan                       -> balayage / analyse
   software release           -> publication de logiciel
   workaround                 -> contournement / solution de contournement
+  revert                     -> Retour / revenir
   workflow                   -> flux de travail
   business data              -> donnée métier
   out of scope               -> hors [sujet|champ|portée], en-dehors du périmètre
