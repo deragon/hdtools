@@ -224,8 +224,6 @@ svnl() { svn log $* | less; }
 #   ────────────────────────────────────────────────────────────────────────────
 which git >/dev/null 2>&1
 if (( $? == 0 )); then
-  alias hdglog='git log --name-only'
-  #alias hdglog='git log --stat'
   alias hdgpull='git pull --all --prune'
   alias hdgstatus='git status --untracked-files=no'
 
