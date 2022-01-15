@@ -723,6 +723,8 @@ LOGS / COMMENTS
     git log --author="deragon" --all # List only logs related to the user.
       ┗▶ See:  https://stackoverflow.com/questions/4259996/how-can-i-view-a-git-log-of-just-one-users-commits
 
+    git log --folllow <file> # For renamed files, show all logs including prior rename.
+
 
   Important consideration when writing logs / comments
   ────────────────────────────────────────────────────────────────────────────
