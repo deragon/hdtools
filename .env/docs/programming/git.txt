@@ -68,7 +68,7 @@ COMMANDES
 
   Undo/Revert:
 
-      git restore --staged .  # Unstage all staged changes.
+      git restore --staged .  # SAFE.  Unstage all staged changes.  Code not reverted.
       git checkout .          # Recursively undo local changes and revert to files found in current branch.
 
     To undo a reset:
@@ -79,10 +79,10 @@ COMMANDES
       git checkout HEAD -- <file>   # Undo one file.
       git reset HEAD@{1}            # Another way, but less hard.
 
-    Unstage:  git reset [<file>]  # If no file provide, all files are
+    Unstage:  git reset [<file>]  # SAFE.  If no file provide, all files are
                                   # unstaged.  However, their changes remain;
                                   # the files are not reverted to the version
-                                  # stored in the repository.  SAFE
+                                  # stored in the repository.
 
               git checkout <file>
 
