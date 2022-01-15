@@ -12,4 +12,11 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-git log --name-status
+OPTIONS="--name-status"  # Show filename.
+
+if [ ! -z "${@}" ]; then
+  # If file has been renamed, follow its history.
+  OPTIONS="${OPTIONS} --follow"
+fi
+
+git log ${OPTIONS} $@
