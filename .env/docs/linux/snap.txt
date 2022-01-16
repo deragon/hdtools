@@ -4,6 +4,7 @@ COMMANDS
   Read:  https://snapcraft.io/docs/keeping-snaps-up-to-date
 
   - snap list
+  - sudo snap refresh # Update Snaps.
 
 
 
