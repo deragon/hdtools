@@ -1,0 +1,302 @@
+SAFEST KEY
+══════════════════════════════════════════════════════════════════════════════
+
+  Why not use larger cipher keys?
+
+    http://security.stackexchange.com/questions/25375/why-not-use-larger-cipher-keys
+
+    With every doubling of the RSA key length, decryption is 6-7 times times
+    slower.
+
+  # Slow for file transfers
+  ssh-keygen -b 4096 -t rsa
+
+  ssh-keygen -b 4096 -t rsa -N "" -f "${HOME}/.ssh/id_rsa_nopass"
+  cat "${HOME}/.ssh/id_rsa_nopass.pub"
+
+  From:  http://security.stackexchange.com/questions/5096/rsa-vs-dsa-for-ssh-authentication-keys
+
+  DSA est moins sécure, et dois être 1024 bits.
+
+
+  Usage avec rsync:
+
+    rsync -e "ssh -i ${HOME}/.ssh/id_rsa_nopass -o GSSAPIAuthentication=no -l <dst_userid>"
+
+
+
+TUNNELS
+══════════════════════════════════════════════════════════════════════════════
+
+  BYPASSING SSH RESTRICTIONS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Lets say that from your local laptop, you cannot connect to serverB using
+    ssh.  However, you can connect to serverA using ssh, and once on it, you
+    can ssh again to serverB.
+
+    To create a tunnel that would allow you to ssh directly to serverB from
+    your laptop, run the following command:
+
+      ssh -L 9022:serverB:22 serverA  # Create SSH Tunnel.
+        -N  # Add -N if you do not want a shell session on serverA
+
+      ssh -p 9022 localhost  # Will connect to ServerB
+
+
+
+  TUNNEL TO A PORT LISTENING ONLY TO LOCALHOST
+  ────────────────────────────────────────────────────────────────────────────
+
+    ssh -L 9090:127.0.0.01:9090 root@<somehost>
+                ^^^^^^^^^^
+
+
+  REVERSE SSH TUNNEL
+  ────────────────────────────────────────────────────────────────────────────
+
+    Make your local station available to a server which does not have
+    access.
+
+    From your laptop under Cygwin, run:
+
+      /usr/bin/ssh -Y -f -N -T \
+        -R7999:jira-scm.company.com:7999 ${REMOTE_USER}@${REMOTE_SERVER}
+
+    Then, from the remote server, you can access BitBucket using
+    localhost:7999.
+
+    See:  https://unix.stackexchange.com/questions/46235/how-does-reverse-ssh-tunneling-work
+
+
+  TROUBLESHOOTING
+  ────────────────────────────────────────────────────────────────────────────
+
+    channel 3: open failed: administratively prohibited: open failed
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Solution:
+
+        vim /etc/ssh/sshd_config
+
+          # To prevent error 'open failed: administratively prohibited: open failed'
+          AllowTcpForwarding yes
+          PermitTunnel yes
+
+
+
+AUTHORIZED_KEYS
+══════════════════════════════════════════════════════════════════════════════
+
+  From http://www.eng.cam.ac.uk/help/jpmg/ssh/authorized_keys_howto.html
+
+    Host access list
+
+      If the options phrase at the beginning of a line contains the
+      keyword from="string" this restricts the use of the key on that
+      line to sessions that originate from hosts that match "string".
+      Examples might be
+
+         from="trusted.eng.cam.ac.uk"
+         from="*.eng.cam.ac.uk,!untrusted.eng.cam.ac.uk"
+         from="tw?00.eng.cam.ac.uk"
+
+      The hostname used will need to be the hostname reported when the
+      IP (network) address of the connecting machine is looked up in the
+      DNS.  The * wildcard matches one or more characters, while the ?
+      wildcard matches a single character. If the connecting hostname
+      matches an entry prefixed by '!', then it will be rejected.
+
+    Forced command
+
+      If the options phrase at the beginning of a line contains the
+      keyword command="string", then any ssh connection that
+      authenticates using that particular key will only run the command
+      specified, even if the command line it was given specified another
+      command.
+
+    Other options
+
+      Various ssh facilities may be suppressed by adding the following
+      options to the options phrase at the beginning of a line:
+
+         no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty
+
+      When heavily restricting an ssh key in circumstances where entirely
+      automated remote connections are desired, it is generally a good
+      idea to apply all of these options unless the command being run
+      actually needs one of these facilities.
+
+
+
+AUTHORIZED_KEYS2 DEPRECATED
+══════════════════════════════════════════════════════════════════════════════
+
+  From http://sial.org/howto/openssh/#s6
+
+  The authorized_keys2 file has been deprecated since the OpenSSH 3.0
+  release (2001). Merge any keys in the authorized_keys2 file into
+  authorized_keys, unless still running an ancient OpenSSH version:x
+
+
+
+AUTOMATE INTERACTIVE PASSWORD
+══════════════════════════════════════════════════════════════════════════════
+
+  If you cannot make use of a SSH key but have the password, you
+  can use sshpass to automate the login the following way:
+
+    sshpass -f "${HOME}/.ssh/passwordfile.txt" sftp user@sftp.server.com
+
+  It works for 'ssh' and 'sftp'.
+
+  "${HOME}/.ssh/passwordfile.txt" contains only one line with the password.
+
+  It can actually be anywhere on the file system (does not need to be under
+  ~/.ssh).
+
+  Though not necessary, it is recommended to perform a chmod 400 on the
+  password file to be safe.
+
+
+
+SERVER
+══════════════════════════════════════════════════════════════════════════════
+
+  To restrict login from only a limited set of users:
+
+  In /etc/ssh/sshd_config:
+
+    PermitRootLogin no
+    AllowUsers <userid#1> <userid#2> <userid#3> ...
+
+
+  START A LOCAL SERVER (LIKE UNDER CYGWIN ON WINDOWS)
+  ────────────────────────────────────────────────────────────────────────────
+
+    - Install the sshd package
+
+    - Setup sshd configuration and generate keys with
+
+      ssh-host-config --yes
+
+    - Run sshd on a different port, in debuging mode:
+
+      /usr/sbin/sshd -d -p 10022
+
+
+
+BYPASS COMPANY RESTRICTION USING FIREFOX, SSH DYNAMIC PORT FORWARDING AND PROXY
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding#Dynamic_Port_Forwarding
+
+  Dynamic port forwarding turns your SSH client into a SOCKS proxy server.
+  SOCKS is a little-known but widely-implemented protocol for programs to
+  request any Internet connection through a proxy server. Each program that
+  uses the proxy server needs to be configured specifically, and reconfigured
+  when you stop using the proxy server.
+
+  For example, say you wanted Firefox to connect to every web page through
+  your SSH server. First you would use dynamic port forwarding with the
+  default SOCKS port:
+
+  ssh -C -D 1080 laptop
+
+  The -D option specifies dynamic port forwarding. 1080 is the standard SOCKS
+  port. Although you can use any port number, some programs will only work if
+  you use 1080. -C enables compression, which speeds the tunnel up when
+  proxying mainly text-based information (like web browsing), but can slow it
+  down when proxying binary information (like downloading files).
+
+  Next you would tell Firefox to use your proxy:
+
+  go to Edit -> Preferences -> Advanced -> Network -> Connection -> Settings...
+
+  - check "Manual proxy configuration"
+  - make sure "Use this proxy server for all protocols" is cleared
+  - clear "HTTP Proxy", "SSL Proxy", "FTP Proxy", and "Gopher Proxy" fields
+  - enter "127.0.0.1" for "SOCKS Host"
+  - enter "1080" (or whatever port you chose) for Port.
+
+  You can also set Firefox to use the DNS through that proxy, so even your DNS
+  lookups are secure:
+
+  - Type in about:config in the Firefox address bar
+  - Find the key called "network.proxy.socks_remote_dns" and set it to true
+
+  The SOCKS proxy will stop working when you close your SSH session. You will
+  need to change these settings back to normal in order for Firefox to work
+  again.
+
+  To make other programs use your SSH proxy server, you will need to configure
+  each program in a similar way.
+
+
+
+OPTIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  - To avoid the "The authenticity of host '<somehost> (<some ip>)' can't be established." question and have the host
+    added automatically to ~/.ssh/known_hosts, connect with:
+
+    ssh -o 'StrictHostKeyChecking=no' root@<somehost> # No host checking
+
+  - Escape ssh session.
+
+    ~.  <- to quit ssh session.
+
+  - ssh -o PubkeyAuthentication=no ${USER}@${HOST}  # Force use of password, no ssh key.
+    or
+    ssh -o PreferredAuthentications=keyboard-interactive ${USER}@${HOST}  # Force use of password, no ssh key.
+
+
+
+MENU
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://unix.stackexchange.com/questions/86161/what-do-the-channel-numbers-in-ssh-error-message-refer-to
+
+  What are my active channels?
+  If you have an active ssh connection you can use the following key combination to get help:
+
+  Shift+~ followed by Shift+?
+
+  $ ~?
+  Supported escape sequences:
+    ~.  - terminate connection (and any multiplexed sessions)
+    ~B  - send a BREAK to the remote system
+    ~C  - open a command line
+    ~R  - Request rekey (SSH protocol 2 only)
+    ~^Z - suspend ssh
+    ~#  - list forwarded connections
+    ~&  - background ssh (when waiting for connections to terminate)
+    ~?  - this message
+    ~~  - send the escape character by typing it twice
+  (Note that escapes are only recognized immediately after newline.)
+  debug2: channel 2: written 480 to efd 8
+  You can then use this key combination to get a list of the active channels:
+
+  Shift+~ followed by Shift+#
+
+
+
+PUTTY
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://superuser.com/questions/232362/how-to-convert-ppk-key-to-openssh-key-under-linux
+
+  puttygen id_rsa.ppk -O private-openssh -o id_rsa     # Convert ppk to OpenSSH private key
+  puttygen id_rsa.ppk -O public-openssh  -o id_rsa.pub # Convert ppk to OpenSSH public key
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
