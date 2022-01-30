@@ -328,7 +328,20 @@ ssh()
   [ -z "${TITLE}" ] && TITLE=`echo "${SSH_ARGS[*]}$" | perl -pe "s%(\S+)@(\S+)%\1 - \2%g"`
 
   hd_term_title "${TITLE}"
-  /usr/bin/ssh -Y "${SSH_ARGS[@]}"
+
+
+  # Using XMODIFIERS to signal that HD (Hans Deragon) is connecting.
+  #
+  # This variable is 99% of the time accepted by the sshd server.  On the
+  # server, search for 'AcceptEnv' in /etc/ssh/sshd_config for the list of
+  # variables that are allowed to be passed.
+  #
+  # See:  https://superuser.com/questions/163167/when-sshing-how-can-i-set-an-environment-variable-on-the-server-that-changes-f
+
+  XMODIFIERS_BACKUP="${XMODIFIERS}"
+  export XMODIFIERS="HDCONNECTION"
+  /usr/bin/ssh -o SendEnv="XMODIFIERS" -Y "${SSH_ARGS[@]}"
+  XMODIFIERS="${XMODIFIERS_BACKUP}"
   hd_term_title_auto        # Restore terminal title.
   hd_term_color_bg          # Restore terminal color background.
 }

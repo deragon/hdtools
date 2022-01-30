@@ -36,8 +36,7 @@
 #   # Alias pour charger l'environnement de Hans Deragon.  N'affecte en rien
 #   # l'environnement s'il n'est pas appelé.
 #   alias gohd="source /home/"*dera"*"/.hans.deragon/.corp-"*"/gohd"
-#   [ "$(echo "$(host ${SSH_CLIENT/ */})" | sed -E 's/.*(vl[^\.]+).*/\1/g')" = "<hostname to match>" ] && gohd
-
+#   echo "$(host ${SSH_CLIENT/ */})|${XMODIFIERS}" | egrep -qE '(HDCONNECTION|<laptop hostname>|<ip adress>)' && gohd
 
 
 # FUNCTIONS
