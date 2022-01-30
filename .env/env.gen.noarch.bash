@@ -203,12 +203,6 @@ alias hdresetscrollbar='tput rmcup'
 
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Docker
-hddockerssh() { docker exec -it "${1}" /bin/bash; }; exportfunction hddockerssh
-
-
-
 # Configuration management
 # ══════════════════════════════════════════════════════════════════════════════
 #
