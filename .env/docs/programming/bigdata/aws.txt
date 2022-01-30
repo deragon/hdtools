@@ -49,6 +49,21 @@ AWS CLOUDFORMATION
   - Understanding aws cloudformation !Sub syntax
       https://www.fischco.org/technica/2017/cloud-formation-sub/ 
 
+
+
+AWS CLOUDWATCH
+══════════════════════════════════════════════════════════════════════════════
+
+  Log format
+  ────────────────────────────────────────────────────────────────────────────
+
+    - If a log contains a JSON in a single line, the CloudWatch interface
+      will render the json pretty and show it on multiple lines, easily
+
+      Therefor, it is highly recommended to express logs as JSON.
+
+
+
 COÛTS / COSTS
 ══════════════════════════════════════════════════════════════════════════════
 
