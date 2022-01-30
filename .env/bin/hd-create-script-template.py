@@ -258,6 +258,22 @@ for file in args.files:
             # Thus, we load everything since it makes things easier.
             text="".join(fd.readlines())
 
+    # At this point, 'text' contains all the content of the file, each line
+    # separated with a newline.  Be aware, too, that a newline can consist of
+    # a linefeed (\n), a carriage-return (\r), or a carriage-return+linefeed
+    # (\r\n).
+
+    # Searching for lines that match the given regular expression.  WARNING:
+    # In multiline mode, ^ matches the position immediately following a
+    # newline and $ matches the position immediately preceding a newline, NOT
+    # THE NEWLINE ITSELF.
+    #
+    # See:  https://stackoverflow.com/questions/587345/regular-expression-matching-a-multiline-block-of-text
+    pattern = re.compile(r"^\s+Name:\s+(\w+).*$", re.MULTILINE)
+    for matches in pattern.finditer(text):
+         data=matches.group(1)
+         logger.info(">>" + str(data)+ "<<")
+
 
 # Snippet to print over a line the index we are at.
 # import curses
