@@ -36,6 +36,7 @@ AWS CLI
         destinationn object.
 
 
+
 AWS CLOUDFORMATION
 ══════════════════════════════════════════════════════════════════════════════
 
@@ -45,6 +46,8 @@ AWS CLOUDFORMATION
       https://stackoverflow.com/questions/39678784/validationerror-when-calling-the-createstack-operation-template-format-error
 
 
+  - Understanding aws cloudformation !Sub syntax
+      https://www.fischco.org/technica/2017/cloud-formation-sub/ 
 
 COÛTS / COSTS
 ══════════════════════════════════════════════════════════════════════════════
