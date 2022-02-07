@@ -89,13 +89,12 @@ cmd = [ executable ] + finalArgs
 
 if "gvim" in executable.lower() and display != None:
     # 'Popen' is used intead of 'run' because 'Popen' performs a fork and thus
-    # allows this Python instance to end.
+    # allows this Python instance to end quickly.
     if os.fork() != 0:
         # Parent process must die, to un-hook the terminal.
         sys.exit(0)
 
-    # We are in the child process, un-hooked from the terminal.
-    subprocess.Popen(cmd)
+    os.execvp(executable, cmd)
 else:
     # See:  https://docs.python.org/3/library/os.html#process-management
     # Replace current process with 'vim'.
