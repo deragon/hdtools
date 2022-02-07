@@ -136,10 +136,14 @@ setTimeStampFile()
 
 if ((BTAR)); then
   setTimeStampFile "${FILES[0]}"
-  FILE_DST="${PREFIX}-${FILES[0]}-${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
+  [[ ! -z "${PREFIX}" ]] && PREFIX="${PREFIX}-"  # Appending '-' if set.
+  FILE_DST="${PREFIX}${FILES[0]}-${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
   tar cvjf "${FILE_DST}" ${FILES[@]}
-  rm -rf ${FILES[@]}
   echo "Created:  ${FILE_DST}"
+  if ((MOVE)); then
+    echo "Deleting ${FILES[@]} since move option has been provided."
+    rm -rf ${FILES[@]}
+  fi
 else
   for FILE_SRC in ${FILES[@]}; do
 
@@ -187,7 +191,7 @@ else
       fi
     fi
 
-    [ ! -z "${PREFIX}" ] && PREFIX="${PREFIX}-"
+    [[ ! -z "${PREFIX}" ]] && PREFIX="${PREFIX}-"  # Appending '-' if set.
     setTimeStampFile "${FILE_SRC}"
 
     FILE_DST="${FILE_PATH}${PREFIX}${FILENAME}-${TIMESTAMP_FILE}${SUFFIX}${EXTENSION}${ENDSUFFIX}"
