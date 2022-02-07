@@ -48,7 +48,7 @@ If -d is used, create a directory with the ISO 8601 timestamp.
   -s <suffix>     Suffix filename with <suffix>.  Note that the suffix
                   will show up before the extension of the file.
   -e <suffix>     Suffix filename after the extension with <suffix>.
-                 
+
   -h              Display this help text.
 EOM
 }
@@ -92,6 +92,12 @@ if ((MAKEDIR == 0 && ${#FILES[*]} == 0)); then
   ERRORS="${ERRORS} - You must provide at least one file to backup.\n"
 fi
 
+for FILE_SRC in ${FILES[@]}; do
+  if [[ ! -e "${FILE_SRC}" ]]; then
+    ERRORS="${ERRORS} - File does not exists:  '${FILE_SRC}'\n"
+  fi
+done
+
 if [ "${BTAR}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
   ERRORS="${ERRORS} - -b and -e options are not compatible.  Choose one or the other.\n"
 fi
@@ -102,6 +108,8 @@ if [ ! -z "${ERRORS}" ]; then
   echo -e "Command aborted."
   exit 1
 fi
+
+
 
 # PROCESSING
 # ════════════════════════════════════════════════════════════════════
