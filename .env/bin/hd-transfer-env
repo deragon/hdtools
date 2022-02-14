@@ -177,6 +177,8 @@ for DST in ${DSTS[@]}; do
   fi
 
   #echo "\${RSYNC_OPTIONS}=${RSYNC_OPTIONS}"
+  echo "══════════════════════════════════════════════════════════════════════════════"
+  echo "Transfer to:  ${DST}"
 
   eval rsync -av \
     ${RSYNC_OPTIONS} \
