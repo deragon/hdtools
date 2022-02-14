@@ -57,14 +57,14 @@ CONTAINER_ID_ARG="$1"
 # docker ps --format='{{json .}}'
 for DATA in \
   "${CONTAINER_ID_ARG}|NULL" \
-  "$(docker ps --format "{{title .ID}}|{{title .Names}}" | head -1)" \
+  "$(docker ps --format "{{.ID}}|{{.Names}}" | head -1)" \
 ; do
 
   ID="${DATA/\|*}"
   NAME="${DATA/*\|}"
 
   if [[ "${NAME}" == "NULL" ]]; then
-    NAME="$(docker ps --filter "Id=${ID}" --format "{{title .Names}}" )"
+    NAME="$(docker ps --filter "Id=${ID}" --format "{{.Names}}" )"
   fi
   if [[ ! -z "${ID}" ]]; then
     echo "Entering Docker container ${NAME} (${ID})".
