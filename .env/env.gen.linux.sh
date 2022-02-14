@@ -268,7 +268,7 @@ setxauth()
 fi
 
 alias cddownloads='cdprint "${HOME}/Downloads"'
-alias bashr='sudo bash -il'  # bashr == Bash as root
+alias bashr='sudo XMODIFIERS=HDCONNECTION bash -il'  # bashr == Bash as root
 
 
 
