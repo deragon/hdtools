@@ -73,8 +73,8 @@ parser.add_argument('hostport', metavar='<ip, hostname with or without port>',
 parser.add_argument('-t', '--timeout', dest='timeout', default=2, required=False,
                     help='Timeout expressed in seconds.  Default is 2.')
 
-parser.add_argument('-s', '--silence', action="store_true", default=False, required=False,
-                    help='No ouptput.  Be silenced.  Default is to print to stdin results.')
+parser.add_argument('-q', '--quiet', dest='quiet', action="store_true", default=False, required=False,
+                    help='No ouptput.  Be quiet.  Default is to print to stdin results.')
 
 args = parser.parse_args()
 
@@ -127,11 +127,11 @@ if len(errors) > 0:
 with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
     sock.settimeout(args.timeout)  # Seconds.
 
-    if not args.silence:
+    if not args.quiet:
         print("Testing:  " + hostname + ":" + str(port))
 
     if sock.connect_ex((hostname, port)) == 0:
-        if not args.silence:
+        if not args.quiet:
             print("Port is open")
 
         # Experiment sending stdin like netcat (nc) would do.
@@ -146,6 +146,6 @@ with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
 
         sys.exit(0)
     else:
-        if not args.silence:
+        if not args.quiet:
             print("Port is not open")
         sys.exit(1)
