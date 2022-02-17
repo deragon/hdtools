@@ -323,6 +323,7 @@ fi
 #   Voir:  https://docs.aws.amazon.com/cli/latest/userguide/installing.html
 add2path PATH "${HOME}/.local/bin"
 alias hd-aws-unsetvariables='unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN'
+hdawsssh() { ssh "ec2-user@$1"; }; exportfunction hdawsssh
 
 alias hdhistoryclear='cat /dev/null >"${HOME}/.bash_history" && history -c'
 
