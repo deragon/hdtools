@@ -24,8 +24,12 @@ with 'docker ps'.
 
 Usage:  ${SCRIPT_NAME} [-h] [CONTAINER_ID]
 
-   CONTAINER_ID]
-  -h  Display this help text.
+  <CONTAINER_ID>  If provided, starts Bash session in stated container,
+                  else start Bash session on the first container listed
+                  by 'docker ps'.
+
+  -r              Login as root instead of the default user.
+  -h              Display this help text.
 "
 }
 
@@ -34,10 +38,13 @@ Usage:  ${SCRIPT_NAME} [-h] [CONTAINER_ID]
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
 
+USER_ROOT=0
+
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "h" OPTCMD; do
+while getopts "rh" OPTCMD; do
   case "${OPTCMD}" in
+    "r")    USER_ROOT=1;;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -48,6 +55,9 @@ IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
 
 CONTAINER_ID_ARG="$1"
 
+
+unset USER_PARAM
+((USER_ROOT)) && USER_PARAM="--user 0"
 
 # docker ps format documented at:
 #
@@ -68,6 +78,6 @@ for DATA in \
   fi
   if [[ ! -z "${ID}" ]]; then
     echo "Entering Docker container ${NAME} (${ID})".
-    exec docker exec -it "${ID}" bash
+    eval exec docker exec -it ${USER_PARAM} "${ID}" bash
   fi
 done
