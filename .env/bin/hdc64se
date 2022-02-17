@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Hard space after "READY" at end is necessary to dray the full block's
+# background.
+#echo -e "\e[1;34;44m?SYNTAX  ERROR    \nREADY             \e[0m"
+echo -e "\e[1;36;44m?SYNTAX  ERROR    \nREADY             \e[0m"
