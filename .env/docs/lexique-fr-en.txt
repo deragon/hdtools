@@ -33,6 +33,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   workflow                   -> flux de travail
   business data              -> donnée métier
   out of scope               -> hors [sujet|champ|portée], en-dehors du périmètre
+  scale                      -> s'adapte, ce met à l'échèlle, s'étendre
   out of the box             -> clé en main
   customisation              -> personnalisation
   foreign key                -> clé étrangère
