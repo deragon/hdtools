@@ -1141,6 +1141,16 @@ CYGWIN
 
 
 
+GITHUB
+══════════════════════════════════════════════════════════════════════════════
+
+  SSH KEY FINGERPRINTS
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
+
+
+
 MISCELLANEOUS
 ══════════════════════════════════════════════════════════════════════════════
 
