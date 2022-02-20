@@ -726,8 +726,13 @@ LOGS / COMMENTS
     git log --folllow <file> # For renamed files, show all logs including prior rename.
 
 
-  Important consideration when writing logs / comments
+  FORMAT OF COMMENTS / COMMIT MESSAGES
   ────────────────────────────────────────────────────────────────────────────
+
+    How to Write a Git Commit Message
+      https://cbea.ms/git-commit/#seven-rules
+
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
 
     From: https://stackoverflow.com/questions/22731126/writing-long-commit-messages-in-git
 
@@ -741,6 +746,7 @@ LOGS / COMMENTS
     length so that it can fit when using git log --oneline --graph. This is
     actually the standard that the Linux kernel and git project maintainers
     themselves use (GitHub promotes it as well).
+
 
 
   DbUnit standards
