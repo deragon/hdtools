@@ -1,4 +1,4 @@
-SAFEST KEY
+SAFEST KEY - HOW TO GENERATE
 ══════════════════════════════════════════════════════════════════════════════
 
   Why not use larger cipher keys?
