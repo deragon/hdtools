@@ -1,7 +1,8 @@
 JAVA FOR ORACLE NOT FREE ANYMORE SINCE 2018
 ══════════════════════════════════════════════════════════════════════════════
 
-  Download OpenJDK easily ->  See:  https://adoptopenjdk.net/
+  Download OpenJDK easily ->  https://adoptium.net/
+                              Old site:  https://adoptopenjdk.net/
 
   Read:  https://www.lakesidesoftware.com/blog/java-did-what-understanding-how-2019-java-licensing-changes-impact-you
 
