@@ -19,9 +19,15 @@ SAFEST KEY - HOW TO GENERATE
   DSA est moins sécure, et dois être 1024 bits.
 
 
-  Usage avec rsync:
 
-    rsync -e "ssh -i ${HOME}/.ssh/id_rsa_nopass -o GSSAPIAuthentication=no -l <dst_userid>"
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - Usage with rsync:
+      rsync -e "ssh -i ${HOME}/.ssh/id_rsa_nopass -o GSSAPIAuthentication=no -l <dst_userid>"
+
+  - ssh-keygen -y -f "${PRIVATE_KEY}.pem"  # Fetch public key from .pem file.
+                                           # Useful for AWS EC2 key pairs.
 
 
 
@@ -252,7 +258,7 @@ OPTIONS
 
 
 
-MENU
+SSH SHELL
 ══════════════════════════════════════════════════════════════════════════════
 
   From:  https://unix.stackexchange.com/questions/86161/what-do-the-channel-numbers-in-ssh-error-message-refer-to
