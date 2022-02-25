@@ -11,6 +11,12 @@ Cygwin
   This points is usually mute since a laptop is given to a single user.
 
 
+FREE, USEFUL SOFTWARE
+══════════════════════════════════════════════════════════════════════════════
+
+  - Microsoft PowerToys - https://github.com/microsoft/PowerToys
+
+
 SETUP HOME DIRECTORY TO SAME AS THE ONE OF WINDOWS
 ══════════════════════════════════════════════════════════════════════════════
 
