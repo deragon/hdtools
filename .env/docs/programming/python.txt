@@ -754,7 +754,9 @@ EFFICIENCY / PERFORMANCE
 LECTURES INTÉRESSANTES
 ══════════════════════════════════════════════════════════════════════════════
 
-  http://stackoverflow.com/questions/101268/hidden-features-of-python
+  - http://stackoverflow.com/questions/101268/hidden-features-of-python
+
+  - https://github.com/xonsh/xonsh - Shell mixing bash and Python.
 
 
 
