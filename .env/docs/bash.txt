@@ -1,54 +1,3 @@
-STRING MANIUPLATIONS
-══════════════════════════════════════════════════════════════════════════════
-
-  SUBSTRINGS
-  ────────────────────────────────────────────────────────────────────────────
-
-    "${VAR:1}"            # Chop first character.
-    "${VAR:1:3}"          # VAR[1:3]
-    "${VAR:1:${#VAR}-3}"  # VAR[1:length(VAR-3)]
-    "${VAR: -1}"          # Last character (note; the space is important!)
-    "${VAR::-1}"          # Chop last character.
-
-
-    FILTERING AND PARSING A NETWORK URL
-    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
-
-      DST="ec2-user@192.168.1.3:3992"
-
-      DST_USER="${DST/@*}"
-      [[ "${DST_USER}" == ${DST} ]] && unset DST_USER  # No user provided.
-
-      DST_PORT="${DST/*:}"
-      [[ "${DST_PORT}" == ${DST} ]] && unset DST_PORT  # No port provided.
-
-      DST_HOST="${DST/:*}"       # Filter out any port definition.
-      DST_HOST="${DST_HOST/*@}"  # Filter out any user definition.
-
-
-  TEST IF STRING CONTAINS SOME TEXT
-  ────────────────────────────────────────────────────────────────────────────
-
-    Method #1:
-
-      if [[ "${string}" == *"Contains this"* ]]; then echo "Contains it!"; fi
-
-    Method #2:
-
-      match="string"
-        (a="some strong content"; [[ "$a" =~ "${match}" ]] && echo "matched" )
-      matched
-
-
-  UPPER/LOWERCASE, EFFICIENT FORM (BASH VERSION >=4):
-  ────────────────────────────────────────────────────────────────────────────
-
-      ID="AbCd"
-      ID_LC="${ID,,}"
-      ID_UC="${ID^^}"
-
-
-
 ARRAYS
 ══════════════════════════════════════════════════════════════════════════════
 
@@ -166,6 +115,57 @@ ARRAYS
                 last  parameter  is  joined  with  the last part of the original
                 word.  When there are no  positional  parameters,  "$@"  and  $@
                 expand to nothing (i.e., they are removed).
+
+
+
+STRING MANIUPLATIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  SUBSTRINGS
+  ────────────────────────────────────────────────────────────────────────────
+
+    "${VAR:1}"            # Chop first character.
+    "${VAR:1:3}"          # VAR[1:3]
+    "${VAR:1:${#VAR}-3}"  # VAR[1:length(VAR-3)]
+    "${VAR: -1}"          # Last character (note; the space is important!)
+    "${VAR::-1}"          # Chop last character.
+
+
+    FILTERING AND PARSING A NETWORK URL
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      DST="ec2-user@192.168.1.3:3992"
+
+      DST_USER="${DST/@*}"
+      [[ "${DST_USER}" == ${DST} ]] && unset DST_USER  # No user provided.
+
+      DST_PORT="${DST/*:}"
+      [[ "${DST_PORT}" == ${DST} ]] && unset DST_PORT  # No port provided.
+
+      DST_HOST="${DST/:*}"       # Filter out any port definition.
+      DST_HOST="${DST_HOST/*@}"  # Filter out any user definition.
+
+
+  TEST IF STRING CONTAINS SOME TEXT
+  ────────────────────────────────────────────────────────────────────────────
+
+    Method #1:
+
+      if [[ "${string}" == *"Contains this"* ]]; then echo "Contains it!"; fi
+
+    Method #2:
+
+      match="string"
+        (a="some strong content"; [[ "$a" =~ "${match}" ]] && echo "matched" )
+      matched
+
+
+  UPPER/LOWERCASE, EFFICIENT FORM (BASH VERSION >=4):
+  ────────────────────────────────────────────────────────────────────────────
+
+      ID="AbCd"
+      ID_LC="${ID,,}"
+      ID_UC="${ID^^}"
 
 
 
