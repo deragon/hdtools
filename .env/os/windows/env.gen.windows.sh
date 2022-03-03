@@ -128,6 +128,13 @@ done
 export NO_AT_BRIDGE=1
 
 
+# WSLTTY:  MINTTY for WSL https://github.com/mintty/wsltty
+if [ -e "${HOME}/AppData/Local/wsltty/bin/mintty.exe" ]; then
+  # WSLTTY installed.
+  alias cdwslttyconfig='cdprint "${HOME}/AppData/Roaming/wsltty"'
+  alias hdterm='"${HOME}/AppData/Local/wsltty/bin/mintty.exe" -w max --WSL= --configdir="C:\Users\derah\AppData\Roaming\wsltty" -~ -'
+fi
+
 
 # FILE MANAGERS
 # ════════════════════════════════════════════════════════════════════════════
