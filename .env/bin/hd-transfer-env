@@ -149,42 +149,53 @@ if [[ "${OPTIONS}" == *"excludeprivate"* ]]; then
 "
 fi
 
-if [ ! -z "${PORT}" -a "${PORT}" != "${HOST}" ]; then
-  SSH_CMD="-e \"ssh -p ${PORT}\""
-fi
-
-
 for DST in ${DSTS[@]}; do
+
+  echo -e "
+\e[1;32;40m
+══════════════════════════════════════════════════════════════════════════════
+Transfer to:  ${DST}\e[0m
+"
 
   if [ ! -d "${DST}" ]; then
 
     # Destination is not a directory, but a remote machine, probably.
+    DST_USER="${DST/@*}"
+    [[ "${DST_USER}" == ${DST} ]] && unset DST_USER  # No user provided.
 
-    HOST="${DST/:*}"
-    PORT="${DST/*:}"
+    DST_PORT="${DST/*:}"
+    [[ "${DST_PORT}" == ${DST} ]] && unset DST_PORT  # No port provided.
 
-    DST="${HOST}:"
+    DST_HOST="${DST/:*}"       # Filter out any port definition.
+    DST_HOST="${DST_HOST/*@}"  # Filter out any user definition.
+
+    DST="${DST_HOST}:"
     DST="${DST/::/:}" # It is possible that we added one ':' too many, so we
                       # remove it.
 
-    ping -w 1 "${DST}" >/dev/null 2>&1
+    [[ -z "${DST_PORT}" ]] && DST_PORT=22
 
-    if (( ! $? )); then
-      echo "${DST} does not ping.  Aborting."
-      exit 1
-    fi
+    # # Ping cannot be used as many host these days, while up, do not
+    # # respond to ping anymore.  Instead, we test the port directly.
+    # #ping -w 1 "${DST_HOST}" >/dev/null 2>&1
+    # tp --quiet "${DST_HOST}:${DST_PORT}"
+    #
+    # if (($?)); then
+    #   echo "${DST}:${DST_PORT} is not open.  Skipping."
+    #   continue
+    # fi
+
+    [ -n "${DST_USER}" ] && DST="${DST_USER}@${DST}"
+    SSH_CMD="-e \"ssh -p ${DST_PORT}\""
 
   fi
 
   #echo "\${RSYNC_OPTIONS}=${RSYNC_OPTIONS}"
-  echo "══════════════════════════════════════════════════════════════════════════════"
-  echo "Transfer to:  ${DST}"
-
   eval rsync -av \
     ${RSYNC_OPTIONS} \
     --delete \
     --delete-excluded \
-    --timeout=20 \
+    --timeout=5 \
     ${SSH_CMD} \
     "\"${SRC}\"" "${DST}" \
 
