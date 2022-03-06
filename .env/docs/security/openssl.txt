@@ -1,0 +1,85 @@
+Fichier PFX
+══════════════════════════════════════════════════════════════════════════════
+
+  From Wikipedia:
+
+    PFX has received heavy criticism of being one of the most complex
+    cryptographic protocols, but nevertheless remains the only standard way
+    today to store private keys and certificates in a single encrypted file.
+
+  Extraction d'un certificat client en fichier PEM (Privacy Enhanced Mail Base64 encoded DER certificate)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Avertissement! Java keytool ne comprend pas ce format, il faut ensuite le
+    convertir en DER (voir ci-dessous).
+
+       openssl pkcs12 -in <fichier>.pfx -clcerts -nokeys -out <fichier>.pem
+
+    Conversion d'un certificat client PEM en DER (Distinguished Encoding Rules), un format binaire.
+    Java keytool est capable de lire ce format.
+
+       openssl x509 -inform pem -in <fichier>.pem -outform der -out <fichier>.crt
+
+    Références:
+
+        * stackoverflow.com convert-pfx-to-cer
+        * Wikipedia PKCS12
+
+
+
+Ajout d'un certificat client dans une JDK
+══════════════════════════════════════════════════════════════════════════════
+
+Voici comment l'on ajoute un certificat pour que Java puisse le reconnaître et
+que les applications puissent s'en servir.
+
+Notes:
+
+    * Le certificat doit être en format DER. Voir Fichier PFX.
+    * Le fichier de keystore de Java réside à même le répertoire de Java
+      ("${JAVA_HOME}/jre/lib/security/cacerts"). Il est donc important de le
+      recopier lorsque l'on change de jdk, pour une mise-à-jour de ce dernier
+      par exemple.
+    * changeit est le mot de passe par défaut du keystore de Java et il n'a
+      jamais été changé dans les environnements.
+
+keytool \
+ -import \
+ -v \
+ -trustcacerts \
+ -file <fichier>.crt \
+ -storepass changeit \
+ -keystore "${JAVA_HOME}/jre/lib/security/cacerts"
+
+
+
+APACHE SERVER
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://knowledge.digicert.com/solution/SO21807.html
+
+  Use OpenSSL to convert PFX file (PKCS#12) to compatible (X.509) files for
+  Apache server.
+
+  To extract the certificate, private key and more, run the OpenSSL command:
+
+   openssl pkcs12 -in "${FILE_PREFIX}.pfx" -nocerts -out "${FILE_PREFIX}-private-key.pem"
+
+  Then check the content of "${FILE_PREFIX}-private-key.pem" with a text
+  editor to get what you need.
+
+  To extract the certificate (public key), run the OpenSSL command:
+
+    openssl pkcs12 -in "${FILE_PREFIX}.pfx" -clcerts -nokeys -out "${FILE_PREFIX}-public-key.pem"
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
