@@ -1,0 +1,59 @@
+From:  http://www.phoronix.com/forums/forum/phoronix/latest-phoronix-articles/848113-llvm-drops-its-autoconf-build-system/page
+
+Sooo.... Build systems I've seen/tried:
+
+- Autotools is antique, nearly impossible to make sense of and physically
+  painful to set up. It's a Turing tarpit: Everything (might) be possible, but
+  nothing is easy. I still have no idea just how many auto* tools come into
+  play and in what order and what consumes what files when why. The configure
+  scripts Autotools generates are incredibly inefficient: They run dozens upon
+  dozens of tests for the smallest minutiae (does gcc work, does atan2f() and
+  strtoull() exist and do they work) over and over and over again in each
+  subdirectory, even if it was just tested and even if you don't use those
+  damn functions. This is both pointless and slow. In general, the philosophy
+  of Autotools is as opaque as mud; Approximately the only thing I can say
+  that is good about Autotools is that those configure scripts have a
+  predictable and usable user interface. --prefix=`pwd`/install and make it
+  rip.
+- Qmake is great, easy to use, similar to Make and shells in flavour - until
+  you want to do something more than a single, possibly Qt-based, desktop
+  application. For other purposes (such as projects centering around multiple
+  libraries that get linked into multiple command-line applications), it's
+  hard or impossible without setting up "subdirs" projects - but I don't want
+  a subdirectory for each artifact. In that sense it's inflexible.
+- Qbs is the best build system I have experience with. It easily supports any
+  number of build artifacts (shared libraries, static libraries, executables),
+  placed in any layout you want, and is the most purely declarative of the
+  build systems I've used. It requires the least thinking once you have 1) a
+  template Qbs project file and 2) a variety of ready-made artifact
+  descriptions to copy-paste. I don't like, however, that the project files
+  are somewhat Javascript-based, because I know next to nothing about JS.
+- I've read up about Meson and like what I read about it, its design in
+  particular.
+- Tried Scons, didn't prefer it to Qbs, but that was back in the days when I
+  didn't know Python. My opinion could change on it if I retried it.
+- CMake is ugly. Build systems should be a joy to use: Project files should be
+  intuitive and readable. CMakeLists on the other hand are not only a language
+  upon themselves, but HALF the KEY value PAIRS are IN all CAPS and
+  many_macro_names_have_ugly_underscores(). It's no pleasure at all to read,
+  and therefore to use.
+
+
+
+Linux vs. Windows device driver model:
+architecture, APIs and build environment comparison
+══════════════════════════════════════════════════════════════════════════════
+
+  http://xmodulo.com/linux-vs-windows-device-driver-model.html
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
