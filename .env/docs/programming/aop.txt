@@ -1,0 +1,37 @@
+CROSS-CUTTING CONCERN
+══════════════════════════════════════════════════════════════════════════════
+
+  Basically, a cross-cutting concern is some piece of functionality that may
+  not neatly fit in to normal object-oriented architecture, and most likely
+  doesn't add business value or satisfy a requirement on its own (aka
+  non-functional requirements). Logging is the most common example of a
+  cross-cutting concern, because you might use logging in the UI layer, in the
+  business logic, in the persistence layer, etc. Even in an individual layer,
+  logging could be used across all classes/services, cutting through and
+  crossing all the normal boundaries.
+
+  Other examples of cross-cutting concerns, which should come as no surprise
+  if you're a regular reader: transactions, exception handling,
+  INotifyPropertyChanged, authorization, caching, multi-threaded/asynchronous
+  programming, auditing (very similar to logging). What else?
+
+  Ref:  http://crosscuttingconcerns.com/Terminology-cross-cutting-concern
+
+
+
+TUTORIALS
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.javacodegeeks.com/2012/06/simple-introduction-to-aop.html
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
