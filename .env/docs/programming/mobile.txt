@@ -1,0 +1,33 @@
+FRAMEWORKS
+══════════════════════════════════════════════════════════════════════════════
+
+  Flutter (https://flutter.dev/)  <<<---
+  ────────────────────────────────────────────────────────────────────────────
+
+    Flutter is Google’s UI toolkit for building beautiful, natively compiled
+    applications for mobile, web, and desktop from a single codebase.
+
+
+
+  CORDOVA
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://cordova.apache.org/docs/en/latest/guide/overview/index.html
+
+    Apache Cordova is an open-source mobile development framework. It allows
+    you to use standard web technologies - HTML5, CSS3, and JavaScript for
+    cross-platform development. Applications execute within wrappers targeted
+    to each platform, and rely on standards-compliant API bindings to access
+    each device's capabilities such as sensors, data, network status, etc.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
