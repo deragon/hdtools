@@ -1,0 +1,177 @@
+SHORTCUTS
+══════════════════════════════════════════════════════════════════════════════
+
+  MATCH BRACKET
+  ────────────────────────────────────────────────────────────────────────────
+
+    - <Ctrl+Shift+M> The caret jumps to the closing brace of the current code
+      block.  To toggle between code block start or end, press Ctrl+Shift+M.
+
+    - <Ctrl+Open Bracket> To navigate to the code block start, press Ctrl+Open
+      Bracket, with the caret anywhere inside the code block.
+
+    - <Ctrl+Close Bracket> The caret jumps to the opening brace of the current
+      code block.  To navigate to the code block end, press Ctrl+Close
+      Bracket, with the caret anywhere inside the code block.
+
+
+  FORMATING
+  ────────────────────────────────────────────────────────────────────────────
+
+    // @formatter:off
+    // @formatter:on
+
+    This feature needs to be enabled in IntelliJ IDEA first.  To enable it:
+
+      File > Settings > Editor > Code Style > Formatter controller
+
+        (you can change the formatter control markers, as long as they're in
+        comments).
+
+
+ISSUES
+══════════════════════════════════════════════════════════════════════════════
+
+  Checkout project module from maven dependency
+
+    http://youtrack.jetbrains.com/issue/IDEA-94785
+
+    I'm working on a maven based project that has may dependencies on other
+    projects in our VCS. I'd like to promote one of these dependencies to a
+    project module rather than manually checking it our and importing it
+    separately (besides, when I do so I have to do hunting for the maven
+    dependency and remove it manually to avoid overlaps with the checked out
+    module)
+
+
+  TODO - Multiline support
+  ────────────────────────────────────────────────────────────────────────────
+
+    Not supported yet.  See:
+
+    http://youtrack.jetbrains.com/issue/IDEA-62161
+    https://stackoverflow.com/questions/22066879/is-it-possible-to-use-multiline-todos-in-intellij-idea-13
+
+
+
+MAVEN
+══════════════════════════════════════════════════════════════════════════════
+
+  MAVEN ITEM MENU NOT SHOWING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Sometimes the item menu <right click on project name><Maven> does not show
+    up.  To fix this, click on the pom.xml, <right click> on it and the
+    "Maven" item menu will show up.  Select "Re-import" and once this is done,
+    then the "Maven" menu will appear on the 'project name' level.
+
+    Adding "Maven" from the "<right click on 'project name'> "Add Frameworks
+    Support" does not seam to work as of 2019-04-17.  No clue why.
+
+
+
+PERSISTENCE
+══════════════════════════════════════════════════════════════════════════════
+
+  IntelliJ IDEA 10 generate entity (POJO) from DB model
+
+    http://stackoverflow.com/questions/5259276/intellij-idea-10-generate-entity-pojo-from-db-model
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Unable to use Intellij with a generated sources folder (in target/)
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/5170620/unable-to-use-intellij-with-a-generated-sources-folder
+
+    When in the source code, symbols are not found (all red) because they are
+    generated such as those created by the Spring framework into the target/
+    directory, do the following:
+
+    I'm using Maven (SpringBoot application) solution is:
+
+      - Right click project folder
+      - Select Maven
+      - Select Generate Sources And Update Folders
+
+    Then, Intellij automatically import generated sources to project.
+
+
+  NON RESOLVED DEPENDENCIES IN INTELLIJ IDEA, BUT COMMAND LINE MVN COMPILES
+  FINE
+  CANNOT RESOVLE SYMBOL '<SYMBOL>'
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/5905896/intellij-inspection-gives-cannot-resolve-symbol-but-still-compiles-code
+
+    1) Caches are screwed.  Run: File -> Invalidate Caches and restarted the IDE
+
+    2) If that does not work, try deleting "${HOME}/.IntelliJIdea*/system"
+
+    3) If all else fail, try deleting any *.iml file under the src/ and test/
+       directories.
+
+        [master] ff "*.iml"
+        ./master.iml         # Keep this one.
+        ./src/main/main.iml  <<-- Delete this one.
+        ./src/test/test.iml  <<-- Delete this one.
+
+
+
+  java: javacTask: source release 1.8 requires target release 1.8
+  ────────────────────────────────────────────────────────────────────────────
+    From:  http://stackoverflow.com/questions/29888592/errorjava-javactask-source-release-8-requires-target-release-1-8
+
+    If project is maven, add to the pom.xml:
+
+      <build>
+          <plugins>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-compiler-plugin</artifactId>
+                  <configuration>
+                      <source>1.8</source>
+                      <target>1.8</target>
+                  </configuration>
+              </plugin>
+          </plugins>
+      </build>
+
+    Else
+
+      File > Settings > Build, Exection, Deployment > Compiler > Java Compiler
+
+      and/or
+
+      File > Project Structures > Modules > Select target platform.
+
+
+
+CREATING PROJECT FROM EXISTING SOURCES
+══════════════════════════════════════════════════════════════════════════════
+
+  Counter intuitively, it is best to "File / Open " and point to the existing
+  source directory, even if it has no '.idea' directory yet, than going'
+  through 'File / New / Projects from existing sources'.
+
+  'File / New / Projects from existing sources' has a tendency to use
+  'intelligence' to figure out where the source code resides and creates a
+  module with the wrong path, often <project>/src/main/java instead of
+  <project>/.  This problem does not occur with 'File / Open'.
+
+  Occurs:  IntelliJ IDEA 2017.3.4 (Ultimate Edition)
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
