@@ -1,0 +1,43 @@
+TERRAFORM - https://www.terraform.io/
+══════════════════════════════════════════════════════════════════════════════
+
+  Infrascture As Code (IAC)
+
+  Terraform is a tool for building, changing, and versioning infrastructure
+  safely and efficiently. Terraform can manage existing and popular service
+  providers as well as custom in-house solutions.
+
+
+
+COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  terraform apply
+  terraform init
+  terraform plan
+  terraform refresh
+  terraform workspace list
+  terraform workspace select prod
+
+
+  DESTROY
+  ────────────────────────────────────────────────────────────────────────────
+
+    Specific target (best, mostly safest strategy since usually, we do
+    not want to delete all)
+
+    export TARGET=""
+    terraform.exe plan    -target "${TARGET}" -destroy .  # Preview, safe
+    terraform.exe destroy -target "${TARGET}" .           # Destroy, unsafe
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
