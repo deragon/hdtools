@@ -23,6 +23,8 @@ Usage:  ${SCRIPT_NAME} [-G] [-W] [-n] [-N] [-w] [-h]
   -W  Show Windows format. (Windows only)
   -O  Show Native (Original) format.
 
+  -E  Show Escaped format.
+
   -n  Show network information.
   -N  Show mumeric IP.
 
@@ -36,17 +38,20 @@ NETWORK=0
 SHOWIP=0
 WHICH=0
 
+FORMAT_NORMAL=0
 FORMAT_WINDOWS=0
+FORMAT_ESCAPED=0
 FORMAT_NATIVE=0
 FORMAT_GIT=0
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "GWOnNwh" OPTCMD; do
+while getopts "GWONEnwh" OPTCMD; do
   case "${OPTCMD}" in
     "G")    FORMAT_GIT=1;;
     "W")    FORMAT_WINDOWS=1;;
     "O")    FORMAT_NATIVE=1;;
+    "E")    FORMAT_ESCAPED=1;;
     "n")    NETWORK=1;;
     "N")    SHOWIP=1;;
     "w")    WHICH=1;;
@@ -54,11 +59,14 @@ while getopts "GWOnNwh" OPTCMD; do
   esac
 done
 
-if (( (FORMAT_GIT || FORMAT_WINDOWS || FORMAT_NATIVE) == 0 )); then
+if (( (FORMAT_GIT    || FORMAT_WINDOWS || \
+       FORMAT_NATIVE || FORMAT_ESCAPED) == 0 )); then
   # No format was explicitely set, thus showing them all.
+  FORMAT_NORMAL=1
+  FORMAT_GIT=1
   FORMAT_WINDOWS=1
   FORMAT_NATIVE=1
-  FORMAT_GIT=1
+  FORMAT_ESCAPED=1
 fi
 
 shift $((${OPTIND} - 1))  # Remove options from $@
@@ -88,18 +96,22 @@ fi
 
 printPathNormal()
 {
-  NORMAL_PATH="${NETWORK_INFO}${CANONICAL_PATH}"
-  echo -e "${NORMAL_PATH}${SUFFIX}"
+  if ((FORMAT_NORMAL)); then
+    NORMAL_PATH="${NETWORK_INFO}${CANONICAL_PATH}"
+    echo -e "${NORMAL_PATH}${SUFFIX}"
+  fi
 }
 
 printPathWithEscape()
 {
-  # Only print the escaped path if it is different than the normal
-  # path.  If we do not do this, the same path would show up twice,
-  # which is useless and not desired.
-  ESCAPED_PATH=$(printf "%q\n" "${NETWORK_INFO}${CANONICAL_PATH}")
-  if [ "${NORMAL_PATH}" != "${ESCAPED_PATH}" ]; then
-    echo -e "${ESCAPED_PATH}${SUFFIX}"
+  if ((FORMAT_ESCAPED)); then
+    # Only print the escaped path if it is different than the normal
+    # path.  If we do not do this, the same path would show up twice,
+    # which is useless and not desired.
+    ESCAPED_PATH=$(printf "%q\n" "${NETWORK_INFO}${CANONICAL_PATH}")
+    if [ "${NORMAL_PATH}" != "${ESCAPED_PATH}" ]; then
+      echo -e "${ESCAPED_PATH}${SUFFIX}"
+    fi
   fi
 }
 
@@ -150,8 +162,8 @@ for FILEORPATH in $@ "${EXTRAPATH}"; do
 
   if [[ "${HD_OS_FAMILY}" == *"WSL"* ]]; then
     CANONICAL_PATH="$(wslpath -a -w "${CANONICAL_PATH}")"
-    echo "${CANONICAL_PATH}"
-    printf "%q\n" "${CANONICAL_PATH}"
+    (( FORMAT_NATIVE ))  && echo "${CANONICAL_PATH}"
+    (( FORMAT_ESCAPED )) && printf "%q\n" "${CANONICAL_PATH}"
   elif [ "${HD_OS_FAMILY}" == "Cygwin" ]; then
     # Need to escape '\', thus the 'sed' command following 'cygpath'.
     CANONICAL_PATH="$(cygpath -w "${CANONICAL_PATH}" | sed 's/\\/\\\\/g')"
