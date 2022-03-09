@@ -13,4 +13,5 @@
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
 # Scan Terraform (*.tf) files.
-find . -name '*.tf' -print0 | xargs --null fgrep --color "$@"
+find . -regextype posix-extended -iregex '.*.tf(vars)?$' -print0 | \
+  xargs --null fgrep --color "$@"
