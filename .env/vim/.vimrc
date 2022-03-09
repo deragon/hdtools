@@ -85,6 +85,15 @@
 "
 "   Unfolding / expanding / open all folds:  zR
 "
+"   zr   Reduce folding: Add |v:count1| to 'foldlevel'.
+"   zM   Close all folds: set 'foldlevel' to 0.
+
+" |fold-marker| marker      Markers are used to specify folds.
+set foldmethod=marker
+
+" foldlevel=99 == When opening a file, it is unfolded by default.
+set foldlevel=99
+
 " ════════════════════════════════════════════════════════════════════
 " SEARCH AND REPLACE:
 "
@@ -1056,7 +1065,6 @@ endif
 if v:version > 800
   " Autres options qui ne marchent qu'avec vim 8+
   set belloff=all " Disable all bells/sounds.
-  set foldmethod=marker foldlevel=0
 
   "source $HDVIM/hd-quickmenu.vim
 endif
