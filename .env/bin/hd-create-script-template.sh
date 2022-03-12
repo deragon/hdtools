@@ -350,9 +350,9 @@ tail -f "${LOGFILE}"
 # ════════════════════════════════════════════════════════════════════
 echo
 if (( DRYRUN )); then
-  echo -en "\e[1;37;44mCommand was executed in dry mode; nothing was executed.\e[0;00m\n\e[1;37;44mRerun with -e to execute the action.\e[0;00m"
-  echo -en "\e[1;37;44mCommande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.\e[0;00m\n\e[1;37;44mRerouler avec l'option -e pour exécuter l'action.\e[0;00m"
+  echo -en "\e[1;37;44mCommand was executed in dry mode; nothing was executed.\e[0;00m\n\e[1;37;44mRerun with -e to execute the action.\e[0;00m\n"
+  echo -en "\e[1;37;44mCommande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.\e[0;00m\n\e[1;37;44mRerouler avec l'option -e pour exécuter l'action.\e[0;00m\n"
 else
-  echo -en "\e[1;37;42mCommand was executed.\e[0;00m"
-  echo -en "\e[1;37;42mCommande fut exécutée.\e[0;00m"
+  echo -en "\e[1;37;42mCommand was executed.\e[0;00m\n"
+  echo -en "\e[1;37;42mCommande fut exécutée.\e[0;00m\n"
 fi
