@@ -48,7 +48,7 @@ run()
   if (( DRYRUN )); then
     echo "DRYRUN:  $@"
   else
-    $@
+    "$@"
   fi
 }
 
