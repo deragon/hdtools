@@ -207,7 +207,7 @@ for FILE in ${FILES[@]}; do
   printLineWithSpacesToEnd "Searching in ${FILE}"
 
   EXTENSION="${FILE##*.}"
-  if [ "${EXTENSION}" == ${FILE} ]; then
+  if [ "${EXTENSION}" == "${FILE}" ]; then
     # No extension found.
     EXTENSION=""
     FILENAME="${FILE}"
