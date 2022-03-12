@@ -3,11 +3,11 @@ CREATION
 
   Interesting base images:
 
-  - Centos:  https://store.docker.com/images/centos, Tags: centos:7.5.1804
+  - Centos:  https://hub.docker.com/_/centos
 
   - To download them locally:
 
-  `docker pull centos:7.5.1804 # Download to get the image locally.`
+    `docker pull centos:7.5.1804 # Download to get the image locally.`
 
 
 
@@ -24,11 +24,12 @@ MISC
   docker container start ${CONTAINER} # Start an already existing container.
   docker exec -it ${CONTAINER} bash   # Start bash session in container.
   docker exec -it ${CONTAINER} --user <user> bash   # Start bash session as <user>
-  docker inspect "${CONTAINER}"
+  docker exec -it ${CONTAINER} --user 0 bash   # Start bash session as root.
+  docker inspect "${CONTAINER}" | less # Safe.  Prints out details.
 
   docker info # Shows all sort of info about the docker eco-system on the host.
 
-  docker -f logs nifi # Equivalent of a tail, but it scrolls from the beginning 
+  docker -f logs nifi # Equivalent of a tail, but it scrolls from the beginning
 
 
   # Enable / Disable docker container at host bootup.
@@ -37,26 +38,83 @@ MISC
 
 
 
+DOCKER IMAGE VS CONTAINER
+==========
+
+  https://phoenixnap.com/kb/docker-image-vs-container
+
+
+
+DIFFERENCE BETWEEN A REGISTRY, REPOSITORY AND IMAGE
+==========
+
+  From:  https://nickjanetakis.com/blog/docker-tip-53-difference-between-a-registry-repository-and-image
+
+  A Docker repository is where you can store 1 or more versions of a specific
+  Docker image. An image can have 1 or more versions (tags).  A Docker image
+  can be compared to a git repo. A git repo can be hosted inside of a GitHub
+  repository, but it could also be hosted on Gitlab, BitBucket or your own git
+  repo hosting service. It could also sit on your development box and not be
+  hosted anywhere.
+
+  The same goes for a Docker image. You can choose to not push it anywhere,
+  but you could also push it to the Docker Hub which is both a public and
+  private service for hosting Docker repositories. There are other third party
+  repository hosting services too.
+
+  The thing to remember here is a Docker repository is a place for you to
+  publish and access your Docker images. Just like GitHub is a place for you
+  to publish and access your git repos.
+
+  It’s also worth pointing out that the Docker Hub and other third party
+  repository hosting services are called “registries”. A registry stores a
+  collection of repositories.
+
+  You could say a registry has many repositories and a repository has many
+  different versions of the same image which are individually versioned with
+  tags.
+
+
+
+INSTALL DOCKER ON UBUNTU (INCLUDING WSL 2)
+==========
+
+  Read:  https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+
+  Once installed, on WSL 2, the service must be started.  As of
+  2022-01-24, systemd is still not supported on WSL 2.  You must start it with:
+
+    sudo service docker start # Safe
+
+  To test if the installation was successful, run:
+
+    sudo docker run hello-world # Safe
+
+
 
 VOLUMES AND DATA
 ==========
 
-  VOLUMES
+  docker volume ls  # SAFE.  List all volumes on host.
+  docker inspect -f '{{ .Mounts }}' "${CONTAINER}"
+  docker inspect "${CONTAINER}" | less
+
+
+  IMPORTANT NOTES
   ────────────────────────────────────────────────────────────────────────────
 
-    Volumes in dockers should have been called mount points.  They are moint
-    points allowing docker containers to access directories and files of the
-    host.
+    - Volumes in dockers should have been called mount points.  They are moint
+      points allowing docker containers to access directories and files of the
+      host.
 
-    Volumes are a bit if a misnowmer.  Usually when VMs talks about volumes,
-    it is a storage sytem that contains the root file system within the VM.
-    In docker, it is not the case.
+    - Volumes are a bit if a misnowmer.  Usually when VMs talks about volumes,
+      it is a storage sytem that contains the root file system within the VM.
+      In docker, it is not the case.
 
 
 
   Root
   ────────────────────────────────────────────────────────────────────────────
-
 
   Root directories of containers are found in Ubuntu under:
 
@@ -74,6 +132,7 @@ VOLUMES AND DATA
     Storage Driver: aufs
      Root Dir: /var/lib/docker/aufs
     Docker Root Dir: /var/lib/docker
+
 
 
 Tools
@@ -95,23 +154,73 @@ Tools
 10 DOCKER COMMANDS YOU CAN'T LIVE WITHOUT
 ==========
 
-From:  https://medium.com/the-code-review/top-10-docker-commands-you-cant-live-without-54fb6377f481
+From:  https://www.bitcoininsider.org/article/23859/top-10-docker-commands-you-cant-live-without
 
-* docker ps - Lists running containers. Some useful flags include: -a / -all for all containers (default shows just running) and --quiet /-q to list just their ids (useful for when you want to get all the containers).
-* docker pull - Most of your images will be created on top of a base image from the Docker Hub registry. Docker Hub contains many pre-built images that you can pull and try without needing to define and configure your own. To download a particular image, or set of images (i.e., a repository), use docker pull.
-* docker build - The docker build command builds Docker images from a Dockerfile and a “context”. A build’s context is the set of files located in the specified PATH or URL. Use the -t flag to label the image, for example docker build -t my_container . with the . at the end signalling to build using the currently directory.
-* docker run - Run a docker container based on an image, you can follow this on with other commands, such as -it bash to then run bash from within the container. Also see Top 10 options for docker run - a quick reference guide for the CLI command. docker run my_image -it bash
-* docker logs - Use this command to display the logs of a container, you must specify a container and can use flags, such as --follow to follow the output in the logs of using the program. docker logs --follow my_container
-* docker volume ls - This lists the volumes, which are the preferred mechanism for persisting data generated by and used by Docker containers.
-* docker rm - Removes one or more containers. docker rm my_container
-* docker rmi - Removes one or more images. docker rmi my_image
-* docker stop - Stops one or more containers. docker stop my_container stops one container, while docker stop $(docker ps -a -q) stops all running containers. A more direct way is to use docker kill my_container, which does not attempt to shut down the process gracefully first.
+- docker ps
 
-Use them together, for example to clean up all your docker images and containers:
+  Lists running containers. Some useful flags include: -a / -all for all
+  containers (default shows just running) and —-quiet /-q to list just their
+  ids (useful for when you want to get all the containers).
 
-* kill all running containers with docker kill $(docker ps -q)
-* delete all stopped containers with docker rm $(docker ps -a -q)
-* delete all images with docker rmi $(docker images -q)
+- docker pull
+
+  Most of your images will be created on top of a base image from the Docker
+  Hub registry. Docker Hub contains many pre-built images that you can pull
+  and try without needing to define and configure your own. To download a
+  particular image, or set of images (i.e., a repository), use docker pull.
+
+- docker build
+
+  The docker build command builds Docker images from a Dockerfile and a
+  “context”. A build’s context is the set of files located in the specified
+  PATH or URL. Use the -t flag to label the image, for example docker build -t
+  my_container . with the . at the end signalling to build using the currently
+  directory.
+
+  Example:
+
+    docker build -t "${IMAGE_TAG}" .
+      -t "${IMAGE_TAG}"  to tag the image with a label.
+      .                  assumes that *Dockerfile* is under the current dir.
+
+- docker run
+
+  Run a docker container based on an image, you can follow this on with
+  other commands, such as -it bash to then run bash from within the
+  container. docker run my_image -it bash
+
+- docker logs
+
+  Use this command to display the logs of a container, you must specify
+  a container and can use flags, such as --follow to follow the output
+  in the logs of using the program. docker logs --follow my_container
+
+- docker volume ls
+
+  This lists the volumes, which are the preferred mechanism for
+  persisting data generated by and used by Docker containers.
+
+- docker rm
+
+  Removes one or more containers. docker rm my_container
+
+- docker rmi
+
+  Removes one or more images. docker rmi my_image
+
+- docker stop
+
+  Stops one or more containers. docker stop my_container A more direct
+  way is to use docker kill my_container , which does not attempt to
+  shut down the process gracefully first.
+
+- Use them together, for example to clean up all your docker images and containers:
+
+  - kill all running containers with docker kill $(docker ps -q)
+  - delete all stopped containers with docker rm $(docker ps -a -q)
+  - delete all images with docker rmi $(docker images -q)
+
+
 
 END
 ==========
