@@ -1,0 +1,69 @@
+SNOWFLAKE
+
+
+GRANT
+══════════════════════════════════════════════════════════════════════════════
+
+  Caveats
+  ────────────────────────────────────────────────────────────────────────────
+
+    Granting a privilege to a role is not enough for it to be effective.
+    One must also grant "USAGE" to the schema to the role.
+
+      grant SELECT on view "<someview>" to role <some role>;           -- Not enough
+      grant USAGE on schema <schema of someview> to role <some role>;  -- Now the 'select' works.
+
+
+
+SQL
+══════════════════════════════════════════════════════════════════════════════
+
+  TIMESTAMPS - to_timestamp_ltz()
+  ────────────────────────────────────────────────────────────────────────────
+
+    -- Queries between a specific time range.
+    select *
+    from table(
+      information_schema.QUERY_HISTORY_BY_USER(
+        USER_NAME => '<some user>',
+        end_time_range_start => to_timestamp_ltz('2021-09-03 18:05:00.000 -0500'),
+        end_time_range_end   => to_timestamp_ltz('2021-09-03 18:06:00.000 -0500')
+       ))
+    order by start_time;
+
+    -- Queries of the last 24 hours.
+    select *
+    from table(
+      information_schema.QUERY_HISTORY(
+        end_time_range_start => TIMESTAMPADD(DAY, -1, current_timestamp()),
+        end_time_range_end   => current_timestamp()
+       ))
+    order by start_time;
+
+
+  MISCELLANEOUS
+  ────────────────────────────────────────────────────────────────────────────
+
+    - select 'test';  -- Oracle's 'dual' equivalent; no 'from' statement.
+
+
+  GROUPBY MONTH
+  ────────────────────────────────────────────────────────────────────────────
+
+    -- Number of queries per months across the whole account.
+    select
+      to_varchar(date_trunc('MONTH',start_time), 'YYYY-MM') as MONTH, -- DAY, MONTH, WEEK, MONTH, YEAR
+      count(query_id) as number_of_queries
+    from "SNOWFLAKE"."ACCOUNT_USAGE"."QUERY_HISTORY"
+    group by 1 order by MONTH desc;
+
+        MONTH      NUMBER_OF_QUERIES
+        2020-02    36903
+        2020-01     1572
+
+
+
+RESULT_SCAN
+══════════════════════════════════════════════════════════════════════════════
+
+  select * from table(RESULT_SCAN('<uuid>')) where ...;
