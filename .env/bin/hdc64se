@@ -1,6 +1,24 @@
 #!/bin/bash
 
+# Need to find a way to figure out if TRUECOLOR is supported.  For the
+# moment, we hard code, assuming it is.
+TRUECOLOR=1
+
+if (( TRUECOLOR )); then
+  # Truecolor:  Colors picked with color picker from:
+  #   https://www.c64-wiki.com/images/2/2c/c64_16farben.png
+  #
+  # https://stackoverflow.com/questions/15682537/ansi-color-specific-rgb-sequence-bash
+  BG='\x1b[48;2;72;58;170m'
+  FG='\x1b[38;2;134;122;222m'
+else
+  # 16 Colors
+  BG=''
+  FG='\e[1;36;44m'
+fi
+
+OFF='\e[0m'
+
 # Hard space after "READY" at end is necessary to dray the full block's
 # background.
-#echo -e "\e[1;34;44m?SYNTAX  ERROR    \nREADY             \e[0m"
-echo -e "\e[1;36;44m?SYNTAX  ERROR    \nREADY             \e[0m"
+printf "${BG}${FG}?SYNTAX  ERROR    \nREADY             ${OFF}\n"
