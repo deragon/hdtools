@@ -1,0 +1,40 @@
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - wsl.exe --shutdown # Reboot not a concept.  Restart a new terminal after.
+
+
+
+WSL GUI
+══════════════════════════════════════════════════════════════════════════════
+
+  Set graphical application (must install an Xserver)
+
+    https://stackoverflow.com/questions/61860208/wsl-2-run-graphical-linux-desktop-applications-from-windows-10-bash-shell-erro
+
+    On Windows 10, the open source Xserver 'VcXsrv' works well.
+
+
+  VCXSRV
+  ────────────────────────────────────────────────────────────────────────────
+
+    Error messages
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Gdk-Message: 10:57:08.360: gvim: Fatal IO error 110 (Connection timed out) on X server 10.0.0.200:0.0.
+      ⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋
+
+        See https://stackoverflow.com/questions/61026890/why-does-my-vcxsrv-crash-with-xio-fatal-io-error-110-connection-timed-out-on
+
+        As of 2021-12-22, there is no solution.  Someone on the web suggest
+        that the problem is with Windows OS that cuts the connection, not
+        VcXsrv.  No confirmation about that was found.
+
+
+  Windows Firewall blocking port 6000
+  ────────────────────────────────────────────────────────────────────────────
+
+    For GUI applications to run under WSL, port 6000 to the Windows Host need to
+    be opened.  See instructions at:
+
+      https://www.bleepingcomputer.com/news/microsoft/windows-subsystem-for-linux-2-bypasses-the-windows-10-firewall/
