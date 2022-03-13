@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Workaround to prevent X apps running in WSL to randomly stop die on X Server in Windows host.
+
+See:  https://github.com/microsoft/WSL/issues/5339
+
+Usage:  ${SCRIPT_NAME}  [-h]
+
+ -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [[ ! "$(uname -a)" =~ "microsoft" ]]; then
+  ERRORS="${ERRORS} - You are not running under WSL.  This script is only meant for WSL.  Aborting."
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+# From:  https://github.com/microsoft/WSL/issues/5339
+sudo sysctl -w net.ipv4.tcp_keepalive_intvl=60 net.ipv4.tcp_keepalive_probes=5 net.ipv4.tcp_keepalive_time=300
