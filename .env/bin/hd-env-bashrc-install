@@ -1,0 +1,167 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+Install on remote host an alias in .bashrc to initiate the loading
+of Hans Deragon's environment.
+
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <DST>+
+
+  -d  Dry-run.
+  -h  Display this help text.
+"
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    "$@"
+  fi
+}
+
+SCRIPT="
+#!/bin/bash
+
+  FILE_TMP=\"/tmp/328401.tmp\"
+  cat >\"\${FILE_TMP}\" <<EOS
+USER_HOME=\"\${HOME}\"
+FILE=\"\\\${USER_HOME}/.bashrc\"
+
+BASHRC=\"
+# ----------------------------------------------------------------------
+# Alias pour charger l'environnement de Hans Deragon.  N'affecte en rien
+# l'environnement s'il n'est pas appelé.
+alias gohd='source \"\\\${USER_HOME}/.hans.deragon/.corp-\"*\"/gohd\"'
+[ \\\"\\\\\\\${XMODIFIERS}\\\" == 'HDCONNECTION' ] && gohd
+\"
+
+if fgrep -q 'alias gohd' \"\\\${HOME}/.bashrc\"; then
+  printf '\e[1;34m% 8s' \"\\\${USER}\"
+  echo -e \":  Hans Deragon's 'gohd' already installed.\\\e[0;00m\"
+else
+  echo -e \"\\\${BASHRC}\" >>\"\\\${HOME}/.bashrc\"
+  printf '\e[1;32m% 8s' \"\\\${USER}\"
+  echo -e \":  Hans Deragon's 'gohd' installed.\\\e[0;00m\"
+fi
+EOS
+
+if [ \"\$(whoami)\" == \"ec2-user\" ]; then
+  # On a AWS EC2 machine, ec2-user has sudo rights, thus we also
+  # install the bootstrap on root's .bashrc.
+
+  sudo -u root bash \"\${FILE_TMP}\"
+fi
+
+bash \"\${FILE_TMP}\"
+rm \"\${FILE_TMP}\"
+"
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "dh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if DSTS in $@ have spaces,
+                          # we separate DSTS properly.
+
+DSTS=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#DSTS[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide at least one hostname as a destination.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+
+# title()
+# ────────────────────────────────────────────────────────────────────────────
+#
+#  call:  title "Test #1"
+#  stdout:  ═ Test #1 2020-02-21 11:22:51 ════════════════════════════════════════════════════
+title()
+{
+  local LINE="═══════════════════════════════════════════════════════════════════════════════"
+  local TITLE="${1} "$(date "+${TIMESTAMP_FORMAT_HUMAN}")
+  local SEPARATOR=$(printf "%s %s %s\n" "${LINE:1:1}" "${TITLE}" "${LINE:${#TITLE}}")
+  echo "${SEPARATOR}"
+}
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+# STDIN OR DSTS
+#
+# If no DST has been provided, set one DST as STDIN (-).  This way,
+# either DSTs passed as arguments are processed or STDIN.
+if (( ${#DSTS[*]} == 0 )); then
+  echo -e "\e[1;30;43m WARNING \e[0m  SDTIN being used for input."
+  DSTS[0]="-"
+fi
+
+
+# Running through remaining arguments
+index=0
+for DST in ${DSTS[@]}; do
+
+  # Print title only if more than one DST is being processed.
+  (( ${#DSTS[*]} > 1 )) && title "Processing ${DST}"
+
+  echo "${SCRIPT}" | /usr/bin/ssh "${DST}"
+done
+
+
+# DRY RUN / EXECUTION WARNING
+# ════════════════════════════════════════════════════════════════════
+echo
+if (( DRYRUN )); then
+  echo -en "\e[1;37;44mCommand was executed in dry mode; nothing was executed.\e[0;00m\n\e[1;37;44mRerun with -e to execute the action.\e[0;00m\n"
+else
+  echo -en "\e[1;37;42mCommand was executed.\e[0;00m\n"
+fi
