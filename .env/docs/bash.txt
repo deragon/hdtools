@@ -1569,8 +1569,10 @@ XML PARSING
 
     Very good, but requires installation of the tool.
 
-    xmlstarlet el "<file.xml>"                     # Get list of elements.
-    xmlstarlet sel -t -v "<xmlpath>" "<file.xml>"  # Get value of XML element.
+    xmlstarlet el "${FILE}"                     # Get list of elements.
+    xmlstarlet sel -t -v "<xmlpath>" "${FILE}"  # Get value of XML element.
+
+    xmlstarlet ed -d '//comment()' "${FILE}"    # Show XML stripped of comments.
 
     See:  http://xmlstar.sourceforge.net/doc/UG/xmlstarlet-ug.html
 
