@@ -187,7 +187,7 @@ trap 'signalerrorhandler ${LINENO}' ERR
 # If no file has been provided, set one file as STDIN (-).  This way,
 # either files passed as arguments are processed or STDIN.
 if (( ${#FILES[*]} == 0 )); then
-  echo -e "\e[1;30;43m WARNING \e[0m  SDTIN being used for input."
+  echo -e "\e[1;30;43m WARNING \e[0m  SDTIN being used for input." >&2
   FILES[0]="-"
 
   # Or as an alternative, to catch all STDIN into a variable named STDIN:
