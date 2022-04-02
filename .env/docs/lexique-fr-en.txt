@@ -44,6 +44,8 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   onboarding                 -> accompagnement, processus d'intégration
   race condition             -> situation de compétition
                                 condition de concurrence
+  stream                     -> flux continu
+
 
 
 ACRONYMS
