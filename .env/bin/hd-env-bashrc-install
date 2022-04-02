@@ -46,12 +46,24 @@ run()
 SCRIPT="
 #!/bin/bash
 
-  FILE_TMP=\"/tmp/328401.tmp\"
-  cat >\"\${FILE_TMP}\" <<EOS
-USER_HOME=\"\${HOME}\"
-FILE=\"\\\${USER_HOME}/.bashrc\"
+FILE_TMP=\"/tmp/328401.tmp\"
 
-BASHRC=\"
+cat >\"\${FILE_TMP}\" <<EOS
+#!/bin/bash
+
+USER_HOME=\"\${HOME}\"
+
+# On RHEL systems, .bash_profile sources .bashrc and then hard code
+# the PATH variable, destroying the PATH setup by 'gohd'.
+# To avoid this, we thus
+if fgrep -q '.bashrc' \"\\\${HOME}/.bash_profile\"; then
+  BASH_FILE=\"\\\${HOME}/.bash_profile\"
+else
+  BASH_FILE=\"\\\${HOME}/.bashrc\"
+fi
+
+
+BASH_COMMANDS=\"
 # ----------------------------------------------------------------------
 # Alias pour charger l'environnement de Hans Deragon.  N'affecte en rien
 # l'environnement s'il n'est pas appelé.
@@ -59,11 +71,11 @@ alias gohd='source \"\\\${USER_HOME}/.hans.deragon/.corp-\"*\"/gohd\"'
 [ \\\"\\\\\\\${XMODIFIERS}\\\" == 'HDCONNECTION' ] && gohd
 \"
 
-if fgrep -q 'alias gohd' \"\\\${HOME}/.bashrc\"; then
+if fgrep -q 'alias gohd' \"\\\${BASH_FILE}\"; then
   printf '\e[1;34m% 8s' \"\\\${USER}\"
   echo -e \":  Hans Deragon's 'gohd' already installed.\\\e[0;00m\"
 else
-  echo -e \"\\\${BASHRC}\" >>\"\\\${HOME}/.bashrc\"
+  echo -en \"\\\${BASH_COMMANDS}\" >>\"\\\${BASH_FILE}\"
   printf '\e[1;32m% 8s' \"\\\${USER}\"
   echo -e \":  Hans Deragon's 'gohd' installed.\\\e[0;00m\"
 fi
@@ -71,8 +83,7 @@ EOS
 
 if [ \"\$(whoami)\" == \"ec2-user\" ]; then
   # On a AWS EC2 machine, ec2-user has sudo rights, thus we also
-  # install the bootstrap on root's .bashrc.
-
+  # install the bootstrap on root's .bash(_profile|rc) file.
   sudo -u root bash \"\${FILE_TMP}\"
 fi
 
