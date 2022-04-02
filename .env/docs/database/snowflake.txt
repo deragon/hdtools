@@ -67,3 +67,36 @@ RESULT_SCAN
 ══════════════════════════════════════════════════════════════════════════════
 
   select * from table(RESULT_SCAN('<uuid>')) where ...;
+
+
+
+PROCEDURES
+══════════════════════════════════════════════════════════════════════════════
+
+  ⚠ IMPORTANT:
+
+    When specifying a procedure, you must always provide the types of all the arguments,
+    as procedures in Snowflake support overloading, i.e. more than one procedure
+    can have the same name, but different list of arguments.
+
+  -- Show ownership of procedure
+  -- Parentheses with arguments MUST be outside of double quotes for 'describe' to work.
+  show grants on procedure "<DATABASE>"."<SCHEMA>"."<PROCEDURE>"(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN);
+
+  -- Does not show the ownership.
+  describe PROCEDURE "<DATABASE>"."<SCHEMA>"."<PROCEDURE>"(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN);
+  SHOW PROCEDURES like '<Procedure names>';  -- DOES NOT SHOW OWNERSHIP.
+
+
+
+OWNERSHIP
+══════════════════════════════════════════════════════════════════════════════
+
+  use database <DATABASE>;
+
+  -- Show ownership of procedure
+  -- Parentheses with arguments MUST be outside of double quotes for 'describe' to work.
+  show grants on procedure "<DATABASE>"."<SCHEMA>"."<PROCEDURE>"(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN);
+
+  grant ownership on procedure <DATABASE>.<SCHEMA>.<PROCEDURE>(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN) to role "<ROLE>" REVOKE CURRENT GRANTS;
+  grant usage     on procedure <DATABASE>.<SCHEMA>.<PROCEDURE>(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN) to role "<ROLE>";
