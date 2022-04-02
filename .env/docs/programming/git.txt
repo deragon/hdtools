@@ -912,6 +912,29 @@ EOF
       the diffs queue?.
 
 
+    MELD
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      WSL
+      ⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋
+
+        [difftool "meld"]
+
+          cmd = \"/mnt/c/Users/derah/Programs/Meld/Meld.exe\" \"$(wslpath -w \"${LOCAL}\")\" \"$(wslpath -w \"${REMOTE}\")\"
+          trustExitCode = true
+          prompt = false
+
+
+      CYGWIN
+      ⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋
+
+        [difftool "meld"]
+
+          cmd = \"C:/Users/derah/Programs/Meld/meld.exe\" \"${LOCAL}\" \"${REMOTE}\"
+          trustExitCode = true
+          prompt = false
+
+
 
 GITIGNORE
 ══════════════════════════════════════════════════════════════════════════════
