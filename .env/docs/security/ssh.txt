@@ -169,6 +169,9 @@ AUTOMATE INTERACTIVE PASSWORD
 SERVER
 ══════════════════════════════════════════════════════════════════════════════
 
+  - systemctl restart sshd.service  # SAFE:  existings ssh connections not lost.
+
+
   To restrict login from only a limited set of users:
 
   In /etc/ssh/sshd_config:
