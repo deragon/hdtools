@@ -1,0 +1,113 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Remove comments in provided files.
+
+Usage:  ${SCRIPT_NAME} [-h] <file.xml>+
+
+  -h  Display this help text.
+"
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+# if ((${#FILES[*]} == 0)); then
+#   ERRORS="${ERRORS} - You must provide at least one argument.\n"
+# fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+
+
+# title()
+# ────────────────────────────────────────────────────────────────────────────
+#
+#  call:  title "Test #1"
+#  stdout:  ═ Test #1 2020-02-21 11:22:51 ════════════════════════════════════════════════════
+title()
+{
+  local LINE="═══════════════════════════════════════════════════════════════════════════════"
+  local TITLE="${1} "$(date "+${TIMESTAMP_FORMAT_HUMAN}")
+  local SEPARATOR=$(printf "%s %s %s\n" "${LINE:1:1}" "${TITLE}" "${LINE:${#TITLE}}")
+  echo "${SEPARATOR}"
+}
+
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+# STDIN OR FILES
+#
+# If no file has been provided, set one file as STDIN (-).  This way,
+# either files passed as arguments are processed or STDIN.
+if (( ${#FILES[*]} == 0 )); then
+  echo -e "\e[1;30;43m WARNING \e[0m  SDTIN being used for input." >&2
+  FILES[0]="<STDIN>"
+fi
+
+for FILE in ${FILES[@]}; do
+
+  # Print title only if more than one file is being processed.
+  (( ${#FILES[*]} > 1 )) && title "Processing ${FILE}"
+
+  FILE_TYPE="$(file "${FILE}")"
+
+  if [[ "${FILE_TYPE,,}" =~ "xml" ]]; then
+    if [ "${FILE}" == "<STDIN>" ]; then
+      xmlstarlet ed -d '//comment()' # Processing STDIN.
+    else
+      xmlstarlet ed -d '//comment()' "${FILE}"
+    fi
+  else
+    # -- Comments are for SQL.
+    sed --regexp-extended '/^\s*(;|#|\/\/|\"|--|$)/d' "${FILE}"
+  fi
+done

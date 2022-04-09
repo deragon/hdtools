@@ -728,13 +728,6 @@ readinfo()
   info --subnodes --no-raw-escapes -o - $* | less
 }
 
-hd_clearcomments()
-{
-  # -- Comments are for SQL.
-  perl -ne  "print if not /^\s*(;|#|\/\/|\"|--|$)/" $@
-}
-exportfunction hd_clearcomments
-
 fflush_stdin()
 {
   local ffs_originalSettings
