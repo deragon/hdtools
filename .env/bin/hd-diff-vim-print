@@ -150,6 +150,7 @@ while IFS='' read -r LINE || [[ -n "${LINE}" ]]; do
       echo -e "vimdiff <(unzip -l '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}') <(unzip -l '${CHANGE_COLOR_B}${FILENAMEB}${COLOR_RESET}')  # ${CHANGE_TS_HUMAN_A} / ${CHANGE_TS_HUMAN_2}"
     else
       echo -e "vimdiff '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' '${CHANGE_COLOR_B}${FILENAMEB}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A} / ${CHANGE_TS_HUMAN_2}"
+      echo -e "vimdiff <(hdclearcomments '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}') <(hdclearcomments '${CHANGE_COLOR_B}${FILENAMEB}${COLOR_RESET}') # ${CHANGE_TS_HUMAN_A} / ${CHANGE_TS_HUMAN_2}"
     fi
   fi
 
