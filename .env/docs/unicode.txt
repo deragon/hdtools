@@ -135,13 +135,12 @@ UNICODE UTF-8 UTF8
   ☠ 2620   シ30B7    ₵ 20B5    € 20AC    ⋘ 22D8    ⋙ 22D9
   ♥ 2665   ♡ 2661    ❤ 2764    ° 00B0 (degree)
 
-  🔗 (web link) 📧 (email) ✉ (enveloppe)
-  🌊(wave)
+  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)
+  🔗 (web link) 📧 (email) ✉ (enveloppe) 🌊 (wave) 🗑 (trash)
   ? 1F44B  ∞ 221E (infinit)    ↔ 2194 (double arrow)   ¤ 00A4 (currency)
   ⏪23EA   ⏩23E9    ⏫23EB    ⏬23EC   ∕ (division slash)
   💍 💯
   █ 2588
-  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)
   ⛁ 26C1 (database)
   ß 00DF -> compose + s + s
 
