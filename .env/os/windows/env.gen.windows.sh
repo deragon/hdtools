@@ -108,6 +108,11 @@ chrome()
   hd_application_run_executable_windows CHROME "Google Chrome" "CHROME.EXE" "$@"
 }
 
+meld()
+{
+  hd_application_run_executable_windows MELD "Meld" "MELD.EXE" "$@"
+}
+
 
 for MOUNT_DIR in "/mnt" "/cygdrive" "null"; do
   [ -d "${MOUNT_DIR}" ] && break
