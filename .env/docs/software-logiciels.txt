@@ -58,6 +58,14 @@ SCREENCAST
 DIAGRAMMES / DESSIN
 ══════════════════════════════════════════════════════════════════════════════
 
+  diagrams.net - https://www.diagrams.net/ (known as Draw IO before)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Download desktop version at:  https://github.com/jgraph/drawio-desktop/releases
+    Code:                         https://github.com/jgraph/drawio
+    Note:  diagrams.net is open source but closed to contributions.
+
+
   GraphML - http://en.wikipedia.org/wiki/GraphML
   ────────────────────────────────────────────────────────────────────────────
 
@@ -85,14 +93,12 @@ DIAGRAMMES / DESSIN
         http://yed.yworks.com/support/qa/4680/can-the-grid-be-magnetic
 
 
-
   SDEDIT - http://sourceforge.net/projects/sdedit
   ────────────────────────────────────────────────────────────────────────────
 
     A fantastic sequence diagram designer  <<--- Très bon, facile.
 
     Doc:  http://sdedit.sourceforge.net
-
 
 
   Enterprise modèle
@@ -108,7 +114,6 @@ DIAGRAMMES / DESSIN
        multi-platforme.
 
 
-
   Collaboration
   ────────────────────────────────────────────────────────────────────────────
 
@@ -117,13 +122,6 @@ DIAGRAMMES / DESSIN
 
       Drawpile is a Free software collaborative drawing program that allows
       multiple users to sketch on the same canvas simultaneously.
-
-
-
-  diagrams.net - https://www.diagrams.net/
-  ────────────────────────────────────────────────────────────────────────────
-
-    Jamais essayé, parait bien.
 
 
 
