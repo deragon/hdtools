@@ -27,7 +27,11 @@ hd_application_run_executable()
 
   if [ -e "${!VARNAME}" ]; then
     echo "Executing ${TEXT}:  ${!VARNAME}"
-    "${!VARNAME}" "$@" &
+    if [ -z "$@" ]; then
+      ("${!VARNAME}" &)
+    else
+      ("${!VARNAME}" "$@" &)
+    fi
   else
     local IFS="|"
     for EXECUTABLE in ${EXECUTABLES}; do
