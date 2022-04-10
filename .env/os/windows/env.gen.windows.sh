@@ -69,13 +69,18 @@ classpathToWindows
 
 hd_application_run_executable_windows()
 {
-  if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
-    hd_application_run_executable "$1" "$2" "$3" \
-      "$(cygpath -w "$(readlink -f "${4}")")"
+  local WIN_PATH
+  if [ -z "${4}" ]; then
+    WIN_PATH=""
   else
-    hd_application_run_executable "$1" "$2" "$3" \
-      "$(wslpath -a -w "$(readlink -f "${4}")")"
+    if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
+      WIN_PATH="$(cygpath -w "$(readlink -f "${4}")")"
+    else
+      WIN_PATH="$(wslpath -a -w "$(readlink -f "${4}")")"
+    fi
   fi
+
+  hd_application_run_executable "$1" "$2" "$3" "${WIN_PATH}"
 }
 
 acroread()
@@ -85,12 +90,12 @@ acroread()
 
 word()
 {
-  hd_application_run_executable_windows MSWORD "Microsoft Word" WINWORD.EXE "$@"
+  hd_application_run_executable_windows MSWORD "Microsoft Word" "WINWORD.EXE" "$@"
 }
 
 excel()
 {
-  hd_application_run_executable_windows MSEXCEL "Microsoft Excel" EXCEL.EXE "$@"
+  hd_application_run_executable_windows MSEXCEL "Microsoft Excel" "EXCEL.EXE" "$@"
 }
 
 chrome()
@@ -100,7 +105,7 @@ chrome()
   #
   #             This will cause a long delay each time this function is called,
   #             instead of only the first time.
-  hd_application_run_executable_windows CHROME "Google Chrome" CHROME.EXE "$@"
+  hd_application_run_executable_windows CHROME "Google Chrome" "CHROME.EXE" "$@"
 }
 
 
