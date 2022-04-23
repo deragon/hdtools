@@ -928,6 +928,10 @@ endif
 " installing from this repository, add the following to your vimrc:
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 
+" Fix YAML indent problem when commenting.
+" From:  https://stackoverflow.com/questions/51059357/vim-wrong-indent-when-comment-lines-of-yaml-file
+autocmd FileType yaml,yaml.ansible setlocal indentkeys-=0#
+
 " From:  http://vim.wikia.com/wiki/Quick_generic_option_toggling
 " Map key to toggle opt
 function! MapToggle(key, opt)
