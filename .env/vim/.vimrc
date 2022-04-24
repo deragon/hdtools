@@ -332,6 +332,11 @@ map <Leader>unicode :s/\(<[uU]\\|\\u\)\(\x\{4}\)>*/\=nr2char(str2nr(submatch(2),
 :vnoremap <leader>uudecode c<c-r>=system('uudecode', @")<cr><esc>
 :vnoremap <leader>uuencode c<c-r>=system('uuencode', @")<cr><esc>
 
+" Hardspaces replaced with normal spaces.
+" Need to use <Bar> here instead of | since | is used to separate vim
+" commands in .vimrc.
+map <Leader>hardspaces :s/\( \<Bar>☠\)/ /g<cr><esc>
+
 " 'set noic' to not ignore case.  Default is to ignore case when searching.
 " It is easier that way.
 set ic
