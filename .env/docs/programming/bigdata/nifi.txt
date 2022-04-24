@@ -9,7 +9,7 @@ NiFi
 
   Dependencies of Nifi:
 
-    Zookeeper
+    Zookeeper, but only if configured as a cluster.
 
 
 
