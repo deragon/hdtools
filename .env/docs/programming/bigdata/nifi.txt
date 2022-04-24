@@ -1,16 +1,6 @@
-
-
-
-Nifi
+NiFi
 ══════════════════════════════════════════════════════════════════════════════
 
-  According to Frank from Hortonworks.
-
-  Should not be used for enrichment, since the processors to do so are
-  limited.   Should be used for routing, splitting data and transfer data from
-  multiple sources into a lake.
-
-  ────────────────────────────────────────────────────────────────────────────
 
   Nifi Processors and other Nifi components can be versionned with Nifi's
   registry.
