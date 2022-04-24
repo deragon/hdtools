@@ -8,6 +8,7 @@ SITES
 LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
+  troubleshooting            -> dépannage / résolution de problèmes / diagnostic des défaillances
   backdoor                   -> porte dérobée
   bug                        -> vermine
   credentials                -> données de connexion
