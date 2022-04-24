@@ -27,7 +27,27 @@ NIFI REGISTRY AND DEPLOYMENT INTO PRODUCTION
 
 
 
-À LIRE
+nifi.properties
+══════════════════════════════════════════════════════════════════════════════
+
+  Properties that cannot be modified/are always overridden in nifi.properties
+  ────────────────────────────────────────────────────────────────────────────
+
+    For some properties in nifi.properties, if you change them in that file
+    they will be always be ignored and reverted or changed to something else
+    upon NiFi's restart.  That is because the script:
+
+      /opt/nifi/scripts/start.sh
+
+    ... reads environment variables and sets default values into
+    nifi.properties at each restart for many properties regardless of their
+    value in nifi.properties.
+
+    See:  https://stackoverflow.com/questions/54295980/nifi-from-overwriting-values-in-nifi-properties
+
+
+
+READINGS
 ══════════════════════════════════════════════════════════════════════════════
 
   - Understanding NiFi processor's "Run Duration" functionality.
