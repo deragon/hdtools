@@ -146,12 +146,14 @@ STRING MANIUPLATIONS
       DST_HOST="${DST_HOST/*@}"  # Filter out any user definition.
 
 
-  TEST IF STRING CONTAINS SOME TEXT
+  TEST IF STRING CONTAINS/STARTS/ENDS WITH SOME TEXT
   ────────────────────────────────────────────────────────────────────────────
 
     Method #1:
 
       if [[ "${string}" == *"Contains this"* ]]; then echo "Contains it!"; fi
+      if [[ "${string}" == "Starts with this"* ]]; then echo "Starts with it!"; fi
+      if [[ "${string}" == "Ends with this"* ]]; then echo "Ends with it!"; fi
 
     Method #2:
 
