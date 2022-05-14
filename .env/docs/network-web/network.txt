@@ -1,0 +1,410 @@
+TOOLS
+══════════════════════════════════════════════════════════════════════════════
+
+  Get IP address
+  ────────────────────────────────────────────────────────────────────────────
+
+    NOTE:  'host' command is deprecated.  Use 'dig'.
+
+    dig +short "${HOSTNAME}"      # Get IP of hostname/FQDN.
+    dig +noall +short -x "${IP}"  # Reverse lookup for hostname/FQDN.
+
+
+  Tester la vitesse d'une connexion d'un furteur
+  ────────────────────────────────────────────────────────────────────────────
+
+    ${HDENVDIR}/bin/testinternetspeed/testinternetspeed.sh
+
+    Voir:
+
+      http://askubuntu.com/questions/147377/how-to-debug-slow-browsing-speed
+
+
+  LECTURE
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch04_:_Simple_Network_Troubleshooting
+
+
+  PORT TEST
+  ────────────────────────────────────────────────────────────────────────────
+
+  Utiliser la commande nc (netcat) pour placer un processus qui
+  écoute sur un port en particulier:
+
+    nc -l 9999  # 9999 port sur lequel la machine écoute.
+    telnet <machine> 9999
+
+    nc -l prdp4micmac 8080  # Écoute sur l'IP de prdp4micmac, port 8080
+
+  Tester si un port est ouvert
+
+    nc -z <remote host> <port>  # Print result, returns 0 (success) or 1 (fail)
+    nc -w 2 <remote host> <port>  # No print, returns 0 (success) or 1 (fail)
+
+    # Without nc/telnet available.  Works even under Cygwin.
+    timeout 5 bash -c 'cat </dev/null >/dev/tcp/${IP}/${PORT}'
+
+    telnet <remote host> <port>
+
+
+  NETWORK STATS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Nombre de paquets par secondes.  Cependant, notez que cette métrique
+    est inutile car on ne sait pas combien gros sont les paquets ni
+    la capacité des NICs.
+
+      netstat -i 1
+
+    Voir:  http://www.brendangregg.com/Perf/network.html
+
+    Sur Solaris, aucun outil natif fourni de l'information sur le %
+    utilisé des NICs.  Mais il existe un outil en version Perl et C
+    nommé nicstat qui est génial.
+
+      Version C:     http://sourceforge.net/projects/nicstat/files/
+      Version Perl:  http://www.brendangregg.com/K9Toolkit/nicstat
+
+    La version Perl se trouve déjà sous ${HDENVDIR}/bin/nicstat.pl
+
+    Voir aussi:  http://www.brendangregg.com/k9toolkit.html
+
+
+  OS DETECTION / IDENTIFICATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    nmap -A -T4 -F [-P0] <hostname>  # Alias to netosdetect in .env
+
+
+  CONTROL YOUR BANDWIDTH WITH TRICKLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    http://www.tuxradar.com/content/control-your-bandwidth-trickle
+
+
+  LIST OF SERVERS LISTENING ON PORTS
+  ────────────────────────────────────────────────────────────────────────────
+
+
+    Linux:    nmap -v -A <IP>  # << Très bon
+              netstat -lp --inet --numeric-ports
+              lsof -i -P -n  # Numerical IP addresses and Port number.
+              lsof -i        # Hostnames and port names.
+              lsof -i TCP | fgrep LISTEN # Port listening on the machine
+
+    Solaris:  netstat -an
+
+              lsof n'est pas disponible par défaut sur Solaris.
+              Pour associer un port et son PID, on peut exécuter le
+              script suivant:
+
+                PORT=25
+                for p in $(ps -eo pid)
+                do
+                  OUT=$(pfiles $p)
+                  if [[ "$OUT" =~ port:\ ${PORT} ]]
+                  then
+                    echo $p
+                  fi
+                done
+
+              Réf:  http://serverfault.com/questions/6183/how-do-i-find-out-what-process-a-listening-socket-is-bound-to-under-solaris-8
+                    http://blogs.oracle.com/taz/entry/get_application_pid_listening_on
+
+    Windows:  netstat -v -o -n -b -a
+
+
+  ethtool eth0    # List characteristics of interface.
+
+
+  TCPDUMP
+  ────────────────────────────────────────────────────────────────────────────
+
+    IMPORTANT PARAMETERS TO MOST OFTEN INCLUDE IN A COMMAND:
+
+      -s < number of bytes to catch; default 68>
+      -nn  # Don’t convert protocol and port numbers etc. to names either.
+      -A   # Ascii output
+
+    tcpdump output as raw data can be read by Wireshark for offline analysis
+    without the need for any conversion.
+
+    # IMPORTANT:  -s 0 signifie affiche tous les octets.  Sinon, tcpdump
+    #             n'affiche que les premiers 96 octets.
+    tcpdump -s 0 -i eth1 -A # Ascii output.
+    tcpdump -s 0 -i eth1 -w <file> # Raw/binary output to file, Wireshark compatible.
+
+    # Test for any TCP traffic, excluding SSH.
+    tcpdump "proto \tcp and port not 22 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)" -i eth0
+
+
+    # Example for capturing packets for destination 192.168.0.1:8080, TCP and
+    # that contains only data.
+
+    IP=
+    tcpdump "net ${IP} and tcp port 8080 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)" -s 0 -i eth1 -X -w ${IP}-tcpdump-`date +"%Y%m%d-%H%M%S"`.log
+
+    From the manpage:
+
+      To print all IPv4 HTTP packets to and from port 80, i.e. print only
+      packets that contain data, not, for example, SYN and FIN packets and
+      ACK-only packets. (IPv6 is left as an exercise for the reader.)
+
+      WARNIG:  If you use this type of filter, NO CONNECTION FAILURE WILL
+               SHOW UP.  Thus, to debug a 'connection refused' error, DO
+               NOT ADD THIS FILTER.
+
+          tcpdump 'tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)'
+
+
+  snoop
+
+    snoop -d vnet0 -v not dst port 22 and not icmp and not udp and dst ssmtl120 | egrep "Source address|Destination port|IP Header"
+
+
+  TRES BON:  Pour connaitre les ports RPCs utilisés par quelles applications:
+
+     pmap_dump
+
+  bwm-ng (http://www.gropp.org/)
+
+    Bandwidth Monitor NG is a small and simple console-based live
+    bandwidth monitor for Linux, BSD, Solaris, Mac OS X and others.
+
+  bandwhich
+
+    From:  https://www.tecmint.com/bandwhich-monitor-linux-network-bandwidth-utilization/
+
+    Bandwhich, formerly known as “what”, is a terminal utility written in Rust
+    programming language, which is used for monitoring current network
+    bandwidth utilization by the process, connection, and remote IP/hostname.
+    It sniffs a specified network interface and tracks IP packet size,
+    cross-referencing it with the /proc filesystem on Linux and lsof on macOS.
+
+
+  TRACEROUTE
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch04_:_Simple_Network_Troubleshooting#Using_traceroute_to_Test_Connectivity
+
+    Another tool for network troubleshooting is the traceroute command. It
+    gives a listing of all the router hops between your server and the target
+    server.  This helps you verify that routing over the networks in between
+    is correct.
+
+    The traceroute command works by sending a UDP packet destined to the
+    target with a TTL of 0. The first router on the route recognizes that the
+    TTL has already been exceeded and discards or drops the packet, but also
+    sends an ICMP time exceeded message back to the source. The traceroute
+    program records the IP address of the router that sent the message and
+    knows that that is the first hop on the path to the final destination. The
+    traceroute program tries again, with a TTL of 1. The first hop, sees
+    nothing wrong with the packet, decrements the TTL to 0 as expected, and
+    forwards the packet to the second hop on the path. Router 2, sees the TTL
+    of 0, drops the packet and replies with an ICMP time exceeded message.
+    traceroute now knows the IP address of the second router. This continues
+    around and around until the final destination is reached.
+
+
+
+  TRANSFERTS DE FICHIERS PERFORMANTS
+  ══════════════════════════════════════════════════════════════════════════════
+
+  BBCP
+
+    bbcp is a point-to-point network file copy application written by Andy
+    Hanushevsky at SLAC as a tool for the BaBar collaboration. It is capable
+    of transferring files at approaching line speeds in the WAN.
+
+    http://pcbunn.cithep.caltech.edu/bbcp/using_bbcp.htm
+
+
+
+CIDR
+══════════════════════════════════════════════════════════════════════════════
+
+  Best website to figure the CIDR of a public IP address:
+
+    https://www.whois.com   # Find the CIDR of an IP.
+      Example:  https://www.whois.com/whois/74.56.0.0
+
+    https://dnschecker.org/ip-whois-lookup.php   # Find the CIDR of an IP.
+
+
+DNS
+══════════════════════════════════════════════════════════════════════════════
+
+  sudo resolvectl flush-caches  # Flush DNS server on 127.0.0.53
+
+  systemd-resolve --status      # List all DNS servers being used:
+
+  Linux - Maximum of 3 DNS servers
+  ────────────────────────────────────────────────────────────────────────────
+
+    Linux supports a maximum of 3 DNS Servers.
+
+    Read:  https://unix.stackexchange.com/questions/28004/how-to-overcome-libc-resolver-limitation-of-maximum-3-nameservers
+
+    Ainsi, si l'on configure les 3 serveurs DNS suivant de Vidéotron:
+
+      DNS de Vidéotron:  24.200.241.37, 24.201.245.77, 24.200.243.189
+
+    Dans la connexion Arimazo du Portable (en utilisant le GUI), le DNS de
+    Arimazo sera ignoré et aucun des appareils connectés à Arimazo
+    n'apparaitra dans une recherche de DNS.  Il est suggéré, s'il faut pour
+    des raisons de tests, de configurer les serveurs de Vidéotron, de n'en
+    configurer que 2.
+
+
+  TRAPS ──────────────────────────────────────────────────────────────────────
+
+    `host` and `nslookup` directly contact the DNS server and will not
+    take into account /etc/hosts even if it is setup under /etc/nsswitch.conf
+    as the primary source (first on the list).
+
+
+  NSLOOKUP ───────────────────────────────────────────────────────────────────
+
+    # Dump de toute les entrées DNS d'un domaine en entier.
+
+    nslookup # Entrer dans le mode interactif
+
+      # Notez que sous Linux, cette fonction n'est pas implémentée.
+      ls -d axa-canada.com > dns.txt
+
+
+
+PORT FORWARDER / REDIRECT
+══════════════════════════════════════════════════════════════════════════════
+
+  En JAVA:
+
+    Fonctionne merveilleusement:
+
+    Voir ${HDENVDIR}/bin/hd-port-forwarder-java
+
+
+
+INTERFACES
+══════════════════════════════════════════════════════════════════════════════
+
+
+  Solaris:
+
+    [root@<host> ~] dladm show-dev
+    e1000g0         link: up        speed: 1000  Mbps       duplex: full
+    e1000g1         link: up        speed: 1000  Mbps       duplex: full
+
+    Set an option on a NIC:  ndd
+
+
+
+TRUCS
+══════════════════════════════════════════════════════════════════════════════
+
+  OBTAINING A MAC ADDRESS OF A REMOTE HOST.
+
+  MAC addresses don't route, so the IP address would have to be of a
+  host on your network. You may have to ping the IP first.
+
+  arp -a <IP>
+
+
+
+
+NFS
+══════════════════════════════════════════════════════════════════════════════
+
+  AUTHENTICATION PROBLEM
+  --------------------------------------------------------------------
+
+  Jan 13 14:26:35 kickstart rpc.mountd: authenticated mount request from
+  <fqdn>:911 for /export/pub (/export/pub)
+  Jan 13 14:26:35 kickstart rpc.mountd: getfh failed: Operation not permitted
+
+  exportfs -r règle le problème.
+
+  Une autre solution rapporté mais pas testé est de remplacer:
+
+    "*(ro,insecure,all_squash)" avec "(ro,insecure,all_squash)"
+
+  i.e. retirer dans /etc/exportfs le '*' qui signifie "tout les clients".
+  The second form implicitly means all clients anyway, and it has been
+  reported to work better.
+
+  Problème rapporté à:
+
+    https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=92081
+
+  Note:  Si on tente d'exporter autre chose qu'un fs local, comme
+         réexporter un share NFS déjà mounté, cette erreur ce produira
+         et il n'y a rien à faire.
+
+
+  NO DNS FORWARD LOOKUP
+  --------------------------------------------------------------------
+
+    If the following error occurs when trying to mount an nfs mountpoint:
+
+    refused mount request from 192.168.1.134 (<fqdn>) for
+    /export/cfg/wks (/export/cfg/wks): no DNS forward lookup
+
+    Run on the NFS server the command:  exportfs -r.  This should clear it.
+
+
+
+PROXY
+══════════════════════════════════════════════════════════════════════════════
+
+  1ST METHOD TO FETCH PROXY INFORMATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://superuser.com/questions/33588/how-to-view-internet-explorer-auto-detected-proxy-settings
+
+    # IMPORTANT:
+    #
+    #   The http_proxy variable must not be set, or wget will not work.
+    #   This is why 'hdproxyunset' is called prior the wget call.
+    Fetch the automatic proxy settings with:
+
+      http_proxy="" wget http://wpad/wpad.dat -O wpad.dat-$(hddate -f)
+      hdproxyunset; wget http://wpad/wpad.dat -O wpad.dat-$(hddate -f)
+
+    Within the file, look for the server(s) returned by the function.
+
+    Then, setup in your .bashrc:
+
+      export {http,https,ftp,gohper}_proxy="http://proxy.example.com:8080"
+      export no_proxy="<fqdn>,${no_proxy}"
+
+
+  2ND METHOD TO FETCH PROXY INFORMATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    In some organization, it is not possible to fetch the information
+    following the 1st method described above.  Authentification with the
+    'wpad' server is required and always fails.
+
+    Another way to fetch proxy information is to log all traffic when visiting
+    an external website.  This can be easily achieved with Chrome:
+
+      1) Go to:  chrome://net-export/
+      2) Start the logging service, saving to a file.
+      3) Visit an external site.
+      4) Stop logging
+      5) fgrep -i proxy <logging file>
+
+    You should now have found the proxy FQDN.
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
