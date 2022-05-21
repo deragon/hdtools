@@ -473,6 +473,9 @@ MERGE / REBASE
       #Merge changes from ${BRANCH_SRC} to ${BRANCH_TARGET}
       git rebase ${BRANCH_SRC} ${BRANCH_TARGET}
 
+      # For UNDO previous rebase, will reset from remote.
+      git reset --hard ORIG_HEAD  #
+
 
   Merge
   ────────────────────────────────────────────────────────────────────────────
