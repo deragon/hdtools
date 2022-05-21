@@ -115,15 +115,35 @@ parser.add_argument('-l', '--log-level', dest='loglevel', default='info',
 args = parser.parse_args()
 
 if args.loglevel=="debug":
-    logging.basicConfig(level=logging.DEBUG)
+    level=logging.DEBUG
 elif args.loglevel=="warning":
-    logging.basicConfig(level=logging.WARNING)
+    level=logging.WARNING
 elif args.loglevel=="error":
-    logging.basicConfig(level=logging.ERROR)
+    level=logging.ERROR
 elif args.loglevel=="critical":
-    logging.basicConfig(level=logging.CRITICAL)
+    level=logging.CRITICAL
 else:
-    logging.basicConfig(level=logging.INFO)
+    level=logging.INFO
+
+# When setting the log level with logging.basicConfig(), the log level is set
+# for ALL Python modules that using the logging facility, not just the code
+# found in this script.  This is usually not desired.
+#
+# It is preferred to use a logger and set the log level only for it, so only
+# its logs are showing, not that of other modules (very preferable when the
+# log level is set to DEBUG).
+
+# logging.debug("Test of logging %s", "here. :)")
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(funcName)20s(): %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+# Creating a logger with the script's name and setting it to a specific log
+# level.
+logger = logging.getLogger(scriptName)
+logger.setLevel(level)
+logger.debug("Test of logging %s", "here. :)")
+
 
 errors=""
 
@@ -138,11 +158,6 @@ if len(errors) > 0:
 #print(args)
 
 #print("Subdirectories will be created in '" + args.dst + "'.")
-
-logging.debug("Test of logging %s", "here. :)")
-
-logger = logging.getLogger(scriptName)
-logger.debug("Test of logging %s", "here. :)")
 
 
 
