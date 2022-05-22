@@ -66,7 +66,7 @@ COMMANDES
 
     git add -p <file>
 
-  Undo/Revert:
+  Undo/Revert local files:
 
       git restore --staged .  # SAFE.  Unstage all staged changes.  Code not reverted.
       git checkout .          # Recursively undo local changes and revert to files found in current branch.
@@ -93,6 +93,10 @@ COMMANDES
               2) Does not work all the ime
               git checkout -- .;git reset HEAD .  # Undo all changes
 
+
+    Revert an old commit, i.e. undo what that specific commit did:
+
+      git revert <commit id>
 
     Get file of a specific hash #:
 
