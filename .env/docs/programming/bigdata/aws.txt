@@ -64,6 +64,22 @@ AWS CLOUDWATCH
 
 
 
+AWS Lambda
+══════════════════════════════════════════════════════════════════════════════
+
+  Make Lambda access EC2 port through a VPC
+  ────────────────────────────────────────────────────────────────────────────
+
+    Best practice would be to assign your Lambda function to a different
+    security group than the EC2 instance. No inbound rules needed in the
+    Lambda function's security group.
+
+    Confirmed to work.  -- Hans Deragon, 2022-05
+
+    From:  https://stackoverflow.com/questions/59742001/make-lambda-access-ec2-port-through-a-vpc
+
+
+
 COÛTS / COSTS
 ══════════════════════════════════════════════════════════════════════════════
 
