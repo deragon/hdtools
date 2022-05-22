@@ -306,6 +306,7 @@ sshenv()
   fi
 }
 exportfunction sshenv
+sshenv  # Loading SSH Agent setup now.
 
 ssh()
 {
