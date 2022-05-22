@@ -227,14 +227,21 @@ BRANCHES
     git remote update origin --prune # Safe
 
 
-  Reset local branch to match the remote branch (loose all local changes)
+  RESET LOCAL BRANCH TO MATCH THE REMOTE BRANCH (LOOSE ALL LOCAL CHANGES)
   ────────────────────────────────────────────────────────────────────────────
 
-    Setting your branch to exactly match the remote branch can be done in two
-    steps:
+    ⚠ ANY FILE, EVEN THOSE THAT ARE NOT TRACKED BY GIT, WILL BE DELETED ⚠
+
+    Sometimes, git looses track and becomes out of sync with the remote
+    no matter the number of 'git pull --all --prune' one executes.
+
+    To restore the git repo as it is at the remote, run:
 
       git fetch origin
       git reset --hard origin/${BRANCH}
+      git clean -f -d  # DANGER.  WILL DELETE ALL FILES THAT ARE NOT IN REPO.
+
+    See:  https://www.ocpsoft.org/tutorials/git/reset-and-sync-local-respository-with-remote-branch/
 
 
   FORCE LOCAL BRANCH TO TRACK REMOTE BRANCH
