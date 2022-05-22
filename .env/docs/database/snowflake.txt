@@ -66,7 +66,18 @@ SQL
 RESULT_SCAN
 ══════════════════════════════════════════════════════════════════════════════
 
-  select * from table(RESULT_SCAN('<uuid>')) where ...;
+  select * from table(result_scan('<uuid>')) where ...;
+  select * from table(result_scan(last_query_id())) where ...;
+
+  Important:
+
+    - You must double quote (") the name of the column in the 'where' statement.
+    - You must single quote (') the value to compare in the 'where' statement.
+
+  Example:
+
+    show grants to role sysadmin;
+    select * from table(result_scan(last_query_id())) where "granted_on" = 'WAREHOUSE';
 
 
 
