@@ -109,6 +109,7 @@ else
 fi
 
 while IFS='' read -r LINE || [[ -n "${LINE}" ]]; do
+
   #echo "Text read from file: ${LINE}"
   if [ -z "${LINE/Only*/}" ]; then
     FILENAMEA=$(sed -r "s%Only in ([^:]+):\s+(\S+)%\1/\2%g" <<< "${LINE}")
@@ -134,15 +135,20 @@ while IFS='' read -r LINE || [[ -n "${LINE}" ]]; do
   FILE_TYPE="$(file "${FILENAMEA}")"
   FILE_TYPE="${FILE_TYPE,,}"  # To lowercase.
 
+
   colorSelector
 
   if [ -z "${FILENAMEB}" ]; then
-    if [[ "${FILE_TYPE}" =~ " text" ]]; then
-      echo -e "vim '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A}"
+    if [[ "${FILE_TYPE}" =~ "vim swap" ]]; then
+      echo -e "VIM SWAP FILE:  '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A}"
     else
-      echo -e "ls -l '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A}"
+      if [[ "${FILE_TYPE}" =~ " text" ]]; then
+        echo -e "vim '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A}"
+      else
+        echo -e "ls -l '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' # ${CHANGE_TS_HUMAN_A}"
+      fi
+      echo -e "  cp -rp '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' '${DIRB}/.'  # ${CHANGE_TS_HUMAN_A}"
     fi
-    echo -e "  cp -rp '${CHANGE_COLOR_A}${FILENAMEA}${COLOR_RESET}' '${DIRB}/.'  # ${CHANGE_TS_HUMAN_A}"
   else
     CHANGE_TS_HUMAN_2=$(stat --format "%y" "${FILENAMEB}" | sed -r 's/\..*//g')
 
