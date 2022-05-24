@@ -74,7 +74,7 @@ if (( ${#VIM_FILES_SWP[*]} > 0 )); then
   echo -e "Vim swap files identified to be deleted:\n\n${VIM_FILES_SWP[*]}\n"
 
   read -p "Delete all the above files? (y/n):  " -i "y" -e ANSWER
-  if [ "${ANSWER,,}" = "y" ]; then
+  if [[ "${ANSWER,,}" =~ ^[yY]+$ || "${ANSWER,,}" = "yes" ]] ; then
     run rm -f "${VIM_FILES_SWP[@]}"
     echo "Files deleted."
   else
