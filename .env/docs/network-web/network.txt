@@ -239,6 +239,9 @@ DNS
 
   systemd-resolve --status      # List all DNS servers being used:
 
+  nc -uv 8.8.8.8 53 # DNS uses UDP, not TCP, thus use -u to test the port.
+
+
   Linux - Maximum of 3 DNS servers
   ────────────────────────────────────────────────────────────────────────────
 
