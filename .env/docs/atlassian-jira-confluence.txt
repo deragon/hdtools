@@ -81,6 +81,13 @@ CONFLUENCE (ATLASSIAN)
 
 
 
+READ
+══════════════════════════════════════════════════════════════════════════════
+
+  - Outage of April 2022 - https://newsletter.pragmaticengineer.com/p/scoop-atlassian?s=r
+
+
+
 ALTERNATIVES TO CONFLUENCE
 ══════════════════════════════════════════════════════════════════════════════
 
