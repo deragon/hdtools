@@ -230,6 +230,36 @@ From:  https://www.bitcoininsider.org/article/23859/top-10-docker-commands-you-c
 
 
 
+TROUBLESHOOTING
+==========
+
+Network problems
+========
+
+  If you have network problems with your builds/containers, a good idea
+  is to download the wbitt/network-multitool image, start a container based
+  on it, get into it and start
+
+    docker pull wbitt/network-multitool         # Fetch image
+    docker run -it wbitt/network-multitool bash # Start container with Bash session.
+
+  Source code of the image:  https://github.com/wbitt/Network-MultiTool
+
+
+Cleanup
+========
+
+  WARNING:  This will remove:
+
+  - ALL STOPPED CONTAINERS
+  - all volumes not used by at least one container
+  - all networks not used by at least one container
+  - all images without at least one container associated to them
+
+    docker system prune
+
+
+
 END
 ==========
 
