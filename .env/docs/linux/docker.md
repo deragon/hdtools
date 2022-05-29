@@ -91,7 +91,8 @@ INSTALL DOCKER ON UBUNTU (INCLUDING WSL 2)
   Once installed, on WSL 2, the service must be started.  As of
   2022-01-24, systemd is still not supported on WSL 2.  You must start it with:
 
-    sudo service docker start # Safe
+    sudo service docker start   # Safe
+    sudo service docker restart # Safe
 
   To test if the installation was successful, run:
 
