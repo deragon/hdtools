@@ -50,6 +50,20 @@ AWS CLOUDFORMATION
       https://www.fischco.org/technica/2017/cloud-formation-sub/ 
 
 
+  SHARE VARIABLES/VALUES BETWEEN CLOUDFORMATION STACKS
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-systems-manager-parameter/
+
+    Use SSM parameters in AWS Systems Manager Parameter Store to share values
+    between CloudFormation stacks. An SSM parameter stores a value in one
+    stack (stackA) that can be used by another stack (stackB).
+
+    When you use an SSM parameter, there isn't a dependency between the two
+    CloudFormation stacks. This is because the variable is stored in the AWS
+    Systems Manager Parameter Store.
+
+
 
 AWS CLOUDWATCH
 ══════════════════════════════════════════════════════════════════════════════
