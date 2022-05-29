@@ -15,7 +15,10 @@ MISC
 ==========
 
   docker ps # List all containers running.
-  docker images -a # List all images available locally.
+
+  docker images --all # List all images available locally.
+  # Same command as above, but with Created date shown as exact date.
+  docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
 
   CONTAINER=docker1
   #docker1 == 789682b608b34657a7bf665506c51b14463d637ea580b055e6c235d3cd13f351
@@ -35,6 +38,10 @@ MISC
   # Enable / Disable docker container at host bootup.
   docker update --restart=always "${CONTAINER}" # Enable autostart at host boot.
   docker update --restart=no     "${CONTAINER}" # Disable autostart at host boot.
+
+
+  # Formated outputs.  See:  https://docs.docker.com/engine/reference/commandline/ps/#formatting
+  docker ps --all --format 'table {{.ID}}\t{{.Image}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Names}}\t{{.Labels}}'
 
 
 
