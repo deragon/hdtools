@@ -55,6 +55,10 @@ DOCKER IMAGE VS CONTAINER
 DIFFERENCE BETWEEN A REGISTRY, REPOSITORY AND IMAGE
 ==========
 
+  You could say a registry has many repositories and a repository has many
+  different versions of the same image which are individually versioned with
+  tags.
+
   From:  https://nickjanetakis.com/blog/docker-tip-53-difference-between-a-registry-repository-and-image
 
   A Docker repository is where you can store 1 or more versions of a specific
@@ -76,10 +80,6 @@ DIFFERENCE BETWEEN A REGISTRY, REPOSITORY AND IMAGE
   It’s also worth pointing out that the Docker Hub and other third party
   repository hosting services are called “registries”. A registry stores a
   collection of repositories.
-
-  You could say a registry has many repositories and a repository has many
-  different versions of the same image which are individually versioned with
-  tags.
 
 
 
