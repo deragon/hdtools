@@ -221,6 +221,30 @@ BRANCHES
     Marche pas:  git branch <branch name> --set-upstream-to remotes/origin/<branch name>
 
 
+  COMPARE BRANCHES / DIFF OF COMMITS
+  ────────────────────────────────────────────────────────────────────────────
+
+    DIFF OF COMMITS
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      git log "${BRANCH}..main"  # List all commits found in main but not in ${BRANCH}.
+      git log "main..${BRANCH}"  # List all commits found in ${BRANCH} but not in main.
+
+      # With a graph (nice).
+      git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative "master..${BRANCH}"
+
+      See:  https://stackoverflow.com/questions/13965391/how-do-i-see-the-commit-differences-between-branches-in-git
+
+
+    DIFF OF CHANGES AND FILES
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      git diff <branch #1>..<branch #2>  # All diffs
+      git diff --stat        <branch #1>..<branch #2>  # Only list files that changed.  Format #1.
+      git diff --name-status <branch #1>..<branch #2>  # Only list files that changed.  Format #2.
+
+
+
   REFRESH / SYNC LIST OF REMOTE BRANCHES
   ────────────────────────────────────────────────────────────────────────────
 
