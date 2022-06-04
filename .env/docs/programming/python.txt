@@ -954,6 +954,14 @@ WRITING GAMES
 
   Bon -> https://opensource.com/article/18/4/easy-2d-game-creation-python-and-arcade
 
+
+
+BUILDING
+══════════════════════════════════════════════════════════════════════════════
+
+  sudo apt install libpython3-dev  # Provides Python.h & other headers.
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
