@@ -517,6 +517,20 @@ SCRIPT STARTUP
 DATE & TIMESTAMP
 ══════════════════════════════════════════════════════════════════════════════
 
+  DATETIME VS TIME MODULES
+  ────────────────────────────────────────────────────────────────────────────
+
+    Stick to time to prevent DST ambiguity
+
+    The time module is principally for working with Unix time stamps;
+    expressed as a floating point number taken to be seconds since the Unix
+    epoch. the datetime module can support many of the same operations, but
+    provides a more object oriented set of types, and also has some limited
+    support for time zones.
+
+    From:  https://stackoverflow.com/questions/7479777/difference-between-python-datetime-vs-time-modules#:~:text=The%20time%20module%20is%20principally,limited%20support%20for%20time%20zones.
+
+
   DATE / TIMESTAMP / ISO-8601
   ────────────────────────────────────────────────────────────────────────────
 
