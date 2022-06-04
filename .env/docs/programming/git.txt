@@ -93,11 +93,6 @@ COMMANDES
               2) Does not work all the ime
               git checkout -- .;git reset HEAD .  # Undo all changes
 
-
-    Revert an old commit, i.e. undo what that specific commit did:
-
-      git revert <commit id>
-
     Get file of a specific hash #:
 
       git checkout <hash #> -- file1/to/restore file2/to/restore
@@ -433,10 +428,14 @@ FILE MANIPULATIONS
 COMMITS
 ══════════════════════════════════════════════════════════════════════════════
 
-  UNDO
+  UNDO / REVERT COMMIT
   ────────────────────────────────────────────────────────────────────────────
 
-    git reset HEAD~  # Undo last commit
+    git reset HEAD~  # Undo last commit, totally removed.
+
+    Revert an old commit, i.e. undo what that specific commit did:
+
+      git revert <commit id>
 
     For more sophisticated operation, i.e. undo commit which is not the last,
     read:  https://sethrobertson.github.io/GitFixUm/fixup.html
