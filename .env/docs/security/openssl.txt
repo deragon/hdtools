@@ -52,6 +52,7 @@ PFX FILE - AVOID THIS FORMAT
     cryptographic protocols, but nevertheless remains the only standard way
     today to store private keys and certificates in a single encrypted file.
 
+
   Extraction d'un certificat client en fichier PEM (Privacy Enhanced Mail Base64 encoded DER certificate)
   ────────────────────────────────────────────────────────────────────────────
 
@@ -72,29 +73,82 @@ PFX FILE - AVOID THIS FORMAT
 
 
 
-Ajout d'un certificat client dans une JDK
+JAVA
 ══════════════════════════════════════════════════════════════════════════════
 
-Voici comment l'on ajoute un certificat pour que Java puisse le reconnaître et
-que les applications puissent s'en servir.
+  Read/See:
 
-Notes:
+    - https://www.baeldung.com/java-keystore-truststore-difference
 
-    * Le certificat doit être en format DER. Voir Fichier PFX.
-    * Le fichier de keystore de Java réside à même le répertoire de Java
-      ("${JAVA_HOME}/jre/lib/security/cacerts"). Il est donc important de le
-      recopier lorsque l'on change de jdk, pour une mise-à-jour de ce dernier
-      par exemple.
-    * changeit est le mot de passe par défaut du keystore de Java et il n'a
-      jamais été changé dans les environnements.
 
-keytool \
- -import \
- -v \
- -trustcacerts \
- -file <fichier>.crt \
- -storepass changeit \
- -keystore "${JAVA_HOME}/jre/lib/security/cacerts"
+    - GUI -> KeyStore Explorer - Open source, Linux, Win, Mac.
+             Very good.  https://keystore-explorer.org/
+
+
+
+  KEYSTORE
+  ────────────────────────────────────────────────────────────────────────────
+
+    A Java keystore stores private key entries, certificates with public
+    keys or just secret keys
+
+
+  TRUSTSTORE
+  ────────────────────────────────────────────────────────────────────────────
+
+    While a keystore typically holds onto certificates that identify us, a
+    truststore holds onto certificates that identify others.
+
+
+    truststore.jks vs truststore.p12 (PKCS12)
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      - truststore.p12:  New comptabile format PKCS12 with OpenSSL supported by JDK 8+
+                         USE THIS.
+
+        openssl pkcs12 -info -in truststore.p12
+        keytool -import -trustcacerts -noprompt -storepass xxxx -alias abc-sha2 -file /home/ec2-user/abc-sha2.cer -keystore /usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
+
+        Convert *.jks -> *.p12  https://stackoverflow.com/questions/2846828/converting-jks-to-p12
+
+      - truststore.jks:  Old deprecated format, only compatible with Java.
+
+
+    Ajout d'un certificat client dans une JDK
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    Voici comment l'on ajoute un certificat pour que Java puisse le reconnaître et
+    que les applications puissent s'en servir.
+
+    Notes:
+
+        * Le certificat doit être en format DER. Voir Fichier PFX.
+        * Le fichier de keystore de Java réside à même le répertoire de Java
+          ("${JAVA_HOME}/jre/lib/security/cacerts"). Il est donc important de le
+          recopier lorsque l'on change de jdk, pour une mise-à-jour de ce dernier
+          par exemple.
+        * changeit est le mot de passe par défaut du keystore de Java et il n'a
+          jamais été changé dans les environnements.
+
+    keytool \
+     -import \
+     -v \
+     -cacerts \
+     -file <fichier>.crt \
+     -storepass changeit \
+     -keystore "${JAVA_HOME}/jre/lib/security/cacerts"
+
+
+    Keytool:  What values may be used for the storetype
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      From:  https://stackoverflow.com/questions/65878490/keytool-what-values-may-be-used-for-the-storetype
+
+      - jceks
+      - jks
+      - dks
+      - pkcs11
+      - pkcs12
 
 
 
