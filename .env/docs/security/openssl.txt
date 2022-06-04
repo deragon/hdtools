@@ -1,4 +1,49 @@
-Fichier PFX
+READING
+══════════════════════════════════════════════════════════════════════════════
+
+  - Excellents:
+
+    - https://gist.github.com/mohanpedala/468cf9cef473a8d7610320cff730cdd1
+    - https://www.xolphin.com/support/OpenSSL/Frequently_used_OpenSSL_Commands
+
+
+
+PEM, DER, CRT, and CER: X.509 Encodings and Conversions
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://www.ssl.com/guide/pem-der-crt-and-cer-x-509-encodings-and-conversions/#:~:text=PEM%20(originally%20%E2%80%9CPrivacy%20Enhanced%20Mail,%2D%2D%2D%2D%2D%20).
+
+  You may have seen digital certificate files with a variety of filename
+  extensions, such as .crt, .cer, .pem, or .der. These extensions generally
+  map to two major encoding schemes for X.509 certificates and keys: PEM
+  (Base64 ASCII), and DER (binary). However, there is some overlap and other
+  extensions are used, so you can’t always tell what kind of file you are
+  working with just from looking at the filename; you may need to open it in a
+  text editor and take a look for yourself.
+
+
+  From:  https://stackoverflow.com/questions/38976885/difference-between-x-509-and-pem
+
+  X.509 is a series of standards, while PEM is just X.509 object representation in a file (encoding).
+
+
+
+PEM FILE - USE THIS FORMAT
+══════════════════════════════════════════════════════════════════════════════
+
+  PEM (originally “Privacy Enhanced Mail”) is the most common format for X.509
+  certificates, CSRs, and cryptographic keys.
+
+      openssl x509 -text -noout -in "${FILE_PEM}"  # Safe.  Show content of trusted certificates.
+      openssl req  -text -in "${FILE_PEM}" # Safe.  Show content of CSR file.
+      file "${FILE_PEM}" # Safe.  Test if the file is really a PEM file.
+
+
+  CSR = Certificate Signing Request
+
+
+
+PFX FILE - AVOID THIS FORMAT
 ══════════════════════════════════════════════════════════════════════════════
 
   From Wikipedia:
