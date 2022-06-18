@@ -287,6 +287,7 @@ if (( $? == 0 )); then
   }
 fi
 
+alias cdgroot='cdprint "$(git rev-parse --show-toplevel)"'
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Maven
