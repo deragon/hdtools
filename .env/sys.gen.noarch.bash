@@ -73,25 +73,6 @@ hd_term_title_auto()
 }
 exportfunction hd_term_title_auto
 
-hd_term_color_bg()
-{
-  # For description of '\e]11;#XXXXXX\a' code, see:
-  #
-  #   https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-  #
-  # Search for 'ESC]11;' within the page.  This works for Cygwin's mintty.
-  if [[ "${HD_PRD_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    echo -ne '\e]11;#440000\a' # Red background
-  elif [[ "${HD_QA_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    echo -ne '\e]11;#000033\a' # Blue background
-  elif [[ "${HD_DEV_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    echo -ne '\e]11;#003300\a' # Green background
-  else
-    echo -ne '\e]11;#000000\a' # Black background
-  fi
-}
-exportfunction hd_term_color_bg
-
 # If bash is called recursively when a bash script is called, comment out
 # in .bash_profile:
 #hd_Replace "s%^(\s*BASH_ENV\s*=.*)%#\1 # Commented out by HD to avoid bash being recalled recusively.%g" ${HOME}/.bash_profile
@@ -150,6 +131,39 @@ export HD_SCREEN_COLOR_DEFAULT="\e[0;00m"
 export HD_SCREEN_ATTRIBUTES_BLINK="\e[5m"
 export HD_SCREEN_ATTRIBUTES_OFF="\e[0m"
 export HD_SCREEN_COLOR_WHITE_ON_RED="\e[1;37;41m"
+
+export HD_SCREEN_BG_COLOR_RED="\e]11;#440000\a"
+export HD_SCREEN_BG_COLOR_GREEN="\e]11;#003300\a"
+export HD_SCREEN_BG_COLOR_BLUE="\e]11;#000033\a"
+export HD_SCREEN_BG_COLOR_BLACK="\e]11;#000000\a"
+
+alias redbg='echo -ne "${HD_SCREEN_BG_COLOR_RED}"'
+alias greenbg='echo -ne "${HD_SCREEN_BG_COLOR_GREEN}"'
+alias bluebg='echo -ne "${HD_SCREEN_BG_COLOR_BLUE}"'
+alias blackbg='echo -ne "${HD_SCREEN_BG_COLOR_BLACK}"'
+
+hd_term_color_bg()
+{
+  # For description of '\e]11;#XXXXXX\a' code, see:
+  #
+  #   https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+  #
+  # Search for 'ESC]11;' within the page.  This works for Cygwin's mintty.
+  if [[ "${HD_PRD_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
+    #echo -ne '\e]11;#440000\a' # Red background
+    redbg
+  elif [[ "${HD_QA_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
+    #echo -ne '\e]11;#000033\a' # Blue background
+    bluebg
+  elif [[ "${HD_DEV_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
+    #echo -ne '\e]11;#003300\a' # Green background
+    greenbg
+  else
+    #echo -ne '\e]11;#000000\a' # Black background
+    blackbg
+  fi
+}
+exportfunction hd_term_color_bg
 
 hdwarning()
 {
