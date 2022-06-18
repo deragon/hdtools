@@ -59,7 +59,7 @@ OLD DOC, NOT VERY USEFUL WINDOWS 7 - CAPS DEVIENT CTRL
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
-█ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+█ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
 █
 █ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
 █
