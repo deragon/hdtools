@@ -1820,6 +1820,11 @@ COLORS and TERMINAL CODES
 
     - export TERM=xterm-mono Disable colors in terminal
 
+    - Remove Color / ANSI codes from output:
+
+        sudo apt install colorized-logs             # Install ansi2txt.
+        cat "<FILE WITH ANSI COLORS>" | ansi2txt    # Remove color codes.
+
 
     CAT command and colors
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
