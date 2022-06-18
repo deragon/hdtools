@@ -357,6 +357,26 @@ NFS
     Run on the NFS server the command:  exportfs -r.  This should clear it.
 
 
+WIFI
+══════════════════════════════════════════════════════════════════════════════
+
+  Wifi on Linux desktop
+  ────────────────────────────────────────────────────────────────────────────
+
+    How to manage available wireless network priority?
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      From:  https://askubuntu.com/questions/165679/how-to-manage-available-wireless-network-priority
+
+      List connections:
+
+        nmcli -f NAME,UUID,AUTOCONNECT,AUTOCONNECT-PRIORITY c
+
+      Set priority for a connection:
+
+        nmcli connection modify HOME-WIFI connection.autoconnect-priority 10
+
+
 
 PROXY
 ══════════════════════════════════════════════════════════════════════════════
