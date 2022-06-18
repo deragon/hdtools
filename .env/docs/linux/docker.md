@@ -32,7 +32,7 @@ MISC
 
   docker info # Shows all sort of info about the docker eco-system on the host.
 
-  docker -f logs nifi # Equivalent of a tail, but it scrolls from the beginning
+  docker logs -f "${CONTAINER}" # Equivalent of a tail, but it scrolls from the beginning
 
 
   # Enable / Disable docker container at host bootup.
