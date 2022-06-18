@@ -1,0 +1,72 @@
+#!/bin/bash -e
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Fix issue with file permissions in Git repository.
+
+Sometimes on Windows with a SAMBA/Network share, permissions of files in a Git
+repository change unexpectedly.  This script reverts these unwanted and
+unexpected changes.
+
+Usage:  ${SCRIPT_NAME} [-d] [-h]
+
+  -d  Dry-run.
+  -h  Display this help text.
+"
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    "$@"
+  fi
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "dh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+# Go to root level of Git repository.
+cd "$(git rev-parse --show-toplevel)"
+
+# Revert permissions changes.
+# From:  https://stackoverflow.com/questions/1257592/how-do-i-remove-files-saying-old-mode-100755-new-mode-100644-from-unstaged-cha
+run git diff -p -R --no-color | \
+  grep -E "^(diff|(old|new) mode)" --color=never | \
+  git apply
