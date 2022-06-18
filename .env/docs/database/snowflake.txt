@@ -111,3 +111,14 @@ OWNERSHIP
 
   grant ownership on procedure <DATABASE>.<SCHEMA>.<PROCEDURE>(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN) to role "<ROLE>" REVOKE CURRENT GRANTS;
   grant usage     on procedure <DATABASE>.<SCHEMA>.<PROCEDURE>(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN) to role "<ROLE>";
+
+
+
+TERRAFORM
+══════════════════════════════════════════════════════════════════════════════
+
+  Obtain latest version number at:
+    https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest
+
+  Plugin code at:
+    https://github.com/Snowflake-Labs/terraform-provider-snowflake
