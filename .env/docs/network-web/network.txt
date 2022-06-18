@@ -237,7 +237,8 @@ DNS
 
   sudo resolvectl flush-caches  # Flush DNS server on 127.0.0.53
 
-  systemd-resolve --status      # List all DNS servers being used:
+  resolvectl status         # List all DNS servers being used:
+  systemd-resolve --status  # systemd-resolve is a symlink to resolvectl
 
   nc -uv 8.8.8.8 53 # DNS uses UDP, not TCP, thus use -u to test the port.
 
