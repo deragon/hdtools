@@ -104,6 +104,12 @@ COÛTS / COSTS
       https://hardware.slashdot.org/story/19/10/23/0517258/aws-customers-rack-up-hefty-bills-for-moving-data
 
 
+  T3 cheaper than T2
+  ────────────────────────────────────────────────────────────────────────────
+
+    - https://www.densify.com/articles/aws-ec2-t3-burstable-instances
+
+
   S3
   ────────────────────────────────────────────────────────────────────────────
 
