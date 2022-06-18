@@ -1704,6 +1704,39 @@ CURSOR MOVEMENTS
 COLORS and TERMINAL CODES
 ══════════════════════════════════════════════════════════════════════════════
 
+  TrueColor
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/15682537/ansi-color-specific-rgb-sequence-bash
+
+    To test if your terminal supports Truecolor:
+
+      printf "\x1b[38;2;40;177;249mTRUECOLOR\x1b[0m\n"
+
+    On my machine, XTerm happily outputted the correct color; although,
+    terminals that are modeled after terminals that predate modern RGB color
+    generally will not support truecolor - make sure you know your target
+    before using this particular variant of the escape code.
+
+    I'd also like to point out the 38 and the ;5/;2 - Blue Ice mentioned that
+    38 routes and then 5 changes the color. That is slightly incorrect.
+
+    38 is the xterm-256 extended foreground color code; 30-37 are simply
+    16-color foreground codes (with a brightness controlled by escape code
+    1 on some systems and the arguably-supported 90-97 non-standard
+    'bright' codes) that are supported by all vt100/xterm-compliant colored
+    terminals.
+
+    The ;2 and ;5 indicate the format of the color, ultimately telling the
+    terminal how many more sequences to pull: ;5 specifying an 8-bit format
+    (as Blue Ice mentioned) requiring only 1 more control segment, and ;2
+    specifying a full 24-bit RGB format requiring 3 control segments.
+
+    These extended modes are technically "undocumented" and are completely
+    implementation defined. As far as I know and can research, they are not
+    governed by the ANSI committee.
+
+
   CLEAR SCREEN
   ────────────────────────────────────────────────────────────────────────────
 
