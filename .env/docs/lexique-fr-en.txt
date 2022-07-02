@@ -48,6 +48,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   stream                     -> flux continu
   canonical                  -> canonique
   trailing spaces            -> espaces de fin.
+  reset                      -> réinitialiser / remettre (à l'heure|à zéro|en place)
 
 
 
@@ -61,6 +62,7 @@ ACRONYMS
   ITSM                      -> IT service management
   ITIL                      -> (formerly Information Technology Infrastructure Library)
   RBAC                      -> Role-based access control
+  IdP                       -> Identity Provider
 
 
 
