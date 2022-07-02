@@ -405,5 +405,14 @@ alias hdgroups='id -a | sed -r "s/[, ]/\n/g"'  # Shows groups, one group per lie
 # not have the variable ${WSL_...} set.  Thus the only reliable way is to
 # check for the kernel name with 'uname -a'.
 if [[ "$(uname -a)" =~ "microsoft" ]]; then
-  export DISPLAY=$(/mnt/c/Windows/system32/route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0
+
+  hdwsldisplay()
+  {
+    export DISPLAY="$(/mnt/c/Windows/system32/route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0"
+
+    [[ "${1}" != "-q" ]] && echo "DISPLAY=${DISPLAY}"
+  }
+  exportfunction hdwsldisplay
+
+  hdwsldisplay -q
 fi
