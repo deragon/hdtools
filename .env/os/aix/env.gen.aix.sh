@@ -1,10 +1,14 @@
-# Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+# ─ Copyright Notice ───────────────────────────────────────────────────
 #
-# Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+# Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
 #
 # It is released under the GPL 3 licence which can be found at:
 #
 #     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
 
 # From:  https://serverfault.com/questions/100875/how-do-i-tell-which-aix-version-am-i-running
 

@@ -1,10 +1,14 @@
-REM Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
+REM ─ Copyright Notice ───────────────────────────────────────────────────
 REM
-REM Hans Deragon (hans@deragon.biz) owns the copyright of this code.
+REM Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
+REM
+REM Hans Deragon (hans@deragon.biz) owns the copyright of this work.
 REM
 REM It is released under the GPL 3 licence which can be found at:
 REM
 REM     https://www.gnu.org/licenses/gpl-3.0.en.html
+REM
+REM ─────────────────────────────────────────────────── Copyright Notice ─
 
 @echo off
 SET DISPLAY=127.0.0.1:0.0
