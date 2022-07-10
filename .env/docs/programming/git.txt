@@ -59,8 +59,13 @@ COMMANDES
   List URL:       git config --get remote.origin.url
   List remotes:   git remote -v
   Clone:          git clone --mirror ssh://user@example.com/path/to/repo
-
   Update:         git remote update
+
+  Get/fetch old version of file:  git show REVISION:path/to/file
+
+      Replace REVISION with your actual revision (could be a Git commit SHA, a
+      tag name, a branch name, a relative commit name, or any other way of
+      identifying a commit in Git)
 
   Apply only a section/hunk, number of lines of a file to the staging area:
 
