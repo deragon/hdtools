@@ -49,6 +49,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   canonical                  -> canonique
   trailing spaces            -> espaces de fin.
   reset                      -> réinitialiser / remettre (à l'heure|à zéro|en place)
+  statement                  -> déclaration
 
 
 
