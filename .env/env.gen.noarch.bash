@@ -27,7 +27,7 @@ hd_application_run_executable()
 
   if [ -e "${!VARNAME}" ]; then
     echo "Executing ${TEXT}:  ${!VARNAME}"
-    if [ -z "$@" ]; then
+    if [[ $# == 0 ]]; then
       ("${!VARNAME}" &)
     else
       ("${!VARNAME}" "$@" &)
