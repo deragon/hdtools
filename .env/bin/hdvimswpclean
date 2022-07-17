@@ -22,34 +22,19 @@ usage()
 Delete all Vim's .sw? files found under the provided directories, or under
 current path ('.') if no directory is provided.
 
-Usage:  ${SCRIPT_NAME} [-d] [-e] <directories>
+Usage:  ${SCRIPT_NAME} <directories>
 
-  -d  Dry-run.
-  -e  Execute command.  Default is dry-run.
   -h  Display this help text.
 "
-}
-
-run()
-{
-  if (( DRYRUN )); then
-    echo "DRYRUN:  $@"
-  else
-    "$@"
-  fi
 }
 
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
 
-DRYRUN=0
-
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "deh" OPTCMD; do
+while getopts "h" OPTCMD; do
   case "${OPTCMD}" in
-    "d")    DRYRUN=1;;  # Run in dry-run mode.
-    "e")    DRYRUN=0;;  # Run in execute mode.
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -75,21 +60,11 @@ if (( ${#VIM_FILES_SWP[*]} > 0 )); then
 
   read -p "Delete all the above files? (y/n):  " -i "y" -e ANSWER
   if [[ "${ANSWER,,}" =~ ^[yY]+$ || "${ANSWER,,}" = "yes" ]] ; then
-    run rm -f "${VIM_FILES_SWP[@]}"
-    echo "Files deleted."
+    rm -f "${VIM_FILES_SWP[@]}"
+    echo -en "\e[1;30;43mFiles deleted.\e[0;00m\n"
   else
     echo "Aborting."
   fi
 else
   echo "No Vim swap file found."
-fi
-
-
-# DRY RUN / EXECUTION WARNING
-# ════════════════════════════════════════════════════════════════════
-echo
-if (( DRYRUN )); then
-  echo -en "\e[1;37;44mCommand was executed in dry mode; nothing was executed.\e[0;00m\n\e[1;37;44mRerun with -e to execute the action.\e[0;00m\n"
-else
-  echo -en "\e[1;37;42mCommand was executed.\e[0;00m\n"
 fi
