@@ -74,17 +74,27 @@ classpathToWindows
 hd_application_run_executable_windows()
 {
   local WIN_PATH
-  if [ -z "${4}" ]; then
-    WIN_PATH=""
-  else
-    if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
-      WIN_PATH="$(cygpath -w "$(readlink -f "${4}")")"
-    else
-      WIN_PATH="$(wslpath -a -w "$(readlink -f "${4}")")"
-    fi
-  fi
 
-  hd_application_run_executable "$1" "$2" "$3" "${WIN_PATH}"
+  local SUFFIX=$1;        shift
+  local TEXT="$1";        shift
+  local EXECUTABLES="$1"; shift
+  local ARGS
+
+  declare -a ARGS=()
+
+  for ARG in $@; do
+    if [ -z "${ARG}" ]; then
+      ARGS+=("${ARG}")
+    else
+      if [[ "${HD_OS_FAMILY,,}" == *"cygwin"* ]]; then
+        ARGS+=("$(cygpath -w "$(readlink -f "${ARG}")")")
+      else
+        ARGS+=("$(wslpath -a -w "$(readlink -f "${ARG}")")")
+      fi
+    fi
+  done
+
+  hd_application_run_executable "${SUFFIX}" "${TEXT}" "${EXECUTABLES}" "${ARGS[@]}"
 }
 
 acroread()
