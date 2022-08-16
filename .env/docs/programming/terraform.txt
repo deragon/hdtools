@@ -30,6 +30,22 @@ COMMANDS
     terraform.exe plan    -target "${TARGET}" -destroy .  # Preview, safe
     terraform.exe destroy -target "${TARGET}" .           # Destroy, unsafe
 
+
+CONCATENATE GENERATED LIST
+══════════════════════════════════════════════════════════════════════════════
+
+  Concatenage a generated list of role names from a list of schemas with two
+  role names directly.  concat() is used to merge multiple lists together.
+
+  locals {
+
+   roles = concat([for schema in var.SCHEMAS: snowflake_role.schemas["${schema}"].name],
+   [ snowflake_role.role1.name,
+     snowflake_role.role2.name,
+     "ROLE2NAME" ] )
+  }
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
