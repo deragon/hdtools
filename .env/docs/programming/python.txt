@@ -3,7 +3,13 @@ List of good librairies:  https://awesome-python.com/
 STRING MANIPULATION
 ══════════════════════════════════════════════════════════════════════════════
 
-  - "mystring" in stringvar   # Check if strinvar contains "mystring".
+  STRING CONTAINS ANOTHER STRING
+  ────────────────────────────────────────────────────────────────────────────
+
+    if "mystring" in stringvar:  # Check if strinvar contains "mystring".
+
+    # Check if either "str1tomatch" or "str1tomatch" are part of "mystring".
+    if any(item in mystring for item in [ "str1tomatch", "str2tomatch" ]):
 
 
   REPLACE A STRING WITH ANOTHER USING REGEX
