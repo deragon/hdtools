@@ -114,6 +114,17 @@ OWNERSHIP
 
 
 
+GENERATE SQL FROM REQUEST
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/62797022/cloning-a-role-or-copying-grants-to-a-new-role-in-snowflake
+
+    show grants to role SYSADMIN;
+
+    select 'grant all privileges on stream ' || rpad('"' || "database_name" || '"."' || "schema_name" || '"."' || "name" || '"' , 64, ' ') || ' to role "MYROLE";' as "SQL commands generated." from table(result_scan(last_query_id()));
+
+
+
 TERRAFORM
 ══════════════════════════════════════════════════════════════════════════════
 
