@@ -135,7 +135,7 @@ else:
 
 # logging.debug("Test of logging %s", "here. :)")
 logging.basicConfig(
-    format='%(asctime)s - %(levelname)s - %(funcName)20s(): %(message)s',
+    format='%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
 
 # Creating a logger with the script's name and setting it to a specific log
