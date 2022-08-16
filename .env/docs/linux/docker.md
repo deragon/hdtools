@@ -99,6 +99,17 @@ INSTALL DOCKER ON UBUNTU (INCLUDING WSL 2)
     sudo docker run hello-world # Safe
 
 
+  WARNING:  NFTABLES not supported
+  ────────────────────────────────────────────────────────────────────────────
+
+    22.04 & later install nftables instead of iptables, causing docker
+    to fail to start when attempting to create iptables rules.
+
+    The workaround is to run:
+
+      sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+
+
 
 VOLUMES AND DATA
 ==========
