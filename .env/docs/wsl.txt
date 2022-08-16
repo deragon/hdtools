@@ -2,6 +2,85 @@ MISCELLANEOUS
 ══════════════════════════════════════════════════════════════════════════════
 
   - wsl.exe --shutdown # Reboot not a concept.  Restart a new terminal after.
+  - wsl.exe --list # List all distribution
+
+
+
+SETUP / INSTALLATION
+══════════════════════════════════════════════════════════════════════════════
+
+  INSTALLATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Go to Microsoft store and get the Linux distribution you desires.  This is
+    the way to install Linux in WSL.
+
+
+  Home directory to be the same as Window's home directory
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://superuser.com/questions/1132626/changing-home-directory-of-user-on-windows-subsystem-for-linux
+
+    Edit /etc/passwd and set:
+
+      <userid>:x:1000:1000:<user full name>:/mnt/c/Users/<userid>:/bin/bash
+
+
+  Allow user to change file permissions on Windows's file systems.
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://superuser.com/questions/1323645/unable-to-change-file-permissions-on-ubuntu-bash-for-windows-10
+
+cat <<EOF >/etc/wsl.conf
+[automount]
+options = "metadata"
+EOF
+
+
+  sudo without password being asked
+  ────────────────────────────────────────────────────────────────────────────
+
+    In /etc/sudoers, replace
+
+      %sudo ALL=(ALL:ALL) NOPASSWD:ALL
+
+    with:
+
+      %sudo ALL=(ALL:ALL) ALL
+
+
+  Have browser called with login with 'aws login'
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://superuser.com/questions/1262977/open-browser-in-host-system-from-windows-subsystem-for-linux
+
+    - Install WSLU:  https://launchpad.net/~wslutilities/+archive/ubuntu/wslu
+    - export BROWSER=wslview
+    - aws sso login --profile <Your AWS profile>  # Opens window in Browser!  Works.
+
+
+  Ensure that X application do not die after a small amount of time
+  ────────────────────────────────────────────────────────────────────────────
+
+    su -
+    cat /etc/sysctl.conf <<EOM
+# From:  https://github.com/microsoft/WSL/issues/5339
+net.ipv4.tcp_keepalive_intvl = 60
+net.ipv4.tcp_keepalive_probes = 5
+net.ipv4.tcp_keepalive_time = 300
+EOM
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Failed to retrieve available kernel versions.
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://askubuntu.com/questions/1404129/ubuntu-22-04-lts-on-wsl-failed-to-retrieve-available-kernel-versions-failed
+
+    Ignore this message;  It is only a warning that the kernel, controlled by Microsoft, cannot be updated.
 
 
 
