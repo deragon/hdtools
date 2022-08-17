@@ -82,7 +82,7 @@ hd_application_run_executable_windows()
 
   declare -a ARGS=()
 
-  for ARG in $@; do
+  for ARG in "$@"; do
     if [ -z "${ARG}" ]; then
       ARGS+=("${ARG}")
     else
