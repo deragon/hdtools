@@ -48,16 +48,159 @@ fi
 
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Subversion / SVN - Not used anymore, but we keep it if one day it is needed.
+
+# alias diffxsvn='diff -r --exclude ".svn"'
+# svnv() { svn diff --diff-cmd hd-svn-gvimdiff-wrapper $@ & }
+# svnl() { svn log $* | less; }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Git
+which git >/dev/null 2>&1
+if (( $? == 0 )); then
+  alias hdgpull='git pull --all --prune'
+  alias hdgstatus='git status --untracked-files=no'
+  alias hdgitgvim='git difftool --tool=gvimdiff --no-prompt'
+  alias cdgroot='cdprint "$(git rev-parse --show-toplevel)"'  # Return root directory of current Git repo.
+
+  hdgvarclear()
+  {
+    unset \
+      GIT_AUTHOR_NAME     \
+      GIT_AUTHOR_EMAIL    \
+      GIT_AUTHOR_DATE     \
+      GIT_COMMITTER_NAME  \
+      GIT_COMMITTER_EMAIL \
+      GIT_COMMITTER_DATE  \
+      HD_GIT_DATE_OFFSET  \
+      GIT_BACKUP_USERNAME \
+      GIT_BACKUP_EMAIL
+
+    hdgconfigprint
+  }
+
+  hdgrestore()
+  {
+    [ ! -z "${GIT_BACKUP_USERNAME}" ] && \
+      git config --global user.name  "${GIT_BACKUP_USERNAME}"
+
+    [ ! -z "${GIT_BACKUP_EMAIL}" ] && \
+      git config --global user.email "${GIT_BACKUP_EMAIL}"
+
+    hdgvarclear
+  }
+
+  hdgdate()
+  {
+    #  https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables
+
+    if [ -z "${HD_GIT_DATE_OFFSET}" -o "$1" == "-r" ]; then
+      echo -en "Enter offset (in hours):  "
+      read HD_GIT_DATE_OFFSET
+      echo
+    fi
+
+    if [ -z "${GIT_BACKUP_USERNAME}" ]; then
+      GIT_BACKUP_USERNAME=$(git config --global user.name)
+    fi
+    #git config --global user.name "Hans Deragon"
+
+    if [ -z "${GIT_BACKUP_EMAIL}" ]; then
+      GIT_BACKUP_EMAIL=$(git config --global user.email)
+    fi
+    #git config --global user.email hans@deragon.biz
+
+    export GIT_AUTHOR_NAME="Hans Deragon"
+    export GIT_AUTHOR_EMAIL="hans@deragon.biz"
+    export GIT_AUTHOR_DATE=$(date -d "+${HD_GIT_DATE_OFFSET} hours" +"%Y-%m-%d %H:%M:%S%z")
+
+    # Copy GIT_AUTHOR_* to GIT_COMMITTER_*.
+    export GIT_COMMITTER_NAME="${GIT_AUTHOR_NAME}"
+    export GIT_COMMITTER_EMAIL="${GIT_AUTHOR_EMAIL}"
+    export GIT_COMMITTER_DATE="${GIT_AUTHOR_DATE}"
+
+    export HD_GIT_DATE_OFFSET
+
+    hdgconfigprint
+  }
+fi
+
+
 # ══════════════════════════════════════════════════════════════════════════════
+# Maven
+#
+# Variables used here are the official names as suggested by the 'mvn'
+# script.
 
-# From:   http://usevim.com/2012/03/21/git-and-vimdiff/
-alias gitdiff='git difftool --tool=gvimdiff --no-prompt'
+setVarIfDirsExist M2_HOME                      \
+  "${HD_LOGICIELS}/nodist/noarch/maven/latest" \
+  "${M2_HOME}"                                 \
+  ApacheMavenNotAvailable
+
+if [ -d "${M2_HOME}" ]; then
+  export MAVEN_OPTS="-Xms256m -Xmx512m"
+  add2path PATH "${M2_HOME}/bin"
+
+  alias cdmaven='cdprint "${M2_HOME}"'
+  alias cdm2='cdprint "${HOME}/.m2"'
+  alias mvnnotest='mvn -Dmaven.test.skip=true -DskipTests'
+fi
 
 
-# Other
 # ══════════════════════════════════════════════════════════════════════════════
-alias mvnnotest='mvn -Dmaven.test.skip=true -DskipTests'
+# icdiff
+if [ -d "/vol/data/base/software/nodist/noarch/icdiff/src" ]; then
+  alias icdiff="/vol/data/base/software/nodist/noarch/icdiff/src/icdiff"
+fi
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# AWS
+#
+#   Pour installer AWSCLI (en date du 2018-11-09)
+#
+#     pip install awscli --upgrade --user
+#
+#   Ils ont par la suite installés sous "${HOME}/.local/bin"
+#
+#   Voir:  https://docs.aws.amazon.com/cli/latest/userguide/installing.html
+add2path PATH "${HOME}/.local/bin"
+alias hdawsvarunset='unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN;blackbg'
+hdawsssh() { ssh "ec2-user@$1"; }; exportfunction hdawsssh
+
+# 169.254.0.0/16 is a Link-local address (https://en.m.wikipedia.org/wiki/Link-local_address)
+# used by AWS and other services and must never have a proxy.
+export no_proxy="localhost,127.0.0.0/8,169.254.0.0/16,${no_proxy}"
+# export no_proxy="localhost,127.0.0.0/8,::1"  # Version avec IPV6 qui ne marche pas partout.
+
+
+# KERBEROS
+# ════════════════════════════════════════════════════════════════════════════
+#
+#   Detect if the environment support Kerberos and configure then accordingly.
+if [ -e "/etc/krb5.conf" ]; then
+  # Creating alias for often used scripts.
+  alias hdkc='hdkerberos-keytab-create'
+  alias hdku='hdkerberos-keytab-use'
+  alias u='hdku'
+fi
+
+
+# PYTHON - Development environment
+# ════════════════════════════════════════════════════════════════════════════
+#
+#   New development is meant for Python 3 (thus the 3 in the directory of
+#   WORKON_HOME.
+HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH=$(which virtualenvwrapper.sh 2>/dev/null)
+if [ ! -z "${HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH}" ]; then
+  setVarIfDirsExist WORKON_HOME "${HOME}/.python/3/virtualenvs"
+  export VIRTUALENVWRAPPER_PYTHON=$(which python3)
+  unset VIRTUALENVWRAPPER_HOOK_DIR
+  source virtualenvwrapper.sh >/dev/null 2>&1
+fi
+unset HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH
 
 
 # SDK MAN! - https://sdkman.io/
