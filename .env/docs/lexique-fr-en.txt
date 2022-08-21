@@ -8,11 +8,13 @@ SITES
 LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
+  batch                      -> lot / traitement par lots
+  stream                     -> évenementiel / flux continu / lecture en continu/ lecture en transit / diffusion en continu
   troubleshooting            -> dépannage / résolution de problèmes / diagnostic des défaillances
   backdoor                   -> porte dérobée
-  bug                        -> vermine
   credentials                -> données de connexion
-  enjoy                      -> prenez plaisir / savourez / appréciez / jouissiez
+  bug                        -> vermine
+  enjoy                      -> savourez / prenez plaisir / appréciez / jouissiez
   feature                    -> fonctionnalité
   framework                  -> infrastructure logicielle / cadriciel
   legacy system              -> système patrimonial / système hérité https://fr.wikipedia.org/wiki/syst%c3%a8me_h%c3%a9rit%c3%a9
@@ -45,7 +47,6 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   onboarding                 -> accompagnement, processus d'intégration
   race condition             -> situation de compétition
                                 condition de concurrence
-  stream                     -> flux continu
   canonical                  -> canonique
   trailing spaces            -> espaces de fin.
   reset                      -> réinitialiser / remettre (à l'heure|à zéro|en place)
