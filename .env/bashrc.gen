@@ -138,7 +138,7 @@ export HD_BASH_INTERACTIVE=1 # Terminal is interactive (1 == true)
 
 # Permanently disable bracketed paste.
 # See:  https://askubuntu.com/questions/662222/why-bracketed-paste-mode-is-enabled-sporadically-in-my-terminal-screen
-bind 'set enable-bracketed-paste off'
+bind 'set enable-bracketed-paste off' 2>/dev/null
 
 # Check if current ${USER} is one that can be found in
 # ${HD_USERS_EQUIVALENCE} or if the environment need to be loaded
