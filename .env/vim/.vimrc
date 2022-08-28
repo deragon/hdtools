@@ -685,6 +685,11 @@ map <PageUp> :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-U>:set scro
 " Comments
 vmap <F9>   gc<CR>
 
+" Execute Python scripts with CTRL-F9
+" From:  https://stackoverflow.com/questions/18948491/running-python-code-in-vim
+autocmd FileType python map <buffer> <C-F9> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+autocmd FileType python imap <buffer> <C-F9> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+
 " Pipe the current line into the expand program, the line is taken
 " as a indented keyword to expand.
 "
