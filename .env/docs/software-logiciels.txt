@@ -344,6 +344,23 @@ DIFF - MERGE
                  '#!/usr/bin/env python' with '#!/usr/bin/env python3'
 
 
+  dif - a preprocessing front end to meld / gvimdiff / kdiff3 / tkdiff / kompare
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://github.com/koknat/dif
+
+    Usage
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      dif -comments "${FILE1}" "${FILE2}" # Compare without the comments.
+
+
+    Installation
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      None needed.  Just clone the repo and cal 'dif' directly.
+
+
   ROBERTELDERSOFTWAREDIFF
   ────────────────────────────────────────────────────────────────────────────
 
