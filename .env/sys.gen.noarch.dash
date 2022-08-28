@@ -73,9 +73,7 @@ alias spythonpath='splitpath PYTHONPATH'
 
 # Setting proper path for java
 if [ ! -d "${JAVA_HOME}" ]; then
-  if [ -d "${HD_LOGICIELS}/nodist/x86_64/java/jdk-10" ]; then
-    export JAVA_HOME="${HD_LOGICIELS}/nodist/x86_64/java/jdk-10"
-  elif [ -d "${HD_LOGICIELS}/nodist/x86_64/java/jdk" ]; then
+  if [ -e "${HD_LOGICIELS}/nodist/x86_64/java/jdk" ]; then
     export JAVA_HOME="${HD_LOGICIELS}/nodist/x86_64/java/jdk"
   elif [ -d /usr/java ]; then
     export JAVA_HOME=`ls -1d /usr/java/j*dk* 2>/dev/null | tail -1`
@@ -92,14 +90,14 @@ if [ ! -z "${JAVA_HOME}" ]; then
 
   CLASSPATH=".:${CLASSPATH}"
 
-# TODO:  Refine to load only proper jars.
-[ -d "${JAVA_HOME}/jre" ] && \
-  add2path CLASSPATH -f `find "${JAVA_HOME}/jre" -name "*.jar"`
+  # TODO:  Refine to load only proper jars.
+  [ -d "${JAVA_HOME}/jre" ] && \
+    add2path CLASSPATH -f `find "${JAVA_HOME}/jre" -name "*.jar"`
 
-# Comment by Hans Deragon (hans@deragon.biz), 2018-01-31 11:26:54
-# AIX's 'find' command does not support '-maxdepth'... ugh...
-[ -d "${JAVA_HOME}/lib" -a "${HD_OS_FAMILY}" != "AIX" ] && \
-  add2path CLASSPATH -f `find "${JAVA_HOME}/lib" -maxdepth 1 -name "*.jar"`
+  # Comment by Hans Deragon (hans@deragon.biz), 2018-01-31 11:26:54
+  # AIX's 'find' command does not support '-maxdepth'... ugh...
+  [ -d "${JAVA_HOME}/lib" -a "${HD_OS_FAMILY}" != "AIX" ] && \
+    add2path CLASSPATH -f `find "${JAVA_HOME}/lib" -maxdepth 1 -name "*.jar"`
 
   [ "${HD_OS_FAMILY}" == "Cygwin" ] && export JAVA_HOME=`cygpath "${JAVA_HOME}"`
 else
