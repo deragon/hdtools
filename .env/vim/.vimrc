@@ -512,7 +512,7 @@ else
 
     " Fix temporaire pour problème décrit à:
     " https://groups.google.com/forum/#!topic/vim_dev/wzrb9g5zIhA
-    set guiheadroom=80
+    "set guiheadroom=80
 
     " For font dialog, do             >> :set guifont=*
     " For name of font being used, do >> :set guifont
@@ -578,6 +578,19 @@ if has("gui_running")
     set columns=80
   endif
   set lines=999 " 999 = take all the vertical space.
+  set guiheadroom=120  " 2022-08-05 does not work under WSL2, Ubuntu 22.04 LTS
+
+  " Bug:  https://github.com/vim/vim/issues/1510
+  "
+  "       gVim under Linux starts too low when it is configured to take all
+  "       vertical space.
+  "
+  " Bug:  Under Cygwin, when winpos is called during a mintty (terminal) session
+  "       by 'vim' and not 'gvim', the terminal window can be moved out of the
+  "       screen.  'winpos' must be always wrapped around a 'if
+  "       has("gui_running")' statement.
+  winpos 0 30
+
 
   " Get <S-Insert> working.
   " From:  https://superuser.com/questions/322947/gvim-shift-insert-dump-s-insert-instead-of-the-clipboard-text
@@ -1053,21 +1066,6 @@ let g:DiffUnit='Char'
 " Call generate.sh.  Thus in any project, create a 'generate.sh' script and
 " this mapping will allow to call it quickly from VIM.
 " map <Leader>g :w<CR>:silent !clear;./generate.sh<CR>
-
-"
-" Bug:  https://github.com/vim/vim/issues/1510
-"
-"       gVim under Linux starts too low when it is configured to take all
-"       vertical space.
-"
-" Bug:  Under Cygwin, when winpos is called during a mintty (terminal) session
-"       by 'vim' and not 'gvim', the terminal window can be moved out of the
-"       screen.  'winpos' must be always wrapped around a 'if
-"       has("gui_running")' statement.
-if has("gui_running")
-  "winpos 0 999
-  winpos 0 0
-endif
 
 "command! PrettyJson execute "!C:\\cygwin64\\bin\\python3.6m.exe -m json.tool"
 "au FileType json setlocal equalprg=python\ -m\ json.tool
