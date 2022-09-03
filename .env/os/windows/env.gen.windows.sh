@@ -122,7 +122,7 @@ chrome()
   hd_application_run_executable_windows CHROME "Google Chrome" "CHROME.EXE" "$@"
 }
 
-meld()
+meld-win()
 {
   hd_application_run_executable_windows MELD "Meld" "MELD.EXE" "$@"
 }
