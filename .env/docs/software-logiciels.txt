@@ -537,6 +537,20 @@ POSTMAN VS INSOMNIA
 
 
 
+PAINT / IMAGE / GRAPHICS / PHOTO / PICTURES
+══════════════════════════════════════════════════════════════════════════════
+
+  Pinta
+  ────────────────────────────────────────────────────────────────────────────
+
+    Pinta is a free, open source program for drawing and image editing.
+    Supports arrows with the line brush tool.
+    Installed on Ubuntu 22.04 with Flatpak.
+
+      http://www.pinta-project.com/
+
+
+
 DOWNLOADERS
 ══════════════════════════════════════════════════════════════════════════════
 
