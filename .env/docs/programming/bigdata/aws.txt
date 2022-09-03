@@ -22,7 +22,6 @@ AWS S3
 AWS CLI
 ══════════════════════════════════════════════════════════════════════════════
 
-
   aws s3 cp
   ────────────────────────────────────────────────────────────────────────────
 
@@ -45,9 +44,8 @@ AWS CLOUDFORMATION
 
       https://stackoverflow.com/questions/39678784/validationerror-when-calling-the-createstack-operation-template-format-error
 
-
   - Understanding aws cloudformation !Sub syntax
-      https://www.fischco.org/technica/2017/cloud-formation-sub/ 
+      https://www.fischco.org/technica/2017/cloud-formation-sub/
 
 
   SHARE VARIABLES/VALUES BETWEEN CLOUDFORMATION STACKS
@@ -91,6 +89,39 @@ AWS Lambda
     Confirmed to work.  -- Hans Deragon, 2022-05
 
     From:  https://stackoverflow.com/questions/59742001/make-lambda-access-ec2-port-through-a-vpc
+
+
+
+AWS ROOT ACCOUNT
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://www.reddit.com/r/aws/comments/oorjl2/what_exactly_is_the_root_iam_principal/
+
+    It represents the account, so yes it us both the account root user
+    (non-IAM) and since IAM users, roles exist under the account this as a
+    Principal will also mean all calls authenticated by the account. This
+    predates the existence of IAM. Many people mistakenly use Principal: “*”
+    which means any AWS authenticated credential in any account, not just
+    their account.
+
+  From:  https://www.quora.com/What-is-root-in-AWS-IAM
+
+    In AWS resource policies, “root” in Principal ARNs refer to the entire
+    account, for example arn:aws:iam::123456789012:root.
+
+    While it is described as referring to the IAM root user, the default user
+    that exists before any IAM identities are created, it can be confusing. A
+    resource IAM policy that grants Allow access to root  gives access to
+    principals (users and roles) that have the IAM permissions.
+
+    There is no way to declare that access to a resource can only be accessed
+    by the root. This is already implicit, as a resource that does not allow
+    permissions does allow the IAM root user to have access. See: Joe Garcia's
+    answer to How can AWS IAM policy statements refer to the AWS account root
+    user?
+
+    KMS is one notable exception because the root user does not have implicit
+    access when not listed in the key policy.
 
 
 
