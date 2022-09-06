@@ -107,6 +107,13 @@ parser.add_argument('files', metavar='files', type=str, nargs='+',
 # parser.add_argument('-u', '--user', type=str, dest='user',
 #                     default=os.environ["USER"], help='Provide user id.')
 
+# Optional argument with choices.
+# See:  https://stackoverflow.com/questions/40324356/python-argparse-choices-with-a-default-choice
+# parser.add_argument('-t', '--type', dest='type', default="ascii7bits", required=False, type=str,
+#                     nargs='?',
+#                     choices=['ascii7bits', 'latin', 'digitAndLetters', 'digitAndLowerLetters', 'digitAndUpperLetters' ],
+#                     help='Length of password generated.  Default is ascii7bits.')
+
 parser.add_argument('-l', '--log-level', dest='loglevel', default='info',
        choices=['debug', 'info', 'warning', 'error', 'critical'],
        help='Set logs level.  Default is \'info\'.')
