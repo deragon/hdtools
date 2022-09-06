@@ -58,13 +58,13 @@ Generates a password based on a preselected set of acceptable caracters.
 
 """, formatter_class=argparse.RawTextHelpFormatter)
 
-parser.add_argument('-l', '--length', dest='length', default=32, required=False, type=int,
-                    help='Length of password generated.  Default is 32.')
+parser.add_argument('-l', '--length', dest='length', default=0, required=False, type=int,
+                    help='Length of password generated.  Default is to generate 16 and 32 characters.')
 
-parser.add_argument('-t', '--type', dest='type', default="ascii7bits", required=False, type=str,
+parser.add_argument('-t', '--type', dest='type', default="all", required=False, type=str,
                     nargs='?',
-                    choices=['ascii7bits', 'latin', 'digitAndLetters', 'digitAndLowerLetters', 'digitAndUpperLetters' ],
-                    help='Length of password generated.  Default is ascii7bits.')
+                    choices=['all', 'ascii7bits', 'latin', 'digitAndLetters', 'digitAndLowerLetters', 'digitAndUpperLetters' ],
+                    help='Length of password generated.  Default is "all".')
 
 parser.add_argument('--log-level', dest='loglevel', default='info',
        choices=['debug', 'info', 'warning', 'error', 'critical'],
@@ -99,33 +99,47 @@ if len(errors) > 0:
   sys.exit(1)
 
 # From https://stackoverflow.com/questions/1477294/generate-random-utf-8-string-in-python
+def generatePassword(length, rangeType):
+
+    caracterset = [
+        get_char(code_point) for current_range in ranges[rangeType]
+            for code_point in range(current_range[0], current_range[1] + 1)
+    ]
+
+    logger.debug("caracterset=%s", str(caracterset))
+    password = ''.join(random.choice(caracterset) for i in range(length))
+    print(f" {length:2} / {rangeType:24} →     {password}")
+
+
 try:
     get_char = unichr
 except NameError:
     get_char = chr
 
-if args.type == "ascii7bits":
-    include_ranges = [
-        ( 0x0021, 0x007E ),
-    ]
-elif args.type == "digitAndLetters":
-    include_ranges = [
+
+ranges = {
+
+  "ascii7bits":  [
+        ( 0x0021, 0x007E )
+    ],
+
+  "digitAndLetters":  [
         ( 0x0030, 0x0039 ), # Digits
         ( 0x0041, 0x005A ), # A-Z
-        ( 0x0061, 0x007A ), # a-z
-    ]
-elif args.type == "digitAndLowerLetters":
-    include_ranges = [
+        ( 0x0061, 0x007A )  # a-z
+    ],
+
+  "digitAndLowerLetters":  [
         ( 0x0030, 0x0039 ), # Digits
-        ( 0x0061, 0x007A ), # a-z
-    ]
-elif args.type == "digitAndUpperLetters":
-    include_ranges = [
+        ( 0x0061, 0x007A )  # a-z
+    ],
+
+  "digitAndUpperLetters":  [
         ( 0x0030, 0x0039 ), # Digits
-        ( 0x0041, 0x005A ), # A-Z
-    ]
-elif args.type == "latin":
-    include_ranges = [
+        ( 0x0041, 0x005A )  # A-Z
+    ],
+
+  "latin":  [
         ( 0x0021, 0x0021 ),
         ( 0x0023, 0x0026 ),
         ( 0x0028, 0x007E ),
@@ -138,13 +152,23 @@ elif args.type == "latin":
         ( 0x0370, 0x0377 ),
         ( 0x037A, 0x037E ),
         ( 0x0384, 0x038A ),
-        ( 0x038C, 0x038C ),
+        ( 0x038C, 0x038C )
     ]
+}
 
-caracterset = [
-    get_char(code_point) for current_range in include_ranges
-        for code_point in range(current_range[0], current_range[1] + 1)
-]
+# Set the ranges to print.
+if args.type == "all":
+    rangesToExecute = ranges.keys()
+else:
+    rangesToExecute = [ args.type ]
 
-logger.debug("caracterset=%s", str(caracterset))
-print(''.join(random.choice(caracterset) for i in range(args.length)))
+# If not lenght is provide (0), then we print out password of lengths 16 and 32.
+if args.length == 0:
+    lengthList = [ 16, 32 ]
+else:
+    lengthList = [ args.length ]
+
+# Generating the passwords now.
+for length in lengthList:
+    for rangeToExecute in rangesToExecute:
+        generatePassword(length, rangeToExecute)
