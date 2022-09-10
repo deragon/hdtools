@@ -62,6 +62,19 @@ AWS CLOUDFORMATION
     Systems Manager Parameter Store.
 
 
+  Renaming of stacks is impossible.
+  ────────────────────────────────────────────────────────────────────────────
+
+    Renaming of stacks is impossible.  However, this is a trick:
+
+    - Set all resources in the stack to retain on delete
+    - Delete the stack, whilst retaining the resource
+    - Create a new stack, importing the resources with their current state
+      back into the stack
+
+    See:  https://github.com/iann0036/cfn-stack-rename
+
+
 
 AWS CLOUDWATCH
 ══════════════════════════════════════════════════════════════════════════════
