@@ -148,6 +148,15 @@ COMMANDES
     git checkout <other branch> -- <path to specific file>
 
 
+  URL CHANGE
+  ────────────────────────────────────────────────────────────────────────────
+
+    git config --get remote.origin.url  # Safe:  List current URL.
+
+    git remote rm origin
+    git remote add origin "${URL_NEW}"
+
+
 
 STASH
 ══════════════════════════════════════════════════════════════════════════════
