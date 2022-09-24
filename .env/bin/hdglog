@@ -19,4 +19,6 @@ if [ ! -z "${@}" ]; then
   OPTIONS="${OPTIONS} --follow"
 fi
 
+# Setup LESS commands that makes this pager more practical to use.
+export LESS="--ignore-case --use-color --RAW-CONTROL-CHARS"
 git log ${OPTIONS} $@
