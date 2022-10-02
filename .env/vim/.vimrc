@@ -166,7 +166,6 @@ set foldlevel=99
 " These options must be set first thus must be found at the beginning of the
 " script, because some will reset values and otions if they were set before.
 
-" nocompatible mode must be set before Vundle is loaded.
 set nocompatible " Use Vim defaults (much better!)
 set nobackup
 set noautoindent " if autoindent is on, this causes problems with cut&paste
@@ -194,52 +193,44 @@ if($HDVIM != "")
   set rtp+=$HDVIM
   "echo "${HDVIM} set." $HDVIM
 
-  " VUNDLE ─────────────────────────────────────────────────────────────────────
-  "
-  "   DOCUMENTATION AT:  https://github.com/VundleVim/Vundle.vim/
-  "
-  "   Vundle make use of $HDVIM/bundle.
-  "   GIT repositories must be saved under $HDVIM/bundle
-  "
-  "   Vundle is short for Vim vundle and is a Vim plugin manager.
-  "   https://github.com/gmarik/Vundle.vim
-  "
-  "   BUGS:
-  "
-  "     - PluginSearch does not work as of 2021-04-10:
-  "         https://github.com/VundleVim/Vundle.vim/issues/914
+  " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
+  filetype plugin indent on    " Required.
 
-  filetype off " It can be renabled after all Vundle plugins have been loaded.
-  set rtp+=$HDVIM/bundle/Vundle.vim
-  let g:bundle_dir=$HDVIM."/bundle"
-  "echo "Vundle g:bundle_dir ="g:bundle_dir
-  call vundle#begin()
-  call vundle#rc(g:bundle_dir)
 
-  " let Vundle manage Vundle, required
-  Plugin 'VundleVim/Vundle.vim.git'
+  " VIM-PLUG
+  " ════════════════════════════════════════════════════════════════════
+  "
+  "   https://github.com/junegunn/vim-plug
+  "
+  "   To install all plugins from scratch on a new computer:  PlugInstall
+  "   To update all plugins:                                  PlugUpdate
 
-  Plugin 'AndrewRadev/linediff.vim.git'
-  Plugin 'chrisbra/csv.vim.git'
-  Plugin 'elzr/vim-json.git'
-  Plugin 'godlygeek/tabular.git'
-  Plugin 'jamessan/vim-gnupg.git'
-  Plugin 'plasticboy/vim-markdown.git'
-  Plugin 'scrooloose/nerdtree.git'
-  Plugin 'skywind3000/quickmenu.vim.git'
-  Plugin 'thinca/vim-fontzoom'
-  Plugin 'tomtom/tcomment_vim'
-  Plugin 'tpope/vim-abolish.git'
-  Plugin 'tpope/vim-commentary.git'
-  Plugin 'tpope/vim-fugitive.git'
-  Plugin 'tpope/vim-sensible.git'
-  Plugin 'tpope/vim-unimpaired.git'
-  Plugin 'vim-scripts/SQLUtilities.git'
-  Plugin 'hashivim/vim-terraform'
+  " Set Git URI format to 'git' instead of default 'http'.
+  let g:plug_url_format = 'git@github.com:%s.git'
 
-  " All of your Plugins must be added before the following line
-  call vundle#end()            " required
-  filetype plugin indent on    " required
+  call plug#begin()
+  Plug 'AndrewRadev/linediff.vim'
+  Plug 'chrisbra/csv.vim'
+  Plug 'elzr/vim-json'
+  Plug 'godlygeek/tabular'
+  Plug 'jamessan/vim-gnupg'
+  Plug 'plasticboy/vim-markdown'
+  Plug 'scrooloose/nerdtree'
+  Plug 'skywind3000/quickmenu.vim'
+  Plug 'thinca/vim-fontzoom'
+  Plug 'tomtom/tcomment_vim'
+  Plug 'tpope/vim-abolish'
+  Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-sensible'
+  Plug 'tpope/vim-unimpaired'
+  Plug 'vim-scripts/SQLUtilities'
+  Plug 'hashivim/vim-terraform'
+  Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+  "Plug 'vim-textobj-comment'   " Bug; runs deprecated code.  Had to comment out.
+  "Plug 'vim-textobj-user'      " Bug; runs deprecated code.  Had to comment out.
+
+  " On-demand loading
+  call plug#end()
 else
   echo "ERROR:  ${HDVIM} is not set.  'rtp' is missing that path:"
   echo "rtp=" &rtp
