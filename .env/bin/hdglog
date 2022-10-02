@@ -12,13 +12,74 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+usage()
+{
+  echo -e "
+\e[1;37;42m SAFE \e[0m
+
+Usage:  ${SCRIPT_NAME} [-a] [-h] <file>+
+
+  -a  Show logs of author returned by 
+  -h  Display this help text.
+"
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+GIT_AUTHOR="notused"
 OPTIONS="--name-status"  # Show filename.
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "ah" OPTCMD; do
+  case "${OPTCMD}" in
+    "a")    GIT_AUTHOR="$(git config --get user.email)";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if [ -z "${GIT_AUTHOR}" ]; then
+  ERRORS="${ERRORS} - Could not get author's email.\n"
+elif [[ "${GIT_AUTHOR}" != "notused" ]]; then
+  echo "Showing only logs of:  ${GIT_AUTHOR}"
+  OPTIONS="${OPTIONS} --author=\"${GIT_AUTHOR}\" --all"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
 
 if [ ! -z "${@}" ]; then
   # If file has been renamed, follow its history.
   OPTIONS="${OPTIONS} --follow"
 fi
 
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
 # Setup LESS commands that makes this pager more practical to use.
-export LESS="--ignore-case --use-color --RAW-CONTROL-CHARS"
-git log ${OPTIONS} $@
+#
+# --no-init:  To prevent less from clearing the screen upon exit.
+export LESS="--no-init --ignore-case --use-color --RAW-CONTROL-CHARS"
+
+eval git log ${OPTIONS} $@
