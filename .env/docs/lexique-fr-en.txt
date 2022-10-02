@@ -48,9 +48,10 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   race condition             -> situation de compétition
                                 condition de concurrence
   canonical                  -> canonique
-  trailing spaces            -> espaces de fin.
+  trailing spaces            -> espaces de fin
   reset                      -> réinitialiser / remettre (à l'heure|à zéro|en place)
   statement                  -> déclaration
+  due diligence              -> vérification diligente
 
 
 
