@@ -712,8 +712,10 @@ map <esc>s :set nospell<CR>
 "  flkjasdf;lkjasd;lfkjasd;lfkj;lksdjfl;kasdjfl ksdjflkj
 
 
-" PARAGRAPH FORMATING WITH INDENTATION
+" PARAGRAPH FORMATING/WRAPPING WITH INDENTATION
 " ══════════════════════════════════════════════════════════════════════════════
+"
+" For tips:  https://stackoverflow.com/questions/7338214/nicely-formatting-long-comments-in-vim
 "
 "   <esc>v -> formats the current paragraph to 78 cols
 "   <esc>g -> formats the current paragraph to 72 cols (Git commit format)
