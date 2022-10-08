@@ -202,6 +202,11 @@ if($HDVIM != "")
   "
   "   https://github.com/junegunn/vim-plug
   "
+  "   Installation:
+  "
+  "      curl -fLo "${HDVIM}/autoload/plug.vim" --create-dirs \
+  "        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  "
   "   To install all plugins from scratch on a new computer:  PlugInstall
   "   To update all plugins:                                  PlugUpdate
 
