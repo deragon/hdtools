@@ -213,7 +213,7 @@ if($HDVIM != "")
   " Set Git URI format to 'git' instead of default 'http'.
   let g:plug_url_format = 'git@github.com:%s.git'
 
-  call plug#begin()
+  call plug#begin($HDVIM)
   Plug 'AndrewRadev/linediff.vim'
   Plug 'chrisbra/csv.vim'
   Plug 'elzr/vim-json'
