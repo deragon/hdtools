@@ -279,6 +279,8 @@ map <Leader>7 <esc>02i <esc>76a-<esc>a<CR>
 map <Leader>ac :Tabularize /^[^:]*\zs:\zs/<CR><CR>
 map <Leader>ae :Tabularize /^[^=]*\zs=\zs/<CR><CR>
 map <Leader>a= :Tabularize /=/<CR><CR>
+map <Leader>a/ :Tabularize /\//<CR><CR>
+map <Leader>a\ :Tabularize /\\/<CR><CR>
 "Align on [ with 2 spaces at its left, 0 spaces at its right.  Ex:  '  [<text>'
 map <Leader>a[ :Tabularize /^[^\[]*\zs\[/l2l0<CR><CR>
 map <Leader>at :Tabularize /\t/<CR><CR>
