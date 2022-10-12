@@ -213,7 +213,13 @@ if($HDVIM != "")
   " Set Git URI format to 'git' instead of default 'http'.
   let g:plug_url_format = 'git@github.com:%s.git'
 
-  call plug#begin($HDVIM)
+  " silent! is used here to avoid native gvim on Windows to display the
+  " following error message:
+  "
+  "   [vim-plug] `git` executable not found. Most commands will not be
+  "   available. To suppress this message, prepend `silent!` to `call
+  "   plug#begin(...)`.
+  silent! call plug#begin($HDVIM)
   Plug 'AndrewRadev/linediff.vim'
   Plug 'chrisbra/csv.vim'
   Plug 'elzr/vim-json'
