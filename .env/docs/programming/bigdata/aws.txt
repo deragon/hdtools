@@ -34,6 +34,11 @@ AWS CLI
       - Tags found on the source object are preserved/copied to the
         destinationn object.
 
+  List all objects in a bucket
+  ────────────────────────────────────────────────────────────────────────────
+
+    aws s3 ls s3://${S3_BUCKET} --recursive --human-readable --summarize | tee "${S3_BUCKET}.txt"
+
 
 
 AWS CLOUDFORMATION
