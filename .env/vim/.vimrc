@@ -219,7 +219,7 @@ if($HDVIM != "")
   "   [vim-plug] `git` executable not found. Most commands will not be
   "   available. To suppress this message, prepend `silent!` to `call
   "   plug#begin(...)`.
-  silent! call plug#begin($HDVIM)
+  silent! call plug#begin('$HDVIM/plugged')
   Plug 'AndrewRadev/linediff.vim'
   Plug 'chrisbra/csv.vim'
   Plug 'elzr/vim-json'
