@@ -24,20 +24,20 @@ MISC
   #docker1 == 789682b608b34657a7bf665506c51b14463d637ea580b055e6c235d3cd13f351
 
   docker run ${IMAGE}  # Create a container from image.
-  docker container start ${CONTAINER} # Start an already existing container.
-  docker exec -it ${CONTAINER} bash   # Start bash session in container.
-  docker exec -it ${CONTAINER} --user <user> bash   # Start bash session as <user>
-  docker exec -it ${CONTAINER} --user 0 bash   # Start bash session as root.
-  docker inspect "${CONTAINER}" | less # Safe.  Prints out details.
+  docker container start ${DOCKER_CONTAINER_ID} # Start an already existing container.
+  docker exec -it "${DOCKER_CONTAINER_ID}" bash   # Start bash session in container.
+  docker exec -it "${DOCKER_CONTAINER_ID}" --user <user> bash   # Start bash session as <user>
+  docker exec -it "${DOCKER_CONTAINER_ID}" --user 0 bash   # Start bash session as root.
+  docker inspect "${DOCKER_CONTAINER_ID}" | less # Safe.  Prints out details.
 
   docker info # Shows all sort of info about the docker eco-system on the host.
 
-  docker logs -f "${CONTAINER}" # Equivalent of a tail, but it scrolls from the beginning
+  docker logs -f "${DOCKER_CONTAINER_ID}" # Equivalent of a tail, but it scrolls from the beginning
 
 
   # Enable / Disable docker container at host bootup.
-  docker update --restart=always "${CONTAINER}" # Enable autostart at host boot.
-  docker update --restart=no     "${CONTAINER}" # Disable autostart at host boot.
+  docker update --restart=always "${DOCKER_CONTAINER_ID}" # Enable autostart at host boot.
+  docker update --restart=no     "${DOCKER_CONTAINER_ID}" # Disable autostart at host boot.
 
 
   # Formated outputs.  See:  https://docs.docker.com/engine/reference/commandline/ps/#formatting
@@ -115,8 +115,8 @@ VOLUMES AND DATA
 ==========
 
   docker volume ls  # SAFE.  List all volumes on host.
-  docker inspect -f '{{ .Mounts }}' "${CONTAINER}"
-  docker inspect "${CONTAINER}" | less
+  docker inspect -f '{{ .Mounts }}' "${DOCKER_CONTAINER_ID}"
+  docker inspect "${DOCKER_CONTAINER_ID}" | less
 
 
   IMPORTANT NOTES
