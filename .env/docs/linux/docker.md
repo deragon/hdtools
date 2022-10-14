@@ -25,6 +25,10 @@ MISC
 
   docker run ${IMAGE}  # Create a container from image.
   docker container start ${DOCKER_CONTAINER_ID} # Start an already existing container.
+
+  docker container ps --format "table {{.ID}}\t{{.CreatedAt}}\t{{.Size}}" # List running containers in table format.
+  DOCKER_CONTAINER_ID="$(docker container ps --format "{{.ID}}" | head -1)"; echo "${DOCKER_CONTAINER_ID}"
+
   docker exec -it "${DOCKER_CONTAINER_ID}" bash   # Start bash session in container.
   docker exec -it "${DOCKER_CONTAINER_ID}" --user <user> bash   # Start bash session as <user>
   docker exec -it "${DOCKER_CONTAINER_ID}" --user 0 bash   # Start bash session as root.
