@@ -4,6 +4,9 @@
 **/personal
 **/todel
 **/*-disabled
+**/.corp-*
+**/vim/autoload
+**/vim/plugged
 **/vim/bundle
 **/vim/spell/*.spl
 **/vim/spell/*.sug
