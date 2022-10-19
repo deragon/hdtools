@@ -20,16 +20,25 @@ SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
 SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
 SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
 
+unset COLORS
+declare -A COLORS=(
+  ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+  ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+  ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+  ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+  ["NORMAL"]="\e[0;00m"
+)
+
 usage()
 {
   echo -e "
-\e[1;37;42m SAFE \e[0m
-\e[1;30;43m SLIGHT DANGER \e[0m
-\e[1;37;41m DANGER \e[0m
+${COLORS[FG_WHITE_BG_GREEN]} SAFE ${COLORS[NORMAL]}
+${COLORS[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${COLORS[NORMAL]}
+${COLORS[FG_WHITE_BG_RED]} DANGER ${COLORS[NORMAL]}
 
-\e[1;37;42m SAUF \e[0m
-\e[1;30;43m LÉGER DANGER \e[0m
-\e[1;37;41m DANGER \e[0m
+${COLORS[FG_WHITE_BG_GREEN]} SAUF ${COLORS[NORMAL]}
+${COLORS[FG_BLACK_BG_YELLOW]} LÉGER DANGER ${COLORS[NORMAL]}
+${COLORS[FG_WHITE_BG_RED]} DANGER ${COLORS[NORMAL]}
 
 Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <file>+
 
@@ -103,8 +112,8 @@ if [ -z "${ENV}" ]; then
 fi
 
 if [ ! -z "${ERRORS}" ]; then
-  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
-  echo -e "\e[1;37;41mERREUR:\e[0m  Les erreurs suivantes furent détectées.\n"
+  echo -e "${COLORS[FG_WHITE_BG_RED]}ERROR:${COLORS[NORMAL]}  The following errors where detected.\n"
+  echo -e "${COLORS[FG_WHITE_BG_RED]}ERREUR:${COLORS[NORMAL]}  Les erreurs suivantes furent détectées.\n"
   echo -e "${ERRORS}"
   echo -e "Command aborted."
   echo -e "Commande avortée."
@@ -161,9 +170,9 @@ signalerrorhandler()
   LINENO_ERR=$1
   echo -e "$(cat <<EOM
 
-\e[1;37;41mERROR:\e[0m  The previous command failed.  Script aborted.
+${COLORS[FG_WHITE_BG_RED]}ERROR:${COLORS[NORMAL]}  The previous command failed.  Script aborted.
          Following the command that failed:
-\e[1;37;41mERREUR:\e[0m  La commande précédente a échouée.  script avorté.
+${COLORS[FG_WHITE_BG_RED]}ERREUR:${COLORS[NORMAL]}  La commande précédente a échouée.  script avorté.
          Voici la commande qui a échouée:
 EOM
 )"
@@ -187,7 +196,7 @@ trap 'signalerrorhandler ${LINENO}' ERR
 # If no file has been provided, set one file as STDIN (-).  This way,
 # either files passed as arguments are processed or STDIN.
 if (( ${#FILES[*]} == 0 )); then
-  echo -e "\e[1;30;43m WARNING \e[0m  SDTIN being used for input." >&2
+  echo -e "${COLORS[FG_BLACK_BG_YELLOW]} WARNING ${COLORS[NORMAL]} SDTIN being used for input." >&2
   FILES[0]="-"
 
   # Or as an alternative, to catch all STDIN into a variable named STDIN:
@@ -350,9 +359,9 @@ tail -f "${LOGFILE}"
 # ════════════════════════════════════════════════════════════════════
 echo
 if (( DRYRUN )); then
-  echo -en "\e[1;37;44mCommand was executed in dry mode; nothing was executed.\e[0;00m\n\e[1;37;44mRerun with -e to execute the action.\e[0;00m\n"
-  echo -en "\e[1;37;44mCommande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.\e[0;00m\n\e[1;37;44mRerouler avec l'option -e pour exécuter l'action.\e[0;00m\n"
+  echo -en "${COLORS[FG_WHITE_BG_BLUE]}Command was executed in dry mode; nothing was executed.${COLORS[FG_WHITE_BG_BLUE]}\n${COLORS[FG_WHITE_BG_BLUE]}Rerun with -e to execute the action.${COLORS[NORMAL]}\n"
+  echo -en "${COLORS[FG_WHITE_BG_BLUE]}Commande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.${COLORS[FG_WHITE_BG_BLUE]}\n${COLORS[FG_WHITE_BG_BLUE]}Rerouler avec l'option -e pour exécuter l'action.${COLORS[NORMAL]}\n"
 else
-  echo -en "\e[1;37;42mCommand was executed.\e[0;00m\n"
-  echo -en "\e[1;37;42mCommande fut exécutée.\e[0;00m\n"
+  echo -en "${COLORS[FG_WHITE_BG_GREEN]}Command was executed.${COLORS[NORMAL]}\n"
+  echo -en "${COLORS[FG_WHITE_BG_GREEN]}Commande fut exécutée.${COLORS[NORMAL]}\n"
 fi
