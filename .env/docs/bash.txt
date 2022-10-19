@@ -34,8 +34,6 @@ ARRAYS
 
   Read:  https://unix.stackexchange.com/questions/328882/how-to-add-remove-an-element-to-from-the-array-in-bash
 
-  ENTRIES["data3"]="data 3" << MARCHE PAS!!!!!! Pas un hash map
-
   # Load lines from a file - one line == one array entry
   # Pipe (|) does not work here.  Use "< <(...)"
   readarray FILES < <(find "${RECURSIVEPATH}" -type f -name "*.pdf")
@@ -118,7 +116,24 @@ ARRAYS
 
 
 
-STRING MANIUPLATIONS
+DICTIONARY / HASH MAP
+══════════════════════════════════════════════════════════════════════════════
+
+  Available since Bash 4
+
+  From:  https://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash
+
+  # IMPORTANT:  declare with CAPITAL -A, not LOWERCASE -a,
+  #             which will create an array instead.
+  declare -A animals=( ["moo"]="cow" ["woof"]="dog")
+  animals["miew"]="cat"
+  echo "${animals[moo]}"
+  echo "${animals[@]}"   # Expand all values.
+  echo "${!animals[@]}"  # Expand all keys.
+
+
+
+STRING MANIPULATIONS
 ══════════════════════════════════════════════════════════════════════════════
 
   SUBSTRINGS
