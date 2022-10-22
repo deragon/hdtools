@@ -139,8 +139,9 @@ setup_user()
 {
 
   git config --global user.name               "Hans Deragon"
-
-  if [ "${USERDOMAIN}" = "VIDEOTRON" ] || [[ "$(hostname -f)" =~ "videotron" ]]; then
+  if [ "${HD_CORP_IDENTIFIER}" == "cdpq" ]; then
+    git config --global user.email "hderagon@cdpq.com"
+  elif [ "${USERDOMAIN}" = "VIDEOTRON" ] || [[ "$(hostname -f)" =~ "videotron" ]]; then
     git config --global user.email "hans.deragon@videotron.com"
   else
     git config --global user.email "hans@deragon.biz"
