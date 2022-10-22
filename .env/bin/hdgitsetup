@@ -54,23 +54,29 @@ diff_setup_common()
   git config --global mergetool.trustExitCode "true"
   git config --global difftool.trustExitCode  "true"
   git config --global difftool.prompt         "false"
+}
 
 
-  # hdvimdiff
-  git config --global difftool.hdvimdiff.cmd 'vimdiff -u "${HDVIMRC}" "${LOCAL}" "${REMOTE}"'
-  git config --global difftool.hdvimdiff.trustExitCode "true"
-  git config --global difftool.hdvimdiff.prompt "false"
+diff_setup_tool()
+{
+  local TOOL_TITLE="${1}"
+  local TOOL_CMD_BIN="${2}"
+  local TOOL_CMD_OPTIONS="${3}"
 
-  # hdgvimdiff
-  #
-  # In order to work correctly, gvim must stay in the foreground and NOT fork
-  # a new process as usual. This is accomplished by using the -f or --nofork
-  # flag when starting gvim (or gvimdiff).
-  #
-  # See:  https://stackoverflow.com/questions/26554865/how-can-i-make-git-difftool-to-use-gvim-gvimdiff
-  git config --global difftool.hdgvimdiff.cmd 'gvimdiff --nofork -u "${HDVIMRC}" "${LOCAL}" "${REMOTE}"'
-  git config --global difftool.hdgvimdiff.trustExitCode "true"
-  git config --global difftool.hdgvimdiff.prompt "false"
+  TOOL_CMD_PATH="$(which "${TOOL_CMD_BIN}")"
+  if [[ ! -z "${TOOL_CMD_PATH}" ]]; then
+
+    if [[ ! -z "${TOOL_CMD_OPTIONS}" ]]; then
+      #TOOL_CMD_OPTIONS="\"${TOOL_CMD_OPTIONS}\" "
+      TOOL_CMD_OPTIONS="${TOOL_CMD_OPTIONS} "
+    fi
+
+    git config --global difftool.${TOOL_TITLE}.cmd \
+       "\"${TOOL_CMD_PATH}\" ${TOOL_CMD_OPTIONS}\"\${LOCAL}\" \"\${REMOTE}\""
+    git config --global difftool.${TOOL_TITLE}.trustExitCode true
+    git config --global difftool.${TOOL_TITLE}.prompt false
+
+  fi
 }
 
 
@@ -93,6 +99,21 @@ diff_setup_linux()
 {
   git config --global diff.tool    "hdvimdiff"
   git config --global diff.guitool "hdgvimdiff"
+
+  # hdgvimdiff
+  #
+  # In order to work correctly, gvim must stay in the foreground and NOT fork
+  # a new process as usual. This is accomplished by using the -f or --nofork
+  # flag when starting gvim (or gvimdiff).
+  #
+  # See:  https://stackoverflow.com/questions/26554865/how-can-i-make-git-difftool-to-use-gvim-gvimdiff
+  diff_setup_tool "hdvimdiff"  "vimdiff"  "--nofork -u \"\${HDVIMRC}\""
+  diff_setup_tool "hdgvimdiff" "gvimdiff" "--nofork -u \"\${HDVIMRC}\""
+
+  diff_setup_tool "meld"       "meld"     ""
+  diff_setup_tool "meld"       "meld.exe" ""
+  diff_setup_tool "icdiff"     "icdiff"   ""
+  diff_setup_tool "dif"        "dif"      "-comments"
 }
 
 
