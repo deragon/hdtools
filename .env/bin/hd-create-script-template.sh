@@ -21,13 +21,18 @@ SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
 SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
 
 unset COLORS
-declare -A COLORS=(
-  ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
-  ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
-  ["FG_WHITE_BG_RED"]="\e[1;37;41m"
-  ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
-  ["NORMAL"]="\e[0;00m"
-)
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
+  # remain unset and no ANSI codes are sent out.
+  declare -A COLORS=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["NORMAL"]="\e[0;00m"
+  )
+fi
+
 
 usage()
 {
