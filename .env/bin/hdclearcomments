@@ -23,6 +23,7 @@ Remove comments in provided files.
 
 Usage:  ${SCRIPT_NAME} [-h] <file.xml>+
 
+  -x  Force file type as XML (for use with <STDIN>)
   -h  Display this help text.
 "
 }
@@ -34,8 +35,10 @@ Usage:  ${SCRIPT_NAME} [-h] <file.xml>+
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "h" OPTCMD; do
+unset FILETYPE
+while getopts "xh" OPTCMD; do
   case "${OPTCMD}" in
+    "x")    FILETYPE="xml";;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -98,14 +101,14 @@ for FILE in ${FILES[@]}; do
   # Print title only if more than one file is being processed.
   (( ${#FILES[*]} > 1 )) && title "Processing ${FILE}"
 
-  FILE_TYPE="$(file "${FILE}")"
+  if [[ "${FILE}" == "<STDIN>" ]]; then
+    FILE="-"
+  else
+    [[ -z "${FILE_TYPE}" ]] && FILE_TYPE="$(file "${FILE}")"
+  fi
 
   if [[ "${FILE_TYPE,,}" =~ "xml" ]]; then
-    if [ "${FILE}" == "<STDIN>" ]; then
-      xmlstarlet ed -d '//comment()' # Processing STDIN.
-    else
       xmlstarlet ed -d '//comment()' "${FILE}"
-    fi
   else
     # -- Comments are for SQL.
     sed --regexp-extended '/^\s*(;|#|\/\/|\"|--|$)/d' "${FILE}"
