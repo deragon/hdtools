@@ -687,7 +687,7 @@ map  <S-F6> :g/}\n\n\/\//s//}\r\r\/\//g<CR>
 noremap <F8> "
 
 map  <S-F8> :set columns=80<CR>
-imap <S-F11> Copyright 2021, Hans Deragon<CR>Consultant en informatique/Software Consultant<CR><CR>Deragon Informatique inc.<CR>https://www.deragon.biz<CR>mailto:hans@deragon@biz
+imap <S-F11> Copyright 2023, Hans Deragon<CR>Consultant en informatique/Software Consultant<CR><CR>Deragon Informatique inc.<CR>https://www.deragon.biz<CR>mailto:hans@deragon@biz
 "map <S-F12> O<esc>!!cat ${HDENVDIR}/signature.txt<CR>
 
 " Hexadecimal editor
