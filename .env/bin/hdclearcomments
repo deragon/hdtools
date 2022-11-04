@@ -19,9 +19,30 @@ usage()
   echo -e "
 \e[1;37;42m SAFE \e[0m
 
-Remove comments in provided files.
+Remove comments in provided files or <STDIN>.
 
 Usage:  ${SCRIPT_NAME} [-h] <file.xml>+
+
+  -f  Ignore any prefix that suggest to be a file followed by a colon, as
+      reported by the output of grep.
+
+      For instance, consider what is returned by the following command:
+
+        $ fgrep -r bash .
+        bin/hd-env-bashrc-install:# On RHEL systems..
+        bin/hd-env-bashrc-install:if fgrep -q '.bashrc' \"\\\${HOME}/.bash_profile\"; then
+        bin/hd-env-bashrc-install:  BASH_FILE=\"\\\${HOME}/.bash_profile\"
+
+      Now notice that when passed through '${SCRIPT_NAME} -f', the line with
+      the comments does not show because the it is commented, even though the
+      actual line in <STDIN> does not start with a comment, but with a
+      filename, i.e. 'bin/hd-env-bashrc-install:'.
+
+        $ fgrep -r bash . | ${SCRIPT_NAME} -f
+        bin/hd-env-bashrc-install:if fgrep -q '.bashrc' \"\\\${HOME}/.bash_profile\"; then
+        bin/hd-env-bashrc-install:  BASH_FILE=\"\\\${HOME}/.bash_profile\"
+
+      This option is ignored when input is XML.
 
   -x  Force file type as XML (for use with <STDIN>)
   -h  Display this help text.
@@ -36,8 +57,10 @@ Usage:  ${SCRIPT_NAME} [-h] <file.xml>+
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
 unset FILETYPE
-while getopts "xh" OPTCMD; do
+RE_PREFIX='\s*'
+while getopts "fxh" OPTCMD; do
   case "${OPTCMD}" in
+    "f")    RE_PREFIX='\s*([[:alnum:]]| |_|-|\.|\/)*:';;
     "x")    FILETYPE="xml";;
     "h"|*)  usage; exit 1;;
   esac
@@ -111,6 +134,6 @@ for FILE in ${FILES[@]}; do
       xmlstarlet ed -d '//comment()' "${FILE}"
   else
     # -- Comments are for SQL.
-    sed --regexp-extended '/^\s*(;|#|\/\/|\"|--|$)/d' "${FILE}"
+    sed --regexp-extended "/^${RE_PREFIX}"'(;|#|\/\/|\"|--|$)/d' "${FILE}"
   fi
 done
