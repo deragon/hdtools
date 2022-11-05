@@ -22,6 +22,45 @@ AWS S3
 AWS CLI
 ══════════════════════════════════════════════════════════════════════════════
 
+  AWS SSO LOGIN AND CREDENTIALS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Create the AWS config file:
+
+      cat <<EOF >>"${HOME}/.aws/config"
+[default]
+region = ca-central-1
+
+# Development environment
+[profile awsssodv]
+sso_start_url = <Specifies the URL that points to the organization's AWS access portal.>
+sso_region = ca-central-1
+sso_account_id = <put account name here>
+sso_role_name = <put SSO role here>
+region = ca-central-1
+output = json
+EOF
+
+    Setup a useful alias:
+
+    alias awslogin='aws sso login --profile awsssodv'
+
+
+    Then, download 'aws-sso-creds' from
+    https://github.com/jaxxstorm/aws-sso-creds
+
+    This utility will automatically populate the following variables:
+
+      AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY
+      AWS_SESSION_TOKEN
+
+    Create the following alias to use 'aws-sso-creds'.
+
+      alias awsdv='eval $(aws-sso-creds export --profile awsssodv); greenbg'
+
+
+
   aws s3 cp
   ────────────────────────────────────────────────────────────────────────────
 
@@ -38,7 +77,6 @@ AWS CLI
   ────────────────────────────────────────────────────────────────────────────
 
     aws s3 ls s3://${S3_BUCKET} --recursive --human-readable --summarize | tee "${S3_BUCKET}.txt"
-
 
 
 AWS CLOUDFORMATION
