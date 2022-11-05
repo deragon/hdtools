@@ -1738,8 +1738,15 @@ CURSOR MOVEMENTS
 
 
 
-COLORS and TERMINAL CODES
+COLORS and ANSI TERMINAL CODES
 ══════════════════════════════════════════════════════════════════════════════
+
+  Fun commands
+  ────────────────────────────────────────────────────────────────────────────
+
+    figlet TEST    # Display large characters made up of ordinary screen characters.
+    lolcat <file>  # Rainbow coloring effect for text console display
+
 
   TrueColor
   ────────────────────────────────────────────────────────────────────────────
