@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # ─ Copyright Notice ───────────────────────────────────────────────────
 #
@@ -59,20 +59,20 @@ diff_setup_common()
 
 diff_setup_tool()
 {
-  local TOOL_TITLE="${1}"
-  local TOOL_CMD_BIN="${2}"
-  local TOOL_CMD_OPTIONS="${3}"
+  local TOOL_TITLE="${1}";   shift;
+  local TOOL_CMD_BIN="${1}"; shift;
+  local TOOL_CMD_OPTIONS="${@}"
 
   TOOL_CMD_PATH="$(which "${TOOL_CMD_BIN}")"
   if [[ ! -z "${TOOL_CMD_PATH}" ]]; then
 
     if [[ ! -z "${TOOL_CMD_OPTIONS}" ]]; then
-      #TOOL_CMD_OPTIONS="\"${TOOL_CMD_OPTIONS}\" "
+      #TOOL_CMD_OPTIONSk"\"${TOOL_CMD_OPTIONS}\" "
       TOOL_CMD_OPTIONS="${TOOL_CMD_OPTIONS} "
     fi
 
     git config --global difftool.${TOOL_TITLE}.cmd \
-       "\"${TOOL_CMD_PATH}\" ${TOOL_CMD_OPTIONS}\"\${LOCAL}\" \"\${REMOTE}\""
+       "'${TOOL_CMD_PATH}' ${TOOL_CMD_OPTIONS}\"\${LOCAL}\" \"\${REMOTE}\""
     git config --global difftool.${TOOL_TITLE}.trustExitCode true
     git config --global difftool.${TOOL_TITLE}.prompt false
 
@@ -110,10 +110,10 @@ diff_setup_linux()
   diff_setup_tool "hdvimdiff"  "vimdiff"  "--nofork -u \"\${HDVIMRC}\""
   diff_setup_tool "hdgvimdiff" "gvimdiff" "--nofork -u \"\${HDVIMRC}\""
 
+  diff_setup_tool "meld-win"   "meld.exe" ""
   diff_setup_tool "meld"       "meld"     ""
-  diff_setup_tool "meld"       "meld.exe" ""
   diff_setup_tool "icdiff"     "icdiff"   ""
-  diff_setup_tool "dif"        "dif"      "-comments"
+  diff_setup_tool "dif"        "dif"      "-comments" "-noWhite"
 }
 
 
@@ -207,6 +207,8 @@ else
 fi
 
 setup_gitignore
+
+sed -ri "s/\t/  /g" "${HOME}/.gitconfig"  # Replace all tabs with spaces.
 
 cat <<EOM
 
