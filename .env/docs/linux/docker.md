@@ -20,11 +20,9 @@ MISC
   # Same command as above, but with Created date shown as exact date.
   docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
 
-  CONTAINER=docker1
-  #docker1 == 789682b608b34657a7bf665506c51b14463d637ea580b055e6c235d3cd13f351
-
   docker run ${IMAGE}  # Create a container from image.
-  docker container start ${DOCKER_CONTAINER_ID} # Start an already existing container.
+  docker container start "${DOCKER_CONTAINER_ID}" # Start an already existing container.
+  docker container stop  "${DOCKER_CONTAINER_ID}"
 
   docker container ps --format "table {{.ID}}\t{{.CreatedAt}}\t{{.Size}}" # List running containers in table format.
   DOCKER_CONTAINER_ID="$(docker container ps --format "{{.ID}}" | head -1)"; echo "${DOCKER_CONTAINER_ID}"
