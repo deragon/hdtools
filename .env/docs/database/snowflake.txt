@@ -121,7 +121,7 @@ GENERATE SQL FROM REQUEST
 
     show grants to role SYSADMIN;
 
-    select 'grant all privileges on stream ' || rpad('"' || "database_name" || '"."' || "schema_name" || '"."' || "name" || '"' , 64, ' ') || ' to role "MYROLE";' as "SQL commands generated." from table(result_scan(last_query_id()));
+    select 'grant all privileges on stream ' || rpad('"' || "database_name" || '"."' || "schema_name" || '"."' || "name" || '"' , 64, ' ') || ' to role "MYROLE";' as "-- SQL commands generated." from table(result_scan(last_query_id()));
 
 
 
