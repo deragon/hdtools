@@ -12,10 +12,13 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-if [ $(uname) = "Linux" ]; then
-  /bin/hostname $*
-else
-  # Confirmed that under Solaris and AIX, hostname -f is extremely dangerous
-  # and replaces the hsotanme with '-f'.
+if [ "$(uname)" = "Linux" ]; then /bin/hostname "$@" else
+
+  # 'hostname', when called with arguments, will actually set the hostname as
+  # the parameter on Unix systems such as Solaris, AIX and HP-UX.  For
+  # instance, calling 'hostname -f' on Solaris will set the hostname to '-f'
+  # instead of returning the FQDN like under Linux.
+  #
+  # Thus for any other platform than Linux, we ignore passed parameters.
   /bin/hostname
 fi
