@@ -112,6 +112,7 @@ if [ ! -z "${ERRORS}" ]; then
   exit 1
 fi
 
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
 
 
 # title()
@@ -207,3 +208,5 @@ for FILE in ${FILES[@]}; do
     fi
   fi
 done
+
+echo "Finished at:  $(date "+${TIMESTAMP_FORMAT_HUMAN}")"
