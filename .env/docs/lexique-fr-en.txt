@@ -52,6 +52,8 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   reset                      -> réinitialiser / remettre (à l'heure|à zéro|en place)
   statement                  -> déclaration
   due diligence              -> vérification diligente
+  dashboard                  -> tableau de bord
+  to map                     -> faire la correspondance, assignation
 
 
 
