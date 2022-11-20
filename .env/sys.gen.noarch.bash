@@ -176,9 +176,20 @@ hderror()
 }
 
 
-if [ "${HD_OS_FAMILY}" != "Linux" -a \
-     "${HD_OS_FAMILY}" != "Cygwin" -a \
-     "${HD_OS_FAMILY}" != "Darwin" ]; then
+
+# Overwriting commands that are dangerous on some Unix systems such as
+# Solaris, AIX, HP-UX and others.
+#
+# - 'hostname', when called with arguments, will actually set the hostname
+#   as the parameter.  For instance, calling 'hostname -f' on Solaris will
+#   set the hostname to '-f' instead of returning the FQDN like under Linux.
+#
+# - 'killall' is dangerous on any other platform than does not uses the GNU
+#   version.  It actually kills all processes, thus killing the OS.
+if ! [[ "${HD_OS_FAMILY}" =~ "Linux"  ||
+        "${HD_OS_FAMILY}" =~ "Cygwin" ||
+        "${HD_OS_FAMILY}" =~ "Darwin"    ]]; then
+
   alias hostname="${HDENVDIR}/bin/hdhostname"
   alias killall="echo -e \"killall is dangerous on any other platform than Linux.\nIt is disabled here.  Escape it if you really want to use this command.\""
 fi
