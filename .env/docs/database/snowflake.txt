@@ -133,3 +133,13 @@ TERRAFORM
 
   Plugin code at:
     https://github.com/Snowflake-Labs/terraform-provider-snowflake
+
+
+USER MANAGEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+ UNLOCK USER
+  ────────────────────────────────────────────────────────────────────────────
+
+      use role accountadmin;  -- Curiously, securityadmin is not enough.
+      alter user <USERNAME> set mins_to_unlock=0;
