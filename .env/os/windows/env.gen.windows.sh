@@ -102,6 +102,8 @@ acroread()
   hd_application_run_executable_windows ACROREAD "Acrobat reader" "Acrobat.exe|AcroRd32.exe" "$@"
 }
 
+alias e='acroread'  # Same alias as under Linux, used to call 'evince'.
+
 word()
 {
   hd_application_run_executable_windows MSWORD "Microsoft Word" "WINWORD.EXE" "$@"
