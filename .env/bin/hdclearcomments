@@ -60,7 +60,7 @@ unset FILETYPE
 RE_PREFIX='\s*'
 while getopts "fxh" OPTCMD; do
   case "${OPTCMD}" in
-    "f")    RE_PREFIX='\s*([[:alnum:]]| |_|-|\.|\/)*:';;
+    "f")    RE_PREFIX='\s*([[:alnum:]]| |_|-|\.|\/)*:\s*';;
     "x")    FILETYPE="xml";;
     "h"|*)  usage; exit 1;;
   esac
