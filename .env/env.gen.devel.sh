@@ -60,7 +60,7 @@ fi
 # Git
 which git >/dev/null 2>&1
 if (( $? == 0 )); then
-  alias hdgpull='git pull --all --prune; git branch -avv'
+  alias hdgpull='git pull --all --prune; git branch -a'
   alias hdgstatus='git status --untracked-files=no'
   alias hdgitgvim='git difftool --tool=hdgvimdiff --no-prompt &'
   alias cdgroot='cdprint "$(git rev-parse --show-toplevel)"'  # Return root directory of current Git repo.
