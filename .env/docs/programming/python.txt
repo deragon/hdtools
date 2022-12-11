@@ -139,7 +139,7 @@ ARRAY / LIST / DICTIONNARY (HASH)
 
     list = []
     len(list)
-    list.append(<data>)
+    list.append(<data>)  # Modify, add to list.
     list + ListB  # Concatenation, merge.
     list.extends(listB) # Same as 'list + listB' (Concatenation, merge).
     list.sort()
