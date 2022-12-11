@@ -1006,6 +1006,13 @@ BUILDING
 
   sudo apt install libpython3-dev  # Provides Python.h & other headers.
 
+
+
+READING - DOCUMENTATION - CHEAT - TIPS
+══════════════════════════════════════════════════════════════════════════════
+
+  - https://www.codingem.com/python-tricks-and-tips/
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
