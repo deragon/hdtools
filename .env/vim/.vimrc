@@ -1039,6 +1039,11 @@ set fo+=n " http://stackoverflow.com/questions/6731794/format-lists-in-vim
 set listchars=nbsp:☠,tab:↳↳,trail:␣
 set list
 
+" From:  https://stackoverflow.com/questions/21708814/can-vim-diff-use-the-patience-algorithm
+" Set algorithm:patience.  See:  https://vimways.org/2018/the-power-of-diff/
+if has("patch-8.1.0360")
+  set diffopt+=internal,algorithm:patience
+endif
 
 " Diff function to ignore empty lines
 " ══════════════════════════════════════════════════════════════════════════════
