@@ -200,6 +200,7 @@ BRANCHES
   Change branch:
 
     # Checkout branch connected to remote branch
+--> git switch <remote branch name without the remote name (do not put 'origin'!>
     git checkout --track origin/<branch> # <branch is the name of the remote after 'origin'
     git checkout -b <branch> remotes/origin/<branch> # Explicit, if you want to change the name of the local branch.
 
@@ -240,7 +241,7 @@ BRANCHES
       git log "main..${BRANCH}"  # List all commits found in ${BRANCH} but not in main.
 
       # With a graph (nice).
-      git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative "master..${BRANCH}"
+      git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative "develop..${BRANCH}"
 
       See:  https://stackoverflow.com/questions/13965391/how-do-i-see-the-commit-differences-between-branches-in-git
 
@@ -527,6 +528,8 @@ MERGE / REBASE
 
   Merge
   ────────────────────────────────────────────────────────────────────────────
+
+    git merge --ff-only origin/develop
 
     git checkout <target branch>
     git merge <branch to merge into the current branch>
