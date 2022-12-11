@@ -15,6 +15,9 @@ is_git_repo() {
 
 is_git_repo
 
+# Jump to root directory of Git repository.
+cd "$(git rev-parse --show-toplevel)"
+
 while [[ $# -gt 1 ]]
 do
 key="$1"
