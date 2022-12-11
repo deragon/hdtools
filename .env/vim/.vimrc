@@ -220,6 +220,7 @@ if($HDVIM != "")
   "   available. To suppress this message, prepend `silent!` to `call
   "   plug#begin(...)`.
   silent! call plug#begin('$HDVIM/plugged')
+  Plug 'rickhowe/diffchar.vim'
   Plug 'AndrewRadev/linediff.vim'
   Plug 'chrisbra/csv.vim'
   Plug 'elzr/vim-json'
@@ -1062,9 +1063,6 @@ function! HdDiff()
 endfunction
 
 
-" Configuration for plugin diffChar, to show only the differences by
-" character, by default.
-let g:DiffUnit='Char'
 
 " TEMPORARY COMMANDS - COULD BE DELETED ONCE NOT USEFUL ANYMORE
 " ══════════════════════════════════════════════════════════════════════════════
@@ -1075,6 +1073,8 @@ let g:DiffUnit='Char'
 
 "command! PrettyJson execute "!C:\\cygwin64\\bin\\python3.6m.exe -m json.tool"
 "au FileType json setlocal equalprg=python\ -m\ json.tool
+
+
 
 " QUICKMENU (plugin setup)
 " ══════════════════════════════════════════════════════════════════════════════
