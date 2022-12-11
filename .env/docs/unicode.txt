@@ -1,12 +1,15 @@
 UNICODE UTF-8 UTF8
 ══════════════════════════════════════════════════════════════════════════════
+ ⃠ COMBI
+
+a ⃠b
 
   Mon 2₵.  My 2₵.
   👍😀 😂 😛 🙄 😖 😠 😱
   💤 sleep
-  🔴 Red circle
   🟢 Green circle
   🟡 Yellow circle
+  🔴 Red circle
 
   👍👎 Thumbs up / down
   Vim dig:  0M→● (bullet)
@@ -40,7 +43,6 @@ UNICODE UTF-8 UTF8
     ™ nor the ® mark appears in official Canadian Trademark Law.
 
   ⎘ External link
-
   ℃  Celcius  €  Euro
   ☕ Café (hot beverage)  💤 Sleep  🐔 Chicken  🥔 Potato
   🤯 Mindblowing   👶 Baby
@@ -61,7 +63,7 @@ UNICODE UTF-8 UTF8
   ☠ 2620   シ30B7    ₵ 20B5    € 20AC    ⋘ 22D8    ⋙ 22D9
   ♥ 2665   ♡ 2661    ❤ 2764    ° 00B0 (degree)
 
-  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)
+  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)    🆘 SOS
   🔗 (web link) 📧 (email) ✉ (enveloppe) 🌊 (wave) 🗑 (trash)
   ? 1F44B  ∞ 221E (infinit)    ↔ 2194 (double arrow)   ¤ 00A4 (currency)
   ⏪23EA   ⏩23E9    ⏫23EB    ⏬23EC   ∕ (division slash)
