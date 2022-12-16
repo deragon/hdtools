@@ -270,6 +270,7 @@ fi
 alias cddownloads='cdprint "${HOME}/Downloads"'
 alias bashr='sudo XMODIFIERS=HDCONNECTION bash -il'  # bashr == Bash as root
 
+add2path PATH /var/lib/flatpak/exports/bin
 
 
 # MUSÉE
