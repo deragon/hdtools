@@ -20,7 +20,7 @@ STRING MANIPULATION
     re.sub(".*need", "Accomplished", "Full string that need replacement.")
     'Accomplished replacement.'
 
-    str.replace("old", "new" [, max])
+    str.replace("old", "new" [, max])  # NOT REGEX
     re.sub(r"\|(\d)_", r"|C\g<1>_", mystringvar)  # Replace with groups.
 
       From:  https://stackoverflow.com/questions/5984633/python-re-sub-group-number-after-number
