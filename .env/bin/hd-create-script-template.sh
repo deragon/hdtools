@@ -125,9 +125,17 @@ if [ ! -z "${ERRORS}" ]; then
   exit 1
 fi
 
-TIMESTAMP_FILE="$(date +"%Y%m%dT%H%M%S")" # ISO 8601 format.
+
+
+# Display format of timestamps.
+TIMESTAMP_FORMAT_HUMAN_WITHNANO="%Y-%m-%d %H:%M:%S %N"
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+TIMESTAMP_FORMAT_FILE="%Y%m%dT%H%M%S" # ISO 8601 format.
+
+# All timestamps below start with exactly the same time.
 TIMESTAMP_START="$(date +"%s")" # Seconds since epoch.
-TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+TIMESTAMP_HUMAN="$(date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}")"
+TIMESTAMP_FILE="$( date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_FILE}")"
 
 
 
