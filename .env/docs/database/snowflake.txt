@@ -62,6 +62,16 @@ SQL
         2020-01     1572
 
 
+  Groupby null
+  ────────────────────────────────────────────────────────────────────────────
+
+    select
+      IFF(DELETED is NULL, 'IN SERVICE', 'DELETE' ) as STATE,
+      count(*) as COUNT
+    from "SNOWFLAKE"."ACCOUNT_USAGE"."STAGES"
+    group by 1;
+
+
 
 RESULT_SCAN
 ══════════════════════════════════════════════════════════════════════════════
