@@ -41,10 +41,49 @@ SQL
     order by start_time;
 
 
-  MISCELLANEOUS
+  DUAL
   ────────────────────────────────────────────────────────────────────────────
 
-    - select 'test';  -- Oracle's 'dual' equivalent; no 'from' statement.
+    SINGLE ROWS
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      select 'test';  -- Oracle's 'dual' equivalent; no 'from' statement.
+
+
+    MULTIPLE ROWS
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      From:  https://stackoverflow.com/questions/63017612/how-to-select-multiple-rows-with-fake-data-in-snowflake
+
+      -- Example #1
+
+      select $1 AS txt,
+             $2 as num
+      from
+        ( values
+          (1,'one'),
+          (2,'two'),
+          (3,'three') );
+
+      -- Example #2
+
+      with
+        fake_rows as (
+          select
+            1 as num,
+            'one' as txt
+       union
+          select
+            2,
+            'two'
+       union
+          select
+            3,
+            'three'
+        )
+      select $1 AS txt,
+             $2 as num
+      from fake_rows;
 
 
   GROUPBY MONTH
