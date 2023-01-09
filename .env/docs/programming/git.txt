@@ -231,8 +231,17 @@ BRANCHES
     Marche pas:  git branch <branch name> --set-upstream-to remotes/origin/<branch name>
 
 
+
   COMPARE BRANCHES / DIFF OF COMMITS
   ────────────────────────────────────────────────────────────────────────────
+
+    AHEAD AND BEHIND COMPARISON OF BRANCHES
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      git rev-list --left-right --count develop...main
+
+      See:  https://stackoverflow.com/questions/20433867/git-ahead-behind-info-between-master-and-branch
+
 
     DIFF OF COMMITS
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
@@ -252,6 +261,7 @@ BRANCHES
       git diff <branch #1>..<branch #2>  # All diffs
       git diff --stat        <branch #1>..<branch #2>  # Only list files that changed.  Format #1.
       git diff --name-status <branch #1>..<branch #2>  # Only list files that changed.  Format #2.
+
 
 
 
