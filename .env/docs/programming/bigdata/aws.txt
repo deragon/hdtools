@@ -210,6 +210,35 @@ COSTS
     - Does not cost much to send data into S3.
     - COST A LOT to push the data out of S3 into your own server.
 
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Unable to validate the following destination configurations
+  ────────────────────────────────────────────────────────────────────────────
+
+    If this occurs when you attempt to connect an S3 bucket to a SNS topic,
+    in the SNS's Access Policy, replace:
+
+      "Condition": {
+        "StringEquals": {
+          "AWS:SourceOwner": "<account number here>"
+        }
+
+    with
+
+      "Condition": {
+        "StringEquals": {
+          "AWS:SourceAccount": "<account number here>"
+        }
+
+    The default AWS:SourceOwner created by AWS when the topic was created
+    is just wrong.  Who know why this is the default; AWS is often weird.
+
+    See:  https://www.youtube.com/watch?v=RjSW75YsBMM at 18:00 minutes.
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
