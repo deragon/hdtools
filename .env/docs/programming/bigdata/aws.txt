@@ -241,6 +241,21 @@ TROUBLESHOOTING
     See:  https://www.youtube.com/watch?v=RjSW75YsBMM at 18:00 minutes.
 
 
+  64 CHARACTERS LIMIT FOR PATH AND ROLE NAME
+  ────────────────────────────────────────────────────────────────────────────
+
+    As of 2023-01-01, from: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_permissions-to-switch.html
+
+      If you create the role programmatically, you can add a Path of up to 512
+      characters and a RoleName. The role name can be up to 64 characters
+      long.  HOWEVER, TO USE A ROLE WITH THE SWITCH ROLE FEATURE IN THE AWS
+      MANAGEMENT CONSOLE, THE COMBINED PATH AND ROLENAME CANNOT EXCEED 64
+      CHARACTERS.
+
+    Thus if you want to switch role in the AWS console (web interface), the
+    combination <path/role name> must not exceed this 64 characters limit.
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
