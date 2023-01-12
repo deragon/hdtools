@@ -14,7 +14,7 @@ AWS S3
       This also holds true if you have different AWS accounts for your
       environments DEV, PRD, etc...
 
-      As a good practice, you can addyour AWS account number as a suffix to
+      As a good practice, you can add your AWS account number as a suffix to
       the name to avoid any collision.  Example:  'tmp-123456789012'.
 
 
@@ -71,12 +71,14 @@ EOF
         'aws s3 cp' command was executed.
 
       - Tags found on the source object are preserved/copied to the
-        destinationn object.
+        destination object.
+
 
   List all objects in a bucket
   ────────────────────────────────────────────────────────────────────────────
 
     aws s3 ls s3://${S3_BUCKET} --recursive --human-readable --summarize | tee "${S3_BUCKET}.txt"
+
 
 
 AWS CLOUDFORMATION
@@ -87,7 +89,7 @@ AWS CLOUDFORMATION
 
       https://stackoverflow.com/questions/39678784/validationerror-when-calling-the-createstack-operation-template-format-error
 
-  - Understanding aws cloudformation !Sub syntax
+  - Understanding AWS CloudFormation !Sub syntax
       https://www.fischco.org/technica/2017/cloud-formation-sub/
 
 
@@ -132,7 +134,7 @@ AWS CLOUDWATCH
 
 
 
-AWS Lambda
+AWS LAMBDA
 ══════════════════════════════════════════════════════════════════════════════
 
   Make Lambda access EC2 port through a VPC
@@ -167,14 +169,14 @@ AWS ROOT ACCOUNT
 
     While it is described as referring to the IAM root user, the default user
     that exists before any IAM identities are created, it can be confusing. A
-    resource IAM policy that grants Allow access to root  gives access to
+    resource IAM policy that grants Allow access to root gives access to
     principals (users and roles) that have the IAM permissions.
 
     There is no way to declare that access to a resource can only be accessed
     by the root. This is already implicit, as a resource that does not allow
     permissions does allow the IAM root user to have access. See: Joe Garcia's
-    answer to How can AWS IAM policy statements refer to the AWS account root
-    user?
+    answer to 'How can AWS IAM policy statements refer to the AWS account root
+    user?'.
 
     KMS is one notable exception because the root user does not have implicit
     access when not listed in the key policy.
