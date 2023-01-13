@@ -1052,6 +1052,11 @@ MISC USEFUL STUFF
       echo "Interactive terminal exists."
     fi
 
+- ps command to get process information as a string that can be
+  evaluated/sourced by bash.
+
+    eval $(ps -e --format "uid user pid comm" | sed = | sed 'N;s/\n/\t/' | sed -rn 's/^([[:digit:]]+)\s*(\S+)\s+(\S+)\s+(\S+)\s+(\S+).*/PS_UID[\1]="\2";PS_USER[\1]="\3";PS_PID[\1]="\4";PS_CMD[\1]="\5"/gp')
+
 - Read a value from STDIN (User input)
 
   read -p "Enter a value:  " -i "<default value>" -e ANSWER
