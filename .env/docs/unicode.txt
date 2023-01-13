@@ -163,6 +163,12 @@ a ⃠b
     U+208x  x₀  x₁  x₂  x₃  x₄  x₅  x₆  x₇  x₈  x₉  x₊  x₋  x₌  x₍  x₎
     U+209x  xₐ  xₑ  xₒ  xₓ  xₔ  xₕ  xₖ  xₗ  xₘ  xₙ  xₚ  xₛ  xₜ
 
+    Fractions
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      ¼ ½ ¾ ⅐ ⅑ ⅒ ⅓ ⅔ ⅕ ⅖ ⅗ ⅘ ⅙ ⅚ ⅛ ⅜ ⅞ ↉
+
+      Fraction creator:  https://lights0123.com/fractions/
 
 
   SMILEYS
