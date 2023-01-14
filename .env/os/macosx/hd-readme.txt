@@ -73,7 +73,7 @@ SOFTWARE
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
-█ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
 █
 █ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
 █
