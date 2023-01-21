@@ -1,0 +1,75 @@
+ADD EXTRA PRINCIPAL IN ONLY SOME ENVIRONMENTS
+══════════════════════════════════════════════════════════════════════════════
+
+Conditions:
+
+  isDEV: !Equals [ !Ref 'AWS::AccountId', "<AWS Account # here>" ]
+  isQUA: !Equals [ !Ref 'AWS::AccountId', "<AWS Account # here>" ]
+  isPRD: !Equals [ !Ref 'AWS::AccountId', "<AWS Account # here>" ]
+
+  # Install on DEV and QUA only.
+  installRolesToAssume: !Or
+    - !Condition  isDEV
+    - !Condition  isQUA
+
+Mappings:
+  EnvironmentsMap:
+
+    # DEV
+    "<AWS Account # here>":
+      rolesToAssume: [ "arn:aws:iam::<AWS Account # here>:role/<role here>" ]
+
+    # QUA
+    "<AWS Account # here>":
+      # Correspond au groupe AD 'CTAGS_AWS_KJON_EDPP_'.
+      rolesToAssume: [ "arn:aws:iam::<AWS Account # here>:role/<role here>" ]
+
+    # Env #2
+    "<AWS Account # here>":
+      rolesToAssume: [ "<Not used, but must be present to pass aws-cli parser and have this stack sent to AWS>" ]
+
+Resources:
+  MyRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName:  "MyRoleName"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # Okta support.
+          - Effect: Allow
+            Principal:
+              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:saml-provider/OktaIDP"
+            Action:
+              - 'sts:AssumeRoleWithSAML'
+            Condition:
+              StringEquals:
+                'SAML:aud': 'https://signin.aws.amazon.com/saml'
+          - !If
+            - installRolesToAssume
+            - Effect: Allow
+              Principal:
+                AWS:
+                  !FindInMap
+                    - EnvironmentsMap
+                    - !Ref 'AWS::AccountId'
+                    - rolesToAssume
+              Action:
+                - "sts:AssumeRole"
+            - !Ref AWS::NoValue
+      Path: "/"
+      ManagedPolicyArns: "<Managed Policy ARN here>"
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
