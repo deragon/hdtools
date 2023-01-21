@@ -48,7 +48,7 @@ timeStart = datetime.now()
 #
 # - and -- options are always optional according to argparse.  If you
 # want mandatory arguments, they should not be prefixed with - or --.
-# 
+#
 # http://stackoverflow.com/questions/24180527/argparse-required-arguments-listed-under-optional-arguments
 
 import argparse
@@ -58,7 +58,7 @@ parser.add_argument('inputdir', metavar='inputdir', type=str,
                    help='Input directory.')
 parser.add_argument('--dst', dest='dst', default='.',
                     help='Destination where subdirectories will be created.')
-parser.add_argument('--hardlink', dest='hardlink', 
+parser.add_argument('--hardlink', dest='hardlink',
                     default=False, action="store_true",
                     help='Create hard links instead of moving files.')
 parser.add_argument('--softlink', dest='softlink',
@@ -162,7 +162,7 @@ for root, dirs, files in os.walk(args.inputdir):
     index+=1
     dst_fullpath = args.dst + os.sep + str(index % args.split) + os.sep + file
     src_fullpath = root + os.sep + file
-    
+
     print "                                                                                \r",
 
     if index%100000 == 0:
@@ -170,13 +170,13 @@ for root, dirs, files in os.walk(args.inputdir):
 
     if args.hardlink:
       print "Creating hardlink " + src_fullpath + " -> " + dst_fullpath,
-      os.link(src_fullpath, dst_fullpath) 
+      os.link(src_fullpath, dst_fullpath)
     elif args.softlink:
       print "Creating softlink " + src_fullpath + " -> " + dst_fullpath,
-      os.symlink(src_fullpath, dst_fullpath) 
+      os.symlink(src_fullpath, dst_fullpath)
     else:
       print "Moving " + src_fullpath + " -> " + dst_fullpath,
-      os.rename(src_fullpath, dst_fullpath) 
+      os.rename(src_fullpath, dst_fullpath)
     print "\r",
 
 
