@@ -721,11 +721,6 @@ map <esc>e :setlocal spell spelllang=en_us<CR>
 map <esc>f :setlocal spell spelllang=fr<CR>
 map <esc>s :set nospell<CR>
 
-"- lksdjf;lkasdjf;lkasdj ;lfkjasd lkfj asdlkjflkasdjflkasdjfl;kajsd
-"  flkjasdf;lkjasd;lfkjasd;lfkj;lksdjfl;kasdjfl ksdjflkj asdlkfjasdlkfj
-"  flkjasdf;lkjasd;lfkjasd;lfkj;lksdjfl;kasdjfl ksdjflkj
-
-
 " PARAGRAPH FORMATING/WRAPPING WITH INDENTATION
 " ══════════════════════════════════════════════════════════════════════════════
 "
