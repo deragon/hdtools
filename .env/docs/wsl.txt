@@ -117,3 +117,17 @@ WSL GUI
     be opened.  See instructions at:
 
       https://www.bleepingcomputer.com/news/microsoft/windows-subsystem-for-linux-2-bypasses-the-windows-10-firewall/
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
