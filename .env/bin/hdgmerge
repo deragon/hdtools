@@ -1,0 +1,131 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+# Generic, usefull docs to read:
+#
+#   - Different Merge Types in Git
+#       https://lukemerrett.com/different-merge-types-in-git/
+
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+unset COLORS
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
+  # remain unset and no ANSI codes are sent out.
+  declare -A COLORS=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["NORMAL"]="\e[0;00m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${COLORS[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${COLORS[NORMAL]}
+
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <BRANCH>+
+
+  -z  Debug logs enabled.
+  -z  Traces de débuggage activées.
+  -h  Display this help text.
+  -h  Affiche ce texte d'aide.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DEBUG=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "zh" OPTCMD; do
+  case "${OPTCMD}" in
+    "z")    DEBUG=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if BRANCHS in $@ have spaces,
+                          # we separate BRANCHS properly.
+
+BRANCHS=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#BRANCHS[*]} != 1)); then
+  ERRORS="${ERRORS} - You must provide exactly one branch to merge with current branch.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "${COLORS[FG_WHITE_BG_RED]}ERROR:${COLORS[NORMAL]}  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
+
+run()
+{
+  CMD="${@}"
+  echo "Attempting:  ${@}"
+  eval "${@}"
+}
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+REMOTE_AND_BRANCH="${BRANCHS[0]}"
+
+if [[ "${REMOTE_AND_BRANCH}" == "origin/"* ]]; then 
+  BRANCH="${REMOTE_AND_BRANCH/origin\/}"
+  REMOTE="${REMOTE_AND_BRANCH/\/*}"
+else
+  BRANCH="${REMOTE_AND_BRANCH}"
+  unset REMOTE
+fi
+
+if ! run "git merge --ff-only \"${REMOTE_AND_BRANCH}\""; then
+  if [[ -z "${REMOTE}" ]]; then
+    CMD="git pull --rebase \"${BRANCH}\""
+  else
+    CMD="git pull --rebase \"${REMOTE}\" \"${BRANCH}\""
+  fi
+  if ! run "${CMD}"; then
+    echo -e "${COLORS[FG_WHITE_BG_RED]} FAILED ${COLORS[NORMAL]}"
+  else
+    echo -e "${COLORS[FG_WHITE_BG_GREEN]} SUCCES ${COLORS[NORMAL]}"
+  fi
+else
+  echo -e "${COLORS[FG_WHITE_BG_GREEN]} SUCCES ${COLORS[NORMAL]}"
+fi
