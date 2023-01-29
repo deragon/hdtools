@@ -1746,6 +1746,13 @@ CURSOR MOVEMENTS
 COLORS and ANSI TERMINAL CODES
 ══════════════════════════════════════════════════════════════════════════════
 
+  Readings
+  ────────────────────────────────────────────────────────────────────────────
+
+    - XTerm Control Sequences (very good and complete)
+      https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+
+
   Fun commands
   ────────────────────────────────────────────────────────────────────────────
 
