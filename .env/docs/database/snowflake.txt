@@ -118,6 +118,9 @@ RESULT_SCAN
   select * from table(result_scan('<uuid>')) where ...;
   select * from table(result_scan(last_query_id())) where ...;
 
+  select last_query_id(); -- Returns à UUID to use in next statement.
+  select * from table(result_scan('<UUID here>'));
+
   Important:
 
     - You must double quote (") the name of the column in the 'where' statement.
