@@ -39,7 +39,9 @@ the difference.
   -e  Exclude pattern.  Can be used multiple times.  Useful to exclude
       generated code and IDE configuration files.
 
-      ${SCRIPT_NAME} -e target -e .idea ...
+      You need to use the '*' wildcard as 'global pattern' is used by diff.
+
+      ${SCRIPT_NAME} -e '*target*' -e .idea ...
 
   -1  Add exclude pattern set #1 to exclude patterns.  This set adds:
 
