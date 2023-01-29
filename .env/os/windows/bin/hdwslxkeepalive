@@ -25,6 +25,7 @@ See:  https://github.com/microsoft/WSL/issues/5339
 
 Usage:  ${SCRIPT_NAME}  [-h]
 
+ -q  Quiet; no display.
  -h  Display this help text.
 "
 }
@@ -33,10 +34,13 @@ Usage:  ${SCRIPT_NAME}  [-h]
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
 
+QUIET=""
+
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "h" OPTCMD; do
+while getopts "qh" OPTCMD; do
   case "${OPTCMD}" in
+    "q"|*)  QUIET="--quiet";;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -59,4 +63,4 @@ if [ ! -z "${ERRORS}" ]; then
 fi
 
 # From:  https://github.com/microsoft/WSL/issues/5339
-sudo sysctl -w net.ipv4.tcp_keepalive_intvl=60 net.ipv4.tcp_keepalive_probes=5 net.ipv4.tcp_keepalive_time=300
+sudo sysctl ${QUIET} -w net.ipv4.tcp_keepalive_intvl=60 net.ipv4.tcp_keepalive_probes=5 net.ipv4.tcp_keepalive_time=300
