@@ -61,8 +61,10 @@ DIAGRAMMES / DESSIN
   diagrams.net - https://www.diagrams.net/ (known as Draw IO before)
   ────────────────────────────────────────────────────────────────────────────
 
-    Download desktop version at:  https://github.com/jgraph/drawio-desktop/releases
+    Download desktop version at:  https://github.com/jgraph/drawio-desktop/releases/
     Code:                         https://github.com/jgraph/drawio
+    Online version:               https://app.diagrams.net/ (previously, https://draw.io/)
+
     Note:  diagrams.net is open source but closed to contributions.
 
 
