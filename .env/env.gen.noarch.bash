@@ -251,7 +251,12 @@ if [[ "$(uname -a)" =~ "microsoft" ]]; then
   {
     export DISPLAY="$(/mnt/c/Windows/system32/route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0"
 
-    [[ "${1}" != "-q" ]] && echo "DISPLAY=${DISPLAY}"
+    if [[ "${1}" != "-q" ]]; then
+      echo "DISPLAY=${DISPLAY}"
+      hdwslxkeepalive
+    else
+      hdwslxkeepalive -q
+    fi
   }
   exportfunction hdwsldisplay
 
