@@ -1499,10 +1499,11 @@ TOOLS
   EHCACHE
   ────────────────────────────────────────────────────────────────────────────
 
-    http://ehcache.org/documentation/2.8/recipes/spring-annotations
+    https://ehcache.org/documentation/2.8/recipes/spring-annotations
     https://code.google.com/p/ehcache-spring-annotations/
- -> http://www.mkyong.com/spring/spring-caching-and-ehcache-example/
-    http://ehcache.org/ehcache.xml
+ -> https://www.mkyong.com/spring/spring-caching-and-ehcache-example/
+    https://ehcache.org/ehcache.xml
+
 
 
 TUTORIALS
