@@ -28,7 +28,11 @@ usage()
 Create the AWS Cloudformation stack which template filename is passed
 as an argument to this script.
 
-Usage:  ${SCRIPT_NAME} [-c|-u|-x|-z] [-p <parameter file.json> [-d|-e] [-h] <template filename>+
+Usage:  ${SCRIPT_NAME} [-c|-u|-x|-z]
+          [-p <parameter file.json>]
+          [-n <stack name>]
+          [-s <stack suffix>]
+          [-d|-e] [-h] <template filename>+
 
   -c  Create stack
   -u  Update stack
@@ -36,6 +40,7 @@ Usage:  ${SCRIPT_NAME} [-c|-u|-x|-z] [-p <parameter file.json> [-d|-e] [-h] <tem
   -z  Delete stack
 
   -p  <parameter file.json> - Note that lines can be commented with '#'.
+  -n  Suffix name passed as argument, instead of being derived from the filename.
   -s  Suffix to add to stack name.  Default is none.
 
   -d  Dry-run.
@@ -63,16 +68,18 @@ PARAMETERS=""
 DRYRUN=1
 OPERATION="create-stack"
 STACK_SUFFIX=""
+unset STACK_NAME
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "xcuzp:s:deh" OPTCMD; do
+while getopts "xcuzp:n:s:deh" OPTCMD; do
   case "${OPTCMD}" in
     "x")    OPERATION="create-change-set";;
     "c")    OPERATION="create-stack";;
     "u")    OPERATION="update-stack";;
     "z")    OPERATION="delete-stack";;
     "p")    PARAMETERS="${OPTARG}";;
+    "n")    STACK_NAME="${OPTARG}";;
     "s")    STACK_SUFFIX="${OPTARG}";;
     "d")    DRYRUN=1;;  # Run in dry-run mode.
     "e")    DRYRUN=0;;  # Run in execute mode.
@@ -143,10 +150,10 @@ for FILE in ${FILES[@]}; do
   if [ "${EXTENSION}" == ${FILE} ]; then
     # No extension found.
     EXTENSION=""
-    STACK_NAME="${FILE}"
+    [ -z "${STACK_NAME}" ] && STACK_NAME="${FILE}"
   else
     # An extension was found.  Stripping it from ${FILE}.
-    STACK_NAME="${FILE%.*}"
+    [ -z "${STACK_NAME}" ] && STACK_NAME="${FILE%.*}"
   fi
 
   EXTRA_OPTIONS=""
