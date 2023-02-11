@@ -62,7 +62,7 @@ run()
 PARAMETERS=""
 DRYRUN=1
 OPERATION="create-stack"
-SUFFIS=""
+STACK_SUFFIX=""
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
@@ -73,7 +73,7 @@ while getopts "xcuzp:s:deh" OPTCMD; do
     "u")    OPERATION="update-stack";;
     "z")    OPERATION="delete-stack";;
     "p")    PARAMETERS="${OPTARG}";;
-    "s")    SUFFIX="${OPTARG}";;
+    "s")    STACK_SUFFIX="${OPTARG}";;
     "d")    DRYRUN=1;;  # Run in dry-run mode.
     "e")    DRYRUN=0;;  # Run in execute mode.
     "h"|*)  usage; exit 1;;
@@ -143,10 +143,10 @@ for FILE in ${FILES[@]}; do
   if [ "${EXTENSION}" == ${FILE} ]; then
     # No extension found.
     EXTENSION=""
-    FILENAME="${FILE}"
+    STACK_NAME="${FILE}"
   else
     # An extension was found.  Stripping it from ${FILE}.
-    FILENAME="${FILE%.*}"
+    STACK_NAME="${FILE%.*}"
   fi
 
   EXTRA_OPTIONS=""
@@ -157,7 +157,7 @@ for FILE in ${FILES[@]}; do
   while ((1)); do
 
     if [[ "${OPERATION}" == *"delete"* ]]; then
-      echo -ne "\n\e[1;30;43m  WARNING  \e[0m  Delete stack '${FILENAME}'? (y/n) "
+      echo -ne "\n\e[1;30;43m  WARNING  \e[0m  Delete stack '${STACK_NAME}'? (y/n) "
       read -s -n 1 ANSWER
       if [[ "${ANSWER}" == "y" ]]; then
         echo -e "\e[1;30;41m  Deleting.  \e[0m"
@@ -169,7 +169,7 @@ for FILE in ${FILES[@]}; do
       if [ "${OPERATION}" = "create-change-set" ]; then
         TIMESTAMP_FILE="$(date +"%Y%m%dT%H%M%S")" # ISO 8601 format.
         EXTRA_OPTIONS="${EXTRA_OPTIONS}
-          --change-set-name \"${FILENAME}-${TIMESTAMP_FILE}\""
+          --change-set-name \"${STACK_NAME}-${TIMESTAMP_FILE}\""
       fi
 
       EXTRA_OPTIONS="${EXTRA_OPTIONS}
@@ -180,7 +180,7 @@ for FILE in ${FILES[@]}; do
     EXTRA_OPTIONS="${EXTRA_OPTIONS} ${PARAMETERS}"
 
     OUTPUT="$(run aws cloudformation "${OPERATION}" \
-      --stack-name "${FILENAME}${SUFFIX}" \
+      --stack-name "${STACK_NAME}${STACK_SUFFIX}" \
       ${EXTRA_OPTIONS} 2>&1)"
 
     if [[ "${OUTPUT}" == *"error occurred"*"already exists"* && \
