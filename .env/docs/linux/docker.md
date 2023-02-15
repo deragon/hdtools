@@ -203,9 +203,13 @@ From:  https://www.bitcoininsider.org/article/23859/top-10-docker-commands-you-c
 
   Example:
 
-    docker build -t "${IMAGE_TAG}" .
-      -t "${IMAGE_TAG}"  to tag the image with a label.
-      .                  assumes that *Dockerfile* is under the current dir.
+    docker build --tag "${IMAGE_TAG}" .
+      --tag "${IMAGE_TAG}"  to tag the image with a label.
+      .                     assumes that *Dockerfile* is under the current dir.
+
+  Other options:
+
+      --nocache    Force rebuild of everything, ignoreing current cache.
 
 - docker run
 
