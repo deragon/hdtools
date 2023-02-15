@@ -40,7 +40,7 @@ Usage:  ${SCRIPT_NAME} [-c|-u|-x|-z]
   -z  Delete stack
 
   -p  <parameter file.json> - Note that lines can be commented with '#'.
-  -n  Suffix name passed as argument, instead of being derived from the filename.
+  -n  Stack name passed as argument, instead of being derived from the filename.
   -s  Suffix to add to stack name.  Default is none.
 
   -d  Dry-run.
