@@ -73,11 +73,9 @@ CONFLUENCE (ATLASSIAN)
 
     From:  https://community.atlassian.com/t5/Confluence-questions/How-do-i-search-only-within-a-space/qaq-p/348370
 
-    Prehaps just bookmark the constructed search url for the space :
+    Just bookmark the constructed search url for the space :
 
       https://<root>/confluence/dosearchsite.action?cql=space+%3D+%22<space name>%22
-
-    (Confirmé que cela marche, 2019-05-16 13:54:31 EDT).
 
 
 
@@ -92,6 +90,8 @@ ALTERNATIVES TO CONFLUENCE
 ══════════════════════════════════════════════════════════════════════════════
 
   - https://opensource.com/article/20/9/open-source-alternatives-confluence
+
+
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
