@@ -20,6 +20,9 @@ MISC
   # Same command as above, but with Created date shown as exact date.
   docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
 
+  # Delete all dangling images.  From:  https://stackoverflow.com/questions/33913020/docker-remove-none-tag-images
+  # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+
   docker run ${IMAGE}  # Create a container from image.
   docker container start "${DOCKER_CONTAINER_ID}" # Start an already existing container.
   docker container stop  "${DOCKER_CONTAINER_ID}"
