@@ -20,6 +20,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   legacy system              -> système patrimonial / système hérité https://fr.wikipedia.org/wiki/syst%c3%a8me_h%c3%a9rit%c3%a9
   merge                      -> fusionnement
   mindset                    -> attitude / mentalité / façon de faire
+  match                      -> correspondance / égalité / pareil
   mismatch                   -> décalage, inadéquation, disparité, non-concordance, non-appariement, déséquilibre
   near real time             -> quasi temps réel
   open source                -> code source libre / code source ouvert
