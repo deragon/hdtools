@@ -51,6 +51,7 @@ CachedDataSet
 Canonical's
 Clippy
 CloudFormation
+CloudTrail
 CloudWatch
 Cloudera
 Compiz
@@ -86,6 +87,7 @@ FSx
 Firefox
 FlatDtdDataSet
 FlowFile
+flowfiles
 Fn
 FrameMaker
 GPL
