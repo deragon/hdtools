@@ -1,3 +1,37 @@
+USE OF WILDCARDS '*' WITH IAM / PRINCIPALS
+══════════════════════════════════════════════════════════════════════════════
+
+  IMPORTANT NOTE - THERE IS NO WILDCARD POSSIBLE IN A PRINCIPAL
+  ────────────────────────────────────────────────────────────────────────────
+
+    '*' can be used inside a <principal_block> to specify everyone (or
+    anonymous) but it cannot be used as a string wildcard to match on
+    multiple principals.
+
+    In other words, there is no wildcard possible in a Principal.  However,
+    there is a way around this limitation using a condition.
+
+      - Sid: "Example on how to Permet les 'services connexions' utilisés par les pipelines d'Azure DevOps d'accéder à la clé.
+        Effect: Allow
+        Principal:
+          AWS:
+            # The below 'root' principal represent the whole account and
+            # thus matches any user and role of the account.
+            #
+            # See:  https://www.reddit.com/r/aws/comments/oorjl2/what_exactly_is_the_root_iam_principal/
+            - !Sub "arn:aws:iam::${AWS::AccountId}:root"
+        Action:
+          - "kms:Decrypt"
+        Resource: "*"
+        Condition:
+          StringLike:
+            "aws:PrincipalArn": !Sub "arn:aws:iam::${AWS::AccountId}:role/<MyPrefixRoleHere>*"
+
+
+    See:  https://steampipe.io/blog/aws-iam-policy-wildcards-reference
+
+
+
 ADD EXTRA PRINCIPAL IN ONLY SOME ENVIRONMENTS
 ══════════════════════════════════════════════════════════════════════════════
 
