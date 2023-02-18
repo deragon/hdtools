@@ -115,21 +115,24 @@ EOF
   fi
 }
 
+# Kills any rogue ssh-agent owned by the current user only.
+# ssh-agent of other users rename unaffected.
 killrogueagents()
 {
-  [ -z "${USER}" ] && USER=`whoami`
-  if (($? > 1)); then
-    cat <<EOM
-Cannot identify current user.  Rogue agents cannot be killed.
-Operation continues however.
-EOM
-    return
-  fi
-
   # SSH_AGENT_PID is not defined anywhere, but that does not mean
   # that there is no ssh-agent running for the user.  Trying to find at
   # least one.
   if [ "${HD_OS_FAMILY}" = "Cygwin" -o "${HD_OS_FAMILY}" = "MinGW" ] || [[ "$(uname)" == *"MINGW"* ]]; then
+
+    [ -z "${USER}" ] && USER=`whoami`
+    if (($? > 1)); then
+      cat <<EOM
+Cannot identify current user.  Rogue agents cannot be killed.
+Operation continues however.
+EOM
+      return
+    fi
+
     # CYGWIN and MinGW BUG:  ps -eo -> option -o is not available under these environments.
     export ROGUE_SSH_AGENT_PIDS=`ps -ef | fgrep "${USER}" | fgrep -v "<defunct>" | awk '{print $2, $6}' | perl -ne "if(/\d+\s+.+ssh-agent$/) { print; exit 1 }" | awk '{print $1}'`
   else
@@ -153,7 +156,7 @@ EOM
 
 check_ssh_agent()
 {
-  [ -r ${SSH_ENV}.sh ] && source "${SSH_ENV}.sh" >/dev/null
+  [ -r "${SSH_ENV}.sh" ] && source "${SSH_ENV}.sh" >/dev/null
 
   if [ -z "${SSH_AGENT_PID}" ]; then
     print "No running valid ssh-agent found."
@@ -171,7 +174,8 @@ if check_ssh_agent; then
   start_ssh_agent
 fi
 
-killrogueagents
+killrogueagents # Kill any rogue ssh-agent owned by the current user.
+
 ssh-add -l >/dev/null
 if (($?)); then
   print "No keys saved in ssh-agent.  Adding now."
