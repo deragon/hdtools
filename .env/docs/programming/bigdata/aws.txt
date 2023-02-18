@@ -153,6 +153,37 @@ AWS LAMBDA
 AWS ROOT ACCOUNT
 ══════════════════════════════════════════════════════════════════════════════
 
+  --->>> Extract of an email from AWS Support <<<---
+
+    The "aws: *" value in the Principal field gives every identity in every
+    AWS account permission to use the KMS key, unless another policy statement
+    explicitly denies it. In contrast, the AWS account principal value
+    ("arn:aws:iam::${AWS::AccountId}:root") doesn't give any principal
+    permission to the KMS key. Instead, it gives the specified AWS account
+    permission to use IAM policies to permit principals in the account to use
+    the KMS key.
+
+    Thus, a principal like the following give rights to no identities:
+
+        Principal:
+          # Does not give any identity actual rights, just gives permissions
+          # of identities of the account to get some rights.
+          AWS: "arn:aws:iam::${AWS::AccountId}:root"
+
+    The solution is the use "*" and a condition to give rights:
+
+        Principal:
+          AWS: "*" # All identities of ALL the AWS accounts of this world, not only this one.
+        Action:
+          - "<someaction>"
+        Resource: "*"
+        Condition:
+          # Now with conditions such as this one, we limit the actual identities that can
+          # access this resource.
+          StringLike:
+            "aws:PrincipalArn": !Sub "arn:aws:iam::${AWS::AccountId}:role/<Some role prefix>*"
+
+
   From:  https://www.reddit.com/r/aws/comments/oorjl2/what_exactly_is_the_root_iam_principal/
 
     It represents the account, so yes it us both the account root user
@@ -161,6 +192,7 @@ AWS ROOT ACCOUNT
     predates the existence of IAM. Many people mistakenly use Principal: “*”
     which means any AWS authenticated credential in any account, not just
     their account.
+
 
   From:  https://www.quora.com/What-is-root-in-AWS-IAM
 
@@ -199,7 +231,7 @@ COSTS
     - AWS Customers Rack Up Hefty Bills For Moving Data
       https://hardware.slashdot.org/story/19/10/23/0517258/aws-customers-rack-up-hefty-bills-for-moving-data
 
-    - Basecamp Details 'Obscene' $3.2 Million Bill That Prompted It To Quit the Cloud 
+    - Basecamp Details 'Obscene' $3.2 Million Bill That Prompted It To Quit the Cloud
       https://news.slashdot.org/story/23/01/16/1723202/basecamp-details-obscene-32-million-bill-that-prompted-it-to-quit-the-cloud
 
 
