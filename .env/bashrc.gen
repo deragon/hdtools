@@ -122,7 +122,7 @@ hdenv_minimum  # Loading minimal configuration for all processes.
 # Label annoucing that the environment is being loaded.
 # Label generated with the following command:
 #   cat <(echo "Environement de") <(toilet -f pagga "Hans Deragon")  | lolcat -S 1 -t -f >env.label.ansi
-cat "${HDENVDIR}/env.label.ansi"
+(( HDENVQUIET != 1 )) && cat "${HDENVDIR}/env.label.ansi"
 
 # To be evaluated with ((${HD_BASH_INTERACTIVE})).
 export HD_BASH_INTERACTIVE=1 # Terminal is interactive (1 == true)
