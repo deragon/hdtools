@@ -168,6 +168,7 @@ fi
 #   Voir:  https://docs.aws.amazon.com/cli/latest/userguide/installing.html
 add2path PATH "${HOME}/.local/bin"
 alias hdawsvarunset='unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN;blackbg'
+alias hdawsvarprint='printf "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"\nexport AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\"\nexport AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\"\n"'
 hdawsssh() { ssh "ec2-user@$1"; }; exportfunction hdawsssh
 
 # 169.254.0.0/16 is a Link-local address (https://en.m.wikipedia.org/wiki/Link-local_address)
