@@ -650,13 +650,25 @@ GETOPTS
 EXECUTION
 ══════════════════════════════════════════════════════════════════════════════
 
-  -Xms128m               # Minimum Heap memory
-  -Xmx1g                 # Maximum Heap memory
-  -XX:PermSize=64m       # PermGen Size
-  -XX:MaxPermSize=256m   # Maximum PermGen Size
+  MEMORY CONCERNS
+  ────────────────────────────────────────────────────────────────────────────
 
-  -Xms128m -Xmx1g -XX:PermSize=64m -XX:MaxPermSize=256m
+    Good reads about Memory allocation
 
+      - https://developers.redhat.com/articles/2021/09/09/how-jvm-uses-and-allocates-memory#jvm_options_that_affect_memory_use
+      - http://java-latte.blogspot.com/2014/03/metaspace-in-java-8.html
+
+
+    Formula
+
+      JVM memory = Heap memory+ Metaspace + CodeCache + (ThreadStackSize * Number of Threads) + DirectByteBuffers + Jvm-native
+
+
+    JVM options
+
+      -Xms128m                 # Minimum Heap memory
+      -Xmx1g                   # Maximum Heap memory
+      -XX:MaxMetaspaceSize=8g  # Maximum Metaspace memory used for class objects.
 
 
   EXECUTABLE WITH -jar OR -cp/-classpath
@@ -1703,7 +1715,7 @@ JSON
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
-█ Copyright 2000-2022 Hans Deragon - GPL 3.0 licence.
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
 █
 █ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
 █
