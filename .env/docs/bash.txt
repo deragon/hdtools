@@ -2090,6 +2090,23 @@ ADVOCACY FOR BASH
 
   De:  https://unix.stackexchange.com/questions/145522/what-does-it-mean-to-be-sh-compatible/145524
 
+
+
+UNIT TESTING
+══════════════════════════════════════════════════════════════════════════════
+
+  BATS - Bash Automated Testing System - https://github.com/bats-core/bats-core
+  ────────────────────────────────────────────────────────────────────────────
+
+    Bats is a TAP-compliant testing framework for Bash. It provides a simple
+    way to verify that the UNIX programs you write behave as expected.
+
+    A Bats test file is a Bash script with special syntax for defining test
+    cases. Under the hood, each test case is just a function with a
+    description.
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2021 Hans Deragon - GPL 3.0 licence.
