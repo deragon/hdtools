@@ -156,6 +156,31 @@ THEORY
     - https://medium.com/all-things-ledger/the-byzantine-generals-problem-168553f31480
     - https://en.wikipedia.org/wiki/Byzantine_fault
 
+
+
+TOOLS
+══════════════════════════════════════════════════════════════════════════════
+
+  CloudQuery - https://www.cloudquery.io/docs
+  ────────────────────────────────────────────────────────────────────────────
+
+    CloudQuery is an asset inventory out of the box. You can think of it as an
+    open-source (and cheaper) alternative to AWS Config Snapshot feature. It
+    detects configuration details of multiple resource types along with
+    multi-region and multi-account support.
+
+    Its setup requires an external database to store all the resources. The
+    installation docs show how to set up a temporary local Postgres DB over a
+    docker container.
+
+    Source code:  https://github.com/cloudquery/cloudquery
+
+    Articles:
+
+      - https://badshah.io/cloudquery-vs-steampipe/
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
