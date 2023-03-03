@@ -100,4 +100,22 @@ else
   HEADTAIL_CMD="tail"
 fi
 
-eval "find \"${DIRECTORIES[@]}\" -maxdepth ${MAXDEPTH} -type f -print0 | xargs -0 stat --format '%Y :%y \"%n\"' | sort -nr | cut -d: -f2- | ${HEADTAIL_CMD} -n "${NUMBER}" ${FILENAMES_ONLY_FILTER}"
+# 'stat' format used:
+#
+#   %y     time of last data modification, human-readable
+#
+#   %Y     time of last data modification, seconds since Epoch
+#
+#   %s     total size, in bytes
+#
+# The 1st 'cut' command remove the first field which contains the timestamp in
+# seconds which was used to sort the list, but that is useless to display.
+#
+# The 2nd 'cut" removes the milliseconds and timezone, useless data.
+eval "
+  find \"${DIRECTORIES[@]}\" -maxdepth ${MAXDEPTH} -type f -print0 |
+  xargs -0 stat --format '%Y:%y %12s \"%n\"' |
+  sort -nr |
+  cut -d: -f2- |
+  cut --complement -c 20-35 |
+  ${HEADTAIL_CMD} -n "${NUMBER}" ${FILENAMES_ONLY_FILTER}"
