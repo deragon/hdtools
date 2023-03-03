@@ -19,6 +19,9 @@ usage()
   echo -e "
 \e[1;37;42m SAFE \e[0m
 
+Move a window containing the provided string to the desired workspace
+(workspaces start at 0)
+
 Usage:  ${SCRIPT_NAME} -d <workspace number> [-h]
                        <egrep -E matching pattern for the windows title>
 
@@ -26,6 +29,9 @@ Usage:  ${SCRIPT_NAME} -d <workspace number> [-h]
       MANDATORY
 
   -h  Display this help text.
+
+
+Example:  ${SCRIPT_NAME} -d 0 GVIM1
 "
 }
 
