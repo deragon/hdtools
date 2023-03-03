@@ -63,7 +63,12 @@ STRING MANIPULATION
   ────────────────────────────────────────────────────────────────────────────
 
     stringToIndent="line #1\nline #2\nline #3\n"
-    stringIndented=''.join("  "+line for line in stringToIndent.splitlines(True))
+
+    # Method #1
+    stringIndented=''.join("  " + line for line in stringToIndent.splitlines(True))
+
+    # Method #2
+    re.sub('\n', '\n  ', "\n"+stringToIndent).rstrip() + "\n"
 
 
 FORMATING & PADDING
