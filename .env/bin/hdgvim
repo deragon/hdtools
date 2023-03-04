@@ -51,7 +51,17 @@ if executable is None:
     print("ERROR:  Could not find [g]vim.  Aborting")
     sys.exit(1)
 
-nominalArgs = [ "-u", os.environ['HDVIMRC']] + sys.argv[1:]
+nominalArgs  = []
+
+hdvimrc     = os.environ['HDVIMRC']
+hdvimrcpost = os.environ['HDVIMRC'] + "-post"
+
+if os.path.isfile(hdvimrc) and os.access(hdvimrc, os.R_OK):
+  nominalArgs  += [ "-u", hdvimrc]
+if os.path.isfile(hdvimrcpost) and os.access(hdvimrcpost, os.R_OK):
+  nominalArgs  += [ "-S", hdvimrcpost]
+
+nominalArgs += sys.argv[1:]
 
 if "cygwin" in platform.system().lower() and "gvim" in executable.lower():
     # Windows Gvim being used here.
