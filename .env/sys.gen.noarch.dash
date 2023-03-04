@@ -140,20 +140,27 @@ export HDVIMRC="${HDVIM}/.vimrc"
 unalias vi >/dev/null 2>&1
 unalias vim >/dev/null 2>&1
 if which vim >/dev/null 2>&1; then
-  alias vi='vim -u "${HDVIMRC}"'
-  alias vim='vim -u "${HDVIMRC}"'
-  alias vimdiff='vimdiff -u "${HDVIMRC}"'
-  alias gvimdiff='gvimdiff -u "${HDVIMRC}"'
+
+  # Vim's -S ensure that the file is sourced last of all the files being
+  # sources during Vim's initialization.  To get the list of all files
+  # being sources during Vim's initialization, in their order, call
+  # :scriptnames
+  alias vi='vim -u "${HDVIMRC}" -S "${HDVIMRC}-post"'
+  alias vim='vim -u "${HDVIMRC}" -S "${HDVIMRC}-post"'
+  alias vimdiff='vimdiff -u "${HDVIMRC}" -S "${HDVIMRC}-post"'
   EDITOR="vim"  # Here, the alias 'vim' will be called which is desired.
+
+  gvim()     { hdgvim "$@"; }
+  gvimdiff() { HD_GVIM="gvimdiff" hdgvim "$@"; }
+  gvimw()    { hdgvim "$(which $*)"; }
+  gviml()    { locate $* | xargs hdgvim; }
+
 else
   EDITOR="vi"   # Here, the alias 'vi' will be called which is desired.
 fi
 export EDITOR
 
+vimw() { eval "${EDITOR}" '"$(which $*)"'; }
+viml() { locate $* | xargs "${EDITOR}"; }
+
 cdwhich() { eval cd '"$(which $*)"'; }
-
-vimw() { eval ${EDITOR} '"$(which $*)"'; }
-viml() { locate $* | xargs ${EDITOR}; }
-
-gvimw() { hdgvim "$(which $*)"; }
-gviml() { locate $* | xargs gvim; }
