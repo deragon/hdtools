@@ -169,8 +169,6 @@ set foldlevel=99
 
 set nocompatible " Use Vim defaults (much better!)
 set nobackup
-set noautoindent " if autoindent is on, this causes problems with cut&paste
-                 " feature of X (at least, on Sun machines).
 
 " ════════════════════════════════════════════════════════════════════
 " Setting the RunTime Path.
@@ -193,9 +191,6 @@ let &runtimepath = printf('%s,%s,%s/after', s:portable, &runtimepath, s:portable
 if($HDVIM != "")
   set rtp+=$HDVIM
   "echo "${HDVIM} set." $HDVIM
-
-  " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
-  filetype plugin indent on    " Required.
 
 
   " VIM-PLUG
@@ -606,11 +601,6 @@ if has("gui_running")
   cmap <S-Insert>  <C-R>+
 endif
 
-" Following filetype commands set up some special features that allow
-" gg=G to properly indent bash scripts for instance.
-filetype plugin on
-filetype indent on
-
 " Sets the backspace and delete keys correctly for xterm and rxvt.
 " See :fix[del] in help of vim.
 "
@@ -721,6 +711,31 @@ autocmd FileType python imap <buffer> <C-F9> <esc>:w<CR>:exec '!python3' shelles
 map <esc>e :setlocal spell spelllang=en_us<CR>
 map <esc>f :setlocal spell spelllang=fr<CR>
 map <esc>s :set nospell<CR>
+
+" Non breaking spaces now show as: ☠ (dead skull)
+"                    Tabs show as: ↳↳
+"         Trailing spaces show as: ␣
+set listchars=nbsp:☠,tab:↳↳,trail:␣
+set list
+
+set noautoindent " if autoindent is on, this causes problems with cut&paste
+                 " feature of X (at least, on Sun machines).
+" Following filetype commands set up some special features that allow
+" gg=G to properly indent bash scripts for instance.
+"
+" https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
+
+" From:  https://vi.stackexchange.com/questions/11696/what-does-filetype-plugin-on-really-do
+"
+"   Because local options have priority over global ones your .vimrc settings
+"   might be ignored. In that case you need to create a file
+"   ~/.vim/after/ftplugin/javascript.vim (with the name of the filetype you
+"   wish to change) and set your own setlocal options in there.
+"
+filetype plugin on
+filetype indent on
+
+
 
 " PARAGRAPH FORMATING/WRAPPING WITH INDENTATION
 " ══════════════════════════════════════════════════════════════════════════════
@@ -1020,20 +1035,6 @@ fun! JsonPrettyWithSortedKeys( arg ) "{{{
   execute '!hdjsonpretty -i -s '.expand(shellescape('%:p'))
 endfunction "}}}
 command! -nargs=* JsonPrettyWithSortedKeys call JsonPrettyWithSortedKeys( '<args>' )
-
-" Add ∙ as a bullet so indentation with it works fine.
-" -- is used for SQL files.
-" Type the following for help:  ':help format-comments'
-" Attention!!! Ne marche pas lorsque le fichier est un fichier *.txt.
-" 'comments' est alors reconfiguré ailleurs.
-set comments +=:--,fb:∙,fb:•,fb:▪,fb:{digits})
-set fo+=n " http://stackoverflow.com/questions/6731794/format-lists-in-vim
-
-" Non breaking spaces now show as: ☠ (dead skull)
-"                    Tabs show as: ↳↳
-"         Trailing spaces show as: ␣
-set listchars=nbsp:☠,tab:↳↳,trail:␣
-set list
 
 " From:  https://stackoverflow.com/questions/21708814/can-vim-diff-use-the-patience-algorithm
 " Set algorithm:patience.  See:  https://vimways.org/2018/the-power-of-diff/
