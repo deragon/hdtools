@@ -26,7 +26,10 @@ argument converted to Windows format so gvim.exe can find it.
 
 try:
     gvim_from_env = os.environ['HD_GVIM']
-    vim_to_try = [ "gvim", "gvim.exe", gvim_from_env, "vim", "vim.exe" ]
+    if "diff" in gvim_from_env:
+        vim_to_try = [ "gvimdiff", "gvimdiff.exe", gvim_from_env, "vimdiff", "vimdiff.exe" ]
+    else:
+        vim_to_try = [ "gvim", "gvim.exe", gvim_from_env, "vim", "vim.exe" ]
 except:
     # OS environment variable HD_GVIM is not set, thus we do not include it in
     # the list.
