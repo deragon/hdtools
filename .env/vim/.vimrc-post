@@ -1,0 +1,7 @@
+" Add \u2219 as a bullet so indentation with it works fine.
+" -- is used for SQL files.
+" Type the following for help:  ':help format-comments'
+" Attention!!! Ne marche pas lorsque le fichier est un fichier *.txt.
+" 'comments' est alors reconfigur� ailleurs.
+set comments +=:--,fb:∙,fb:•,fb:▪,fb:{digits})
+set fo+=n " http://stackoverflow.com/questions/6731794/format-lists-in-vim
