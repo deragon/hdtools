@@ -6,6 +6,7 @@
 " ════════════════════════════════════════════════════════════════════
 "
 "   :echo <variable>  -> echo v:version  " Print a vim variable's value.
+"   :scriptnames " Shows all the files sourced in their respective order.
 "
 "
 " CONFIG LIST OF FEATURES AVAILABLE WITHIN VIM:
@@ -700,7 +701,7 @@ map ,hof :%!xxd -r<CR>
 map <PageDown> :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-D>:set scroll=0<CR>
 map <PageUp> :set scroll=0<CR>:set scroll^=2<CR>:set scroll-=1<CR><C-U>:set scroll=0<CR>
 
-" Comments
+" Comments/uncomments selected lines.
 vmap <F9>   gc<CR>
 
 " Execute Python scripts with CTRL-F9
