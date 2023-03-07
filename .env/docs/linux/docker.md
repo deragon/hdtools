@@ -24,11 +24,14 @@ MISC
   # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
   docker run ${IMAGE}  # Create a container from image.
-  docker container start "${DOCKER_CONTAINER_ID}" # Start an already existing container.
-  docker container stop  "${DOCKER_CONTAINER_ID}"
+
+  DOCKER_CONTAINER_ID="$(docker container ps --format "{{.ID}}" | head -1)"; echo "${DOCKER_CONTAINER_ID}"
+
+  docker container start   "${DOCKER_CONTAINER_ID}" # Start an already existing container.
+  docker container restart "${DOCKER_CONTAINER_ID}"
+  docker container stop    "${DOCKER_CONTAINER_ID}"
 
   docker container ps --format "table {{.ID}}\t{{.CreatedAt}}\t{{.Size}}" # List running containers in table format.
-  DOCKER_CONTAINER_ID="$(docker container ps --format "{{.ID}}" | head -1)"; echo "${DOCKER_CONTAINER_ID}"
 
   docker exec -it "${DOCKER_CONTAINER_ID}" bash   # Start bash session in container.
   docker exec -it "${DOCKER_CONTAINER_ID}" --user <user> bash   # Start bash session as <user>
