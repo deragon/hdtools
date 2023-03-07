@@ -105,17 +105,6 @@
     sudo docker run hello-world # Safe
 
 
-## WARNING:  NFTABLES not supported
-
-  22.04 & later install nftables instead of iptables, causing docker
-  to fail to start when attempting to create iptables rules.
-
-  The workaround is to run:
-
-    sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-
-
-
 # VOLUMES AND DATA
 
     docker volume ls  # SAFE.  List all volumes on host.
@@ -255,6 +244,17 @@ From:  https://www.bitcoininsider.org/article/23859/top-10-docker-commands-you-c
     docker run -it wbitt/network-multitool bash # Start container with Bash session.
 
   Source code of the image:  https://github.com/wbitt/Network-MultiTool
+
+
+## WARNING:  NFTABLES not supported
+
+  22.04 & later install nftables instead of iptables, causing docker
+  to fail to start when attempting to create iptables rules.
+
+  The workaround is to run:
+
+    sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+
 
 
 # Cleanup
