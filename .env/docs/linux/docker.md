@@ -1,5 +1,47 @@
-CREATION
-==========
+# COMMON COMMANDS
+
+    docker ps # List all containers running.
+    docker ps # List all containers running.
+    docker ps # List all containers running.
+
+    docker images --all # List all images available locally.
+    # Same command as above, but with Created date shown as exact date.
+    docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
+
+    # Delete all dangling images.  From:  https://stackoverflow.com/questions/33913020/docker-remove-none-tag-images
+    # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+
+    docker run ${IMAGE}  # Create a container from image.
+
+    DOCKER_CONTAINER_ID="$(docker container ps --format "{{.ID}}" | head -1)"; echo "${DOCKER_CONTAINER_ID}"
+
+    docker container start   "${DOCKER_CONTAINER_ID}" # Start an already existing container.
+    docker container restart "${DOCKER_CONTAINER_ID}"
+    docker container stop    "${DOCKER_CONTAINER_ID}"
+
+    docker container ps --format "table {{.ID}}\t{{.CreatedAt}}\t{{.Size}}" # List running containers in table format.
+
+    docker exec -it "${DOCKER_CONTAINER_ID}" bash   # Start bash session in container.
+    docker exec -it "${DOCKER_CONTAINER_ID}" --user <user> bash   # Start bash session as <user>
+    docker exec -it "${DOCKER_CONTAINER_ID}" --user 0 bash   # Start bash session as root.
+    docker inspect "${DOCKER_CONTAINER_ID}" | less # Safe.  Prints out details.
+
+    docker info # Shows all sort of info about the docker eco-system on the host.
+
+    docker logs -f "${DOCKER_CONTAINER_ID}" # Equivalent of a tail, but it scrolls from the beginning
+
+
+    # Enable / Disable docker container at host bootup.
+    docker update --restart=always "${DOCKER_CONTAINER_ID}" # Enable autostart at host boot.
+    docker update --restart=no     "${DOCKER_CONTAINER_ID}" # Disable autostart at host boot.
+
+
+    # Formated outputs.  See:  https://docs.docker.com/engine/reference/commandline/ps/#formatting
+    docker ps --all --format 'table {{.ID}}\t{{.Image}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Names}}\t{{.Labels}}'
+
+
+
+# CREATION
 
   Interesting base images:
 
@@ -11,57 +53,14 @@ CREATION
       docker pull ubuntu:22.04
 
 
-MISC
-==========
 
-  docker ps # List all containers running.
-
-  docker images --all # List all images available locally.
-  # Same command as above, but with Created date shown as exact date.
-  docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"
-
-  # Delete all dangling images.  From:  https://stackoverflow.com/questions/33913020/docker-remove-none-tag-images
-  # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
-
-  docker run ${IMAGE}  # Create a container from image.
-
-  DOCKER_CONTAINER_ID="$(docker container ps --format "{{.ID}}" | head -1)"; echo "${DOCKER_CONTAINER_ID}"
-
-  docker container start   "${DOCKER_CONTAINER_ID}" # Start an already existing container.
-  docker container restart "${DOCKER_CONTAINER_ID}"
-  docker container stop    "${DOCKER_CONTAINER_ID}"
-
-  docker container ps --format "table {{.ID}}\t{{.CreatedAt}}\t{{.Size}}" # List running containers in table format.
-
-  docker exec -it "${DOCKER_CONTAINER_ID}" bash   # Start bash session in container.
-  docker exec -it "${DOCKER_CONTAINER_ID}" --user <user> bash   # Start bash session as <user>
-  docker exec -it "${DOCKER_CONTAINER_ID}" --user 0 bash   # Start bash session as root.
-  docker inspect "${DOCKER_CONTAINER_ID}" | less # Safe.  Prints out details.
-
-  docker info # Shows all sort of info about the docker eco-system on the host.
-
-  docker logs -f "${DOCKER_CONTAINER_ID}" # Equivalent of a tail, but it scrolls from the beginning
-
-
-  # Enable / Disable docker container at host bootup.
-  docker update --restart=always "${DOCKER_CONTAINER_ID}" # Enable autostart at host boot.
-  docker update --restart=no     "${DOCKER_CONTAINER_ID}" # Disable autostart at host boot.
-
-
-  # Formated outputs.  See:  https://docs.docker.com/engine/reference/commandline/ps/#formatting
-  docker ps --all --format 'table {{.ID}}\t{{.Image}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Names}}\t{{.Labels}}'
-
-
-
-DOCKER IMAGE VS CONTAINER
-==========
+# DOCKER IMAGE VS CONTAINER
 
   https://phoenixnap.com/kb/docker-image-vs-container
 
 
 
-DIFFERENCE BETWEEN A REGISTRY, REPOSITORY AND IMAGE
-==========
+# DIFFERENCE BETWEEN A REGISTRY, REPOSITORY AND IMAGE
 
   You could say a registry has many repositories and a repository has many
   different versions of the same image which are individually versioned with
@@ -91,8 +90,7 @@ DIFFERENCE BETWEEN A REGISTRY, REPOSITORY AND IMAGE
 
 
 
-INSTALL DOCKER ON UBUNTU (INCLUDING WSL 2)
-==========
+# INSTALL DOCKER ON UBUNTU (INCLUDING WSL 2)
 
   Read:  https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
@@ -107,41 +105,36 @@ INSTALL DOCKER ON UBUNTU (INCLUDING WSL 2)
     sudo docker run hello-world # Safe
 
 
-  WARNING:  NFTABLES not supported
-  ────────────────────────────────────────────────────────────────────────────
+## WARNING:  NFTABLES not supported
 
-    22.04 & later install nftables instead of iptables, causing docker
-    to fail to start when attempting to create iptables rules.
+  22.04 & later install nftables instead of iptables, causing docker
+  to fail to start when attempting to create iptables rules.
 
-    The workaround is to run:
+  The workaround is to run:
 
-      sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-
-
-
-VOLUMES AND DATA
-==========
-
-  docker volume ls  # SAFE.  List all volumes on host.
-  docker inspect -f '{{ .Mounts }}' "${DOCKER_CONTAINER_ID}"
-  docker inspect "${DOCKER_CONTAINER_ID}" | less
-
-
-  IMPORTANT NOTES
-  ────────────────────────────────────────────────────────────────────────────
-
-    - Volumes in dockers should have been called mount points.  They are moint
-      points allowing docker containers to access directories and files of the
-      host.
-
-    - Volumes are a bit if a misnowmer.  Usually when VMs talks about volumes,
-      it is a storage sytem that contains the root file system within the VM.
-      In docker, it is not the case.
+    sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
 
 
 
-  Root
-  ────────────────────────────────────────────────────────────────────────────
+# VOLUMES AND DATA
+
+    docker volume ls  # SAFE.  List all volumes on host.
+    docker inspect -f '{{ .Mounts }}' "${DOCKER_CONTAINER_ID}"
+    docker inspect "${DOCKER_CONTAINER_ID}" | less
+
+
+## IMPORTANT NOTES
+
+  - Volumes in dockers should have been called mount points.  They are moint
+    points allowing docker containers to access directories and files of the
+    host.
+
+  - Volumes are a bit if a misnowmer.  Usually when VMs talks about volumes,
+    it is a storage sytem that contains the root file system within the VM.
+    In docker, it is not the case.
+
+
+## Root
 
   Root directories of containers are found in Ubuntu under:
 
@@ -162,24 +155,21 @@ VOLUMES AND DATA
 
 
 
-Tools
-==========
+# Tools
 
-  LazyDocker
-  ────────────────────────────────────────────────────────────────────────────
+## LazyDocker
 
-    A user interface for Docker and docker-compose, with everything you need
-    in one terminal window, and every command command being one keypress away,
-    so you don't have to memorise commands or keep track of your containers
-    across multiple terminal windows
+  A user interface for Docker and docker-compose, with everything you need
+  in one terminal window, and every command command being one keypress away,
+  so you don't have to memorise commands or keep track of your containers
+  across multiple terminal windows
 
-    https://github.com/jesseduffield/lazydocker
-    https://www.linuxuprising.com/2019/07/lazydocker-new-docker-and-docker.html
+  https://github.com/jesseduffield/lazydocker
+  https://www.linuxuprising.com/2019/07/lazydocker-new-docker-and-docker.html
 
 
 
-10 DOCKER COMMANDS YOU CAN'T LIVE WITHOUT
-==========
+# 10 DOCKER COMMANDS YOU CAN'T LIVE WITHOUT
 
 From:  https://www.bitcoininsider.org/article/23859/top-10-docker-commands-you-cant-live-without
 
@@ -253,11 +243,9 @@ From:  https://www.bitcoininsider.org/article/23859/top-10-docker-commands-you-c
 
 
 
-TROUBLESHOOTING
-==========
+# TROUBLESHOOTING
 
-Network problems
-========
+## Network problems
 
   If you have network problems with your builds/containers, a good idea
   is to download the wbitt/network-multitool image, start a container based
@@ -269,22 +257,20 @@ Network problems
   Source code of the image:  https://github.com/wbitt/Network-MultiTool
 
 
-Cleanup
-========
+# Cleanup
 
-  WARNING:  This will remove:
+WARNING:  This will remove:
 
-  - ALL STOPPED CONTAINERS
-  - all volumes not used by at least one container
-  - all networks not used by at least one container
-  - all images without at least one container associated to them
+- ALL STOPPED CONTAINERS
+- all volumes not used by at least one container
+- all networks not used by at least one container
+- all images without at least one container associated to them
 
     docker system prune
 
 
 
-END
-==========
+# Copyright
 
     █ ─ Copyright Notice ───────────────────────────────────────────────────
     █
