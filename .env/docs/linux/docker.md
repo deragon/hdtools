@@ -90,7 +90,9 @@
 
 
 
-# INSTALL DOCKER ON UBUNTU (INCLUDING WSL 2)
+# INSTALL DOCKER
+
+## UBUNTU (INCLUDING WSL 2)
 
   Read:  https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
@@ -103,6 +105,25 @@
   To test if the installation was successful, run:
 
     sudo docker run hello-world # Safe
+
+## RED HAT / RHEL
+
+  From:  https://stackoverflow.com/questions/65878769/cannot-install-docker-in-a-rhel-server
+
+  Add an entry on top of the file `/etc/yum.repos.d/docker-ce.repo`, with this
+  content (although it states `centos`, it works for RHEL too):
+
+    [centos-extras]
+    name=Centos extras - $basearch
+    baseurl=http://mirror.centos.org/centos/7/extras/x86_64
+    enabled=1
+    gpgcheck=1
+    gpgkey=http://centos.org/keys/RPM-GPG-KEY-CentOS-7
+
+  Then the installation command:
+
+    yum -y install slirp4netns fuse-overlayfs container-selinux
+
 
 
 # VOLUMES AND DATA
