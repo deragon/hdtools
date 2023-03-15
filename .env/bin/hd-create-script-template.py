@@ -249,6 +249,13 @@ with open('file.json') as fd:
 json_dict=json.loads('{ "test": "Hi there." }') # Load json from str.
 
 
+# MISCELLANEOUS
+# ────────────────────────────────────────────────────────────────────────────
+def stringToHex(string):
+    return ':'.join("{:0>2}".format(hex(ord(x))[2:]) for x in string).upper()
+
+
+
 
 # WALK A DIRECTORY
 # ────────────────────────────────────────────────────────────────────────────
