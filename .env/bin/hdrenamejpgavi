@@ -15,25 +15,27 @@
 REPERTOIRES=("$@") # If you want the number of elements of $@, use $#
 [ -z "${REPERTOIRES}" ] && REPERTOIRES[0]=.
 
-renamefiles -r         \
-  --old JPG  --new jpg \
-  --old jpeg --new jpg \
-  --old JPEG --new jpg \
-  --old GIF  --new gif \
-  --old PNG  --new png \
-  --old AVI  --new avi \
-  --old MKV  --new mkv \
-  --old MP3  --new mp3 \
-  --old MP4  --new mp4 \
-  --old SVG  --new svg \
+renamefiles -r          \
+  --old JPG  --new jpg  \
+  --old jpeg --new jpg  \
+  --old JPEG --new jpg  \
+  --old GIF  --new gif  \
+  --old PNG  --new png  \
+  --old AVI  --new avi  \
+  --old MKV  --new mkv  \
+  --old MP3  --new mp3  \
+  --old MP4  --new mp4  \
+  --old SVG  --new svg  \
   --old SVGZ --new svgz \
-  --old ICO  --new ico \
+  --old ICO  --new ico  \
+  --old WEBM --new webm \
+  --old WEBP --new webp \
   "${REPERTOIRES[@]}"
 
 for REPERTOIRE in "${REPERTOIRES[@]}"; do
 
   find "${REPERTOIRE}" \
     -regextype posix-extended \
-    -regex '^.*\.(jpg|gif|mkv|avi|mp4|3gp|svg|svgz|png|ico)$' \
-    -exec chmod -x {} \;
+    -regex '^.*\.(jpg|gif|mkv|avi|mp4|3gp|svg|svgz|png|ico|webm|webp)$' \
+    -exec chmod a-wx {} \;
 done
