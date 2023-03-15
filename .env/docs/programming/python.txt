@@ -41,6 +41,7 @@ STRING MANIPULATION
     var1=123
     var2="16 padding."
     print(f" >>{var1:6}<< →  >>{var2:>16}<< >>{var2:*<16}<<\n")
+    print(f"{'This is static text, not a variable' :<64}Other text starting at column 65.")
 
     Left and right padding is determined with < and >.
 
