@@ -234,9 +234,13 @@ MISCELLANEOUS
   - Convert hex to int:   print int("0xdeadbeef", 16)
     (Need to specify base, i.e. 16.)
 
-  - Print without Linefeed/LF:  print("Hello", end='')
-
   - Convert int to hex:  print hex(255)
+
+  - Convert a string to hex representation:
+
+    ':'.join("{:0>2}".format(hex(ord(x))[2:]) for x in 'Hello,\nWorld!').upper()
+
+  - Print without Linefeed/LF:  print("Hello", end='')
 
   - Perl's chomp() equivalent:  "string\n".rstrip()
 
