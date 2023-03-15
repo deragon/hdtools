@@ -460,7 +460,7 @@ LS_COLORS="${LS_COLORS}:*.csr=01;31;44:*.crt=01;31;44:*.key=01;31;44:*.p12=01;31
 LS_COLORS="${LS_COLORS}:*.deb=0;35:*.rpm=0;35:*.pkg=0;35:*.jar=0;35:*.war=0;35:*.tgz=0;35:*.tar=0;35:*.zip=0;35:*.arg=0;35:*.lzh=0;35:*.arc=0;35:*.gz=0;35:*.Z=0;35:*.iso=0;35:*.bz2=0;35:*.iso=0;35"
 LS_COLORS="${LS_COLORS}:*.php=1;32:*.py=1;32:*.ph=1;32:*.h=1;32:*.c=1;32:*.cc=1;32:*.cpp=1;32:*.pas=1;32:*.asm=1;32:*.bas=1;32:*.java=1;32:*.groovy=1;32:*.scala=1;32:*.jsp=1;32:*.js=1;32:*.vim=1;32"
 LS_COLORS="${LS_COLORS}:*.pif=1;34:*.sys=1;34"
-LS_COLORS="${LS_COLORS}:*.gif=1;36:*.jpg=1;36:*.ras=1;36:*.cdr=1;36:*.bmp=1;36:*.pcx=1;36:*.eps=1;36:*.cgm=1;36:*.svg=1;36:*.svgz=1;36:*.png=1;36:*.avi=1;36:*.xcf=1;36:*.pbm=1;36:*.pnm=1;36:*.mp4=1;36:*.mkv=1;36:*.webm=1;36::*.ico=1;36"
+LS_COLORS="${LS_COLORS}:*.gif=1;36:*.jpg=1;36:*.ras=1;36:*.cdr=1;36:*.bmp=1;36:*.pcx=1;36:*.eps=1;36:*.cgm=1;36:*.svg=1;36:*.svgz=1;36:*.png=1;36:*.avi=1;36:*.xcf=1;36:*.pbm=1;36:*.pnm=1;36:*.mp4=1;36:*.mkv=1;36:*.webm=1;36:*.webp=1;36:*.ico=1;36"
 LS_COLORS="${LS_COLORS}:*.ogg=2;36:*.mp3=2;36:*.3gp=2;36:*.flv=2;36:*.wav=2;36"
 LS_COLORS="${LS_COLORS}:*.bak=31:*.tmp=31:*.org=31:*.orig=31:*.obsolete=31:*.class=1;31"
 LS_COLORS="${LS_COLORS}:di=1;37:ex=3;33:*.bat=3;33:*.com=3;33:*.exe=3;33"
