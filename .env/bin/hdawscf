@@ -52,10 +52,11 @@ Usage:  ${SCRIPT_NAME} [-c|-u|-x|-z]
 run()
 {
   if (( DRYRUN )); then
-    echo "DRYRUN:  $@"
+    echo "DRYRUN:  $@" 1>&2
+    OUTPUT=""
   else
-    echo "EXECUTING:  $@"
-    eval $@
+    echo "EXECUTING:  $@" 1>&2
+    OUTPUT="$(eval $@ 2>&1)"
   fi
 }
 
@@ -175,21 +176,21 @@ for FILE in ${FILES[@]}; do
     else
       if [ "${OPERATION}" = "create-change-set" ]; then
         TIMESTAMP_FILE="$(date +"%Y%m%dT%H%M%S")" # ISO 8601 format.
-        EXTRA_OPTIONS="${EXTRA_OPTIONS}
-          --change-set-name \"${STACK_NAME}-${TIMESTAMP_FILE}\""
+        EXTRA_OPTIONS="${EXTRA_OPTIONS} --change-set-name \"${STACK_NAME}-${TIMESTAMP_FILE}\""
       fi
 
-      EXTRA_OPTIONS="${EXTRA_OPTIONS}
-        --capabilities \"CAPABILITY_NAMED_IAM\"
-        --template-body \"file://./${FILE}\""
+      EXTRA_OPTIONS="${EXTRA_OPTIONS} --capabilities \"CAPABILITY_NAMED_IAM\" --template-body \"file://./${FILE}\""
     fi
 
     EXTRA_OPTIONS="${EXTRA_OPTIONS} ${PARAMETERS}"
 
-    OUTPUT="$(run aws cloudformation "${OPERATION}" \
+    shopt -s extglob                        # Important:  This option must be set for trimming to work.
+    EXTRA_OPTIONS="${EXTRA_OPTIONS##*( )}"  # Trim all spaces (' ') from the left.
+    run aws cloudformation "${OPERATION}" \
       --stack-name "${STACK_NAME}${STACK_SUFFIX}" \
-      ${EXTRA_OPTIONS} 2>&1)"
+      ${EXTRA_OPTIONS} 2>&1
 
+    # ${OUTPUT} is set in the run() function.
     if [[ "${OUTPUT}" == *"error occurred"*"already exists"* && \
           "${OPERATION}" == "create-stack" ]]; then
       echo "Updating stack instead of creating it as ask, since the stack already exists."
