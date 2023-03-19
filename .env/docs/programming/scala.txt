@@ -1,0 +1,124 @@
+CLASS VS OBJECTS
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://stackoverflow.com/questions/1755345/difference-between-object-and-class-in-scala
+
+  - class C defines a class, just as in Java or C++.
+
+  - object O creates a singleton object O as instance of some anonymous class;
+    it can be used to hold static members that are not associated with
+    instances of some class.
+
+  - object O extends T makes the object O an instance of trait T; you can then
+    pass O anywhere, a T is expected.
+
+  - if there is a class C, then object C is the companion object of class C;
+    note that the companion object is not automatically an instance of C.
+
+  - Traits are simillar to Interface in Java, but include fields.
+
+
+LOGGING
+══════════════════════════════════════════════════════════════════════════════
+
+  Use Scala Logging:  https://github.com/lightbend/scala-logging
+
+
+  Scala Logging  (https://github.com/lightbend/scala-logging)
+  ────────────────────────────────────────────────────────────────────────────
+
+    import com.typesafe.scalalogging.{LazyLogging, Logger}
+
+    object MyClass extends LazyLogging {
+      def main(args: Array[String]): Unit = {
+        logger.error("Hello world")
+      }
+    }
+
+
+
+  pom.xml (as of 2020-01-15)
+  ────────────────────────────────────────────────────────────────────────────
+    ...
+
+    <properties>
+      <slf4j.version>1.7.30</slf4j.version>
+      <log4j.version>2.13.0</log4j.version>
+    </properties>
+
+    ...
+
+    <!-- Logging -->
+    <dependency>
+        <groupId>com.typesafe.scala-logging</groupId>
+        <artifactId>scala-logging_2.11</artifactId>
+        <version>3.9.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+
+
+
+  log4j2.xml
+  ────────────────────────────────────────────────────────────────────────────
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="WARN">
+        <Appenders>
+            <Console name="Console" target="SYSTEM_OUT">
+
+                <!-- Warning:  This PatternLayout make use of %C and %M to print out
+                               the name of the class and method from which the logger is called.
+                               This is somewhat expensive, so for intense applications, one might
+                               want to remove this -->
+
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %C.%M() - %msg%n"/>
+
+            </Console>
+        </Appenders>
+        <Loggers>
+            <Root level="debug">
+                <AppenderRef ref="Console"/>
+            </Root>
+        </Loggers>
+    </Configuration>
+
+
+
+SBT
+══════════════════════════════════════════════════════════════════════════════
+
+  sbt is an open-source build tool for Scala and Java projects, similar to
+  Apache's Maven and Ant.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
