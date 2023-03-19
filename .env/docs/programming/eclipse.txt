@@ -1,0 +1,95 @@
+SHOTCUTS
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.shortcutworld.com/en/win/Eclipse.html
+
+
+
+DISABLE FORMATING PER SECTION
+══════════════════════════════════════════════════════════════════════════════
+
+  Réf:  http://stackoverflow.com/questions/1820908/how-to-turn-off-the-eclipse-code-formatter-for-certain-sections-of-java-code
+
+  // @formatter:off
+  ...
+  // @formatter:on
+
+  /*-
+
+   */
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  Parentheses match:  Double click à droite de la parenthèse ou CTRL-SHIFT-P
+  Expand search:      SHIFT <NUMPAD *>
+  Auto refresh:       Preferences -> General -> Workspace -> Refresh automatically
+
+
+  Paste a multi-line Java String in Eclipse
+
+    Eclipse has an option so that copy-paste of multi-line text into String
+    literals will result in quoted newlines:
+
+        Preferences/Java/Editor/Typing/ 
+          "Escape text when pasting into a string literal"
+
+    Réf:  http://stackoverflow.com/questions/2159678/paste-a-multi-line-java-string-in-eclipse
+
+
+
+DEBUG BACKGROUND COLOR
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://askubuntu.com/questions/70599/how-to-change-tooltip-background-color-in-unity
+
+    I had to edit these files:
+
+      /usr/share/themes/Ambiance/gtk-3.0/settings.ini
+      /usr/share/themes/Ambiance/gtk-3.0/gtk.css
+      /usr/share/themes/Ambiance/gtk-2.0/gtkrc
+
+    (Addition: for Ubuntu 12.04, it seems youjust have to modify the file:
+    /usr/share/themes/Ambiance/gtk-2.0/gtkrc , replacing the tooltip backround
+    and foreground color, with the #000000 and the #f5f5b5 color,
+    respectively)
+
+    You require root privileges to edit the files. Use gksudo gedit to edit
+    them.
+
+    Search for tooltip in these files and you'll find the color definitions
+    for the foreground and the background. I use #000000 as foreground and
+    #f5f5b5 as background and now the tooltips in all applications are again
+    readable. After changing the color values simply switch to some other
+    theme and then back to Ambiance and the tooltip color is now fixed.
+
+
+
+PLUGINS
+══════════════════════════════════════════════════════════════════════════════
+
+  eclipse-fileencodinginfo  To determine the encoding of a file.
+
+    https://github.com/ystsoi/eclipse-fileencodinginfo
+
+
+
+MAVEN
+══════════════════════════════════════════════════════════════════════════════
+
+  See maven.txt for Eclipse particularities.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
