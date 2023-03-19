@@ -1,0 +1,147 @@
+AUTHENTICATION
+══════════════════════════════════════════════════════════════════════════════
+
+  BASIC
+  ────────────────────────────────────────────────────────────────────────────
+
+    The username and password are combined with a single colon (:). This means
+    that the username itself cannot contain a colon.
+
+      Example:  To encode 'john:hispassword'
+
+                  $ echo "john:hispassword" | base64
+                  am9objpoaXNwYXNzd29yZAo=
+
+                To decode:
+
+                  $ echo "am9objpoaXNwYXNzd29yZAo=" | base64 --decode
+                  john:hispassword
+
+    From:  https://medium.com/@ziatheonlyone/spring-rest-api-part-3-spring-security-basic-authentication-3fd20342745b
+
+    Basic authentication sends a Base64-encoded string that contains a user
+    name and password for the client. Base64 is not a form of encryption and
+    should be considered the same as sending the user name and password in
+    clear text. If a resource needs to be protected, strongly consider using
+    an authentication scheme other than basic authentication.
+
+    See also: https://en.wikipedia.org/wiki/Basic_access_authentication
+
+
+  GET
+  ────────────────────────────────────────────────────────────────────────────
+
+    https_proxy="" curl --verbose --insecure --request GET \
+      --netrc-file "${HOME}/.netrc" \
+      --url https://<url>
+
+    Format of "${HOME}/.netrc"
+
+      machine <example.com> login <username> password <password>
+
+    Credentials explained at:
+
+      https://stackoverflow.com/questions/2594880/using-curl-with-a-username-and-password
+
+
+  POST
+  ────────────────────────────────────────────────────────────────────────────
+
+    The 'echo' command is useful when Java exception occurred on the other
+    end; the stack trace is then properly rendered on multiple lines, making
+    it easier to read.
+
+    The 'authorization' header of type 'Basic' takes for input
+    '<user>:<password>'.  That string must be base64 encoded.
+    Use the following command to achieve this:
+
+                   $ echo "<user>:<password>" | base64
+                   PHVzZXI+OjxwYXNzd29yZD4K
+
+    echo -e "$(
+    https_proxy="" curl --insecure --request POST \
+      --header 'Accept-Encoding: gzip,deflate' \
+      --header 'Connection: Keep-Alive' \
+      --header 'Content-Type: application/json' \
+      --header 'Authorization: Basic PHVzZXI+OjxwYXNzd29yZD4K' \ # PHVzZXI+OjxwYXNzd29yZD4K == <user>:<password>
+      --data   '{ "Instructions" : "Put your JSON data here." }'
+      --url    'https://someserver/somerestapiendpoint' \
+      | tr -d '\r'
+    )"
+
+    '\r' need to be deleted if present, else lines will pile up one on top of
+    the other in the terminal, resulting that only the last line will be
+    showing up.
+
+
+
+BASE64
+══════════════════════════════════════════════════════════════════════════════
+
+  There exist more than one base64 encoding.
+
+    - Standard Base64, as shown with 'echo "Hello world!" | base64'
+
+    - URL Base64.  The standard Base64 contains characters '+' and '/' which are not
+      acceptable characters in a URL.  Thus, these characters need to be
+      replaced with '-' and '_' respectively (see standard description below
+      in section 'Base64 URL applications'.
+
+      There exist no option for Linux's 'base64' command to generate a URL
+      version.  One must pass the output through something like 'sed' to
+      replace the '+' and '/' characters.
+
+      See:  https://gist.github.com/indrayam/dd47bf6eef849a57c07016c0036f5207
+
+
+  Base64 URL applications
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://en.wikipedia.org/wiki/Base64#URL_applications
+
+    Base64 encoding can be helpful when fairly lengthy identifying information
+    is used in an HTTP environment. For example, a database persistence
+    framework for Java objects might use Base64 encoding to encode a
+    relatively large unique id (generally 128-bit UUIDs) into a string for use
+    as an HTTP parameter in HTTP forms or HTTP GET URLs. Also, many
+    applications need to encode binary data in a way that is convenient for
+    inclusion in URLs, including in hidden web form fields, and Base64 is a
+    convenient encoding to render them in a compact way.
+
+    Using standard Base64 in URL requires encoding of '+', '/' and '='
+    characters into special percent-encoded hexadecimal sequences ('+' becomes
+    '%2B', '/' becomes '%2F' and '=' becomes '%3D'), which makes the string
+    unnecessarily longer.
+
+    For this reason, modified Base64 for URL variants exist (such as base64url
+    in RFC 4648), where the '+' and '/' characters of standard Base64 are
+    respectively replaced by '-' and '_', so that using URL encoders/decoders
+    is no longer necessary and has no impact on the length of the encoded
+    value, leaving the same encoded form intact for use in relational
+    databases, web forms, and object identifiers in general. Some variants
+    allow or require omitting the padding '=' signs to avoid them being
+    confused with field separators, or require that any such padding be
+    percent-encoded. Some libraries will encode '=' to '.', potentially
+    exposing applications to relative path attacks when a folder name is
+    encoded from user data.
+
+
+
+API SERVICES
+══════════════════════════════════════════════════════════════════════════════
+
+  - Geocoding:  http://geocoder.ca/
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
