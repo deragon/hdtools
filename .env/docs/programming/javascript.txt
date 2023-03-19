@@ -1,0 +1,255 @@
+LIBRARIES
+══════════════════════════════════════════════════════════════════════════════
+
+  - Three JS:  Cool, easy 3D animation in WebASM:  https://threejs.org/
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - Deep copy:  JSON.parse(JSON.stringify(obj))
+      This deep copy is pretty fast according to:  http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
+
+  - Get the type of an object:  Object.prototype.toString.call(<object here>))
+  - Replace a string:
+
+      <string>.replace(/<regex here/, '<replacement text>');
+
+      IMPORTANT:  DO NOT PUT /<regex here/ around ''!
+                  Else, the regex will be interpreted as literal.
+
+  - Exit:  process.exit()
+  - bson2json
+
+    sudo npm i bson2json -g # Installation
+
+
+
+
+ARRAYS
+══════════════════════════════════════════════════════════════════════════════
+
+  Loop / Iterate:             for ( entry of array ) { ... }
+  Concatenate / join arrays:  array1.concat(array2)
+  Add at beginning:           array.unshift(object)
+  Add at end:                 array.push(object)
+
+
+
+=== AND !== ARE STRICT COMPARISON OPERATORS:
+══════════════════════════════════════════════════════════════════════════════
+
+  JavaScript has both strict and type-converting equality comparison. For
+  strict equality the objects being compared must have the same type and:
+
+  - Two strings are strictly equal when they have the same sequence of
+    characters, same length, and same characters in corresponding positions.
+  - Two numbers are strictly equal when they are numerically equal (have the
+    same number value). NaN is not equal to anything, including NaN. Positive
+    and negative zeros are equal to one another.
+  - Two Boolean operands are strictly equal if both are true or both are
+    false.
+  - Two objects are strictly equal if they refer to the same Object.
+  - Null and Undefined types are == (but not ===). [I.e. (Null==Undefined) is
+    true but (Null===Undefined) is false]
+
+
+
+TIME
+══════════════════════════════════════════════════════════════════════════════
+
+  Le NPM pour le temps:  moment
+
+    const moment = require('moment');
+
+  Même chose que moment, mais ajouter la notion de timezone.  Sinon, tous
+  les autres fonctions de moment sont présentent.
+
+    const moment = require('moment-timezone');
+
+  DISPLAY / PRINT
+  ────────────────────────────────────────────────────────────────────────────
+
+    moment().format();                       // 2016-11-24T11:10:57-05:00
+    moment().format('YYYY-MM-DD hh:mm:ss');  // 2016-11-24 11:11:50
+
+
+CSV
+══════════════════════════════════════════════════════════════════════════════
+
+  CSV TO JSON
+  ────────────────────────────────────────────────────────────────────────────
+
+    csv2json
+
+      npm install --global csv2json
+
+      # Now in the terminal you can use 'csv2json'
+
+
+  JSON TO CSV
+  ────────────────────────────────────────────────────────────────────────────
+
+    JSONEXPORT <<-- BEST
+
+        const jsonexport = require('jsonexport');
+        jsonexport(json, function(err, csv) {
+          // Make use of 'csv' here.
+        }
+
+
+    JSON2CSV
+
+      From:  https://github.com/zemirco/json2csv#how-to-use
+
+      # CLI command available only if installed with -g.
+      sudo npm install json2csv -g
+
+      Format of input json file:
+
+        [
+          { <json fields> },
+          { <json fields> }
+        ]
+
+      Field format is name of field.  If the fields are hierarchy, like:
+
+         "hieracrhy1" : {
+           "field1",
+           "field2",
+           "field3",
+         }
+
+      The hierarchy is expressed with '.'.  For example:
+
+         "hieracrhy1.field1"
+
+      # Command to execute.
+      json2csv -i input.json --fields hieracrhy1.field1,hieracrhy1.field2
+
+
+
+STRING TO HEXCODE
+══════════════════════════════════════════════════════════════════════════════
+
+  There is no out of the box function to perform this.  You can however
+  define the following functions:
+
+  From:  http://stackoverflow.com/questions/21647928/javascript-unicode-string-to-hex
+
+  // Encode String to hexcode.
+  String.prototype.hexEncode = function() {
+      var hex, i;
+
+      var result = "";
+      for (i=0; i<this.length; i++) {
+          hex = this.charCodeAt(i).toString(16);
+          result += ("000"+hex).slice(-4);
+      }
+
+      return result
+  }
+
+  // Decode hexcode into String.
+  String.prototype.hexDecode = function(){
+      var j;
+      var hexes = this.match(/.{1,4}/g) || [];
+      var back = "";
+      for(j = 0; j<hexes.length; j++) {
+          back += String.fromCharCode(parseInt(hexes[j], 16));
+      }
+
+      return back;
+  }
+
+
+
+MOCHA
+══════════════════════════════════════════════════════════════════════════════
+
+  RUN MOCHA TEST IN THE CURRENT DIRECTORY
+  ────────────────────────────────────────────────────────────────────────────
+
+    Though
+
+    // Add project's base directory to nodejs's search path for modules.
+    // This allows to call 'mocha <this file>' directly.
+    const projectDir = __dirname.replace(/test\/.*/, '');
+    require('app-module-path').addPath(projectDir);
+
+
+
+
+JSON
+══════════════════════════════════════════════════════════════════════════════
+
+  ∙ Read a json file:
+
+    let json = require('./<file.json>');  // No nead to call JSON.parse();
+
+
+
+READ FILE, LINE BY LINE
+══════════════════════════════════════════════════════════════════════════════
+
+  constlineReader = require('readline').createInterface({
+    input: require('fs').createReadStream('file.in')
+  });
+
+  lineReader.on('line', function (line) {
+    console.log('Line from file:', line);
+  });
+
+
+
+MERGE THE JSON OBJECT INTO THIS USING Object.assign()
+══════════════════════════════════════════════════════════════════════════════
+
+  constructor(data) {
+      Object.assign(this, data);
+      // Read:  https://googlechrome.github.io/samples/object-assign-es6/
+  }
+
+  var data = JSON.parse(req.responseText);
+  new User(data);
+
+
+
+PACKAGE.JSON
+══════════════════════════════════════════════════════════════════════════════
+
+  Version
+  ────────────────────────────────────────────────────────────────────────────
+
+    version Must match version exactly
+    >version Must be greater than version
+    >=version etc
+    <version
+    <=version
+    ~version "Approximately equivalent to version" See semver
+    ^version "Compatible with version" See semver
+    1.2.x 1.2.0, 1.2.1, etc., but not 1.3.0
+    http://... See 'URLs as Dependencies' below
+    * Matches any version
+    "" (just an empty string) Same as *
+    version1 - version2 Same as >=version1 <=version2.
+    range1 || range2 Passes if either range1 or range2 are satisfied.
+    git... See 'Git URLs as Dependencies' below
+    user/repo See 'GitHub URLs' below
+    tag A specific version tagged and published as tag See npm-tag
+    path/path/path See Local Paths below
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
