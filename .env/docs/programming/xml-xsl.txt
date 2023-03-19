@@ -1,0 +1,178 @@
+XML AND BASH
+══════════════════════════════════════════════════════════════════════════════
+
+  xmlstarlet - http://xmlstar.sourceforge.net/  REALLY GOOD
+  ────────────────────────────────────────────────────────────────────────────
+
+    xml el -a "<file.xml>"                  # Get list of elements and
+                                            # associated attributes.
+    xml sel -t -v "<xmlpath>" "<file.xml>"  # Get value of XML element.
+
+    # To show in order more than one element, separate the elements with a '|'
+    # (or) operator.
+    xml sel -t -v 'con:soapui-project/con:testSuite/@name|con:soapui-project/con:testSuite/con:testCase/@name' *.xml
+
+    # To show more than one element, but one after the other one (less
+    # useful), use multiple -v options.
+    xml sel -t -v con:soapui-project/con:testSuite/@name -v con:soapui-project/con:testSuite/con:testCase/@name *.xml
+
+
+
+XML TO CSV CONVERSION
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://askubuntu.com/questions/174143/convert-xml-to-csv-shell-command-line
+  Ref:   http://xmlsoft.org/XSLT/index.html
+         http://xmlsoft.org/XSLT/xsltproc.html
+
+
+  > xsltproc file.xsl file.xml | tr '|' '\n'
+  fs.defaultFS=hdfs://server.com:8000
+  fs.trash.interval=1
+
+
+  file.xml
+  ----------
+
+    <?xml version="1.0" encoding="UTF-8"?>
+
+    <configuration>
+      <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://server.com:8000</value>
+      </property>
+      <property>
+        <name>fs.trash.interval</name>
+        <value>1</value>
+      </property>
+    </configuration>
+
+
+  file.xsl
+  ----------
+
+    <xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="text" encoding="iso-8859-1"/>
+    <xsl:strip-space elements="*" />
+
+    <xsl:template match="/configuration">
+      <xsl:apply-templates select="property" />
+    </xsl:template>
+
+    <xsl:template match="/configuration/property">
+      <xsl:value-of select="name"/><xsl:text>=</xsl:text>
+      <xsl:value-of select="value"/><xsl:text>|</xsl:text>
+    </xsl:template>
+
+    <!-- etc -->
+    </xsl:stylesheet>
+
+
+
+XML NAMESPACE
+══════════════════════════════════════════════════════════════════════════════
+
+  De:  https://stackoverflow.com/questions/1181888/what-does-xmlns-in-xml-mean
+
+  xmlns means 'XML namespace'.
+
+  Basically, every element (or attribute) in XML belongs to a namespace, a way
+  of "qualifying" the name of the element.
+
+  Imagine you and I both invent our own XML. You invent XML to describe
+  people, I invent mine to describe cities. Both of us include an element
+  called name.  Yours refers to the person’s name, and mine to the city
+  name—OK, it’s a little bit contrived.
+
+  <person>
+      <name>Rob</name>
+      <age>37</age>
+      <homecity>
+          <name>London</name>
+          <lat>123.000</lat>
+          <long>0.00</long>
+      </homecity>
+  </person>
+
+  If our two XMLs were combined into a single document, how would we tell the
+  two names apart? As you can see above, there are two name elements, but they
+  both have different meanings.
+
+  The answer is that you and I would both assign a namespace to our XML, which
+  we would make unique:
+
+  <personxml:person xmlns:personxml="http://www.your.example.com/xml/person"
+                    xmlns:cityxml="http://www.my.example.com/xml/cities">
+      <personxml:name>Rob</personxml:name>
+      <personxml:age>37</personxml:age>
+      <cityxml:homecity>
+          <cityxml:name>London</cityxml:name>
+          <cityxml:lat>123.000</cityxml:lat>
+          <cityxml:long>0.00</cityxml:long>
+      </cityxml:homecity>
+  </personxml:person>
+
+  Now we’ve fully qualified our XML, there is no ambiguity as to what each
+  name element means. All of the tags that start with personxml: are tags
+  belonging to your XML, all the ones that start with cityxml: are mine.
+
+  There are a few points to note:
+
+  - If you exclude any namespace declarations, things are considered to be in
+    the default namespace.
+
+  - If you declare a namespace without the identifier, that is,
+    xmlns="http://somenamespace", rather than xmlns:rob="somenamespace", it
+    specifies the default namespace for the document.
+
+  - The actual namespace itself, often a IRI, is of no real consequence. It
+    should be unique, so people tend to choose a IRI/URI that they own, but it
+    has no greater meaning than that. Sometimes people will place the schema
+    (definition) for the XML at the specified IRI, but that is a convention of
+    some people only.
+
+  - The prefix is of no consequence either. The only thing that matters is
+    what namespace the prefix is defined as. Several tags beginning with
+    different prefixes, all of which map to the same namespace are considered
+    to be the same.
+
+    For instance, if the prefixes personxml and mycityxml both mapped to the
+    same namespace (as in the snippet below), then it wouldn't matter if you
+    prefixed a given element with personxml or mycityxml, they'd both be
+    treated as the same thing by an XML parser. The point is that an XML
+    parser doesn't care what you've chosen as the prefix, only the namespace
+    it maps too. The prefix is just an indirection pointing to the namespace.
+
+    <personxml:person 
+         xmlns:personxml="http://example.com/same/url"
+         xmlns:mycityxml="http://example.com/same/url" />
+
+  - Attributes can be qualified but are generally not. They also do not
+    inherit their namespace from the element they are on, as opposed to
+    elements (see below).
+
+  Also, element namespaces are inherited from the parent element. In other
+  words I could equally have written the above XML as
+
+  <person xmlns="http://www.your.example.com/xml/person">
+      <name>Rob</name>
+      <age>37</age>
+      <homecity xmlns="http://www.my.example.com/xml/cities">
+          <name>London</name>
+          <lat>123.000</lat>
+          <long>0.00</long>
+      </homecity>
+  </person>
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
