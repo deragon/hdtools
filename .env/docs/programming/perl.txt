@@ -1,0 +1,150 @@
+PERFORMING A REGULAR EXPRESSION SEARCH (NO REPLACEMENT)
+══════════════════════════════════════════════════════════════════════════════
+
+  perl -e "\$_='somestringtomatch';exit (/stringto/)"; echo $?
+  LINE=`perl -e "\\\$_='${LINE}';s/(\s*adding:\s*)*(.*?)(\s+\\\(deflated.*)/\2/g;print \\\$_;"`
+
+  # Search through a directory for xml files and print with the file name the
+  # string between <ERR-MSG></ERR-MSG> tags.
+  find <dir> -name "*.xml" -exec perl -ne "s%.*<ERR-MSG>(.*)</ERR-MSG>.*%\1%g and print \"{}\t\$_\n\" " {} \;
+
+
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - Replace all withspaces except newline (use double negative no Non Space
+
+      \s includes tab, space and newline.  But if you search and replace all
+      \s in a line, your document will become flat as all newlines would be
+      gone.  To avoid this, use double negative:
+
+       s/[^\S\n]+/;/g;  # Replace all whitespace except newline with ;
+
+      That is, not-not-whitespace or not-newline. Distributing the outer not
+      (i.e., the complementing ^ in the character class) with De Morgan's law,
+      this is equivalent to “whitespace and not newline,”.
+
+      Voir:  http://stackoverflow.com/questions/3469080/how-do-i-match-whitespace-but-not-newlines
+
+  - Print groups (Formatted mode)
+
+      perl -ne "if( /VALUES\s*\((\d+),(\d+),'([^']+)','([^']+)'/ ) { printf(\"%03s;%03s;% -30s;% -30s \n\", \${1},\${2},\${3},\${4}); };" <file>
+
+  - Negative lookahead
+
+    echo "https://paris123.example.com:5443" | perl -ne 'print if /.*?paris[a-z0-9\.]+com(?!:5443)/'
+
+
+
+GREP REPLACEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  who | perl -ne "/\s+\:\d\s+/ and print"
+  who | perl -ne "print if(/\s+\:\d\s+/)"
+
+  perl -ne "s/.*\[solver\] (.*)/\1/g and print" <file>
+
+  # egrep -v replacement
+  perl -ne "(not /^\s+at\s.*/) and (not /${WEBSPHERE_LOG_IGNORE_REGEX}/) and print"
+
+
+
+PERFORMING MULTIPLE SEARCH AND REPLACE IN A SINGLE COMMAND
+=====================================================================
+
+  Output to stdout:
+
+    perl -pe 's%^\s*CertificateFile.*%CertificateFile = "camo.cert"%g;s%^\s*MailTo.*%MailTo = "hans.deragon\@hp.com"%g;' <file>
+
+  Change the file directly:
+
+    perl -pi -e 's%^\s*CertificateFile.*%CertificateFile = "camo.cert"%g;s%^\s*MailTo.*%MailTo = "hans.deragon\@hp.com"%g;' <file>
+
+  grep -P "OSIP_NET_HOSTNAME=" $FILE | perl -pe 's%.*=\"(\w*)\"%\1%g'
+
+
+
+PERFORMING MULTI-LINE SUBSTITUTION
+══════════════════════════════════════════════════════════════════════════════
+
+  IMPORTANT:  THIS WILL NEVER WORK WITH A ONE-LINER ON THE CLI
+
+    perl -pe or perl -only read one line at a time.
+    So the /s parameter won't work anymore in these circumstances.
+
+  Trick:
+
+    You can remove the LFs by piping the output to the command 'tr -d "\n"'
+
+  To read:
+
+    http://www.perl.com/pub/a/2003/06/06/regexps.html
+
+    This webpage explains that .* does not match \n unless the 's' option be
+    added, like:
+
+      "This is my\nmulti-line string" =~ /This.*string/s;
+
+  perl << EOP
+  \${CODE}=\`cat ${LMWF_LAST_BACKUP_FILENAME}\`;
+  print \${CODE};
+  print "============================================================";
+  \${CODE}=~s/^(\s*);;\n(\s*stop)/
+  \1# HP Addition - Spanning Tree fix \1#
+  \1# DHCPD timeout is too low, and thus timeout before the spanning
+  \1# tree of the routers have settled and thus let the DHCP request to
+  \1# go through.  Here, we sleep to give a chance for DHCP to setup
+  \1# properly.
+  \1sleep 30
+  \1;;
+  \2/gm;
+  open(OUTPUT, ">${NETWORKFILE}");
+  print OUTPUT \${CODE};
+EOP
+
+
+
+INSTALLING MODULES
+══════════════════════════════════════════════════════════════════════════════
+
+  Automatic --yes like option:
+
+    perl -MCPAN -e "shell"
+
+    cpan> o conf prerequisites_policy follow
+
+    To save this policy for the next time you run cpan (have it become
+    the default), do:
+
+    cpan> o conf commit
+
+
+  Force installation:
+
+    cpan> force install <module>
+
+
+  To add paths to @INC from the shell, set the following variables.
+  Note that these commands will add given path to @INC, not overwrite
+  it.
+
+    export PERLLIB="<paths to add>"
+
+    or
+
+    export PERL5LIB="<paths to add>"
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
