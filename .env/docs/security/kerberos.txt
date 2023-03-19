@@ -1,0 +1,80 @@
+KERBEROS
+══════════════════════════════════════════════════════════════════════════════
+
+  To get an authentification key, run:
+
+    kinit "${USER}@${REALM}"  # ${REALM} is case sensitive.  Put the value in the right case.
+
+    Example: kinit "${USER}@<fqdn>"
+
+
+    - export KRB5_TRACE="/dev/stdout"  # Enable Debug tracing
+
+  - klist -t -k <keytab file> # List content of a keytab
+
+
+KERBEROS_REALM="<put the realm here>"
+
+$ nslookup -type=srv _kerberos._tcp.${KERBEROS_REALM}
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+Non-authoritative answer:
+_kerberos._tcp.<Kerberos realm>  service = 0 100 88 <fqdn1>
+_kerberos._tcp.<Kerberos realm>  service = 0 100 88 <fqdn2>
+
+Authoritative answers can be found from:
+
+
+PORTS
+══════════════════════════════════════════════════════════════════════════════
+
+  The default ports used by Kerberos are:
+
+    -  88 for the KDC1.
+    - 749 for the admin server.
+
+
+KEYTAB CREATION
+══════════════════════════════════════════════════════════════════════════════
+
+  Script
+  ────────────────────────────────────────────────────────────────────────────
+
+    See scripts:
+
+      hdkerberos-keytab-create
+      hdkerberos-keytab-use
+
+    The receipe is the following:
+
+      KERBEROS_USER=${USER#su}@
+      KERBEROS_PASSWORD=""
+      printf "%b" "addent -password -p "${KERBEROS_USER}" -k 1 -e arcfour-hmac\n${KERBEROS_PASSWORD}\nwrite_kt ${KERBEROS_USER}.keytab" | ktutil
+      unset KERBEROS_PASSWORD
+
+
+  MANUAL
+  ────────────────────────────────────────────────────────────────────────────
+
+    [su<username>@wlhdpedgea01 ~] ktutil
+    ktutil:  addent -password -p <username>@<fqdn> -k 5 -e
+    Password for <username>@<fqdn>:
+    ktutil:  write_kt keytab-<username>.kt
+    ktutil:  quit
+
+    [su<username>@wlhdpedgea01 ~] kinit -kt keytab-<username>-*.kt <username>@<fqdn>
+    [su<username>@wlhdpedgea01 ~] klist
+    Ticket cache: FILE:/tmp/krb5cc_10279
+    Default principal: <username>@<fqdn>
+
+    Valid starting       Expires              Service principal
+    03/29/2019 15:55:29  03/30/2019 01:55:29  krbtgt/<fqdn>@<fqdn>
+            renew until 04/05/2019 15:55:29
+
+
+  TYPES OF AVAILABLE KEYS
+  ────────────────────────────────────────────────────────────────────────────
+
+    - arcfour-hmac
+    - aes256-cts-hmac-sha1-96
