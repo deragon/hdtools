@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+unset COLORS
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
+  # remain unset and no ANSI codes are sent out.
+  declare -A COLORS=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["NORMAL"]="\e[0;00m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${COLORS[FG_WHITE_BG_GREEN]} SAFE ${COLORS[NORMAL]}
+
+Create a dummy, dated test file that can be used for a variety of scenarios
+such as testing a file transfer mechanism.
+
+Usage:  ${SCRIPT_NAME} [-o <owner name>] [-h] <file>+
+
+  -f  Generate file in french.
+  -o  Owner
+  -h  Display this help text.
+
+
+Example:
+
+    ${SCRIPT_NAME} -o \"John Smith\"
+
+    ...will create the file 'test-file-johnsmith-20230329T135515.txt'
+    (actual timestamp will be the current time) with the following content:
+
+      This is a test file created on 2023-03-29 13:55:15 by John Smith.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+LANGUAGE="en"
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "o:fh" OPTCMD; do
+  case "${OPTCMD}" in
+    "o")    OWNER="${OPTARG}";;
+    "f")    LANGUAGE="fr";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+
+# Display format of timestamps.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+TIMESTAMP_FORMAT_FILE="%Y%m%dT%H%M%S" # ISO 8601 format.
+
+# All timestamps below start with exactly the same time.
+TIMESTAMP_START="$(date +"%s")" # Seconds since epoch.
+TIMESTAMP_HUMAN="$(date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}")"
+TIMESTAMP_FILE="$( date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_FILE}")"
+
+if [ -z "${OWNER}" ]; then
+  OWNER_DETAILS=""
+  OWNER_LC=""
+else
+  OWNER_LC="${OWNER,,}"       # Lowercase.
+  OWNER_LC="-${OWNER_LC/ /}"  # Remove all spaces.
+
+  if [ "${LANGUAGE}" = "fr" ]; then
+    OWNER_DETAILS=" par ${OWNER}"
+  else
+    OWNER_DETAILS=" by ${OWNER}"
+  fi
+fi
+
+
+if [ "${LANGUAGE}" = "fr" ]; then
+  FILENAME="fichier-de-test${OWNER_LC}-${TIMESTAMP_FILE}.txt"
+  cat <<EOM >"${FILENAME}"
+Ce fichier de test fut créé le ${TIMESTAMP_HUMAN}${OWNER_DETAILS}.
+EOM
+else
+  FILENAME="test-file${OWNER_LC}-${TIMESTAMP_FILE}.txt"
+  cat <<EOM >"${FILENAME}"
+This is a test file created on ${TIMESTAMP_HUMAN}${OWNER_DETAILS}.
+EOM
+fi
+
+echo -e "Content of '${FILENAME}':\n"
+
+cat "${FILENAME}"
