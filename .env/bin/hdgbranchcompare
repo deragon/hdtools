@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+unset COLORS
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
+  # remain unset and no ANSI codes are sent out.
+  declare -A COLORS=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["NORMAL"]="\e[0;00m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${COLORS[FG_WHITE_BG_GREEN]} SAFE ${COLORS[NORMAL]}
+
+Compare commit differences between all branch and the one provided as
+argument.  If no branch is provided, default to 'develop'
+
+Usage:  ${SCRIPT_NAME} [-h] <branch to compare all other branches>*
+
+  -h  Display this help text.
+"
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+BRANCHES=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+ERRORS=""
+
+if ((${#BRANCHES[*]} == 0)); then
+  BRANCHES[0]="develop"
+fi
+
+if ((${#BRANCHES[*]} > 1)); then
+  ERRORS="${ERRORS} - You cannot provide more than a branch.\n"
+fi
+
+if [ ! -z "${ERRORS}" ]; then
+  echo -e "${COLORS[FG_WHITE_BG_RED]}ERROR:${COLORS[NORMAL]}  The following errors where detected.\n"
+  echo -e "${ERRORS}"
+  echo -e "Command aborted."
+  exit 1
+fi
+
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+BRANCH_CMP="${BRANCHES[0]}"
+
+# Get list of all branches but the one we compare with.
+declare -a BRANCHES=($(git branch | sed -r "s/^..//g;/^${BRANCH_CMP}$/d"))
+
+for BRANCH in ${BRANCHES[@]}; do
+  printf "\n${BRANCH_CMP} vs ${BRANCH}\n"
+  git rev-list --left-right --count "${BRANCH_CMP}...${BRANCH}"
+done
