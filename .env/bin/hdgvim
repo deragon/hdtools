@@ -101,8 +101,11 @@ cmd = [ executable ] + finalArgs
 #print("cmd:  " + str(" ".join(cmd)))
 
 if "gvim" in executable.lower() and display != None:
-    # 'Popen' is used intead of 'run' because 'Popen' performs a fork and thus
-    # allows this Python instance to end quickly.
+
+    # Forking here to allow user to go back to the terminal prompt quickly.
+    # Sometimes, gvim takes time to start, for instance when the DISPLAY
+    # environment variable is not properly set and gvim waits long before
+    # timing out and returning to the prompt.
     if os.fork() != 0:
         # Parent process must die, to un-hook the terminal.
         sys.exit(0)
