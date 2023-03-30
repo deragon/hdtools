@@ -150,7 +150,10 @@ if which vim >/dev/null 2>&1; then
   alias vimdiff='vimdiff -u "${HDVIMRC}" -S "${HDVIMRC}-post"'
   EDITOR="vim"  # Here, the alias 'vim' will be called which is desired.
 
-  gvim()     { hdgvim "$@"; }
+  gvim()     { \
+               [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]] && \
+                 hdwsldisplay -q; \
+               hdgvim "$@"; }
   gvimdiff() { HD_GVIM="gvimdiff" hdgvim "$@"; }
   gvimw()    { hdgvim "$(which $*)"; }
   gviml()    { locate $* | xargs hdgvim; }
