@@ -711,11 +711,46 @@ EXTRA DOC
 GUI
 ══════════════════════════════════════════════════════════════════════════════
 
-  CYCLIGENT (https://www.cycligent.com/git-tool)
+  Reading
   ────────────────────────────────────────────────────────────────────────────
 
-    Bof.  J'ai essayé en 2017 et je trouvais qu'il manquait des features,
-    mais je ne me souviens plus desquels.
+    - https://unix.stackexchange.com/questions/48469/gui-for-git-similar-to-sourcetree
+
+
+  gitg  https://github.com/tibirna/gitg
+  ────────────────────────────────────────────────────────────────────────────
+
+    Not bad, but lack a feature to compare branches.
+
+
+  qgit  https://github.com/tibirna/qgit
+  ────────────────────────────────────────────────────────────────────────────
+
+    Not bad, but lack a feature to compare branches.
+
+
+  CYCLIGENT  https://www.cycligent.com/git-tool
+  ────────────────────────────────────────────────────────────────────────────
+
+    I tried in 2017 and I found that some features were missing,
+    but I don't remember which ones.
+
+
+  GitForce  https://sites.google.com/site/gitforcetool/home
+  ────────────────────────────────────────────────────────────────────────────
+
+    Got it to compile under Ubuntu 22.04 easily, but when executing the binary, got a
+
+      [ERROR] FATAL UNHANDLED EXCEPTION: System.NullReferenceException: Object
+      reference not set to an instance of an object
+
+    Did not try to fix this, I moved on.
+
+
+  Abandonned projects
+  ────────────────────────────────────────────────────────────────────────────
+
+    GitX and GitX-dev  https://github.com/rowanj/gitx  Last commit in 2014.
 
 
 
