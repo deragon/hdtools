@@ -115,11 +115,23 @@ SQL
 RESULT_SCAN
 ══════════════════════════════════════════════════════════════════════════════
 
+  -- Using variables to save the last query ID.
+
+  show pipes in account;
+  set LAST_QUERY_ID=(select last_query_id());
+  select * from table(result_scan($LAST_QUERY_ID));
+  select "database_name" || '.' || "name", "error_integration" from table(result_scan($LAST_QUERY_ID)) where "error_integration" is not NULL;
+
+
+  -- Less sophisticated requests...
+
   select * from table(result_scan('<uuid>')) where ...;
   select * from table(result_scan(last_query_id())) where ...;
 
   select last_query_id(); -- Returns à UUID to use in next statement.
   select * from table(result_scan('<UUID here>'));
+
+
 
   Important:
 
