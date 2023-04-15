@@ -12,7 +12,17 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-hd-diff-remove-dates "${1}" 
-hd-diff-remove-dates "${2}" 
+hddateremove "${1}"
+hddateremove "${2}"
 
-vimdiff -u "${HDVIMRC}" "${1}.diffready" "${2}.diffready"
+SUFFIX="datesremoved"
+
+BASENAME1="${1%.*}"
+EXTENSION1="${1##*.}"
+FILENAME1="${BASENAME1}-${SUFFIX}.${EXTENSION1}"
+
+BASENAME2="${2%.*}"
+EXTENSION2="${2##*.}"
+FILENAME2="${BASENAME2}-${SUFFIX}.${EXTENSION2}"
+
+vimdiff -u "${HDVIMRC}" "${FILENAME1}" "${FILENAME2}"

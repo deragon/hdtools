@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+import os.path
+import sys
+import logging
+
+import re
+
+import argparse
+
+scriptName=os.path.basename(sys.argv[0])
+scriptPath=os.path.dirname(sys.argv[0])
+
+scriptPathAbs=os.path.realpath(scriptPath)
+scriptPathAbsParent=os.path.dirname(scriptPathAbs)
+
+scriptNameAndPathAbs=scriptPathAbs + os.sep + scriptName
+
+try:
+    scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
+except IndexError:
+    scriptNameBase=scriptName # There is no extension.
+
+
+# PARSING ARGUMENTS
+# ────────────────────────────────────────────────────────────────────────────
+#
+# See:  https://docs.python.org/3/library/argparse.html
+#
+# WARNING:
+#
+# - and -- options are always optional according to argparse.  If you
+# want mandatory arguments, they should not be prefixed with - or --.
+#
+# http://stackoverflow.com/questions/24180527/argparse-required-arguments-listed-under-optional-arguments
+
+placeholderDate      = "<date removed>"
+placeholderTime      = "<time removed>"
+placeholderTimestamp = f"{placeholderDate}T{placeholderTime}"
+
+parser = argparse.ArgumentParser(description=f"""
+\x1B[1;37;42m SAFE \x1B[0m
+
+For each file provided as argument, create a file with suffix -datesremoved
+which has the same contents, except all dates and timestamps have been
+replaced with placeholders '{placeholderDate}' and '{placeholderTime}'.
+
+If no file is provided, reads <stdin> and outputs to <stdout>.
+
+For example, run:
+
+    """ + scriptName + """
+
+""", formatter_class=argparse.RawTextHelpFormatter)
+
+# Positional arguments.
+# If <files> is mandatory, use "nargs='+'".  If optional, use "nargs='*'".
+parser.add_argument('files', metavar='files', type=str, nargs='*',
+                    help='List of files to rename.')
+
+datePattern=r"(\d{2,4}[-/]*\d{2}[-/]*\d{2,4})"
+datere = re.compile(datePattern)
+timere = re.compile(r"\D*\d{2}:\d{2}:\d{2}(?:[,\. ]\d+)?(?:\s-{0,1}\d{4}|\s+[A-Z]{3})?") # Ex:  16:18:32 EDT
+timestampre = re.compile(datePattern + r"T\d{2}:*\d{2}:*\d{2}(?:\.\d+-\d{2}:*\d{2})*") # ISO 8601 format.  Ex: 20230419T160947
+
+args = parser.parse_args()
+
+if len(args.files) == 0:
+    args.files = [ "<stdin>" ]
+
+for file in args.files:
+
+    if "<stdin>" in file:
+        lines=sys.stdin.readlines()
+        filedstfd=sys.stdout
+    else:
+        with open(file) as fd:
+            lines=fd.readlines()
+        try:
+            fileMetadata      = file.rsplit('.', 1) # Extension found.
+            fileNameBase      = fileMetadata[0]
+            fileNameExtension = "."+fileMetadata[1]
+        except IndexError:
+            fileNameBasescriptNameBase=scriptName # There is no extension.
+            fileNameExtension = fileMetadata[1]
+        filedst=f"{fileNameBase}-datesremoved{fileNameExtension}"
+        filedstfd=open(filedst, "w+")
+
+    try:
+        for line in lines:
+            # Order of following lines is important.
+            line = re.sub(timestampre, r"" + placeholderTimestamp, line)
+            line = re.sub(timere,      r"" + placeholderTime,      line)
+            line = re.sub(datere,      r"" + placeholderDate,      line)
+            filedstfd.write(line)
+    finally:
+        filedstfd.close()
