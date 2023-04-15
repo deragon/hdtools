@@ -1,0 +1,45 @@
+MEMORY MANAGEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  Memory calculation
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://developers.redhat.com/articles/2021/09/09/how-jvm-uses-and-allocates-memory#calculating_jvm_memory_consumption
+
+           ⚠ The article states that ThreadStackSize unit are bytes, but
+             this is a mistake and the unit is actually KiB.
+
+    JVM memory = Heap memory +
+                 Metaspace +
+                 CodeCache +
+                 (ThreadStackSize * Number of Threads) +
+                 DirectByteBuffers +
+                 Jvm-native
+
+
+
+  JVM memory configuration
+  ────────────────────────────────────────────────────────────────────────────
+
+    -Xms32m                    # Minimum Heap memory
+    -Xmx110g                   # Maximum Heap memory
+    -XX:MaxMetaspaceSize=10g   # Maximum Metaspace memory
+    -XX:ThreadStackSize=2m     # Thread stack size
+
+    Note:
+
+      jinfo -flag ThreadStackSize <JAVA_PID>  # In KiB.
+      java -XX:+PrintFlagsFinal -version | grep -F ThreadStackSize  # In KiB.
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
