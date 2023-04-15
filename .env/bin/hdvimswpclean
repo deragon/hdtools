@@ -53,14 +53,19 @@ if (( ${#DIRECTORIES[*]} == 0 )); then
   DIRECTORIES[0]="."
 fi
 
-declare -a VIM_FILES_SWP=($(find "${DIRECTORIES[@]}" -regextype posix-extended -regex ".*\.sw.$"))
+declare -a VIM_FILES_SWP_DATA=($( \
+  find "${DIRECTORIES[@]}" -regextype posix-extended -regex ".*\.sw.$" -print0 | \
+  xargs --null --no-run-if-empty stat --format "%y|%n" | \
+  sed -r 's/\..+\|/  /g'))
 
-if (( ${#VIM_FILES_SWP[*]} > 0 )); then
-  echo -e "Vim swap files identified to be deleted:\n\n${VIM_FILES_SWP[*]}\n"
+declare -a VIM_FILES_SWP_PATHS=(${VIM_FILES_SWP_DATA[*]/*  /})
+
+if (( ${#VIM_FILES_SWP_DATA[*]} > 0 )); then
+  echo -e "Vim swap files identified to be deleted:\n\n${VIM_FILES_SWP_DATA[*]}\n"
 
   read -p "Delete all the above files? (y/n):  " -i "y" -e ANSWER
   if [[ "${ANSWER,,}" =~ ^[yY]+$ || "${ANSWER,,}" = "yes" ]] ; then
-    rm -f "${VIM_FILES_SWP[@]}"
+    rm -f "${VIM_FILES_SWP_PATHS[@]}"
     echo -en "\e[1;30;43mFiles deleted.\e[0;00m\n"
   else
     echo "Aborting."
