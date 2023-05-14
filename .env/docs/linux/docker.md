@@ -19,7 +19,7 @@
     docker container restart "${DOCKER_CONTAINER_ID}"
     docker container stop    "${DOCKER_CONTAINER_ID}"
 
-    docker container ps --format "table {{.ID}}\t{{.CreatedAt}}\t{{.Size}}" # List running containers in table format.
+    docker container ps --all --format "table {{.ID}}\t{{.Names}}\t{{.CreatedAt}}\t{{.Size}}" # List running and idle containers in table format.
 
     docker exec -it "${DOCKER_CONTAINER_ID}" bash   # Start bash session in container.
     docker exec -it "${DOCKER_CONTAINER_ID}" --user <user> bash   # Start bash session as <user>
