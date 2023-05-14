@@ -22,5 +22,15 @@ git remote update origin --prune
 # that cannot be safely delete, an error message will show on screen
 # and the user could then decide what to do about them.
 
-git branch -av | sed -rn 's/^(\s+)*(\S+)\s+.*\[gone\].*/\2/gp' | tr '\n' '\0' |
-  xargs --null --no-run-if-empty git branch -d
+OUTPUT=$(
+  git branch -av | \
+  sed -rn 's/^(\s+)*(\S+)\s+.*\[gone\].*/\2/gp' | tr '\n' '\0' | \
+  xargs --null --no-run-if-empty git branch -d 2>&1
+)
+
+echo -e "${OUTPUT}"
+
+EASY_CMDS=$(echo -e "${OUTPUT}" | sed -nr "s/.*?'(git branch -D .*?)'.*/\1/gp")
+
+[[ ! -z "${EASY_CMDS}" ]] && \
+  echo -e "\nEasy commands to copy & paste:\n\n${EASY_CMDS}"
