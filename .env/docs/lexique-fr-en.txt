@@ -29,9 +29,9 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   packing                    -> emballer
   release                    -> révision?  mise à jour du logiciel?
   release manager            -> gestionnaire de mises en production
+  software release           -> publication de logiciel
   repository                 -> dépôt
   scan                       -> balayage / analyse
-  software release           -> publication de logiciel
   workaround                 -> contournement / solution de contournement
   revert                     -> Retour / revenir
   workflow                   -> flux de travail
@@ -55,6 +55,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   due diligence              -> vérification diligente
   dashboard                  -> tableau de bord
   to map                     -> faire la correspondance, assignation
+  scalability                -> extensible, évolutivité, scalabilité, adaptable, adaptabilité, modularité
 
 
 
