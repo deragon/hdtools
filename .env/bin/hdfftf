@@ -15,4 +15,4 @@
 # Scan Terraform (*.tf) files.
 find . -regextype posix-extended -iregex '.*.tf(vars)?$' | \
   egrep -v '(^(\./)*old/)' | \
-  xargs --delimiter '\n' grep --extended-regexp --ignore-case --color "$@"
+  xargs --delimiter '\n' grep --line-number --extended-regexp --ignore-case --color "$@"
