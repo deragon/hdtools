@@ -1767,6 +1767,7 @@ COLORS and ANSI TERMINAL CODES
   ────────────────────────────────────────────────────────────────────────────
 
     figlet TEST    # Display large characters made up of ordinary screen characters.
+    toilet TEST    # Display large characters made up of ordinary screen characters.
     lolcat <file>  # Rainbow coloring effect for text console display
 
 
