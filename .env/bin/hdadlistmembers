@@ -145,8 +145,15 @@ if len(errors) > 0:
 
 
 text =  {
-           "en": { "MembersOfGroups": "Members of group"  },
-           "fr": { "MembersOfGroups": "Membres du groupe" }
+           "en": {
+                    "MembersOfGroups": "Members of group",
+                    "Empty":           "This group is empty"
+                 },
+
+           "fr": {
+                    "MembersOfGroups": "Membres du groupe",
+                    "Empty":           "Ce groupe est vide"
+                 }
         }
 
 
@@ -195,10 +202,15 @@ def showGroupUsers(groupName, indent):
     logger.debug("groupMembers = >>%s<<", groupMembers)
 
 
-    msg=text[language]["MembersOfGroups"]
-    print(f"{indent}{msg}:  {groupName}\n")
-    #print(f"{indent}Members of group:  {groupName}\n")
+    if len(groupMembers) == 0:
+        msg=text[language]["Empty"]
+        print(f"\n{indent}{groupName} - {msg}:\n")
+        return
 
+    msg=text[language]["MembersOfGroups"]
+    print(f"\n{indent}{groupName} - {msg}:\n")
+
+    groupsToExpandInto = []
     for member in groupMembers:
 
         (memberData, exitcode) = runDsCommand(["dsget.exe", "user", member, "-fn", "-ln", "-email"], False)
@@ -218,10 +230,12 @@ def showGroupUsers(groupName, indent):
 
             print(f"{indent}    {firstName} {lastName} ({email})")
         elif exitcode == 87:
-            showGroupUsers(extractCNfromOU(member), "    ")
+            groupsToExpandInto.append(extractCNfromOU(member))
         else:
             logger.error("Failure with exit code #%d:  %s", exitcode, memberData)
 
+    for group in groupsToExpandInto:
+        showGroupUsers(group, indent+"    ")
 
 firstTime = True
 for groupName in args.groupNames:
