@@ -202,6 +202,17 @@ TOOLS
     X, and is made available under the Eclipse Public License.
 
 
+  B-Label (blabel)  https://apz.fi/blabel/
+  ────────────────────────────────────────────────────────────────────────────
+
+    B-Label is a label editor that is known to work with two very common
+    Brother brand USB label printers PT-1230PC and PT-2430PC. It only works on
+    devices that have continuous roll fed media and it won't work with models
+    that print on separate pre-sized stickers.
+
+    Very good.  Works also very well with PTouch PT-2100 printer.
+
+
 
 PANDOC - A UNIVERSAL DOCUMENT CONVERTER
 ══════════════════════════════════════════════════════════════════════════════
