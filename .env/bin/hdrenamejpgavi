@@ -37,5 +37,5 @@ for REPERTOIRE in "${REPERTOIRES[@]}"; do
   find "${REPERTOIRE}" \
     -regextype posix-extended \
     -regex '^.*\.(jpg|gif|mkv|avi|mp4|3gp|svg|svgz|png|ico|webm|webp)$' \
-    -exec chmod a-wx {} \;
+    -exec chmod a-x {} \;
 done
