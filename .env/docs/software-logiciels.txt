@@ -68,7 +68,17 @@ DIAGRAMMES / DESSIN
     Note:  diagrams.net is open source but closed to contributions.
 
 
-  GraphML - http://en.wikipedia.org/wiki/GraphML
+  D2 https://github.com/terrastruct/d2
+  ────────────────────────────────────────────────────────────────────────────
+
+    A modern diagram scripting language that turns text to diagrams (SVG
+    format), like GraphML.
+
+    Quiet good, well supported and actively developed.
+
+
+
+  GraphML - https://en.wikipedia.org/wiki/GraphML
   ────────────────────────────────────────────────────────────────────────────
 
     GraphML is an XML-based file format for graphs. The GraphML file format
@@ -77,6 +87,8 @@ DIAGRAMMES / DESSIN
     syntax and supports the entire range of possible graph structure
     constellations including directed, undirected, mixed graphs, hypergraphs,
     and application-specific attributes.[1]
+
+    You may want to use D2 as an alternative to GraphML.
 
 
   yEd
