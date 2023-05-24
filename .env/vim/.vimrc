@@ -792,21 +792,38 @@ map <esc>xx :silent 1,$!xmllint --format --recover - 2>/dev/null<CR>
 " Date commands
 " ══════════════════════════════════════════════════════════════════════════════
 if($HD_TIMESTAMP_FORMAT_HUMAN != "")
-  let hd_timestamp_format_human = $HD_TIMESTAMP_FORMAT_HUMAN
+  let g:hd_timestamp_format_human = $HD_TIMESTAMP_FORMAT_HUMAN
 else
   " Under Windows's gvim, $HD_TIMESTAMP_FORMAT_HUMAN is not set.
   " We thus hardcode it here.
-  let hd_timestamp_format_human = "%Y-%m-%d %H:%M:%S %Z"
+  let g:hd_timestamp_format_human = "%Y-%m-%d %H:%M:%S %Z"
 endif
 
-map <esc>dd O<C-R>=strftime(hd_timestamp_format_human)<CR>
-map <esc>da O# Added by Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_format_human)<CR><CR>
-map <esc>dc O# Comment by Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_format_human)<CR><CR>
-map <esc>dr O# Created by Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_format_human)<CR><CR>
-map <esc>dm O# Modified by Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_format_human)<CR><CR>
-map <esc>dh O# Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_format_human)<CR><CR>
-map <esc>ds O-- Hans Deragon (hans@deragon.biz), <C-R>=strftime(hd_timestamp_format_human)<CR><CR>
-" dl for "[D]ate in change[Log] file".
+if($HD_USER_NAME_FULL == "")
+  let s:HD_USER_NAME_FULL="Hans Deragon"
+  let s:HD_USER_EMAIL="hans@deragon.biz"
+else
+  let s:HD_USER_NAME_FULL=$HD_USER_NAME_FULL
+  let s:HD_USER_EMAIL=$HD_USER_EMAIL
+endif
+
+let s:HD_USER_ID_FULL=s:HD_USER_NAME_FULL." (".s:HD_USER_EMAIL.")"
+
+" Fetch first character of the comment string, to get the comment character.
+let commentcharacter=split(&commentstring, '%s')[0]
+
+function! HDSignature(prefix)
+  execute "normal! i".g:commentcharacter." ".a:prefix.s:HD_USER_ID_FULL.", ".strftime(g:hd_timestamp_format_human)."\n"
+endfunction
+
+map <esc>dd O<C-R>=strftime(g:hd_timestamp_format_human)<CR>
+
+map <esc>da :call HDSignature("Added by ")<CR>
+map <esc>dc :call HDSignature("Comment by ")<CR>
+map <esc>dr :call HDSignature("Created by ")<CR>
+map <esc>dm :call HDSignature("Modified by ")<CR>
+map <esc>dh :call HDSignature("")<CR>
+map <esc>ds :call HDSignature("--")<CR>
 map <esc>dl I* <C-R>=strftime($HD_TIMESTAMP_FORMAT_CHANGELOG)<CR>, Hans Deragon<CR>
 
 map m1 ddpkA:  J0j
