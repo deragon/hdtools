@@ -81,6 +81,17 @@ EOF
 
 
 
+AWS IAM
+══════════════════════════════════════════════════════════════════════════════
+
+  AWS managed policies
+  ────────────────────────────────────────────────────────────────────────────
+
+  List of all AWS managed policies found at:
+    https://docs.aws.amazon.com/aws-managed-policy/latest/reference/policy-list.html
+
+
+
 AWS CLOUDFORMATION
 ══════════════════════════════════════════════════════════════════════════════
 
