@@ -226,6 +226,33 @@ AWS ROOT ACCOUNT
 
 
 
+KMS - Key Management Service
+══════════════════════════════════════════════════════════════════════════════
+
+  SSE == Server Side Encryption
+
+  SSE-KMS == AWS KMS == CMK (customer master key)
+
+    AWS KMS is replacing the term customer master key (CMK) with AWS KMS key and
+    KMS key. The concept has not changed. To prevent breaking changes, AWS KMS
+    is keeping some variations of this term.
+
+  SSE-S3
+
+    AWS Managed key for S3.
+
+  SSE-C
+
+    Customer-provided encryption keys.
+
+
+  Reading
+  ────────────────────────────────────────────────────────────────────────────
+
+    -  https://s3browser.com/server-side-encryption-types.aspx#sse-kms
+
+
+
 ACRONYMS
 ══════════════════════════════════════════════════════════════════════════════
 
