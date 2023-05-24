@@ -142,14 +142,19 @@ set foldlevel=99
 " ════════════════════════════════════════════════════════════════════
 " CONFIGURING VIM:
 "
-"  Environment variables are accessible by simply calling them
-"  like in bash:  $LS_COLORS, $HDVIM, etc..
+"   Environment variables are accessible by simply calling them
+"   like in bash:  $LS_COLORS, $HDVIM, etc..
 "
-"  Variables can be set:               let VARNAME="something"
-"  Environment variables can be set:  let $VARNAME="something"
+"   Variables can be set:               let VARNAME="something"
+"   Environment variables can be set:  let $VARNAME="something"
 "
-" DO NOT REFER ENVIRONMENT VARIABLES WITHIN {}.  It seams
-" to be buggy with Vim 7.1.
+"   To use and environment variable in a mapping (imap, etc...), you
+"   need to suround it with "<C-R>=$varname<CR>".  Search for "<C-R>" within
+"   this file for examples.
+"   See:  https://vi.stackexchange.com/questions/21825/how-to-insert-text-from-a-variable-at-current-cursor-position
+"
+"   DO NOT REFER ENVIRONMENT VARIABLES WITHIN {}.  It seams
+"   to be buggy with Vim 7.1.
 "
 " ════════════════════════════════════════════════════════════════════
 " GPG:
