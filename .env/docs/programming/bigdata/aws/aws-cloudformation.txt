@@ -32,6 +32,25 @@ USE OF WILDCARDS '*' WITH IAM / PRINCIPALS
 
 
 
+AWS CLOUDFORMATION LIMITATION / SHORTCOMINGS
+══════════════════════════════════════════════════════════════════════════════
+
+  64 CHARACTERS LIMIT FOR PATH AND ROLE NAME
+  ────────────────────────────────────────────────────────────────────────────
+
+    For roles, always set 'Path: /' in your stack unless your path and role
+    name always remain below 64 characters.  The reason for doing so follows:
+
+    As of 2023-01-01, from: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_permissions-to-switch.html
+
+      If you create the role programmatically, you can add a Path of up to 512
+      characters and a RoleName. The role name can be up to 64 characters
+      long.  HOWEVER, TO USE A ROLE WITH THE SWITCH ROLE FEATURE IN THE AWS
+      MANAGEMENT CONSOLE, THE COMBINED PATH AND ROLENAME CANNOT EXCEED 64
+      CHARACTERS.
+
+
+
 ADD EXTRA PRINCIPAL IN ONLY SOME ENVIRONMENTS
 ══════════════════════════════════════════════════════════════════════════════
 
