@@ -21,6 +21,7 @@ usage()
 
 Usage:  ${SCRIPT_NAME} [-h] <file>+
 
+  -s  Diff on staged changed.
   -h  Display this help text.
 "
 }
@@ -31,8 +32,10 @@ Usage:  ${SCRIPT_NAME} [-h] <file>+
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "h" OPTCMD; do
+OPTIONS=""
+while getopts "sh" OPTCMD; do
   case "${OPTCMD}" in
+    "s")    OPTIONS="${OPTIONS} --staged";;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -42,6 +45,7 @@ IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
                           # we separate FILES properly.
 
 ARGS=("$@") # If you want the number of elements of $@, use $#
+
 
 # VALIDATION
 # ════════════════════════════════════════════════════════════════════
@@ -59,4 +63,4 @@ if [ ! -z "${ERRORS}" ]; then
   exit 1
 fi
 
-git difftool --tool meld $@ &
+eval git difftool ${OPTIONS} --tool meld "$@" &
