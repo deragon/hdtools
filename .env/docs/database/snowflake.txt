@@ -117,7 +117,7 @@ SQL
       from fake_rows;
 
 
-  GROUPBY MONTH
+  GROUP BY MONTH
   ────────────────────────────────────────────────────────────────────────────
 
     -- Number of queries per months across the whole account.
@@ -132,7 +132,7 @@ SQL
         2020-01     1572
 
 
-  Groupby null
+  GROUP BY NULL
   ────────────────────────────────────────────────────────────────────────────
 
     select
