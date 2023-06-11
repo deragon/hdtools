@@ -1,6 +1,37 @@
 SNOWFLAKE
 
 
+LIKE
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://docs.snowflake.com/en/sql-reference/functions/like
+
+  - SQL wildcards are supported in pattern:
+
+    - An underscore (_) matches any single character.
+
+    - A percent sign (%) matches any sequence of zero or more characters.
+
+    - There is no default escape character.
+
+  - Wildcards in pattern include newline characters (\n) in subject as matches.
+
+  - LIKE pattern matching covers the entire string. To match a sequence anywhere within a string, start and end the pattern with %.
+
+  - NULL does not match NULL. In other words, if the subject is NULL and the pattern is NULL, that is not considered a match.
+
+    'SOMETHING%' LIKE 'A-_%' ESCAPE '-';
+
+  If you use the backslash as an escape character, then you must specify
+  escape the backslash in the ESCAPE clause. For example, the following
+  command specifies that the escape character is the backslash, and then
+  uses that escape character to search for ‘%’ as a literal (without the
+  escape character, the ‘%’ would be treated as a wildcard):
+
+    'SOMETHING%' LIKE '%\\%%' ESCAPE '\\';
+
+
+
 GRANT
 ══════════════════════════════════════════════════════════════════════════════
 
