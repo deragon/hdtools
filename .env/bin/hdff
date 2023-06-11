@@ -16,4 +16,4 @@ FILE_PATTERN="${1}"
 shift
 
 set -x
-find . -iname "${FILE_PATTERN}" -type f -print0 | xargs --null fgrep --color "$@"
+find . -iname "${FILE_PATTERN}" -type f -print0 | xargs --null grep --fixed-strings --color --line-number "$@"
