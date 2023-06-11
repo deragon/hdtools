@@ -9,7 +9,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
   batch                      -> lot / traitement par lots
-  stream                     -> évenementiel / flux continu / lecture en continu/ lecture en transit / diffusion en continu
+  stream                     -> évènementiel / flux continu / lecture en continu/ lecture en transit / diffusion en continu
   troubleshooting            -> dépannage / résolution de problèmes / diagnostic des défaillances
   backdoor                   -> porte dérobée
   credentials                -> données de connexion
@@ -33,11 +33,11 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   repository                 -> dépôt
   scan                       -> balayage / analyse
   workaround                 -> contournement / solution de contournement
-  revert                     -> Retour / revenir
+  revert / rollback          -> retour en arrière / revenir / remise à la valeur initiale, originale / annulation
   workflow                   -> flux de travail
   business data              -> donnée métier
-  out of scope               -> hors [sujet|champ|portée], en-dehors du périmètre
-  scale                      -> s'adapte, ce met à l'échèlle, s'étendre
+  out of scope               -> hors [sujet|champ|portée], en dehors du périmètre
+  scale                      -> s'adapte, ce met à l'échelle, s'étendre
   out of the box             -> clé en main
   customisation              -> personnalisation
   foreign key                -> clé étrangère
@@ -56,6 +56,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   dashboard                  -> tableau de bord
   to map                     -> faire la correspondance, assignation
   scalability                -> extensible, évolutivité, scalabilité, adaptable, adaptabilité, modularité
+  array                      -> liste, tableau
 
 
 
