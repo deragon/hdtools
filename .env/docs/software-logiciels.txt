@@ -500,11 +500,17 @@ DIVERS
 OUTLOOK
 ══════════════════════════════════════════════════════════════════════════════
 
-  Changement des Rappels de réunions, du défaut de 15 minutes à 3 heures par
-  exemple.
+  Change meeting reminders from the default 15 minutes to 3 hours:
+  ────────────────────────────────────────────────────────────────────────────
 
-  File / Options / Calendrier / ↴
-    Section 'Option du calendrier' / Rappels par défaut:
+    File / Options / Calendrier / ↴
+      Section 'Option du calendrier' / Rappels par défaut:
+
+
+  Convert .msg files to .eml (text)
+  ────────────────────────────────────────────────────────────────────────────
+
+    msgconvert "${FILENAMEPREFIX}.msg"  # Generates "${FILENAMEPREFIX}.eml"
 
 
 
