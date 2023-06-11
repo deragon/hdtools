@@ -246,7 +246,9 @@ import json
 with open('file.json') as fd:
     json_dict=json.load(fd)
 
-json_dict=json.loads('{ "test": "Hi there." }') # Load json from str.
+json_dict   = json.loads('{ "test": "Hi there." }') # Load json from str.
+json_string = json.dumps(json_dict, ensure_ascii= False, indent = 2)
+
 
 
 # MISCELLANEOUS
