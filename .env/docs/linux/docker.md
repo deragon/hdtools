@@ -1,8 +1,6 @@
 # COMMON COMMANDS
 
     docker ps # List all containers running.
-    docker ps # List all containers running.
-    docker ps # List all containers running.
 
     docker images --all # List all images available locally.
     # Same command as above, but with Created date shown as exact date.
@@ -287,9 +285,10 @@ WARNING:  This will remove:
 - all networks not used by at least one container
 - all images without at least one container associated to them
 
-    docker system prune
-
-
+    # Doc:  https://docs.docker.com/engine/reference/commandline/system_prune/
+    docker system prune --all --force 
+      # --all, -a      Remove all unused images not just dangling ones
+      # --force, -f    Do not prompt for confirmation
 
 # Copyright
 
