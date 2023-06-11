@@ -142,6 +142,18 @@ SQL
     group by 1;
 
 
+  PERCENTAGE OF TOTAL USING GROUP BY WITH COUNT() AND SUM()
+  ────────────────────────────────────────────────────────────────────────────
+
+    show users
+    set LAST_QUERY_ID=(select last_query_id());
+    select count(*) as Number,
+           round(Number*100/sum(number) over(), 2) as Percentage,
+           "default_role"
+      from table(result_scan($LAST_QUERY_ID))
+      group by "default_role" order by number desc;
+
+
 
 RESULT_SCAN
 ══════════════════════════════════════════════════════════════════════════════
