@@ -1763,12 +1763,25 @@ COLORS and ANSI TERMINAL CODES
       https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 
 
-  Fun commands
+  Banner commands
   ────────────────────────────────────────────────────────────────────────────
 
     figlet TEST    # Display large characters made up of ordinary screen characters.
     toilet TEST    # Display large characters made up of ordinary screen characters.
     lolcat <file>  # Rainbow coloring effect for text console display
+
+    Fonts
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Fonts are stored at:  /usr/share/figlet
+      To print out an example of all fonts, run:
+
+        ls -1 /usr/share/figlet | sed -rn 's%([^\/]+)+\.tlf%\1%gp' | xargs -n 1 -I{} toilet -f {} "{}"
+
+      pagga
+      ░█▀█░█▀█░█▀▀░█▀▀░█▀█
+      ░█▀▀░█▀█░█░█░█░█░█▀█
+      ░▀░░░▀░▀░▀▀▀░▀▀▀░▀░▀
 
 
   TrueColor
