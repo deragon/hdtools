@@ -89,7 +89,7 @@ fi
 BRANCH_CMP="${BRANCHES[0]}"
 
 # Get list of all branches but the one we compare with.
-declare -a BRANCHES=($(git branch | sed -r "s/^..//g;/^${BRANCH_CMP}$/d"))
+declare -a BRANCHES=($(git branch | sed -r "s/^..//g" | grep -v "${BRANCH_CMP}"))
 
 for BRANCH in ${BRANCHES[@]}; do
   printf "\n${BRANCH_CMP} vs ${BRANCH}\n"
