@@ -286,9 +286,10 @@ WARNING:  This will remove:
 - all images without at least one container associated to them
 
     # Doc:  https://docs.docker.com/engine/reference/commandline/system_prune/
-    docker system prune --all --force 
+    docker system prune --all --force --volumes
       # --all, -a      Remove all unused images not just dangling ones
       # --force, -f    Do not prompt for confirmation
+      # --volumes      Prune volumes too
 
 # Copyright
 
