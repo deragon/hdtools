@@ -32,7 +32,7 @@ let g:colors_name = "hdblue"
 
 " Cursor
 " ══════════════════════════════════════════════════════════════════════════════
-" 
+"
 "  The color of the terminal cursor cannot be changed here.  The parameters
 "  'cterm*' are being ignored.
 "
@@ -80,16 +80,15 @@ hi WarningMsg   ctermfg=cyan
 hi Error        guifg=red       guibg=darkBlue  gui=underline
 hi Error        ctermfg=white   ctermbg=red
 
-hi Todo         guifg=black     guibg=orange
-hi Todo         ctermfg=black   ctermbg=darkYellow
+hi Todo         guifg=white     guibg=red    gui=bold   ctermfg=white   ctermbg=red
 hi Search       guifg=black     guibg=orange
 hi Search       ctermfg=black   ctermbg=darkYellow
 hi IncSearch    guifg=black     guibg=yellow
 hi IncSearch    ctermfg=black   ctermbg=darkYellow
 hi LineNr       guifg=pink      ctermfg=lightMagenta
-hi title        guifg=white gui=bold    cterm=bold
+hi title        guifg=white     gui=bold    cterm=bold
 
-hi StatusLineNC gui=NONE      guifg=black guibg=blue
+hi StatusLineNC gui=NONE        guifg=black guibg=blue
 hi StatusLineNC ctermfg=black   ctermbg=blue
 hi StatusLine   gui=bold        guifg=cyan  guibg=blue
 hi StatusLine   ctermfg=cyan    ctermbg=blue
