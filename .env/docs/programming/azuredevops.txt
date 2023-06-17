@@ -1,0 +1,67 @@
+AZURE-CLI
+══════════════════════════════════════════════════════════════════════════════
+
+  INSTALLATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Read:  https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt
+
+
+  EXTENSIONS INSTALLATION / UPDATE
+  ────────────────────────────────────────────────────────────────────────────
+
+    Once Azure-CLI is install, do install and/or update the following extensions
+
+      az extension add     --name azure-devops
+
+        or
+
+      az extension update  --name azure-devops
+
+
+  USAGE
+  ────────────────────────────────────────────────────────────────────────────
+
+    To create a Azure DevOps session in your terminal, run:
+
+      aws devops login
+
+    It might ask you for a token.  This is the PAT token you must provide.  See below.
+
+
+    PAT (PERSONAL ACCESS TOKEN)
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Create a PAT (Personal Access Token) by reading:
+
+          https://learn.microsoft.com/en-us/azure/devops/cli/log-in-via-pat?view=azure-devops&tabs=windows
+
+
+      But to avoid running 'aws devops login', set the following in "${HOME}/.bashrc":
+
+        export AZURE_DEVOPS_EXT_PAT="<PAT here>"
+
+
+  LIMITATIONS
+  ────────────────────────────────────────────────────────────────────────────
+
+    As of 2023-06-15, it is impossible to call specifics stages with
+    Azure-CLI.  All stages are always started.  The workaround is to use the
+    API.
+
+    See https://github.com/Azure/azure-cli-extensions/issues/1717
+
+    API documentation for stages:  https://learn.microsoft.com/en-us/rest/api/azure/devops/build/stages/update?view=azure-devops-rest-6.0
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
