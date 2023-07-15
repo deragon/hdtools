@@ -22,6 +22,8 @@ SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
 SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
 SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
 
+
+
 usage()
 {
   echo -e "
@@ -32,7 +34,8 @@ Usage:  ${SCRIPT_NAME} [-l|-e] [-f] [-n <# of DIRECTORIES>] [-m <maxdepth>] [-h]
   -l  latest (default)
   -e  earliest
   -m  <maxdepth> (default ∞)
-  -f  Show only file names, one per line.
+  -f  Format of stats
+  -p  Show only paths, one per line
   -n  Number of DIRECTORIES to show (default 20)
       Set to 0 for NO LIMITS.
   -h  Display this help text.
@@ -41,20 +44,37 @@ Usage:  ${SCRIPT_NAME} [-l|-e] [-f] [-n <# of DIRECTORIES>] [-m <maxdepth>] [-h]
 
 
 
-# ARGUMENT PARSING
+# DEFAULTS
 # ════════════════════════════════════════════════════════════════════
-
 NUMBER="20"
 TYPE="latest"
 FILENAMES_ONLY_FILTER=""
 MAXDEPTH="255"
 
+# 'stat' format
+# ────────────────────────────────────────────────────────────────────
+#
+#   %Y     time of last data modification, seconds since Epoch.
+#
+#   %y     time of last data modification, human-readable.
+#
+#   %s     total size, in bytes.
+#
+#   %n     file name (including path)
+FORMAT='%y %12s "%n"'
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "lfen:m:h" OPTCMD; do
+while getopts "lf:pen:m:h" OPTCMD; do
   case "${OPTCMD}" in
     "l")    TYPE="latest";;
-    "f")    FILENAMES_ONLY_FILTER="| cut -d ' ' -f4-";;
+    "p")    FORMAT="%n";;
+    "f")    FORMAT="${OPTARG}";;
     "e")    TYPE="earliest";;
     "n")    NUMBER="${OPTARG}";;
     "m")    MAXDEPTH="${OPTARG}";;
@@ -88,7 +108,7 @@ if [ ! -z "${ERRORS}" ]; then
   exit 1
 fi
 
-(( NUMBER == 0 )) && NUMBER=2147483648 # 2**31, max interger
+(( NUMBER == 0 )) && NUMBER=2147483648 # 2**31, maximum of an integer.
 
 
 # PROCESSING
@@ -100,22 +120,19 @@ else
   HEADTAIL_CMD="tail"
 fi
 
-# 'stat' format used:
+# Algorithm
+# ────────────────────────────────────────────────────────────────────────────
 #
-#   %y     time of last data modification, human-readable
+#   The format is prepended with '%Y' witch prints out the seconds since
+#   Epoch.  With the following 'sort -nr', the files are then sorted from most
+#   recent to least.
 #
-#   %Y     time of last data modification, seconds since Epoch
-#
-#   %s     total size, in bytes
-#
-# The 1st 'cut' command remove the first field which contains the timestamp in
-# seconds which was used to sort the list, but that is useless to display.
-#
-# The 2nd 'cut" removes the milliseconds and timezone, useless data.
+#   The following 'sed' command removes the added seconds since Epoch from the
+#   output and if "${FORMAT}" includes human-readable dates, nanoseconds and
+#   the timezone are removed from them.
 eval "
   find \"${DIRECTORIES[@]}\" -maxdepth ${MAXDEPTH} -type f -print0 |
-  xargs -0 stat --format '%Y:%y %12s \"%n\"' |
+  xargs --null stat --format '%Y|${FORMAT}' |
   sort -nr |
-  cut -d: -f2- |
-  cut --complement -c 20-35 |
-  ${HEADTAIL_CMD} -n "${NUMBER}" ${FILENAMES_ONLY_FILTER}"
+  sed -r 's/.*?\|//g;s/([[:digit:]]+:[[:digit:]]+:[[:digit:]]+)\.[[:digit:]]+ .[[:digit:]]+/\1/g' |
+  ${HEADTAIL_CMD} -n ${NUMBER}"
