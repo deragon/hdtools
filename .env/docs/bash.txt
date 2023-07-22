@@ -1460,12 +1460,6 @@ MISC USEFUL STUFF
 
     cat text.txt | egrep --color "<stringtomatch>|$"
 
-  - Convert ANSI term color codes to html:
-
-      wget https://github.com/pixelb/scripts/blob/master/scripts/ansi2html.sh
-      chmod a+x ansi2html.sh
-      hdtermcolor-256colors.pl | ansi2html.sh
-
 
 
 STARTUP FILES LOADED
@@ -1904,6 +1898,12 @@ COLORS and ANSI TERMINAL CODES
 
         sudo apt install colorized-logs             # Install ansi2txt.
         cat "<FILE WITH ANSI COLORS>" | ansi2txt    # Remove color codes.
+
+    - Convert ANSI term color codes to html:
+
+        wget https://github.com/pixelb/scripts/blob/master/scripts/ansi2html.sh
+        chmod a+x ansi2html.sh
+        hdtermcolor-256colors.pl | ansi2html.sh
 
 
     CAT command and colors
