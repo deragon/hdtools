@@ -2,7 +2,7 @@ DTO & IntelliJ IDEA:  Plugin DTO GENERATOR exists!  (https://plugins.jetbrains.c
 
 DAO:  Data access object
 
-    De:  http://en.wikipedia.org/wiki/Data_access_object
+    From:  http://en.wikipedia.org/wiki/Data_access_object
 
     Data access object (DAO) is an object that provides an abstract interface
     to some type of database or other persistence mechanism. By mapping
@@ -18,7 +18,7 @@ DAO:  Data access object
 
 DTO:  Data transfer object
 
-    De:  http://en.wikipedia.org/wiki/Data_Transfer_Object
+    From:  http://en.wikipedia.org/wiki/Data_Transfer_Object
 
     Data transfer object (DTO)[1][2] is an object that carries data between
     processes. The motivation for its use has to do with the fact that
@@ -69,10 +69,10 @@ DTO:  Data transfer object
 
 DDO:  Dynamic data objects
 
-  Cet acroynyme est spécifique à IBM.  Ça ne semble pas être utilisé à
-  travers l'industrie.  Voici la documentation d'IBM:
+  This acronym is specific to IBM. It doesn't seem to be used through the
+  industry. Here is IBM's documentation:
 
-    http://publib.boulder.ibm.com/infocenter/cmx/v8r3m0/index.jsp?topic=%2Fcom.ibm.cmx.doc%2Fcmbapmst04.htm
+    https://www.ibm.com/docs/en/content-manager/latest?topic=concepts-dynamic-data-objects-ddo
 
     DDO is a content server-neutral representation of an object's persistent
     data. Its purpose is to contain all of the data for a single persistent
