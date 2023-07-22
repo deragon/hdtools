@@ -7,6 +7,21 @@ SAMBA SERVER
     User shares are located at:  /var/lib/samba/usershares
 
 
+  Test Samba server
+  ────────────────────────────────────────────────────────────────────────────
+
+    Ports 137-139 are for NetBios/Name resolution.  Without it you will have
+    to access machines by DNS or IP address opposed to NetBIOS name.  Thus,
+    port 445 is the only port required to be open usually, as DNS/IP is good
+    enough for most scenarios.
+
+    HOST=""
+    tp ${HOST}:137 \
+       ${HOST}:138 \
+       ${HOST}:139 \
+       ${HOST}:445
+
+
 
 COMMANDS
 ══════════════════════════════════════════════════════════════════════════════
