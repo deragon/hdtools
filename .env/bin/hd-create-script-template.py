@@ -31,6 +31,9 @@ scriptPathAbsParent=os.path.dirname(scriptPathAbs)
 
 scriptNameAndPathAbs=scriptPathAbs + os.sep + scriptName
 
+iso8601Human    = time.strftime("%Y-%m-%d %H:%M:%S")
+iso8601Filename = time.strftime("%Y%m%dT%H%M%S")
+
 try:
     scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
 except IndexError:
@@ -150,7 +153,7 @@ else:
 # logging.debug("Test of logging %s", "here. :)")
 logging.basicConfig(
     format='%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt=iso8601Human)
 
 # Creating a logger with the script's name and setting it to a specific log
 # level.
@@ -420,8 +423,8 @@ def mainwrapper():
         timeExecutedHours, timeExecutedRemainder = divmod(timeExecuted.seconds, 3600)
         timeExecutedMinutes, timeExecutedSeconds = divmod(timeExecutedRemainder, 60)
 
-        timeStartString = timeStart.strftime("%Y-%m-%d %H:%M:%S")
-        timeEndString   = timeEnd.strftime("%Y-%m-%d %H:%M:%S")
+        timeStartString = timeStart.strftime(iso8601Human)
+        timeEndString   = timeEnd.strftime(iso8601Human)
 
         print("\nStarted:   " + timeStartString)
         print("Ended:     " + timeEndString)
@@ -439,9 +442,6 @@ def mainwrapper():
 
 
 def main():
-
-    iso8601Human    = time.strftime("%Y-%m-%d %H:%M:%S")
-    iso8601Filename = time.strftime("%Y%m%dT%H%M%S")
 
     # completedProcess = subprocess.run(["ls", "-l", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
     # print(completedProcess.stdout.decode('utf-8').rstrip())
