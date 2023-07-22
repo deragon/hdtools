@@ -82,34 +82,40 @@ errors=""
 
 port = None
 pattern = re.compile("(.*?//)*([^:]+)(?::*(\d+))*(/.*)*$")
-matches = pattern.match(args.hostport[0])
-if matches != None:
-    protocol = matches.group(1)
-    hostname = matches.group(2)
-    port     = matches.group(3)
-else:
-    protocol = None
-    hostname = args.hostport[0]
-    port     = None
 
-if not port:
-    try:
-        port=args.hostport[1]
-    except IndexError:
-        if protocol == None:
-            errors += "\n  - You failed to provide a port number."
-        elif "http:" in protocol:
-            port=80
-        elif "https:" in protocol:
-            port=443
-        else:
-            errors += "\n  - You failed to provide a port number."
 
-if port:
-    try:
-        port = int(port)
-    except ValueError:
-      errors += "\n  - The port must be an integer.  You provided '" + str(port) + "'"
+def hostportparser(hostport):
+    matches = pattern.match(hostport)
+    if matches != None:
+        protocol = matches.group(1)
+        hostname = matches.group(2)
+        port     = matches.group(3)
+    else:
+        protocol = None
+        hostname = args.hostport[0]
+        port     = None
+
+    if not port:
+        try:
+            port=args.hostport[1]
+        except IndexError:
+            if protocol == None:
+                errors += "\n  - You failed to provide a port number."
+            elif "http:" in protocol:
+                port=80
+            elif "https:" in protocol:
+                port=443
+            else:
+                errors += "\n  - You failed to provide a port number."
+
+    if port:
+        try:
+            port = int(port)
+        except ValueError:
+          errors += "\n  - The port must be an integer.  You provided '" + str(port) + "'"
+
+    return (hostname, port)
+
 
 if args.timeout:
     try:
@@ -124,28 +130,35 @@ if len(errors) > 0:
 
 # Main
 # ════════════════════════════════════════════════════════════════════════════
-with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-    sock.settimeout(args.timeout)  # Seconds.
 
-    if not args.quiet:
-        print("Testing:  " + hostname + ":" + str(port))
+exitcode=0
 
-    if sock.connect_ex((hostname, port)) == 0:
+for hostport in args.hostport:
+    hostname, port = hostportparser(hostport)
+
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+        sock.settimeout(args.timeout)  # Seconds.
+
         if not args.quiet:
-            print("Port is open")
+            print(f"Testing:  {hostname}:{port} -> ", end="", flush=True)
 
-        # Experiment sending stdin like netcat (nc) would do.
-        # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
-        # that HTTPS is expected and this code will not work.
-        # See:  https://stackoverflow.com/questions/31599634/malformed-http-response-with-docker-private-registry-v2-behind-an-nginx-proxy
+        if sock.connect_ex((hostname, port)) == 0:
+            if not args.quiet:
+                print("✓ Open")
 
-        # print(sock.sendmsg(sys.stdin.buffer))
-        # returnTuple=sock.recvmsg(2**16, 2**16)
-        # print(returnTuple)
-        # print(returnTuple[0].decode('utf-8'))
+            # Experiment sending stdin like netcat (nc) would do.
+            # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
+            # that HTTPS is expected and this code will not work.
+            # See:  https://stackoverflow.com/questions/31599634/malformed-http-response-with-docker-private-registry-v2-behind-an-nginx-proxy
 
-        sys.exit(0)
-    else:
-        if not args.quiet:
-            print("Port is not open")
-        sys.exit(1)
+            # print(sock.sendmsg(sys.stdin.buffer))
+            # returnTuple=sock.recvmsg(2**16, 2**16)
+            # print(returnTuple)
+            # print(returnTuple[0].decode('utf-8'))
+
+        else:
+            if not args.quiet:
+                print("✘ Closed")
+            exitcode+=1
+
+sys.exit(exitcode)
