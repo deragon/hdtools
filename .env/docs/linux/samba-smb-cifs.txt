@@ -1,0 +1,95 @@
+SAMBA SERVER
+══════════════════════════════════════════════════════════════════════════════
+
+  User shares
+  ────────────────────────────────────────────────────────────────────────────
+
+    User shares are located at:  /var/lib/samba/usershares
+
+
+
+COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  - systemctl start   smbd.service
+  - systemctl restart smbd.service
+  - systemctl stop    smbd.service
+
+  - sudo pdbedit -L -v  # List all users
+
+
+
+CIFS VS SMB
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://www.varonis.com/blog/cifs-vs-smb/
+
+  Conclusion:  USE SMB, NOT CIFS (which is an old dialect of SMB)
+
+  SMB
+
+    So what is SMB? SMB stands for “Server Message Block.” It’s a file sharing
+    protocol that was invented by IBM and has been around since the
+    mid-eighties. Since it’s a protocol (an agreed upon way of communicating
+    between systems) and not a particular software application, if you’re
+    troubleshooting, you’re looking for the application that is said to
+    implement the SMB protocol.
+
+    The SMB protocol was designed to allow computers to read and write files
+    to a remote host over a local area network (LAN). The directories on the
+    remote hosts made available via SMB are called “shares.”
+
+
+  CIFS
+
+    CIFS stands for “Common Internet File System.” CIFS is a dialect of SMB.
+    That is, CIFS is a particular implementation of the Server Message Block
+    protocol, created by Microsoft.
+
+
+  CIFS vs SMB
+
+    Most people, when they use either SMB or CIFS, are talking about the same
+    exact thing. The two are interchangeable not only in a discussion but also
+    in application – i.e., a client speaking CIFS can talk to a server
+    speaking SMB and vice versa. Why? Because CIFS is a form of SMB.
+
+    While they are the same top level protocol, there are still differences in
+    implementation and performance tuning (hence the different names).
+    Protocol implementations like CIFS vs SMB often handle things like file
+    locking, performance over LAN/WAN, and mass modification of file
+    differently.
+
+
+  CIFS vs SMB: Which One Should I Use?
+
+    In this day and age, you should always use the acronym SMB.  I know what
+    you’re thinking – “but if they’re essentially the same thing, why should I
+    always use SMB?”
+
+    Two reasons:
+
+    1.) The CIFS implementation of SMB is rarely used these days. Under the
+        covers, most modern storage systems no longer use CIFS, they use SMB 2
+        or SMB 3. In the Windows world, SMB 2 has been the standard as of
+        Windows Vista (2006) and SMB 3 is part of Windows 8 and Windows Server
+        2012.
+
+    2.) CIFS has a negative connotation amongst pedants. SMB 2 and SMB 3 are
+        massive upgrades over the CIFS dialect, and storage architects who are
+        near and dear to file sharing protocols don’t appreciate the misnomer.
+        It’s kind of like calling an executive assistant a secretary.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
