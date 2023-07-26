@@ -1,0 +1,117 @@
+USEFUL COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  xinput list
+  xinput list-props "SynPS/2 Synaptics TouchPad"
+
+
+
+POINTING STICK / TRACKPOINT ON HP ELITEBOOK 9470M
+══════════════════════════════════════════════════════════════════════════════
+
+  Set the acceleration speed between -1 and 1.  1 being the most
+  sensitive.  Still, on a 9470m, it is not sensitive enough.
+
+  xinput list-props "PS/2 Generic Mouse"  # Safe, list all properties
+
+  # Set acceleration to maximum.  Still not enough though.
+  xinput --set-prop "PS/2 Generic Mouse" "libinput Accel Speed" 1
+
+
+
+TOUCHPAD DOUBLE CLICK ISSUE (XINPUT / UBUNTU >=19.04)
+══════════════════════════════════════════════════════════════════════════════
+
+  On some latops, the touchpad is soo close to the buttons that one accidently
+  hits the touchpad when clicking on the button.  That often registers as a
+  unwanted double click.
+
+  The fix is to simply reduce the area of sensitivity of the touchpad.
+  The following command does that.
+
+  synclient AreaTopEdge=2000  # HP Elitebook Folio 9470m
+
+  To see current settings, type:  synclient
+
+  See:
+
+    https://ubuntuforums.org/showthread.php?t=1386578
+    ftp://www.x.org/pub/X11R7.5/doc/man/man4/synaptics.4.html
+
+
+
+  PERMANENT SOLUTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Simply copy the following file under /usr/share/X11/xorg.conf.d:
+
+      ${HOME}/.hans.deragon/.env/bin/newcomputer/install/usr/share/X11/xorg.conf.d/71-synaptics-hansderagon.conf
+
+    Hans Deragon's new computer installation script takes care of this.
+
+
+  TROUBLESHOOTING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Couldn't find synaptics properties. No synaptics driver loaded?
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+
+
+OLD - TOUCHPAD DOUBLE CLICK ISSUE (BEFORE XINPUT / UBUNTU 19.04)
+══════════════════════════════════════════════════════════════════════════════
+
+  On some latops, the touchpad is soo close to the buttons that one accidently
+  hits the touchpad when clicking on the button.  That often registers as a
+  unwanted double click.
+
+  The fix is to simply reduce the area of sensitivity of the touchpad.
+  The following command does that.
+
+  synclient AreaTopEdge=1500  # HP Elitebook Folio 9470m
+
+  To see current settings, type:  synclient
+
+  See:
+
+    https://ubuntuforums.org/showthread.php?t=1386578
+    ftp://www.x.org/pub/X11R7.5/doc/man/man4/synaptics.4.html
+
+
+
+  PERMANENT SOLUTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Simply copy the following file under /usr/share/X11/xorg.conf.d:
+
+      ${HOME}/.hans.deragon/.env/bin/newcomputer/install/usr/share/X11/xorg.conf.d/71-synaptics-hansderagon.conf
+
+    Hans Deragon's new computer installation script takes care of this.
+
+
+  TROUBLESHOOTING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Couldn't find synaptics properties. No synaptics driver loaded?
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+
+
+DEBOUNCING A MOUSE
+══════════════════════════════════════════════════════════════════════════════
+
+  xinput list
+  xinput list-props 11  # ← ────────────── ↴
+  xinput --set-prop --type=int --format=32 11 285 100 # 100 is the delay is ms
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
