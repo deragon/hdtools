@@ -16,27 +16,6 @@ ONLINE RESOURCES
 
 
 
-À LIRE
-══════════════════════════════════════════════════════════════════════════════
-
-  Please, do not use snap into UBUNTU, it’s too early
-  https://discourse.ubuntu.com/t/please-do-not-use-snap-into-ubuntu-its-too-early/11206/7
-
-
-  Archive version instable » Nouveautés dans Eoan
-  https://forum.ubuntu-fr.org/viewtopic.php?id=2039864&p=6
-
-
-  Call for testing: chromium-browser deb to snap transition
-  https://discourse.ubuntu.com/t/call-for-testing-chromium-browser-deb-to-snap-transition/11179/222
-
-
-
-BUGS
-══════════════════════════════════════════════════════════════════════════════
-
-  - https://forum.snapcraft.io/t/request-auto-connection-of-removable-media-for-chromium/11903/5
-
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
