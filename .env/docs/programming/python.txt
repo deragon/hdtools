@@ -935,21 +935,50 @@ PIP / MODULES/PACKAGES DOWNLOADS
 PROJECT CREATION
 ══════════════════════════════════════════════════════════════════════════════
 
-  python -m pip install
-  python -m pip install virtualenv
-  python -m pip install virtualenvwrapper
+  Good read on which is the best package to create a virtual environment:
 
-  # Note:  Dans "${HOME}/.hans.deragon/.env/env.gen.noarch.bash",
-  # 'source virtualenvwrapper.sh' est déjà exécuté, donc il n'est pas
-  # nécessaire de le faire manellement.
-  source <PATH TO...>/virtualenvwrapper.sh
+    - https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe
 
-  mkvirtualenv env1
 
-  workon # List all available environment
-  workon env1
+  Virtualenv
+  ────────────────────────────────────────────────────────────────────────────
 
-  echo $VIRTUAL_ENV # Show directory where the environment lies.
+    Virtualenv is better than venv.
+    For reasons, see https://virtualenv.pypa.io/en/latest/
+
+    python -m pip install
+    python -m pip install virtualenv
+    python -m pip install virtualenvwrapper
+
+    # Note:  Dans "${HOME}/.hans.deragon/.env/env.gen.noarch.bash",
+    # 'source virtualenvwrapper.sh' est déjà exécuté, donc il n'est pas
+    # nécessaire de le faire manellement.
+    source <PATH TO...>/virtualenvwrapper.sh
+
+    mkvirtualenv env1
+
+    workon # List all available environment
+    workon env1
+
+    echo $VIRTUAL_ENV # Show directory where the environment lies.
+
+
+  venv (use Virtualenv above, it is better)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Native Python 3 solution, but less good than virtualenv.
+
+    # Created the virtual environment.
+    python -m venv "${HOME}/CDP.PDATA.venv"
+
+    # Activate virtual environment.
+    source "${HOME}/CDP.PDATA.venv/bin/activate"
+
+    # Installation all the project dependencies in the virtual environment.
+    # --editable indicate however that the source code in the current project
+    #  is to be used instead of packaging the project and
+
+    pip install --editable .
 
 
   PACKAGING
@@ -1055,3 +1084,4 @@ READING - DOCUMENTATION - CHEAT - TIPS
 █     https://www.gnu.org/licenses/gpl-3.0.en.html
 █
 █ ─────────────────────────────────────────────────── Copyright Notice ─
+
