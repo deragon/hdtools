@@ -23,6 +23,16 @@ This script is used to call gvim, if available, or vim otherwise.  Under
 Windows, the proper gvim.exe will be called with any file passed as an
 argument converted to Windows format so gvim.exe can find it.
 """
+
+vimType = "gvim"
+
+if "--hdgvim" in sys.argv:
+    sys.argv.remove("--hdgvim")
+    vimType = "gvim"
+if "--hdvim" in sys.argv:
+    sys.argv.remove("--hdvim")
+    vimType = "vim"
+
 try:
     gvim_from_env = [ os.environ['HD_GVIM'] ]
 except:
@@ -37,16 +47,16 @@ try:
 except:
     display = None
 
-if display is None:
+if display is None or vimType == "vim":
     # If there is no DISPLAY, then there is no point in calling gVim.
     gvim     = []
     gvimdiff = []
     gvim_from_env = []
 else:
-    gvim     = [ "gvim", "gvim.exe" ]
+    gvim     = [ "gvim"    , "gvim.exe" ]
     gvimdiff = [ "gvimdiff", "gvimdiff.exe" ]
 
-vim      = [ "vim",  "vim.exe"  ]
+vim      = [ "vim",      "vim.exe"  ]
 vimdiff  = [ "vimdiff",  "vimdiff.exe"  ]
 
 if "diff" in gvim_from_env:
