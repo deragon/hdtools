@@ -23,25 +23,12 @@ This script is used to call gvim, if available, or vim otherwise.  Under
 Windows, the proper gvim.exe will be called with any file passed as an
 argument converted to Windows format so gvim.exe can find it.
 """
-
-gvim     = [ "gvim", "gvim.exe" ]
-vim      = [ "vim",  "vim.exe"  ]
-
-gvimdiff = [ "gvimdiff", "gvimdiff.exe" ]
-vimdiff  = [ "vimdiff",  "vimdiff.exe"  ]
-
 try:
     gvim_from_env = [ os.environ['HD_GVIM'] ]
 except:
     # OS environment variable HD_GVIM is not set, thus we set it to None so
     # the test for this non-existent binary will not be executed.
-    gvim_from_env = [ None ]
-
-
-if "diff" in gvim_from_env:
-    vim_to_try = gvimdiff + gvim_from_env + vimdiff
-else:
-    vim_to_try = gvim + gvim_from_env + vim
+    gvim_from_env = []
 
 try:
     display = os.environ['DISPLAY']
@@ -50,11 +37,27 @@ try:
 except:
     display = None
 
+if display is None:
+    # If there is no DISPLAY, then there is no point in calling gVim.
+    gvim     = []
+    gvimdiff = []
+    gvim_from_env = []
+else:
+    gvim     = [ "gvim", "gvim.exe" ]
+    gvimdiff = [ "gvimdiff", "gvimdiff.exe" ]
+
+vim      = [ "vim",  "vim.exe"  ]
+vimdiff  = [ "vimdiff",  "vimdiff.exe"  ]
+
+if "diff" in gvim_from_env:
+    vim_to_try = gvimdiff + gvim_from_env + vimdiff
+else:
+    vim_to_try = gvim + gvim_from_env + vim
+
 for binary in vim_to_try:
-    if binary is not None:
-        executable = shutil.which(binary)
-        if executable is not None:
-            break
+    executable = shutil.which(binary)
+    if executable is not None:
+        break
 
 if executable is None:
     print("ERROR:  Could not find [g]vim.  Aborting")
@@ -119,8 +122,5 @@ if "gvim" in executable.lower() and display != None:
         # Parent process must die, to un-hook the terminal.
         sys.exit(0)
 
-    os.execvp(executable, cmd)
-else:
-    # See:  https://docs.python.org/3/library/os.html#process-management
-    # Replace current process with 'vim'.
-    os.execvp(executable, [ "vim" ] + finalArgs)
+# See:  https://docs.python.org/3/library/os.html#process-management
+os.execvp(executable, cmd)
