@@ -24,16 +24,24 @@ Windows, the proper gvim.exe will be called with any file passed as an
 argument converted to Windows format so gvim.exe can find it.
 """
 
+gvim     = [ "gvim", "gvim.exe" ]
+vim      = [ "vim",  "vim.exe"  ]
+
+gvimdiff = [ "gvimdiff", "gvimdiff.exe" ]
+vimdiff  = [ "vimdiff",  "vimdiff.exe"  ]
+
 try:
-    gvim_from_env = os.environ['HD_GVIM']
-    if "diff" in gvim_from_env:
-        vim_to_try = [ "gvimdiff", "gvimdiff.exe", gvim_from_env, "vimdiff", "vimdiff.exe" ]
-    else:
-        vim_to_try = [ "gvim", "gvim.exe", gvim_from_env, "vim", "vim.exe" ]
+    gvim_from_env = [ os.environ['HD_GVIM'] ]
 except:
-    # OS environment variable HD_GVIM is not set, thus we do not include it in
-    # the list.
-    vim_to_try = [ "gvim", "gvim.exe", "vim", "vim.exe" ]
+    # OS environment variable HD_GVIM is not set, thus we set it to None so
+    # the test for this non-existent binary will not be executed.
+    gvim_from_env = [ None ]
+
+
+if "diff" in gvim_from_env:
+    vim_to_try = gvimdiff + gvim_from_env + vimdiff
+else:
+    vim_to_try = gvim + gvim_from_env + vim
 
 try:
     display = os.environ['DISPLAY']
@@ -43,9 +51,10 @@ except:
     display = None
 
 for binary in vim_to_try:
-    executable = shutil.which(binary)
-    if executable is not None:
-        break
+    if binary is not None:
+        executable = shutil.which(binary)
+        if executable is not None:
+            break
 
 if executable is None:
     print("ERROR:  Could not find [g]vim.  Aborting")
