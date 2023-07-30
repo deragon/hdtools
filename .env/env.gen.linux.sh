@@ -38,6 +38,12 @@ hd_syslog_print()
 }
 exportfunction hd_syslog_print
 
+hdkernellogger()
+{
+  logger $*
+}
+export -f hdkernellogger
+
 hd_mount_media()
 {
   # Using mapfile to fill the MOUNTMEDIAS as an array.  This way,
@@ -49,32 +55,6 @@ hd_mount_media()
 }
 exportfunction hd_mount_media
 
-# Safe, mais pas utilisé.
-# hdxorg()
-# {
-#   if [ -f /etc/X11/xorg.conf ]; then
-#     ${EDITOR} /etc/X11/xorg.conf
-#   elif [ -f /etc/X11/XF86Config ]; then
-#     ${EDITOR} /etc/X11/XF86Config
-#   else
-#     echo "No xorg.conf/XF86Config file exists."
-#     if [ -d /etc/X11 ]; then
-#       echo "Output of /etc/X11:"
-#       ls -l /etc/X11
-#       cdprint /etc/X11
-#     else
-#       echo "Directory /etc/X11 does not even exists.  X11 installed?"
-#     fi
-#   fi
-# }
-# exportfunction hdxorg
-
-hdkernellogger()
-{
-  logger $*
-}
-export -f hdkernellogger
-
 hans()
 {
   if [ -z "${*}" ]; then
@@ -84,13 +64,8 @@ hans()
   fi
 }
 
-# alias apacherestart='/etc/init.d/httpd restart'
-# alias apachereset='killall -HUP httpd'
-alias aptupgrade='apt-get update;apt-get -y dist-upgrade'
-alias yumupgrade='yum -y upgrade'
-
-alias jpggoodquality='mogrify -quality 66'
-alias galleryrecompress='ls -1 *jpg | fgrep -v sized | fgrep -v thumb | fgrep -v highlight | xargs mogrify -quality 66'
+alias hdjpggoodquality='mogrify -quality 66'  # Change inplace current file to 66% quality.
+alias hdgalleryrecompress='ls -1 *jpg | fgrep -v sized | fgrep -v thumb | fgrep -v highlight | xargs mogrify -quality 66'
 alias hdimage50all='ls -1 *jpg | egrep -v "(sized|thumb|highlight)" | xargs mogrify -quality 66 -resize 50%'
 alias hdimage75all='ls -1 *jpg | egrep -v "(sized|thumb|highlight)" | xargs mogrify -quality 66 -resize 75%'
 alias hdimage50='mogrify -quality 66 -resize 50%'
