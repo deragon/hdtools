@@ -168,6 +168,6 @@ fi
 export EDITOR
 
 vimw() { eval hdvim '"$(which $*)"'; }
-viml() { locate --null $* | eval xargs --null --replace="{}" hdvim "{}"; reset }
+viml() { locate --null $* | eval xargs --null --replace="{}" hdvim "{}"; }
 
 cdwhich() { eval cd '"$(which $*)"'; }
