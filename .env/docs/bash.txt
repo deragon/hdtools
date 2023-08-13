@@ -1753,7 +1753,7 @@ CURSOR MOVEMENTS
 
 
 
-COLORS and ANSI TERMINAL CODES
+ANSI TERMINAL CODES and COLORS
 ══════════════════════════════════════════════════════════════════════════════
 
   Readings
@@ -1784,14 +1784,19 @@ COLORS and ANSI TERMINAL CODES
       ░▀░░░▀░▀░▀▀▀░▀▀▀░▀░▀
 
 
-  TrueColor
+
+  TrueColor 24 bits, 256**3 == 16777216 colors (16 million)
   ────────────────────────────────────────────────────────────────────────────
+
+    Good read:  https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
 
     From:  https://stackoverflow.com/questions/15682537/ansi-color-specific-rgb-sequence-bash
 
     To test if your terminal supports Truecolor:
 
-      printf "\x1b[38;2;40;177;249mTRUECOLOR\x1b[0m\n"
+      printf "\x1b[38;2;40;177;249mTRUECOLOR\x1b[0m\n" # Light blue, FG
+      printf "\x1b[38;2;255;165;0mTRUECOLOR\x1b[0m\n"  # Dark orange, FG
+      printf "\x1b[48;2;255;165;0mTRUECOLOR\x1b[0m\n"  # Dark orange, BG
 
     On my machine, XTerm happily outputted the correct color; although,
     terminals that are modeled after terminals that predate modern RGB color
