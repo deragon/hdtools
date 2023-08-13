@@ -112,7 +112,8 @@ FORMATING & PADDING
 ARRAY / LIST / DICTIONNARY (HASH)
 ══════════════════════════════════════════════════════════════════════════════
 
-  Dictionary (hash tables)
+  DICTIONARY (HASH TABLES)
+  ────────────────────────────────────────────────────────────────────────────
 
     dictionnary = {} # Dictionnary / hash table created.
     dictionnary = {1: 2, 3: 4, 4:3, 2:1, 0:0}
@@ -130,18 +131,51 @@ ARRAY / LIST / DICTIONNARY (HASH)
     for key in sorted dictionnary.keys():
       value=dictionnary[key]
 
-    Pretty dictionnary:
 
-      import json
+    PRETTY DICTIONNARY
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
 
-      # 'ensure_ascii = False' keeps UTF-8 characters as is, i.e. 'é' shows as
-      # such.  If set to false, UTF-8 characters are replaced with unicode
-      # codes, such as \u00e9 for 'é'.
-      print("json = " + json.dumps(dict, sort_keys=True, indent=2, ensure_ascii=False ))
+      PPRINT - BEST IF WANTED TO RE REREAD BY PYTHON
+      ⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋
 
-      dict = json.loads(json_string)
+        import pprint
+
+        pp=pprint.PrettyPrinter(indent=2, width=120)
+        pp.pprint(mydict)
+
+        Note that formating is somewhat limited.
+
+        See:  https://docs.python.org/3/library/pprint.html
+
+      JSON - WARNING, OUTPUT CANNOT BE AlWAYS REREAD BY PYTHON
+      ⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋
+
+        Definitely not convinced it's a good idea to generate a representation
+        of a dictionary with json.dumps(). The representation is not not
+        faithful to a Python dictionary and that's why you have to convert by
+        following the booleans and 'null'. The code below was created quickly
+        and is not foolproof. For example, it could be that the strings
+        converted below is found in a description for example and does not
+        should not be converted.
+
+        import json
+
+        # 'ensure_ascii = False' keeps UTF-8 characters as is, i.e. 'é' shows as
+        # such.  If set to false, UTF-8 characters are replaced with unicode
+        # codes, such as \u00e9 for 'é'.
+
+        dict_str = re.sub('\n', '\n        ', json.dumps(dict_org, indent=4, ensure_ascii=False))
+        # json.dumps() outputs 'false', not 'False'.  Need to convert.
+        dict_str = re.sub(r'(:\s*)(false)', r'\g<1>False', dict_str)
+        # json.dumps() outputs 'true', not 'True'.  Need to convert.
+        dict_str = re.sub(r'(:\s*)(true)', r'\g<1>True', dict_str)
+        # json.dumps() outputs 'null', not 'None'.  Need to convert.
+        dict_str = re.sub(r'(:\s*)(null)', r'\g<1>None', dict_str)
+        dict = json.loads(dict_str)  # Test.
+
 
   List (Arrays)
+  ────────────────────────────────────────────────────────────────────────────
 
     list = []
     len(list)
