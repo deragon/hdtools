@@ -1,10 +1,12 @@
 ARRAYS
 ══════════════════════════════════════════════════════════════════════════════
 
-  declare -a ENTRIES=(${VARIABLE_WITH_ENTRIES_SEPERATED_WITH_LF});
-  declare -a ENTRIES=($(find .))
-  declare -a ENTRIES=() # empty array
-  declare -a ENTRIES=(
+  # -g makes the array global, else it is created only locally, if declared in
+  # a function like if when a variable is declared with 'local'.
+  declare -ag ENTRIES=(${VARIABLE_WITH_ENTRIES_SEPERATED_WITH_LF});
+  declare -ag ENTRIES=($(find .))
+  declare -ag ENTRIES=() # empty array
+  declare -ag ENTRIES=(
   "entry #1"
   "entry #2"
   )
