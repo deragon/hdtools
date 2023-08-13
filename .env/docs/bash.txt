@@ -337,7 +337,11 @@ SED
 
     Sed is not meant to do multiline properly.  Use perl instead; much easier.
 
-      perl -0777 -pe 's/line1\nline2/line1-line2 joined/igs' "${FILE}" # multileine
+      perl -0777 -pe 's/line1\nline2/line1-line2 joined/igs' "${FILE}" # multiline
+
+        -0[octal/hexadecimal] specifies the input record separator ($/) as an octal
+        or hexadecimal number. If there are no digits, the null character is the
+        separator.
 
     Still, below is a way to replace all '\n' with '¤' using sed.
 
