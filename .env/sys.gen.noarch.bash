@@ -284,7 +284,14 @@ if (( ${HD_BASH_INTERACTIVE} )); then
     # We are under a 'screen' session.  Changing brackets.
     export HD_BASH_PS1="•${HD_BASH_PS_USER}@${HD_BASH_PS_HOST} \W• "
   fi
-  export PS1="${HD_BASH_PS1}"
+
+  # ${VIRTUAL_ENV_PROMPT} is set when the shell is within a Python virtual
+  # environment (venv).  This variable is set when the 'activate' function
+  # from the venv is called.  This prompt indicates and remind the user that
+  # the shell is under a venv.
+  #
+  # To get out of the venv, type 'deactivate' at the prompt.
+  export PS1="${VIRTUAL_ENV_PROMPT}${HD_BASH_PS1}"
   alias hd-bash-prompt-normal='export PS1="${HD_BASH_PS1}"'
   alias hd-bash-prompt-short='export PS1="> "'
 
