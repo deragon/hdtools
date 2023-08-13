@@ -200,6 +200,8 @@ if [ ! -z "${HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH}" ]; then
   export VIRTUALENVWRAPPER_PYTHON=$(which python3)
   unset VIRTUALENVWRAPPER_HOOK_DIR
   source virtualenvwrapper.sh >/dev/null 2>&1
+
+  (( HDENVQUIET != 1 )) && echo -e "${HDANSI[GREEN]}Python virtualenvwrapper.sh loaded.${HDANSI[DEFAULT]}"
 fi
 unset HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH
 
