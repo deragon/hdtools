@@ -253,7 +253,10 @@ if [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]]; then
 
   hdwsldisplay()
   {
-    export DISPLAY="$(/mnt/c/Windows/system32/route.exe print | grep 0.0.0.0 | head -1 | awk '{print $4}'):0.0"
+    # Fetch IPv4 address assigned to WSL from Windows stand point of view.
+    # This is the address which the Xserver running on Windows can be
+    # contacted with.
+    export DISPLAY="$(ipconfig.exe | perl -0777 -pe 's/.*?WSL.*?IPv4.*?(\d+\.\d+\.\d+\.\d+).*/\1/igs'):0.0"
 
     if [[ "${1}" != "-q" ]]; then
       echo "DISPLAY=${DISPLAY}"
