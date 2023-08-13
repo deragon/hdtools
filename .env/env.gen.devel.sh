@@ -205,6 +205,10 @@ if [ ! -z "${HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH}" ]; then
 fi
 unset HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH
 
+# Python equivalent of 'bash -x'
+# From:  https://stackoverflow.com/questions/15760381/what-is-the-python-equivalent-of-set-x-in-shell
+alias hdpyx="python -m trace --ignore-dir '$(python -c 'import os, sys; print(os.pathsep.join(sys.path[1:]))')' --trace"
+
 
 # SDK MAN! - https://sdkman.io/
 # ══════════════════════════════════════════════════════════════════════════════
