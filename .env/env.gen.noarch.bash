@@ -246,7 +246,8 @@ hdat()
   disown
 }
 
-alias hdgroups='id -a | sed -r "s/[, ]/\n/g"'  # Shows groups, one group per liene.
+# This alias is never being used...
+#alias hdgroups='id -a | sed -r "s/[, ]/\n/g"'  # Shows groups, one group per liene.
 
 if [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]]; then
 
