@@ -29,6 +29,7 @@ if [ -t 1 ] ; then
     ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
     ["FG_WHITE_BG_RED"]="\e[1;37;41m"
     ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True Colors (24 bits) terminal.
     ["NORMAL"]="\e[0;00m"
   )
 fi
