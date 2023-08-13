@@ -11,17 +11,26 @@
 #     https://www.gnu.org/licenses/gpl-3.0.en.html
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
+if [[ ! -z "${HD_GIT_DATE_OFFSET}" ]]; then
+  FG_WHITE_BG_ORANGERED="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"
+  NORMAL="\e[0;00m"
+  echo -e "HD_GIT_DATE_OFFSET  = >>${FG_WHITE_BG_ORANGERED}${HD_GIT_DATE_OFFSET}${NORMAL}<<\n"
 
-[ -z "${HD_GIT_DATE_FAKE_OFFSET}" ] && HD_GIT_DATE_FAKE_OFFSET=0
+  OFFSET_STR=" ${FG_WHITE_BG_ORANGERED}(offset ${HD_GIT_DATE_OFFSET} hours)${NORMAL}"
+else
+  OFFSET_STR=""
+fi
 
-cat <<EOM
+echo -e "$(cat <<EOM
 GIT_AUTHOR_NAME     = >>${GIT_AUTHOR_NAME}<<
 GIT_COMMITTER_NAME  = >>${GIT_COMMITTER_NAME}<<
 GIT_AUTHOR_EMAIL    = >>${GIT_AUTHOR_EMAIL}<<
 GIT_COMMITTER_EMAIL = >>${GIT_COMMITTER_EMAIL}<<
-GIT_AUTHOR_DATE     = >>${GIT_AUTHOR_DATE}<< (offset ${HD_GIT_DATE_FAKE_OFFSET} hours)
-GIT_COMMITTER_DATE  = >>${GIT_COMMITTER_DATE}<< (offset ${HD_GIT_DATE_FAKE_OFFSET} hours)
+GIT_AUTHOR_DATE     = >>${GIT_AUTHOR_DATE}<<${OFFSET_STR}
+GIT_COMMITTER_DATE  = >>${GIT_COMMITTER_DATE}<<${OFFSET_STR}
+
 EOM
+)"
 
 echo -e "Config:  user.name  = >>$(git config --get user.name)<<"
 echo -e "Config:  user.email = >>$(git config --get user.email)<<"
