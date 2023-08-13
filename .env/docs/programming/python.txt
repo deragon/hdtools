@@ -1029,6 +1029,44 @@ PROJECT CREATION
     pip freeze > requirements.txt
 
 
+  Wheel vs Egg
+  ────────────────────────────────────────────────────────────────────────────
+
+    Egg is deprecated.  Wheel is the proper format.  See official statement
+    about this at:  https://packaging.python.org/en/latest/discussions/wheel-vs-egg
+
+    setuptool, when building the package, will automatically create a wheel (.whl) file.
+
+
+  Setuptool
+  ────────────────────────────────────────────────────────────────────────────
+
+    INSTALLATION
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+       pip install -m build
+
+    MANIFEST.in
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      The MANIFEST.in file contains commands that allow you to discover and
+      manipulate lists of files.
+
+      Doc:  https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html
+
+      'Setuptools' uses the 'distutils' module to generate packages, thus the
+      commands to use in MANIFEST.in are found at:
+      https://docs.python.org/3/distutils/commandref.html#sdist-cmd
+
+      It seems that it is not possible to recursively exclude patterns of
+      directories. For example,
+
+      recurive-exclude . todel
+
+      ... will not exclude any directory named 'todel'. The commands
+      only apply to files, not directories, unfortunately.
+
+
 
 INSTALLATION
 ══════════════════════════════════════════════════════════════════════════════
