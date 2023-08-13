@@ -161,6 +161,13 @@ alias cdprg='cdprint ${HDDOCSDIR}/programming'
 alias cdvim='cdprint "${HDVIM}"'
 
 eval $(hddocsaliascreate)  # Generate documents aliases.
+
+# lg == Lexique Grep
+hdlg()
+{
+  grep -E $@ "${HDDOCSDIR}/lexique-fr-en.txt"
+}
+
 alias todo='gvim ${HDSLDIR}/todo.txt'
 
 ff()
