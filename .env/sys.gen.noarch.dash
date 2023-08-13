@@ -151,14 +151,14 @@ if which vim >/dev/null 2>&1; then
   # :scriptnames
   alias vi='hdvim'
   alias vim='hdvim'
-  alias vimdiff='vimdiff -u "${HDVIMRC}" -S "${HDVIMRC}-post"'
+  alias vimdiff='hdvim --hddiff'
   EDITOR='hdgvim --hdvim'
 
   gvim()     { \
                [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]] && \
                  hdwsldisplay -q; \
                hdgvim "$@"; }
-  gvimdiff() { HD_GVIM="gvimdiff" hdgvim "$@"; }
+  gvimdiff() { hdgvim --hddiff "$@"; }
   gvimw()    { hdgvim "$(which $*)"; }
   gviml()    { locate --null $* | xargs --null --replace="{}" hdgvim "{}"; }
 
