@@ -980,21 +980,22 @@ PROJECT CREATION
     Virtualenv is better than venv.
     For reasons, see https://virtualenv.pypa.io/en/latest/
 
-    python -m pip install
     python -m pip install virtualenv
     python -m pip install virtualenvwrapper
 
-    # Note:  Dans "${HOME}/.hans.deragon/.env/env.gen.noarch.bash",
-    # 'source virtualenvwrapper.sh' est déjà exécuté, donc il n'est pas
-    # nécessaire de le faire manellement.
+    # Note:  In "${HOME}/.hans.deragon/.env/env.gen.devel.sh"
+    # 'source virtualenvwrapper.sh' is called if found in ${PATH}, thus
+    # there is no need to call it manually.
     source <PATH TO...>/virtualenvwrapper.sh
 
     mkvirtualenv env1
 
-    workon # List all available environment
-    workon env1
+    workon        # List all available environment
+    workon env1   # Work in 'env1' environment.
 
-    echo $VIRTUAL_ENV # Show directory where the environment lies.
+    echo "${VIRTUAL_ENV}" # Show directory where the environment lies.
+
+    Virtual environments are saved at:  "${HOME}/.virtualenvs"
 
 
   venv (use Virtualenv above, it is better)
