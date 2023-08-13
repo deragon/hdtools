@@ -32,6 +32,9 @@ if "--hdgvim" in sys.argv:
 if "--hdvim" in sys.argv:
     sys.argv.remove("--hdvim")
     vimType = "vim"
+if "--hddiff" in sys.argv:
+    vimType += "diff"
+    sys.argv.remove("--hddiff")
 
 try:
     gvim_from_env = [ os.environ['HD_GVIM'] ]
@@ -59,11 +62,12 @@ else:
 vim      = [ "vim",      "vim.exe"  ]
 vimdiff  = [ "vimdiff",  "vimdiff.exe"  ]
 
-if "diff" in gvim_from_env:
-    vim_to_try = gvimdiff + gvim_from_env + vimdiff
+if "diff" in vimType or ( len(gvim_from_env) > 0 and "diff" in gvim_from_env[0] ):
+    vim_to_try = gvim_from_env + gvimdiff + vimdiff
 else:
-    vim_to_try = gvim + gvim_from_env + vim
+    vim_to_try = gvim_from_env + gvim + vim
 
+#print(f"vim_to_try = {vim_to_try}")
 for binary in vim_to_try:
     executable = shutil.which(binary)
     if executable is not None:
