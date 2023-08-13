@@ -162,7 +162,7 @@ logger.setLevel(level)
 logger.debug("Test of logging %s", "here. :)")
 
 
-errors=""
+errors = ""
 
 # if args.hardlink == True:
 #   errors += "\n  --hardlink is required."
@@ -237,9 +237,10 @@ lines = open(file)
 for line in lines:
     pass
 
-fileOutput = open(filename + ".new" ,'w+')  # '+' means create if does not exists.  'a' is for append.
-fileOutput.write(output + "\n")
-fileOutput.close()
+with open(filename,'w+') as fd:  # '+' means create if it does not exist.
+                                 # 'a' stands for append.
+    fd.write(output + "\n")
+    fd.close()
 
 
 
