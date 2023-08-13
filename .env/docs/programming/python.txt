@@ -1146,6 +1146,16 @@ READING - DOCUMENTATION - CHEAT - TIPS
 
   - https://www.codingem.com/python-tricks-and-tips/
 
+
+
+ISSUES
+══════════════════════════════════════════════════════════════════════════════
+
+  - Setuptools - [BUG] glob-style pattern with range ([0-9]) not working
+    https://github.com/pypa/setuptools/issues/4018
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
