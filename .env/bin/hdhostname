@@ -12,8 +12,9 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-if [ "$(uname)" = "Linux" ]; then /bin/hostname "$@" else
-
+if [ "$(uname)" = "Linux" ]; then
+  /bin/hostname "$@"
+else
   # 'hostname', when called with arguments, will actually set the hostname as
   # the parameter on Unix systems such as Solaris, AIX and HP-UX.  For
   # instance, calling 'hostname -f' on Solaris will set the hostname to '-f'
