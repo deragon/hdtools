@@ -409,33 +409,30 @@ def handle_exception(exception):
         conn.quit()
 
 
-
-def mainwrapper():
-
+def main_wrapper():
     try:
 
-        timeStart = datetime.now()
+        time_start = datetime.now()
 
         main()
 
-        timeEnd = datetime.now()
+        time_end = datetime.now()
 
-        timeExecuted=timeEnd-timeStart
-        timeExecutedHours, timeExecutedRemainder = divmod(timeExecuted.seconds, 3600)
-        timeExecutedMinutes, timeExecutedSeconds = divmod(timeExecutedRemainder, 60)
+        time_executed = time_end - time_start
+        time_executed_hours, time_executed_remainder = divmod(time_executed.seconds, 3600)
+        time_executed_minutes, time_executed_seconds = divmod(time_executed_remainder, 60)
 
-        timeStartString = timeStart.strftime(iso8601Human)
-        timeEndString   = timeEnd.strftime(iso8601Human)
+        time_start_string = time_start.strftime(iso8601Human)
+        time_end_string = time_end.strftime(iso8601Human)
 
-        print("\nStarted:   " + timeStartString)
-        print("Ended:     " + timeEndString)
-        print("Executed:  {0:02}:{1:02}:{2:02}".format(\
-                timeExecutedHours, timeExecutedMinutes, timeExecutedSeconds))
+        print("\nStarted:   " + time_start_string)
+        print("Ended:     " + time_end_string)
+        print("Executed:  {0:02}:{1:02}:{2:02}".format(time_executed_hours, time_executed_minutes, time_executed_seconds))
 
-        print("\nDébuté:    " + timeStartString)
-        print("Terminé:   " + timeEndString)
-        print("Exécution:  {0:02}:{1:02}:{2:02}".format(\
-                timeExecutedHours, timeExecutedMinutes, timeExecutedSeconds))
+        print("\nDébuté:    " + time_start_string)
+        print("Terminé:   " + time_end_string)
+        print("Exécution:  {0:02}:{1:02}:{2:02}".format(
+            time_executed_hours, time_executed_minutes, time_executed_seconds))
 
     except Exception as exception:
         logger.error("Exception:  %s", exception)
@@ -449,6 +446,7 @@ def main():
     # print(completedProcess.stderr.decode('utf-8').rstrip())
     # print(completedProcess.returncode)
     pass # <code here>
+
 
 if __name__ == "__main__":
     main()
