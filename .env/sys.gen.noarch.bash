@@ -296,6 +296,41 @@ if (( ${HD_BASH_INTERACTIVE} )); then
   alias hd-bash-prompt-short='export PS1="> "'
 
   hd_term_color_bg
+
+  declare -Ag HDANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True Colors (24 bits) terminal.
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["ITALIC"]="\e[2m"
+    ["UNDERLINE"]="\e[3m"
+    ["REVERSE"]="\e[7m"
+    ["STRIKETHROUGH"]="\e[9m"
+    ["BOLD_OFF"]="\e[21m"
+    ["ITALIC_OFF"]="\e[22m"
+    ["UNDERLINE_OFF"]="\e[23m"
+    ["REVERSE_OFF"]="\e[27m"
+    ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLACK"]="\e[30m"
+    ["RED"]="\e[31m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+    ["MAGENTA"]="\e[35m"
+    ["CYAN"]="\e[36m"
+    ["WHITE"]="\e[37m"
+    ["BG_RED"]="\e[41m"
+    ["BG_GREEN"]="\e[42m"
+    ["BG_YELLOW"]="\e[43m"
+    ["BG_BLUE"]="\e[44m"
+    ["BG_MAGENTA"]="\e[45m"
+    ["BG_CYAN"]="\e[46m"
+    ["BG_WHITE"]="\e[47m"
+    ["BG_DEFAULT"]="\e[49m"
+  )
 fi
 
 # ----------------------------------------------------------------------
