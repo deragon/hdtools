@@ -1,0 +1,79 @@
+INSTALLATION (MASSIVE)
+══════════════════════════════════════════════════════════════════════════════
+
+  Google fonts
+  ────────────────────────────────────────────────────────────────────────────
+
+    Download:  git clone https://github.com/google/fonts.git
+
+    There is a lot of them.  To install them massively, you can simply create
+    a symlink to google font ofl directory.  Following, the commands to do
+    this:
+
+      su - # Need to be root
+      FONTS_GOOGLE_DIR="$(locate --regexp '.*Google/fonts/ofl$')"
+      cd "/usr/share/fonts/truetype/."
+      ln -s "${FONTS_GOOGLE_DIR}" google-fonts
+
+
+    Good Google fonts
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Noto:  The Noto family is very good and complete.
+
+             sudo apt install --yes fonts-noto-color-emoji fonts-noto-mono
+
+
+
+FONTS / POLICES
+══════════════════════════════════════════════════════════════════════════════
+
+  Inconsolata    http://levien.com/type/myfonts/inconsolata.html
+
+  MERCHANT-COPY
+
+    https://www.fontspace.com/cumberland-fontworks/merchant-copy
+
+
+
+GLYPH RENDERING
+══════════════════════════════════════════════════════════════════════════════
+
+  TROUBLESHOOTING
+  ────────────────────────────────────────────────────────────────────────────
+
+    When a glyph does not show up the proper form, i.e. for instance, 🟡
+    Yellow circle show up as a square or worst, an unrelated icon, to
+    determine what font is causing the problem, run:
+
+      gucharmap &
+
+    Then search (CTRL-F) for the character.  When on the character, right
+    click and the name of the font used to render it will show up.
+
+
+
+FONTS SUBSTITUTIONS
+══════════════════════════════════════════════════════════════════════════════
+
+
+
+  $ font-manager &
+
+  Clic on the "tools" button on the upper right corner of the windows.
+  Select "Substitutions" on the left.
+  Add the desired substitutions.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
