@@ -26,17 +26,6 @@ patterns = [
   "Offending key for IP in.*",
 ]
 
-# SSH - Connecting args:  -l root sles9sp4
-# The authenticity of host 'sles9sp4 (142.133.110.148)' can't be established.
-# RSA key fingerprint is c2:0c:85:4b:5c:f3:4d:dd:ad:b4:16:6f:6a:9c:bb:07.
-# Are you sure you want to continue connecting (yes/no)? yes
-# Warning: Permanently added 'sles9sp4' (RSA) to the list of known hosts.
-# Warning: the RSA host key for 'sles9sp4' differs from the key for the IP address '142.133.110.148'
-# Offending key for IP in /sp/home/hans/.ssh/known_hosts:51
-# Are you sure you want to continue connecting (yes/no)? no
-# Host key verification failed.
-
-
 child.setecho(False)
 while True:
   try:
