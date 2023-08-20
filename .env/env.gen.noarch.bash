@@ -168,8 +168,6 @@ hdlg()
   grep -E $@ "${HDDOCSDIR}/lexique-fr-en.txt"
 }
 
-alias todo='gvim ${HDSLDIR}/todo.txt'
-
 ff()
 {
   find . -iname "${1}" -follow -print | egrep -i --color=auto "${1//\*/.*}"
