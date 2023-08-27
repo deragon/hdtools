@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+pycharm.sh >/tmp/pycharm.log 2>&1 &
+disown
+cat <<EOM
+Log file of Pycharm at:
+
+  less '/tmp/pycharm.log'
+  tail -f '/tmp/pycharm.log'
+EOM
