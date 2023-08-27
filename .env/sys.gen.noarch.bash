@@ -498,7 +498,7 @@ alias rsyncdeep='rsync --copy-links --partial --sparse --delete-after --times --
 # Executez ${HDENVDIR}/bin/lscolortable pour une table avec toute les couleurs.
 
 LS_COLORS=""
-LS_COLORS="${LS_COLORS}:*.csr=01;31;44:*.crt=01;31;44:*.key=01;31;44:*.p12=01;31;44:*.pem=01;31;44:*.pfx=01;31;44:*.txt.gpg=01;31;44"
+LS_COLORS="${LS_COLORS}:*.csr=01;31;44:*.crt=01;31;44:*.key=01;31;44:*.p12=01;31;44:*.pem=01;31;44:*.ppk=01;31;44:*.pfx=01;31;44:*.txt.gpg=01;31;44"
 LS_COLORS="${LS_COLORS}:*.deb=0;35:*.rpm=0;35:*.pkg=0;35:*.jar=0;35:*.war=0;35:*.tgz=0;35:*.tar=0;35:*.zip=0;35:*.arg=0;35:*.lzh=0;35:*.arc=0;35:*.gz=0;35:*.Z=0;35:*.iso=0;35:*.bz2=0;35:*.iso=0;35"
 LS_COLORS="${LS_COLORS}:*.php=1;32:*.py=1;32:*.ph=1;32:*.h=1;32:*.c=1;32:*.cc=1;32:*.cpp=1;32:*.pas=1;32:*.asm=1;32:*.bas=1;32:*.java=1;32:*.groovy=1;32:*.scala=1;32:*.jsp=1;32:*.js=1;32:*.vim=1;32"
 LS_COLORS="${LS_COLORS}:*.pif=1;34:*.sys=1;34"
