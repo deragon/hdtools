@@ -210,6 +210,12 @@ unset HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH
 alias hdpyx="python -m trace --ignore-dir '$(python -c 'import os, sys; print(os.pathsep.join(sys.path[1:]))')' --trace"
 
 
+# DOCKER
+# ══════════════════════════════════════════════════════════════════════════════
+
+alias hddockerimagelist='docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedAt}}\t{{.Size}}"'
+
+
 # SDK MAN! - https://sdkman.io/
 # ══════════════════════════════════════════════════════════════════════════════
 #
