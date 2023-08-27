@@ -85,6 +85,18 @@ EOM
 TROUBLESHOOTING
 ══════════════════════════════════════════════════════════════════════════════
 
+  "Failed to install org.gnome.Platform: Unable to connect to system bus"
+  ────────────────────────────────────────────────────────────────────────────
+
+    Gnome requires Systemd, which WSL doesn't support directly.
+    So... as of 2023-08-26, flatpak and gnome-software do not work
+
+    One can try WSLg to solve this problem.
+    See instructions at:  https://github.com/microsoft/wslg
+
+    More info:  https://superuser.com/questions/1680151/failed-to-install-org-gnome-platform-unable-to-connect-to-system-bus
+
+
   Failed to retrieve available kernel versions.
   ────────────────────────────────────────────────────────────────────────────
 
