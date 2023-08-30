@@ -32,6 +32,11 @@ try:
 except IndexError:
   scriptNameBase=scriptName # There is no extension.
 
+ansi = {
+    "FG_WHITE_BG_GREEN":      "\033[1;37;42m",
+    "FG_WHITE_BG_RED":        "\033[1;37;41m",
+    "RESET":                  "\033[0;00m",
+}
 
 
 # PARSING ARGUMENTS
@@ -47,7 +52,8 @@ except IndexError:
 # http://stackoverflow.com/questions/24180527/argparse-required-arguments-listed-under-optional-arguments
 
 
-parser = argparse.ArgumentParser(description="""
+parser = argparse.ArgumentParser(description=f"""
+{ansi['FG_WHITE_BG_GREEN']} SAFE {ansi['RESET']}
 
 Test if a port is reachable.  Equivalent of 'nc -zv <args>'.
 
@@ -144,7 +150,7 @@ for hostport in args.hostport:
 
         if sock.connect_ex((hostname, port)) == 0:
             if not args.quiet:
-                print("✓ Open")
+                print(f"{ansi['FG_WHITE_BG_GREEN']} ✓ Open {ansi['RESET']}")
 
             # Experiment sending stdin like netcat (nc) would do.
             # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
@@ -158,7 +164,7 @@ for hostport in args.hostport:
 
         else:
             if not args.quiet:
-                print("✘ Closed")
+                print(f"{ansi['FG_WHITE_BG_RED']} ✘ Closed {ansi['RESET']}")
             exitcode+=1
 
 sys.exit(exitcode)
