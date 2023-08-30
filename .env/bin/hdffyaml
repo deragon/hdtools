@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+# Scan Terraform (*.tf) files.
+find . -regextype posix-extended -iregex '.*.ya*ml?$' | \
+  egrep -v '(^(\./)*old/)' | \
+  xargs --delimiter '\n' grep --line-number --extended-regexp --ignore-case --color "$@"
