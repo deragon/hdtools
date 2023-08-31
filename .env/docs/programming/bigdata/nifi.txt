@@ -13,6 +13,25 @@ NiFi
 
 
 
+DECRYPT PASSWORD / SENSITIVE DATA
+══════════════════════════════════════════════════════════════════════════════
+
+  Sometimes you need to find the password being used.  Heck, some controllers
+  such as 'AWSCredentialsProviderControllerService', not only encrypt the AWS
+  Secret key, but also the AWS Access key!  Thus impossible to figure out
+  what user on the AWS side is being used by the NiFi flow!
+
+  Unfortunately, there is no simple quick way to decrypt these.  All the
+  passwords and sensitive data is found in flow.xml.gz, surrounded with the
+  'enc(...)' string.
+
+  Read:
+
+    - https://www.oopsmydata.com/2018/10/decrypting-nifi-passwords-one-of-great.html
+    - https://medium.com/@danielyahn/nifi-password-recovery-part-1-ad2b7f25bbc3
+
+
+
 CONCURRENT TASKS / concurrency
 ══════════════════════════════════════════════════════════════════════════════
 
