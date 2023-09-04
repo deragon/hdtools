@@ -1,0 +1,411 @@
+HARDWARE INFO + STATS:
+══════════════════════════════════════════════════════════════════════════════
+
+  prtconf
+  uname -i
+  prtdiag -v
+
+  mpstat 5 # processor   info every 5s
+  vmstat 5 # swap and vm info every 5s
+  iostat 5 # io          info every 5s
+  iostat -xn 5
+  eeprom # Firmware info
+
+  format # list of partitions
+
+  /usr/ucb/ps -auxwww # Full column output MAIS SEULEMENT COMME ROOT.
+
+
+
+SWAP
+══════════════════════════════════════════════════════════════════════════════
+
+  # vmstat 5
+
+  kthr      memory            page            disk          faults      cpu
+  r b w   swap  free  re  mf pi po fr de sr s0 s3 -- --   in   sy   cs us sy id
+  0 0 0 14718312 3502472 10 85 14 0 0  0  0 29  0  0  0 1496 2763 2123  1  1 98
+  0 0 0 12670128 1365624 2 29 415 0 0  0  0 51  0  0  0 2573 3777 3478  2  1 97
+  0 0 0 12670064 1365360 0 2  0  0  0  0  0 48  0  0  0 1305 1674 1789  0  1 99
+  0 0 0 12670064 1365360 0 0  0  0  0  0  0 25  0  0  0 1255 1927 1717  0  1 99
+
+  pi: nombre de pages mise en paging
+  po: nombre de pages lues du paging
+
+  Si free est tres bas et que pi/po montrent des chiffres tres haut, ca
+  pagine.  Dans cet exemple (sacwas31 a 0853), ca ne pagine pas.  Il y a
+  du free en masse et le pi/po est tres leger.  Il va toujours y avoir un
+  peu de pi/po.  Ces chiffres doivent monter pas mal avant que declarer
+  un probleme.
+
+
+
+MEMORY USAGE
+══════════════════════════════════════════════════════════════════════════════
+
+  prtconf | fgrep Memory # Total physical memory installed.
+  vmstat 5
+    free = Free memory in KiB.
+  prstat -t  # Mémoire utilisée par les usagers.
+
+
+
+CPU USAGE
+══════════════════════════════════════════════════════════════════════════════
+
+  mpstat 5 # 5 == update at every 5s.
+
+  prstat # Better than generic 'top' tool on the Sun platforms
+  prstat -s size # process stat, sorted by process size
+
+
+
+RAID
+══════════════════════════════════════════════════════════════════════════════
+
+  raidctl -l  # List all raid volumes.
+
+  How to split a mirror raid and rebuild it:
+
+  http://serverfault.com/questions/114368/splitting-a-raidctl-mirror-safely
+
+
+
+SHUTDOWN/REBOOT/PROMPT COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  init 0                           # boot prompt
+  /usr/sbin/shutdown -g 0 -i 0 -y  # boot prompt
+  /usr/sbin/shutdown -g 0 -i 5 -y  # poweroff
+  /usr/sbin/shutdown -g 0 -i 6 -y  # reboot
+
+  Once on OK prompt, you can boot a machine with:
+
+  OK> boot
+
+
+iLOM
+══════════════════════════════════════════════════════════════════════════════
+
+  Go back to the CLI of iLom (getting out of the console):  #.
+
+  To send a break, on the iLOM prompt:
+
+    set /HOST send_break_action=break
+    start /SP/console
+
+
+
+MOUNT
+══════════════════════════════════════════════════════════════════════════════
+
+  Mount iso file locally:
+
+    lofiadm -a /jumpstart/iso/sol-10-u8-ga-sparc-dvd.iso
+    mount /dev/lofi/1 /jumpstart/iso/mnt/sol-10-u8-ga-sparc-dvd
+
+
+
+VERSION OF SOLARIS
+══════════════════════════════════════════════════════════════════════════════
+
+  uname -X  # Très bon, parseable.
+  uname -a
+  cat /etc/release
+  showrev
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  SNOOP ----------------------------------------------------
+
+    Références:
+
+      http://www.softpanorama.org/Net/Sniffers/snoop.shtml#Filter_expressions
+
+
+    Options:
+
+      -r  Do not resolve the IP address to the symbolic name.
+
+    # Snoop an interface
+    snoop -r -d <net interface> # Ex: snoop -d e1000g0
+
+    # -x = hexdump / ascii
+    snoop -r -x -d <net interface> dst <ip>
+
+    # Script to convert snoop traces to pcap files that Wireshark can read:
+    #
+    # Ref:  http://keramida.wordpress.com/2007/12/04/wireshark-converting-solaris-snoop-captured-data-to-libpcap-format/
+
+    snoop -d <net interface> -o <filename>.snoop
+
+    for fname in *.snoop ; do
+      newname="${fname%%.snoop}.pcap"
+      tshark -r "${fname}" -w "${newname}"
+      echo "rc=$? ${fname} -> ${newname}"
+    done
+
+  TRUSS ----------------------------------------------------
+
+    truss is for Solaris, strace is for Linux.
+
+      Truss is used to trace the system/library calls (not user calls) and
+      signals made/received by a new or existing process. It sends the output
+      to stderr.
+
+
+
+  TAR ------------------------------------------------------
+
+  # Tar manipulation (copy of a tree directory)
+  tar cpf - DirectoriesToCopy* | gzip - >Directories.tar.gz
+  gunzip -c Directories.tar.gz | tar xvf -
+
+  tar cpf - . | (cd /dir-to-cp-to && tar xvpBf -)
+
+
+  # Exclude a list of files.  The file exclude.lst can contain directory
+  # names and thus anything on them would be excluded.  No pattern is
+  # used or interpreted; it is a perfect match that is performed.
+  # The special parameter is capital X, followed by the exclude file.
+  # the order of the files is important.
+
+  tar cvXf exlude.lst tarfile.tar files*
+
+  NUMBER OF FILE DESCRIPTORS PER PROCESS -------------------
+
+    /usr/proc/bin/pfiles <PID de siteminder>
+
+
+  OTHER ----------------------------------------------------
+
+  MD5SUM:  digest -a md5 <file>
+
+
+
+NETWORK CONFIGURATION
+══════════════════════════════════════════════════════════════════════════════
+
+  Permanent change of network configuration requires setup of the
+  following files (Solaris 10):
+
+    /etc/hosts
+    /etc/hostname.<interfacename> # Example:  /etc/hostname.e1000g1
+    /etc/netmasks
+    /etc/defaultrouter
+
+  Then reboot.
+
+  Ref:  http://www.computing.net/answers/solaris/enabling-network-interface/4820.html
+
+
+
+INIT.D SERVICES
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://www.sun.com/software/solaris/howtoguides/servicemgmthowto.jsp
+
+  To display all services on your Solaris system with their state
+  information, use the svcs command along with the -a option:
+
+    svcs -a
+
+
+
+ZFS
+══════════════════════════════════════════════════════════════════════════════
+
+  zfs history # <-- Best command to find out what was done.
+
+
+
+PACKAGES
+══════════════════════════════════════════════════════════════════════════════
+
+  Use the pkgchk command to determine which package a particular file
+  belongs to. The syntax is:
+
+  # /usr/sbin/pkgchk -l -p /absolute/path/todir
+
+
+
+SMF / INIT.D / BOOT PROCESS
+══════════════════════════════════════════════════════════════════════════════
+
+  SMF is the equivalent of 'chkconfig' of RHEL.
+
+  List all services and their status:
+
+    svcs -a
+
+  Manifest creation (xml file describing the service)
+
+    svccfg validate memcached.xml  # Just check if there are no syntax errors.
+    svccfg import   memcached.xml  # Import into the repository the manifest.
+
+    svcadm clear    memcached      # To force reading of a newly imported manifest.
+
+    svcs            memcached      # List state of service.
+
+  Commandes persistentes:
+
+    svcadm disable  memcached      # Service will be disabled.
+    svcadm enable   memcached
+
+  Restar:
+
+    svcadm restart memcached       # Does not reread the manifest.  Use 'clear' for this.
+    svcadm restart svc:/network/ssh:default
+
+  References:
+
+    http://www.sun.com/software/solaris/howtoguides/servicemgmthowto.jsp
+
+
+  RUN LEVELS
+  ------------------------------------------------------------
+
+    +=======+==============+====================+
+    | Level |  Unix        | Linux              |
+    +=======+==============+====================+
+    | 0     |  ok prompt   | halt               |
+    +-------+--------------+--------------------+
+    | 1,S   |  single user | single user        |
+    +-------+--------------+--------------------+
+    | 2     |  multi user  | multi user, no nfs |
+    +-------+--------------+--------------------+
+    | 3     |  default     | Full multi-user    |
+    +-------+--------------+--------------------+
+    | 5     |  shutdown    | X11                |
+    +-------+--------------+--------------------+
+    | 6     |  reboot      | reboot             |
+    +-------+--------------+--------------------+
+
+
+
+FIND PROCESS LISTENING ON A GIVEN PORT
+══════════════════════════════════════════════════════════════════════════════
+
+#!/bin/bash
+# Works on SunOS sl2app11 5.9 Generic_118558-34 sun4u sparc SUNW,Sun-Fire-V490
+
+PORTS="7472 3021 1500 11502 53455 49458 64597 49360 54349"
+for p in $(ps -eo pid)
+do
+  PFILESOUT=`pfiles $p`
+  for PORT in $PORTS; do
+    echo "${PFILESOUT}" | fgrep "port: ${PORT}" >/dev/null 2>&1
+    if (( $? == 0 )); then
+      echo "PID $p, PORT #${PORT}"
+      pfiles $p | head -1
+    #else
+      #echo "Not $p"
+    fi
+  done
+done
+
+
+
+ZONES
+══════════════════════════════════════════════════════════════════════════════
+
+  HOW TO FIND THE PARENT GLOBAL ZONE
+  --------------------------------------------------
+
+    (http://blogs.sun.com/bnitz/entry/how_to_find_the_parent)
+
+    Solaris Zones (a.k.a. Solaris Containers) intentionally isolate zones from
+    each other and from the root hardware which hosts the zone. But if the
+    zones and the host are on the same network, there is a way. All zones
+    which are hosted by a particular global zone will typically share the
+    physical hardware address as the global zone. So:
+
+    - ping the broadcast address of your local network.
+    - arp -a | grep {the hostname of your zone}
+    - Now arp -a | grep {the physical address you found}
+
+    This gives the list of the global zone and all of the hosted zones with
+    the same physical network address.
+
+
+
+FIREWALL / IPF / Coupe-feu
+══════════════════════════════════════════════════════════════════════════════
+
+  Great cheat list:
+
+    http://www.homepage.montana.edu/~unixuser/031705/create_solaris_ipf.html
+
+      ipf -E                          : Enable ipfilter when running
+                                      : for the first time.
+              : (Needed for ipf on Tru64)
+
+      ipf -f /etc/ipf/ipf.conf        : Load rules in /etc/ipf/ipf.conf file
+                                      : into the active firewall.
+
+      ipf -Fa -f /etc/ipf/ipf.conf    : Flush all rules, then load rules in
+                                      : /etc/ipf/ipf.conf into active firwall.
+
+      ipf -Fi                         : Flush all input rules.
+
+      ipf -I -f /etc/ipf/ipf.conf     : Load rules in /etc/ipf/ipf.conf file
+                                      : into inactive firewall.
+
+      ipf -V                          : Show version info and active list.
+
+      # ipf -s                          : Swap active and inactive firewalls.
+
+      ipfstat                         : Show summary
+
+      ipfstat -i                      : Show input list
+
+      ipfstat -o                      : Show output list
+
+
+  TROUBLESHOOTING
+
+    open(IPSTATE_NAME): No such file or directory
+
+      This can happen if you are in a zone.  You must get to the global zone.
+
+
+
+INFO ON MACHINE
+══════════════════════════════════════════════════════════════════════════════
+
+  FETCH BUNCH OF INFORMATION ON THE MACHINE:
+  sysinfo
+  /usr/platform/`uname -i`/sbin/prtdiag
+
+
+
+  HOW TO FIGURE OUT CPU INFO (NUMBER OF CPU, SPEED, ETC...)
+
+  [qhander@bahanzai changes3] psrinfo -v
+  Status of processor 0 as of: 12/16/03 11:00:44
+    Processor has been on-line since 09/19/03 09:59:12.
+    The sparcv9 processor operates at 502 MHz,
+          and has a sparcv9 floating point processor.
+
+
+
+PACKAGES
+══════════════════════════════════════════════════════════════════════════════
+
+  https://www.opencsw.org/
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
