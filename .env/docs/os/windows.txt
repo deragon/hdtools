@@ -1,0 +1,307 @@
+DISABLED MODE - GETTING OUT OF IT
+══════════════════════════════════════════════════════════════════════════════
+
+  From: https://superuser.com/questions/970991/windows-10-taskbar-icon-highlight-sticks
+
+  To get out of it, you have to click <CTRL> + <Right Mouse>.
+
+
+
+OFF SCREEN WINDOW
+══════════════════════════════════════════════════════════════════════════════
+
+  If the window is off screen, type;
+
+    <ALT><SPACE>, select "Move" and move the window back into the screen with
+    the cursor keys.
+
+  Move window to different screen:
+
+    Select app in Taskbar and press <Window><Shift><Cursor right or left>
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - To execute a PowerShell script (the script must finish with .ps1 extension):
+
+      powershell -File <Windows formatted path>.ps1
+
+
+  How to Make a Program Run at Startup on Any Computer
+  ────────────────────────────────────────────────────────────────────────────
+
+  From:  https://www.howtogeek.com/228467/how-to-make-a-program-run-at-startup-on-any-computer/
+
+  Quick instructions:
+
+    From Start button, type:  shell:startup
+    In the new 'Windows Explorer' pointing to the Startup folder, drag
+    shortcuts of applications you would like to have started.
+
+  Long instructions:
+
+    To access the startup folder, press Windows Key + R, type
+    “shell:startup” into the Run dialog, and press Enter. Yes, you’ll need to
+    use the folder — you can’t simply add shortcuts from the Task Manager’s
+    Startup pane.
+
+    Shortcuts you add to the “shell:startup” folder will only launch when you
+    log in with your user account. If you’d like a shortcut to launch itself
+    whenever any user logs in, type “shell:common startup” into the Run dialog
+    instead.
+
+    Paste shortcuts into this folder and Windows will automatically load them
+    when you sign into your computer. On Windows 10, you can just
+    drag-and-drop shortcuts from the “All Apps” list in the Start menu
+    directly into this folder.
+
+
+  FONTS
+  ────────────────────────────────────────────────────────────────────────────
+
+    From Windows 10 build 17704 onward you'll have the ability to install
+    fonts without admin rights.
+
+    To get the Windows build version, run:
+      wmic os get Caption, BuildNumber /value # Windows build version
+
+    https://blogs.windows.com/windowsexperience/2018/06/27/announcing-windows-10-insider-preview-build-17704/#vtHzS6SkLWyrfI4D.97
+      Search for "Font installation for non-admin users"
+
+
+  How to move windows on taskbar within group?
+  ────────────────────────────────────────────────────────────────────────────
+
+    Answer:  You cannot.  See:  https://answers.microsoft.com/en-us/windows/forum/all/how-to-move-windows-on-taskbar-within-group/85948ce9-b7f2-46f6-9344-3f0a73b56ad2
+
+
+COMMAND LINE
+══════════════════════════════════════════════════════════════════════════════
+
+  - systeminfo  # Windows version, BIOS, UEFI, system, hardware details...
+
+  - wmic os get Caption, BuildNumber /value # Windows build version
+
+  - wmic path SoftwareLicensingService get OA3xOriginalProductKey # Licence key / Product key
+
+  - Get IP address
+
+    ipconfig (ifconfig equivalent)
+
+  - To get the list of all system tasks:
+
+      task list
+
+  - To get the arguments:
+
+      http://superuser.com/questions/415360/how-do-i-find-out-command-line-arguments-of-a-running-program
+
+  - To get the time at which the login was completed:
+
+      quser
+
+  - getmac # Returns all MAC addresses of the PC.
+
+
+
+CONFIGURATION
+══════════════════════════════════════════════════════════════════════════════
+
+  - Host file:  C:\Windows\System32\drivers\etc\hosts
+
+
+
+LICENSES
+══════════════════════════════════════════════════════════════════════════════
+
+  LICENCE ACTIVATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Windows 10 is free. You can install home or pro version of windows 10 after
+    downloading iso from MS. If you don't activate windows, it won't allow
+    changing theme and some settings but fully functional, including upgrades.
+    In Pro version, bit locker is turned off by default (but folder encryption
+    enabled). In policy editor, you can turn on bit locker and you have a full
+    version of Pro.
+
+    https://support.microsoft.com/fr-ca/help/12440/windows-10-activation
+
+
+  LICENCE KEY / PRODUCT KEY - GET IT / SHOWING IT
+  ────────────────────────────────────────────────────────────────────────────
+
+    wmic path SoftwareLicensingService get OA3xOriginalProductKey # Licence key / Product key
+
+
+  REACTIVATING WINDOWS 10 AFTER A HARDWARE CHANGE
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://support.microsoft.com/en-us/help/20530/windows-10-reactivating-after-hardware-change
+
+    In Windows 10 (Version 1607 or later), you can link your Microsoft account
+    to the Windows 10 digital license on your device. This can help you
+    reactivate Windows using the Activation troubleshooter if you make a
+    significant hardware change later, such as replacing the motherboard.
+
+
+
+ACTIVE DIRECTORY
+══════════════════════════════════════════════════════════════════════════════
+
+  Active Directory Administrative Center
+  ────────────────────────────────────────────────────────────────────────────
+
+    In the Windows startup button, just type the name of the app to run it.
+    Inside, you can search.
+
+    Another alternative is 'hd-ldapsearch'
+
+
+SOFTWARE
+══════════════════════════════════════════════════════════════════════════════
+
+  NEVER INSTALL
+  ────────────────────────────────────────────────────────────────────────────
+
+    PDFFORGE - www.pdfforge.org
+
+      Adds plugins to browsers that ensure that when a server is not found, the
+      user is redirected to http://pdfforge.mybrowserbar.com/cgi with the
+      searched URL as a parameter.  So the internal information about the
+      network topology is sent to the external.
+
+      Réf:  https://en.wikipedia.org/wiki/PDFCreator#Inclusion_of_malware
+
+
+  GOOD SOFTWARE
+  ────────────────────────────────────────────────────────────────────────────
+
+    - Alternatives to PuTTY:
+
+        PuTTY Tray
+        KiTTY           http://www.9bis.net/kitty/#!index.md
+
+    - Avast    Antivirus (Better than AVG according to some (2010))
+    - Comodo   Firewall
+
+
+  COPYQ
+  ────────────────────────────────────────────────────────────────────────────
+
+    To install properly on Windows 10:
+
+    Download the zip (portable ZIP) file from:  https://github.com/hluk/CopyQ/releases
+
+    Then, with Cygwin, run:
+
+      unzip <CopyQ>.zip
+      cd <CopyQ unzipped directory>
+      chmod -R a+x copyq-*  # Make everything executable.
+
+    It is important to run the last <chmod> command.  Does not matter if all
+    the .txt or .md files are rendered executable.  But many .dll and .exe
+    files need to be executable or else a 0xC0000022 Fatal error will occur.
+    So a generic 'chmod -R a+x *' will do the trick quickly.
+
+    This procedure was used to install it at Vidéotron on 2020-09-08.
+
+
+    Autostart CopyQ in Windows
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      From:  https://support.microsoft.com/en-us/windows/add-an-app-to-run-automatically-at-startup-in-windows-10-150da165-dcd9-7230-517b-cf3c295d89dd
+
+      With the file location open, press the Windows logo key  + R, type
+      shell:startup, then select OK. This opens the Startup folder.
+
+      Copy and paste the shortcut of CopyQ from the file location to the
+      Startup folder.
+
+
+  MS-WORD
+  ────────────────────────────────────────────────────────────────────────────
+
+    Missing scrollbar
+
+      Office 2002:
+
+        Tools/Options [View] "Show vertical scroll bar" check box.
+
+      Office 2007 & +:
+
+        Select Office Button>Word Options>Advanced then scroll down to
+        "Display"
+
+          "Show vertical scroll bar" check box.
+
+
+
+260 CHARACTERS PATH LIMIT
+══════════════════════════════════════════════════════════════════════════════
+
+  Explanation:              https://stackoverflow.com/questions/1880321/why-does-the-260-character-path-length-limit-exist-in-windows
+  Workaround with 'subst':  https://serverfault.com/questions/232986/overcoming-maximum-file-path-length-restrictions-in-windows
+
+  Example
+  ────────────────────────────────────────────────────────────────────────────
+
+    For example, you won't be able to read the ihtrace.csv file if you end up under the following directory:
+
+      Y:\<some very long path>\<rest of the path>\file.txt
+
+    A workaround is to create a substitute. Type on the terminal:
+
+      subst R: 'Y:\<some very long path>'
+
+    Afterwards, you would be able to access all files under:
+
+      R:\<rest of the path>\file.txt
+
+
+
+BUGS IN WINDOWS 7
+══════════════════════════════════════════════════════════════════════════════
+
+  - No way to configure and emulate middle mouse button on a system
+    with only two buttons.
+
+
+
+BUGS IN WINDOWS XP
+══════════════════════════════════════════════════════════════════════════════
+
+  Fresh install Windows XP SP2, within 2 weeks of usage, February 2009:
+
+  - Sometimes, when I have an Excel sheet already open, and I open
+    through Windows Explorer another spreadsheet, it refuses to be
+    loaded.  Nothing actually happens.  I have to quit Excel to get
+    the other sheet to be loaded.
+
+  - Mouse pointer sometimes shows up as a garbase squere after a
+    resume from suspend to ram.
+
+  - All day long, mouse pointer indicates busy while nothing is
+    happening.
+
+
+
+PRIVACY
+══════════════════════════════════════════════════════════════════════════════
+
+  - Wikipedia - Privacy and data collection
+    https://en.m.wikipedia.org/wiki/Windows_10#Privacy_and_data_collection
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
