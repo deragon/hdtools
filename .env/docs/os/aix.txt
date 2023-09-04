@@ -1,0 +1,32 @@
+AIX SYSTEM INFORMATIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  lscfg  # Displays configuration, diagnostic, and vital product data (VPD)
+         # information about the system including CPU information:
+
+  lsattr -E -l proc0 | grep "Processor Speed" # Safe:  Cpu information, clock speed
+  pmcycles  # Safe:  CPU Frequency
+
+  oslevel -s  # Version of the os installed.
+
+      7100-03-04-1441
+
+      This will give you:
+
+      "7100" - Base Level
+      "03"   - Technology Level
+      "04"   - Maintenance Level
+      "1141" - Service Pack
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
