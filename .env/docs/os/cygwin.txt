@@ -1,0 +1,387 @@
+CYGSERVER SETUP
+══════════════════════════════════════════════════════════════════════════════
+
+  IMPORTANT READ / WARNING
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://superuser.com/questions/985719/cygwin-window-closes-immediately
+
+    Cygserver must be executed as a service before any other Cygwin process is
+    started.  However, the command that install Cygserver, as of 2020-05-15,
+    configures the Windows service as "start immediatly", which is wrong.
+
+    The problem is that the service 'cygserver' will cache account information
+    and provide it to other Cygwin applications and services like described in
+    https://cygwin.com/cygwin-ug-net/ntsec.html#ntsec-mapping-caching. The
+    account data is retrieved from Microsoft LDAP service which needs more
+    time to start than the cygserver service. Setting the cygserver service to
+    delayed automatic start will resolve this problem. But keep in mind that
+    the start of the cygserver service may delayed a couple of minutes after
+    (re)boot of Windows.
+
+    THE FIX:
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      If you have any Cygwin service installed (such as Cygserver) in your
+      Windows machine try solving the problem by setting these services to
+      either manual start or automatic start but delayed.
+
+
+    Failure to do that causes Mintty to shutdown immediately upon startup.
+    When this happens, a work around is to call cmd.exe and execute the
+    following until the Window's Cygserver service is set to "startup with
+    delay":
+
+      C:\Cygwin64\bin\mintty.exe -i /Cygwin-Terminal.ico /bin/bash -il
+
+
+
+  Install Cygserver as a service:
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://cygwin.com/cygwin-ug-net/using-cygserver.html
+
+    Before you run Cygserver for the first time, you should run the
+    /usr/bin/cygserver-config script once. It creates the default
+    configuration file and, upon request, installs Cygserver as service. The
+    script only performs a default install, with no further options given to
+    Cygserver when running as service. Due to the wide configurability by
+    changing the configuration file, that's typically not necessary.
+
+
+
+PACKAGE MANAGEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  - List of packages installed:  /etc/setup/installed.db
+
+  - For the software to install the first time Cygwin needs to be setup,
+    execute:  cygwin-install-packages.sh
+
+
+
+NETWORK DRIVES SETUP
+══════════════════════════════════════════════════════════════════════════════
+
+  C:\>net use p: \\sfmtl101.axa-canada.intraxa\Ag ******** /user:axa-canada\chiasa01 /persistent:no
+
+  C:\>net use m: \\sfmtl201.axa-canada.intraxa\chiasa01$ ******** /user:axa-canada\chiasa01 /persistent:no
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  NON BLINKING CURSOR IN MINTTY
+  ────────────────────────────────────────────────────────────────────────────
+
+    Despite the Mintty GUI item "Options / Blinking" is on, the cursor
+
+    does not blink once vim has been called.  This is caused by vim which is
+    changing the nature of the terminal.
+
+
+    Solution
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      From: https://github.com/mintty/wsltty/issues/133
+
+      Add the following line in "${HOME}/.minttyrc
+
+      SuppressDEC=12
+
+      Example:
+
+        $ cat "${HOME}/.minttyrc
+        Locale=C
+        Charset=UTF-8
+        Font=Fixedsys
+        CursorType=block
+        SuppressDEC=12
+
+
+  BlockingIOError: [Errno 11] Resource temporarily unavailable
+  ────────────────────────────────────────────────────────────────────────────
+
+    The above message showed in a Python 3 script that used subprocess
+    to fork a new process.  This problem is very well described at:
+    https://cygwin.com/faq.html#faq.using.fixing-fork-failures
+
+    Solution:
+
+      Need to recreate a rebase.  To do so:
+
+      - Kill all Cygwin processes
+      - Upgrade Cygwin:  setup-x86_64.exe --no-shortcuts --no-admin
+
+      That did the job on 2020-11-02.
+
+
+  MKPASSWD
+  ────────────────────────────────────────────────────────────────────────────
+
+  Advenant que le compte usager ne marche pas, essayer en ordre:
+
+    cd /etc
+    cp -p passwd passwd.1
+    cp -p group  group.1
+
+    mkpasswd -c 2>&1 | tee /etc/passwd
+    mkgroup  -c 2>&1 | tee /etc/group
+
+  et si cela ne marche pas (-d prend du temps, mais cherche
+  l'information dans le domaine Windows):
+
+    mkpasswd -c -d 2>&1 | tee /etc/passwd
+    mkgroup  -c -d 2>&1 | tee /etc/group
+
+
+
+  SSH
+  ────────────────────────────────────────────────────────────────────────────
+
+    SSH could not create directory /home/USERNAME/.ssh - 2020-05-26
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      From:  https://superuser.com/questions/735801/ssh-could-not-create-directory-home-username-ssh
+
+      Solution applied at V:
+
+        For those 2019 tumbleweeds if you've tried everything here and nothing
+        works if your nssswitch.conf file has:
+
+          db_home: /cygdrive/c/Users/%U
+
+        In a Cygwin terminal running in admin mode try:
+
+          #export CYGWIN=winsymlinks:native # Not necessary --Hans
+          mkdir -p /home/$USER
+          ln -s $HOME/.ssh /home/$USER
+
+
+
+    Vieux problème - Ne s'est pas produit depuis 2015
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Un récent update dans Cygwin fait en sorte que SSH ne marche plus avec nos
+       serveurs.
+
+      Voici le fix:
+
+        vim "${HOME}/.ssh/config"
+
+      et y insérer:
+
+        Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc
+        MACs hmac-md5,hmac-sha1,hmac-ripemd160
+
+      Référence:
+
+        https://nowhere.dk/articles/natty-narwhal-problems-connecting-to-servers-behind-cisco-firewalls-using-ssh
+
+
+
+    /var/empty must be owned by root
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Probablement /usr/sbin/sshd est déjà configuré pour rouler comme un
+      service.  Il suffit de redémarrer le service:
+
+        net stop  sshd
+        net start sshd
+
+      Pour détruire le service:  sc delete sshd
+
+
+
+MINTTY
+══════════════════════════════════════════════════════════════════════════════
+
+  Code CTRL Sequence (bon):  http://code.google.com/p/mintty/wiki/CtrlSeqs
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  # wmic cpu get numberofcores
+  NumberOfCores
+  4
+
+  # wmic computersystem get numberofprocessors
+  NumberOfProcessors
+  1
+
+
+  CYGWIN environment variable:  http://www.cygwin.com/cygwin-ug-net/using-cygwinenv.html
+  SSHD:   http://pigtail.net/LRP/printsrv/cygwin-sshd.html
+  MINTTY: http://code.google.com/p/mintty
+
+
+
+
+DNS RESOLV
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://superuser.com/questions/61827/how-can-i-add-a-search-domain-in-windows-7
+
+  - Go to Control Panel → Network and Internet → Network and Sharing Center.
+  - Click on Change Adapter Settings on the left side.
+  - Right-click on your network adapter (normally "Local Area Connection" or
+    "Wireless Network Connection") and select Properties.
+  - Select Internet Protocol version 4 (TCP/IPv4) and click on the Properties
+    button.
+  - On the General tab, click on the Advanced… button.
+  - In the Append this DNS suffixes list, add the domains you want, like
+    google.com
+
+    I just tried and it worked for me. By typing "mailENTER" in Firefox, I was
+    sent to Google Mail.
+
+
+
+
+WINDOWS ENVIRONMENT VARIABLES
+══════════════════════════════════════════════════════════════════════════════
+
+  Windows environment variables are stored at two places in the registry:
+
+  Specific to the user:
+
+    HKEY_CURRENT_USER\Environment
+
+  Machine wise:
+
+    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+
+
+
+CRON
+══════════════════════════════════════════════════════════════════════════════
+
+  See: http://stackoverflow.com/questions/707184/how-do-you-run-a-crontab-in-cygwin-on-windows
+
+  To install (talks about permission problems):
+
+    http://www.davidjnice.com/articles/cygwin_cron-service.html
+
+
+  --> Bon:  Problème de permissions avec la façon de faire avec cron-config?
+      Utiliser cette solution:
+
+  From:  http://www.lumdev.net/node/2115
+
+    It took several attempts to get cron working on my Windows 2003 (SP2)
+    machines, but I finally found a method that worked well.
+
+    After you have downloaded the approprate packages using the Cygwin setup
+    program, run the following commands from a Cygwin shell:
+
+
+      # NOTE:  Les instructions suivantes ont été quelques peu modifiées pour
+      #        fonctionner avec la version de cron la plus récente de Cygwin.
+
+      # Enter a new password for cron_server.
+
+      export CRON_USERNAME="cyg_server"
+      export CRON_PASSWORD="<mdp>"
+
+      net user ${CRON_USERNAME} ${CRON_PASSWORD} /add /yes
+      mkpasswd -l -u ${CRON_USERNAME} >> /etc/passwd
+
+      net localgroup Administrators ${CRON_USERNAME} /add
+      editrights -a SeAssignPrimaryTokenPrivilege -u ${CRON_USERNAME}
+      editrights -a SeCreateTokenPrivilege -u ${CRON_USERNAME}
+      editrights -a SeIncreaseQuotaPrivilege -u ${CRON_USERNAME}
+      editrights -a SeServiceLogonRight -u ${CRON_USERNAME}
+      editrights -a SeDenyInteractiveLogonRight -u ${CRON_USERNAME}
+      editrights -a SeDenyNetworkLogonRight -u ${CRON_USERNAME}
+      editrights -a SeDenyRemoteInteractiveLogonRight -u ${CRON_USERNAME}
+
+      cygrunsrv -I cron -p /usr/sbin/cron -a "-n" -d "Cygwin cron" -e "CYGWIN=ntsec" -u ${CRON_USERNAME} -w ${CRON_PASSWORD}
+      net start cron
+
+      # TO REMOVE CRON
+      net stop cron
+      cygrunsrv -R cron
+
+    This creates a separate cron_server user to run the service and grants
+    that user the appropriate rights. (replace with a password of your
+    choosing. Then it limits what that user can do beyond just running the
+    service. Finally, it installs cron as a Windows service. If you have a
+    previous failed install of cron, then you will need to go find and delete
+    the /var/log/cron.log file or the service won't start.
+
+    I also have the ssh daemon running on my Windows boxes and it works well.
+    That was also a somewhat tricky installation, but it is very useful,
+    especially for Unix admins whose institutions have chosen to go with
+    Windows.
+
+
+
+SSHD
+══════════════════════════════════════════════════════════════════════════════
+
+    # Configure ssh & sshd:
+    ssh-host-config
+
+    # Start sshd
+    cygrunsrv  --start  sshd
+
+
+
+FONTS
+══════════════════════════════════════════════════════════════════════════════
+
+  Notes:
+
+  - Deja Vu Sans Mono has best Unicode support.
+
+  List:
+
+    Fixedsys Excelsior -  http://www.fixedsysexcelsior.com/
+
+
+
+PROCESS MANAGEMENT UNDER WINDOWS (PS / KILL)
+══════════════════════════════════════════════════════════════════════════════
+
+  List all processes with their full command line
+  ────────────────────────────────────────────────────────────────────────────
+
+    Note, the order of the columns is not respected by the command
+
+    WMIC path win32_process get Caption,Processid,Commandline
+
+  Kill
+  ────────────────────────────────────────────────────────────────────────────
+
+    taskkill /pid <pid>
+
+    Add '/F' to force killing, if required.
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  Create .ico files from PNG:
+  ────────────────────────────────────────────────────────────────────────────
+
+    /setup*.exe --quiet-mode -p ImageMagick  # Install ImageMagick
+
+    FILE="Git-Icon-1788C"
+    /usr/bin/convert.exe -resize 64x64 "${FILE}.png" "${FILE}.ico"
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
