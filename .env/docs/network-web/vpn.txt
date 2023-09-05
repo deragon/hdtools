@@ -1,0 +1,36 @@
+SShuttle (excellent)
+══════════════════════════════════════════════════════════════════════════════
+
+
+  Using SSH, you can reroute all traffic, easily from your client to your
+  remote server using ssh with Shuttle.  You do not need any admin rights on
+  the server, only that Python is available on it.
+
+  From:  https://www.techrepublic.com/article/how-to-use-ssh-as-a-vpn-with-sshuttle/
+
+    Did you know that you can create a VPN tunnel using SSH? There's a
+    lesser-known tool (available for both Linux and macOS) called sshuttle.
+    With this tool, you can transform an SSH connection into a VPN connection
+    with relative ease. The sshuttle tool is command-line only but doesn't
+    require too much knowledge of the CLI to get it to work.
+
+  From:  https://fedoramagazine.org/use-sshuttle-to-build-a-poor-mans-vpn/
+
+    If you can reach reach a host on the remote network with SSH, you could
+    set up port forwarding. But this can be painful, especially if you need to
+    work with many hosts on that network. Enter sshuttle — which lets you set
+    up a quick and dirty VPN with just SSH access. Read on for more
+    information on how to use it.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
