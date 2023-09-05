@@ -288,9 +288,10 @@ ARITHMETIC
 SED
 ══════════════════════════════════════════════════════════════════════════════
 
-
   Character Classes and Bracket Expressions
   ────────────────────────────────────────────────────────────────────────────
+
+    UTF8 is well supported, contrary to Perl.
 
     Regex cheat sheet:  TO READ:  https://remram44.github.io/regex-cheatsheet/regex.html
 
@@ -312,11 +313,10 @@ SED
     Extracted from:  https://www.gnu.org/software/sed/manual/html_node/Character-Classes-and-Bracket-Expressions.html
 
 
-  Commandes
+  Commands
   ────────────────────────────────────────────────────────────────────────────
 
-    - Imprimer seulement si un match est fait
-      (équivalent de perl -ne 'print if s/...')
+    - Print only if a match is found (same as "perl -ne 'print if s/...'")
 
       sed -rn "s/<text to replace>(group1)/<replacment text>\1/gp"`
             ↑ Do not print                                      ↑ print if match
@@ -324,12 +324,6 @@ SED
     - Sed on content of a variable, not from a file nor stdin:
 
       sed -r "s/a/b/g" <<< "${LINE}"
-
-
-  Particularité
-  ────────────────────────────────────────────────────────────────────────────
-
-    - UTF8 bien supporté, contrairement à Perl
 
 
   Sed multiline
