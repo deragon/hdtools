@@ -8,6 +8,7 @@ SITES
 LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
+  deprecated                 -> déclassé, obsolète, dépassé, déprécié
   batch                      -> lot / traitement par lots
   stream                     -> évènementiel / flux continu / lecture en continu/ lecture en transit / diffusion en continu
   troubleshooting            -> dépannage / résolution de problèmes / diagnostic des défaillances
@@ -57,6 +58,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   to map                     -> faire la correspondance, assignation
   scalability                -> extensible, évolutivité, scalabilité, adaptable, adaptabilité, modularité
   array                      -> liste, tableau
+  thread (email)             -> enfilade, fil de discussion (courriel)
 
 
 
