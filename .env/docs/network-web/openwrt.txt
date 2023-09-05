@@ -1,0 +1,163 @@
+COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  uci show network  # List network information.
+  service dnsmasq restart or /etc/init.d/dnsmasq restart
+
+
+
+SSH
+══════════════════════════════════════════════════════════════════════════════
+
+  SSH public keys and authorized_keys
+  ────────────────────────────────────────────────────────────────────────────
+
+    Do not put public ssh keys under /root/.ssh/authorized_keys (not sure it
+    works, not tested by Hans Deragon).  Instead, put them in:
+
+      /etc/dropbear/authorized_keys
+
+
+
+PACKAGE MANAGEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  opkgopkg update
+
+  # From: https://unix.stackexchange.com/questions/400231/how-do-i-upgrade-all-of-my-installed-packages-in-openwrt
+  # There no single command or argument, but you can easily do it. To upgrade all of the packages, LEDE recommends,
+
+  opkg list-upgradable | cut -f 1 -d ' ' | xargs -r opkg upgrade
+
+
+
+  - Documentation:  https://openwrt.org/packages/start
+
+  opkg install rsync # Pas encore fait -- Hans Deragon (hans@deragon.biz), 2022-02-06 12:07:51 EST
+
+
+
+# Fait le 2022-04-20 07:17:43 EDT
+
+opkg install kmod-ipt-conntrack-extra # Netfilter (IPv4) extra kernel modules for connection tracking Includes: - connbytes - connmark/CONNMARK - conntrack - helper - recent
+
+
+
+
+DNSMASQ
+══════════════════════════════════════════════════════════════════════════════
+
+  Set DNS servers (such as OpenDNS's) instead of using ISP provided
+  ────────────────────────────────────────────────────────────────────────────
+
+    Read:  https://www.reddit.com/r/openwrt/comments/854hmm/how_do_i_set_up_a_default_dns_on_openwrtlede_is/
+
+    To disable sending DNS requests to ISP provided DNS servers, in the
+    OpenWRT interface LuCI:
+
+    - Select the Network->Interfaces menu entry.
+    - Click on Edit for the LAN interfaces.
+    - Choose 'Advanced Settings' tab.
+    - Unselect the "Use DNS servers advertised by peer" checkbox.
+      Enter 127.0.0.1 in the "Use custom DNS servers" dialogue box.
+
+    Après:
+
+    Interfaces - LAN / General Setup
+
+      http://192.168.1.1/cgi-bin/luci/;stok=fdce5555fb60c3898a98d4870d510b5e/admin/network/network/lan
+
+    Il suffit par la suite de remplir le champ:
+
+      Use custom DNS servers
+
+    Il faut ajouter un champ additionnel en cliquant sur le '+' pour
+    ajouter le 2e DNS.
+
+    'Save & Apply' par la suite et le tour est joué.
+
+
+  Figure out what DNS servers are being used
+  ────────────────────────────────────────────────────────────────────────────
+
+    NOTE:
+
+      IPV4
+
+        192.168.1.1       OpenWRT, car on définit dans /etc/config/dhcp plein
+                          d'appareils; il doit être présent pour que nos
+                          propres définitions marchent.
+        208.67.222.123    OpenDNS
+        208.67.220.123    OpenDNS
+        135.19.0.18       dns13.videotron.ca
+        70.80.0.66        dns14.videotron.ca
+
+      IPV4
+
+        2620:119:35::35   OpenDNS
+        2620:119:53::53   OpenDNS
+
+
+    In one terminal, run:
+
+      logread -f
+
+    In another, run:
+
+      /etc/init.d/dnsmasq restart
+
+    The log file will spill something like the following:
+
+      Tue Nov  5 07:23:39 2019 dnsmasq[2482]: using nameserver 208.67.222.123#53
+      Tue Nov  5 07:23:39 2019 dnsmasq[2482]: using nameserver 208.67.220.123#53
+      Tue Nov  5 07:23:39 2019 dnsmasq[2482]: using nameserver 135.19.0.18#53
+      Tue Nov  5 07:23:39 2019 dnsmasq[2482]: using nameserver 70.80.0.66#53
+      Tue Nov  5 07:23:39 2019 dnsmasq[2482]: using nameserver 24.200.0.1#53
+
+    You can also check:
+
+      cat /tmp/resolv.conf.auto
+      # Interface lan
+      nameserver 208.67.222.123
+      nameserver 208.67.220.123
+      # Interface wan
+      nameserver 135.19.0.18
+      nameserver 70.80.0.66
+      nameserver 24.200.0.1
+
+
+
+MAC FILTERING
+══════════════════════════════════════════════════════════════════════════════
+
+  Activé le:  2020-09-23 17:35:46 EDT
+
+  From:  https://openwrt.org/docs/guide-user/base-system/dhcp_configuration
+
+  If you want to distribute IPv4 addresses to known clients only (static
+  leases), use:
+
+    uci set dhcp.lan.dynamicdhcp="0"
+    uci commit dhcp
+    /etc/init.d/dnsmasq restart
+
+  With this, dnsmasq will consider static leases defined in “config host”
+  blocks and in /etc/ethers, and refuse to hand out any IPv4 address to
+  unknown clients.
+
+  Note that you shouldn't use this as a security feature to prevent unwanted
+  clients from connecting. A client can simply configure a static IP in the
+  right range to have access to the network.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
