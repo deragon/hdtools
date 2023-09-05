@@ -365,6 +365,23 @@ PUSH
 
 
 
+PRUNE
+══════════════════════════════════════════════════════════════════════════════
+
+  The following command will remove any dangling object that is not attached
+  to a branch.
+
+    git -c gc.reflogExpire=0            \
+        -c gc.reflogExpireUnreachable=0 \
+        -c gc.rerereresolved=0          \
+        -c gc.rerereunresolved=0        \
+        -c gc.pruneExpire=now           \
+        gc
+
+  See:  https://stackoverflow.com/questions/3797907/how-to-remove-unused-objects-from-a-git-repository
+
+
+
 TAGGING / TAGS
 ══════════════════════════════════════════════════════════════════════════════
 
