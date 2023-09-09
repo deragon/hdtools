@@ -342,72 +342,69 @@ for (( INDEX = 0; INDEX < 100; INDEX ++ )); do
 done
 
 
-# Directory is 'log', not 'logs', to follow Linux standard '/var/log'.
-LOGDIR="${HOME}/log/${SCRIPT_NAME_BASE}"
-mkdir -p "${LOGDIR}"
-LOGFILE="${LOGDIR}/${SCRIPT_NAME_BASE}.${TIMESTAMP_FILE}.PID-$$.log"
-
+logWrapper()
 {
-  echo -en "Started:  ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+  # Directory is 'log', not 'logs', to follow Linux standard '/var/log'.
+  LOGDIR="${HOME}/log/${SCRIPT_NAME_BASE}"
+  mkdir -p "${LOGDIR}"
+  LOGFILE="${LOGDIR}/${SCRIPT_NAME_BASE}.log"
 
-  trap "" HUP  # Detach from terminal; same as nohup.
+  {
+    echo -en "Started:  ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
 
-  <CODE HERE>
+    $@
 
-  TIMESTAMP_END=$(date +"%s") # Seconds since epoch.
-  TIMESTAMP_DIFF=$((${TIMESTAMP_END}-${TIMESTAMP_START}))
+    TIMESTAMP_END=$(date +"%s") # Seconds since epoch.
+    TIMESTAMP_DIFF=$((${TIMESTAMP_END}-${TIMESTAMP_START}))
 
-  echo -en "Started:    ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
-  echo -en "Ended:      ";date -d @"${TIMESTAMP_END}"   +"${TIMESTAMP_FORMAT_HUMAN}"
+    echo -en "Started:    ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+    echo -en "Ended:      ";date -d @"${TIMESTAMP_END}"   +"${TIMESTAMP_FORMAT_HUMAN}"
 
+    TIMESTAMP_DIFF_DAYS=$(printf '% 8d' $(($(date -u -d @"${TIMESTAMP_DIFF}" +'%j')-1)))
 
+    echo -en "Timelapse:  ${TIMESTAMP_DIFF_DAYS} ";date -u -d @"${TIMESTAMP_DIFF}" +'%H:%M:%S'
 
-  TIMESTAMP_DIFF_DAYS=$(printf '% 8d' $(($(date -u -d @"${TIMESTAMP_DIFF}" +'%j')-1)))
+  } 2>&1 | \
+  while IFS= read -r LINE; do
+    # From:  http://mywiki.wooledge.org/BashFAQ/001#Trimming
+    #
+    # The read command modifies each line read; by default it removes all leading
+    # and trailing whitespace characters (spaces and tabs, or any whitespace
+    # characters present in IFS). If that is not desired, the IFS variable has to
+    # be cleared.
+    #
+    # -r instructions 'read' to not consider backslashes as an escape character.
 
-  echo -en "Timelapse:  ${TIMESTAMP_DIFF_DAYS} ";date -u -d @"${TIMESTAMP_DIFF}" +'%H:%M:%S'
+    # If Cygwin, choose 'printf', else use 'date' since it is more accurate (to the nano)
 
-} 2>&1 | \
-while IFS= read -r LINE; do
-  # From:  http://mywiki.wooledge.org/BashFAQ/001#Trimming
-  #
-  # The read command modifies each line read; by default it removes all leading
-  # and trailing whitespace characters (spaces and tabs, or any whitespace
-  # characters present in IFS). If that is not desired, the IFS variable has to
-  # be cleared.
-  #
-  # -r instructions 'read' to not consider backslashes as an escape character.
+    # Cygwin solution
+    printf -v NOW '%(%F %T)T'  # ISO 8601 Format, to the seconds.  For Cygwin (faster, no fork)
+                               # Nanoseconds is not available, unfortunately.
 
-  # If Cygwin, choose 'printf', else use 'date' since it is more accurate (to the nano)
+    # Linux solution.
+    NOW=$(date +"${TIMESTAMP_FORMAT_HUMAN}")  # ISO 8601 Format, to the nano seconds.  For Linux.
+    NOW="${NOW:0:23}"  # The remaining nanoseconds are removed.  Milliseconds remain.
 
-  # Cygwin solution
-  printf -v NOW '%(%F %T)T'  # ISO 8601 Format, to the seconds.  For Cygwin (faster, no fork)
-                             # Nanoseconds is not available, unfortunately.
+    echo "${NOW} ${LINE}" | tee -a "${LOGFILE}"
+  done
 
-  # Linux solution.
-  NOW=$(date +"${TIMESTAMP_FORMAT_HUMAN}")  # ISO 8601 Format, to the nano seconds.  For Linux.
-  NOW="${NOW:0:23}"  # The remaining nanoseconds are removed.  Milliseconds remain.
+  # ) >"${LOGFILE}" &
 
-  echo "${NOW} ${LINE}" | tee -a "${LOGFILE}"
-done
+  sleep 1 # Pause to give a chance for the newly created process to start
+          # in the background.
 
-# ) >"${LOGFILE}" &
+  cat <<EOM
 
+  ${SCRIPT_NAME} is running in the background.
+  The content of the log file can be displayed with the following command:
 
-sleep 1 # Pause to give a chance for the newly created process to start
-        # in the background.
+      tail -f "${LOGFILE}" &
 
-cat <<EOM
-
-${SCRIPT_NAME} roule en background.  Le fichier de log est affiché avec la
-commande suivante.
-
-  tail -f "${LOGFILE}" &
-
-CTRL-C pour avorter.
-
+  <CTRL-C> to abort.
 EOM
 
-tail -f "${LOGFILE}"
+  tail -f "${LOGFILE}"
+}
 
 
 # DRY RUN / EXECUTION WARNING
