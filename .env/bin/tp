@@ -91,6 +91,8 @@ pattern = re.compile("(.*?//)*([^:]+)(?::*(\d+))*(/.*)*$")
 
 
 def hostportparser(hostport):
+    port_in_next_arg = False
+
     matches = pattern.match(hostport)
     if matches != None:
         protocol = matches.group(1)
@@ -103,7 +105,8 @@ def hostportparser(hostport):
 
     if not port:
         try:
-            port=args.hostport[1]
+            port=int(args.hostport[1])
+            port_in_next_arg = True
         except IndexError:
             if protocol == None:
                 errors += "\n  - You failed to provide a port number."
@@ -120,7 +123,7 @@ def hostportparser(hostport):
         except ValueError:
           errors += "\n  - The port must be an integer.  You provided '" + str(port) + "'"
 
-    return (hostname, port)
+    return (hostname, port, port_in_next_arg)
 
 
 if args.timeout:
@@ -137,10 +140,15 @@ if len(errors) > 0:
 # Main
 # ════════════════════════════════════════════════════════════════════════════
 
-exitcode=0
+exitcode = 0
+port_in_next_arg = False
 
 for hostport in args.hostport:
-    hostname, port = hostportparser(hostport)
+    if port_in_next_arg:
+        port_in_next_arg = False
+        continue
+
+    hostname, port, port_in_next_arg = hostportparser(hostport)
 
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
         sock.settimeout(args.timeout)  # Seconds.
