@@ -171,6 +171,15 @@ TIMESTAMP_HUMAN="$(date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}")"
 TIMESTAMP_FILE="$( date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_FILE}")"
 
 
+# Fetch yes or no answer from STDIN.
+# ────────────────────────────────────────────────────────────────────────────
+read -n 1 -p "Désiréz vous exécuter l'image ${DOCKER_IMAGE_ID}? (o/n) " -e ANSWER
+#read -p "Enter a value:  " -i "<default value>" -e ANSWER
+echo
+if [[ "(o|O|y|Y)" =~ "${ANSWER}" ]]; then
+  echo "<yes selected>"
+fi
+
 
 # title()
 # ────────────────────────────────────────────────────────────────────────────
