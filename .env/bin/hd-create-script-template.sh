@@ -20,17 +20,44 @@ SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
 SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
 SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
 
-unset COLORS
+unset ANSI
 if [ -t 1 ] ; then
-  # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
   # remain unset and no ANSI codes are sent out.
-  declare -A COLORS=(
+
+  declare -Ag ANSI=(
     ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
     ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
     ["FG_WHITE_BG_RED"]="\e[1;37;41m"
     ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
-    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True Colors (24 bits) terminal.
-    ["NORMAL"]="\e[0;00m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True ANSI (24 bits) terminal.
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["ITALIC"]="\e[2m"
+    ["UNDERLINE"]="\e[3m"
+    ["REVERSE"]="\e[7m"
+    ["STRIKETHROUGH"]="\e[9m"
+    ["BOLD_OFF"]="\e[21m"
+    ["ITALIC_OFF"]="\e[22m"
+    ["UNDERLINE_OFF"]="\e[23m"
+    ["REVERSE_OFF"]="\e[27m"
+    ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLACK"]="\e[30m"
+    ["RED"]="\e[31m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+    ["MAGENTA"]="\e[35m"
+    ["CYAN"]="\e[36m"
+    ["WHITE"]="\e[37m"
+    ["BG_RED"]="\e[41m"
+    ["BG_GREEN"]="\e[42m"
+    ["BG_YELLOW"]="\e[43m"
+    ["BG_BLUE"]="\e[44m"
+    ["BG_MAGENTA"]="\e[45m"
+    ["BG_CYAN"]="\e[46m"
+    ["BG_WHITE"]="\e[47m"
+    ["BG_DEFAULT"]="\e[49m"
   )
 fi
 
@@ -38,13 +65,13 @@ fi
 usage()
 {
   echo -e "
-${COLORS[FG_WHITE_BG_GREEN]} SAFE ${COLORS[NORMAL]}
-${COLORS[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${COLORS[NORMAL]}
-${COLORS[FG_WHITE_BG_RED]} DANGER ${COLORS[NORMAL]}
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+${ANSI[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${ANSI[RESET]}
+${ANSI[FG_WHITE_BG_RED]} DANGER ${ANSI[RESET]}
 
-${COLORS[FG_WHITE_BG_GREEN]} SAUF ${COLORS[NORMAL]}
-${COLORS[FG_BLACK_BG_YELLOW]} LÉGER DANGER ${COLORS[NORMAL]}
-${COLORS[FG_WHITE_BG_RED]} DANGER ${COLORS[NORMAL]}
+${ANSI[FG_WHITE_BG_GREEN]} SAUF ${ANSI[RESET]}
+${ANSI[FG_BLACK_BG_YELLOW]} LÉGER DANGER ${ANSI[RESET]}
+${ANSI[FG_WHITE_BG_RED]} DANGER ${ANSI[RESET]}
 
 Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <file>+
 
@@ -107,6 +134,18 @@ FILES=("$@") # If you want the number of elements of $@, use $#
 # VALIDATION
 # ════════════════════════════════════════════════════════════════════
 
+printErrorsAndExitIfAny()
+{
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERREUR:${ANSI[RESET]}  Les erreurs suivantes furent détectées.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    echo -e "Commande avortée."
+    exit 1
+  fi
+}
+
 ERRORS=""
 
 if ((${#FILES[*]} == 0)); then
@@ -117,14 +156,7 @@ if [ -z "${ENV}" ]; then
   ERRORS="${ERRORS} - Environment must be provided.  Example: '-e acc'.\n"
 fi
 
-if [ ! -z "${ERRORS}" ]; then
-  echo -e "${COLORS[FG_WHITE_BG_RED]}ERROR:${COLORS[NORMAL]}  The following errors where detected.\n"
-  echo -e "${COLORS[FG_WHITE_BG_RED]}ERREUR:${COLORS[NORMAL]}  Les erreurs suivantes furent détectées.\n"
-  echo -e "${ERRORS}"
-  echo -e "Command aborted."
-  echo -e "Commande avortée."
-  exit 1
-fi
+printErrorsAndExitIfAny
 
 
 
@@ -184,9 +216,9 @@ signalerrorhandler()
   LINENO_ERR=$1
   echo -e "$(cat <<EOM
 
-${COLORS[FG_WHITE_BG_RED]}ERROR:${COLORS[NORMAL]}  The previous command failed.  Script aborted.
+${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The previous command failed.  Script aborted.
          Following the command that failed:
-${COLORS[FG_WHITE_BG_RED]}ERREUR:${COLORS[NORMAL]}  La commande précédente a échouée.  script avorté.
+${ANSI[FG_WHITE_BG_RED]}ERREUR:${ANSI[RESET]}  La commande précédente a échouée.  script avorté.
          Voici la commande qui a échouée:
 EOM
 )"
@@ -210,7 +242,7 @@ trap 'signalerrorhandler ${LINENO}' ERR
 # If no file has been provided, set one file as STDIN (-).  This way,
 # either files passed as arguments are processed or STDIN.
 if (( ${#FILES[*]} == 0 )); then
-  echo -e "${COLORS[FG_BLACK_BG_YELLOW]} WARNING ${COLORS[NORMAL]} SDTIN being used for input." >&2
+  echo -e "${ANSI[FG_BLACK_BG_YELLOW]} WARNING ${ANSI[RESET]} SDTIN being used for input." >&2
   FILES[0]="-"
 
   # Or as an alternative, to catch all STDIN into a variable named STDIN:
@@ -373,9 +405,9 @@ tail -f "${LOGFILE}"
 # ════════════════════════════════════════════════════════════════════
 echo
 if (( DRYRUN )); then
-  echo -en "${COLORS[FG_WHITE_BG_BLUE]}Command was executed in dry mode; nothing was executed.${COLORS[FG_WHITE_BG_BLUE]}\n${COLORS[FG_WHITE_BG_BLUE]}Rerun with -e to execute the action.${COLORS[NORMAL]}\n"
-  echo -en "${COLORS[FG_WHITE_BG_BLUE]}Commande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.${COLORS[FG_WHITE_BG_BLUE]}\n${COLORS[FG_WHITE_BG_BLUE]}Rerouler avec l'option -e pour exécuter l'action.${COLORS[NORMAL]}\n"
+  echo -en "${ANSI[FG_WHITE_BG_BLUE]}Command was executed in dry mode; nothing was executed.${ANSI[FG_WHITE_BG_BLUE]}\n${ANSI[FG_WHITE_BG_BLUE]}Rerun with -e to execute the action.${ANSI[RESET]}\n"
+  echo -en "${ANSI[FG_WHITE_BG_BLUE]}Commande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.${ANSI[FG_WHITE_BG_BLUE]}\n${ANSI[FG_WHITE_BG_BLUE]}Rerouler avec l'option -e pour exécuter l'action.${ANSI[RESET]}\n"
 else
-  echo -en "${COLORS[FG_WHITE_BG_GREEN]}Command was executed.${COLORS[NORMAL]}\n"
-  echo -en "${COLORS[FG_WHITE_BG_GREEN]}Commande fut exécutée.${COLORS[NORMAL]}\n"
+  echo -en "${ANSI[FG_WHITE_BG_GREEN]}Command was executed.${ANSI[RESET]}\n"
+  echo -en "${ANSI[FG_WHITE_BG_GREEN]}Commande fut exécutée.${ANSI[RESET]}\n"
 fi
