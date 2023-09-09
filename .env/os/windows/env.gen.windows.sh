@@ -153,12 +153,18 @@ done
 # See:  https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr
 export NO_AT_BRIDGE=1
 
+if [[ -z "${WIN_DIR_USER_HOME}" ]]; then
+  setVarIfDirsExist WIN_DIR_USER_HOME "/mnt/c/Users/${USER}"
+fi
+
+alias cdwinhome='cdprint "${WIN_DIR_USER_HOME}"'
+alias cddownloads='cdprint "${WIN_DIR_USER_HOME}/Downloads"'
 
 # WSLTTY:  MINTTY for WSL https://github.com/mintty/wsltty
-if [ -e "${HOME}/AppData/Local/wsltty/bin/mintty.exe" ]; then
+if [ -e "${WIN_DIR_USER_HOME}/AppData/Local/wsltty/bin/mintty.exe" ]; then
   # WSLTTY installed.
-  alias cdwslttyconfig='cdprint "${HOME}/AppData/Roaming/wsltty"'
-  alias hdterm='"${HOME}/AppData/Local/wsltty/bin/mintty.exe" -w max --WSL= --configdir="C:\Users\derah\AppData\Roaming\wsltty" -~ -'
+  alias cdwslttyconfig='cdprint "${WIN_DIR_USER_HOME}/AppData/Roaming/wsltty"'
+  alias hdterm='"${WIN_DIR_USER_HOME}/AppData/Local/wsltty/bin/mintty.exe" -w max --WSL= --configdir="C:\Users\derah\AppData\Roaming\wsltty" -~ -'
 fi
 
 
