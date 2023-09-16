@@ -39,6 +39,40 @@ try:
 except IndexError:
     scriptNameBase=scriptName # There is no extension.
 
+ansi = {
+    "FG_WHITE_BG_GREEN":      "\033[1;37;42m",
+    "FG_BLACK_BG_YELLOW":     "\033[1;30;43m",
+    "FG_WHITE_BG_RED":        "\033[1;37;41m",
+    "FG_WHITE_BG_BLUE":       "\033[1;37;44m",
+    "FG_WHITE_BG_ORANGERED":  "\033[38;2;255;255;255m\033[48;2;255;69;0m",  # Requires True Colors (24 bits) terminal.
+    "RESET":                  "\033[0;00m",
+    "BOLD":                   "\033[1m",
+    "ITALIC":                 "\033[2m",
+    "UNDERLINE":              "\033[3m",
+    "REVERSE":                "\033[7m",
+    "STRIKETHROUGH":          "\033[9m",
+    "BOLD_OFF":               "\033[21m",
+    "ITALIC_OFF":             "\033[22m",
+    "UNDERLINE_OFF":          "\033[23m",
+    "REVERSE_OFF":            "\033[27m",
+    "STRIKETHROUGH_OFF":      "\033[29m",
+    "BLACK":                  "\033[30m",
+    "RED":                    "\033[31m",
+    "GREEN":                  "\033[32m",
+    "YELLOW":                 "\033[33m",
+    "BLUE":                   "\033[34m",
+    "MAGENTA":                "\033[35m",
+    "CYAN":                   "\033[36m",
+    "WHITE":                  "\033[37m",
+    "BG_RED":                 "\033[41m",
+    "BG_GREEN":               "\033[42m",
+    "BG_YELLOW":              "\033[43m",
+    "BG_BLUE":                "\033[44m",
+    "BG_MAGENTA":             "\033[45m",
+    "BG_CYAN":                "\033[46m",
+    "BG_WHITE":               "\033[47m",
+    "BG_DEFAULT":             "\033[49m"
+}
 
 # PARSING ARGUMENTS
 # ────────────────────────────────────────────────────────────────────────────
@@ -77,13 +111,13 @@ except IndexError:
 
 
 parser = argparse.ArgumentParser(description="""
-\x1B[1;37;42m SAFE \x1B[0m
-\x1B[1;30;43m SLIGHT DANGER \x1B[0m
-\x1B[1;37;41m DANGER \x1B[0m
+{ansi['FG_WHITE_BG_GREEN']} SAFE {ansi['RESET']}
+{ansi['FG_BLACK_BG_YELLOW']} SLIGHT DANGER {ansi['RESET']}
+{ansi['FG_WHITE_BG_RED']} DANGER {ansi['RESET']}
 
-\x1B[1;37;42m SAUF \x1B[0m
-\x1B[1;30;43m LÉGER DANGER \x1B[0m
-\x1B[1;37;41m DANGER \x1B[0m
+{ansi['FG_WHITE_BG_GREEN']} SAUF {ansi['RESET']}
+{ansi['FG_BLACK_BG_YELLOW']} LÉGER DANGER {ansi['RESET']}
+{ansi['FG_WHITE_BG_RED']} DANGER {ansi['RESET']}
 
 Read a .ini file and export its full content in variables that Bash can make use of.
 
@@ -142,6 +176,7 @@ elif args.loglevel=="critical":
 else:
     level=logging.INFO
 
+
 # When setting the log level with logging.basicConfig(), the log level is set
 # for ALL Python modules that using the logging facility, not just the code
 # found in this script.  This is usually not desired.
@@ -168,8 +203,8 @@ errors = ""
 #   errors += "\n  --hardlink is required."
 
 if len(errors) > 0:
-    print("\x1B[1;37;41mERROR:\x1B[0m  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
-    print("\x1B[1;37;41mERREUR:\x1B[0m  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
+    print(f"{ansi['FG_WHITE_BG_RED']}ERROR:{ansi['RESET']}  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
+    print(f"{ansi['FG_WHITE_BG_RED']}ERREUR:{ansi['RESET']}  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
     sys.exit(1)
 
 #print(args)
