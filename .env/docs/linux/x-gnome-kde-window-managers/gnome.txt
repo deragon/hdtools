@@ -1,0 +1,150 @@
+EXTENSIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  TRÈS BON:  https://itsfoss.com/best-gnome-extensions/
+
+  Pour copier les extensions d'un système à un autre, faire:
+
+  rsync -arv \
+    hans@demloka:/vol/data/base/home/hans/.local/share/gnome-shell/extensions \
+    "${HOME}/.local/share/gnome-shell/."
+
+  Ensuite, repartir Gnome Shell avec <ALT>-F2 suivi par 'r'.
+
+
+  WHY GNOME EXTENSIONS CAUSES CRASHES
+  ────────────────────────────────────────────────────────────────────────────
+
+    Très bon et lire les commentaires qui ajoutent des détails importants!
+
+    https://eischmann.wordpress.com/2018/07/31/story-of-gnome-shell-extensions/
+
+
+
+CONFIGURATION
+══════════════════════════════════════════════════════════════════════════════
+
+  To setup parameters for Gnome Terminals:
+
+  gconftool-2 --set "/apps/gnome-terminal/profiles/Default/background_color" \
+              --type string "#0000FF"
+
+
+  Gconf, Dconf, Gsettings and the relationship between them
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://askubuntu.com/questions/249887/gconf-dconf-gsettings-and-the-relationship-between-them
+
+      Dconf is a data store designed for storing configuration. It is the
+      replacement for Gconf, which was used for the same purpose. Eventually,
+      no programs should depend on Gconf any more.
+
+      Gsettings is a development library used to read and write to a
+      configuration store backend. On Linux, it uses Dconf, but on Windows, it
+      uses the registry, and on OS X, it uses a native data store.
+
+      Application developers and end-users are recommended to use Gsettings,
+      not Dconf directly.
+
+    ‑‑‑‑
+
+      GConf is obsolete. It is the older GNOME 2.x configuration API and
+      system, and has been replaced by DConf/GSettings in newer versions.
+      However, some applications still use it.
+
+      GSettings is a GLib implementation of DConf, which stores its data in a
+      binary database.
+
+      The gsettings command line tool is simply a tool to access or modify
+      settings via the GSettings API, in the same way that the older gconftool
+      command line tool is for GConf.
+
+
+
+QUERIES
+══════════════════════════════════════════════════════════════════════════════
+
+  List of gnome-vfs file servers opened:
+
+    gconftool-2 -R /desktop/gnome/connected_servers
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Resetting Gnome's (version 2?) Settings in Ubuntu
+
+  mkdir .gnome-backup
+  mv .gnome .gnome2 .gconf .gconfd .metacity .gnome-backup
+
+  See:  http://www.linuxjournal.com/content/resetting-gnomes-settings-ubuntu
+
+
+  DOUBLE LOCKING SCREEN ON RESUME
+  ────────────────────────────────────────────────────────────────────────────
+
+  14.04:
+
+    The normal locking screen on resume is set by calling up the "power"
+    settings, click on the link "Tip:  screen brightness affects how much
+    power is used" and check the "Require my password when waking from
+    suspend" checkbox.
+
+    This make the proper locking screen show up, which also allow to
+    switch between users.
+
+    However, for some odd reason, the gnome-screensaver was also set
+    to lock the screen, thus upon resume, two lock screens showed up.
+    Gnome screen saver screen does not allow switching between users, thus
+    it is the one that must be deactivated.
+
+    To do this, run:
+
+      gsettings set org.gnome.desktop.screensaver lock-enabled false
+
+
+  ────────────────────────────────────────────────────────────────────────────
+  - GNOME SCREEN ORIENTATION -> Run 'hdgnomeorientationfix.sh' (safe)
+
+  - Get Gnome version:  Activities -> Search for 'about'
+
+
+
+NAUTILUS
+══════════════════════════════════════════════════════════════════════════════
+
+  Nautilus - Cannot delete file to trash
+  ────────────────────────────────────────────────────────────────────────────
+
+    Bind mounted filesystem (/etc/fstab) cannot have their file sent to trash.
+
+    Caused by bug:  https://bugzilla.kernel.org/show_bug.cgi?id=70831
+    Explained at:  https://unix.stackexchange.com/questions/115757/unable-to-delete-files-to-trash-in-a-bind-mounted-filesystem/115811
+
+
+
+KDE COEXISTING WITH GNOME
+══════════════════════════════════════════════════════════════════════════════
+
+  2020-01-26:  https://www.reddit.com/r/kde/comments/eu3owu/kde_alongside_gnome/
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - tracker-miner-fs -> Gnome indexer.  Takes a lot of CPU.  Does not last long though.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
