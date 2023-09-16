@@ -150,31 +150,32 @@ for hostport in args.hostport:
         continue
 
     hostname, port, port_in_next_arg = hostportparser(hostport)
+    hostname_real, aliases, ips = socket.gethostbyname_ex(hostname)
+    for ip in ips:
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+            sock.settimeout(args.timeout)  # Seconds.
 
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-        sock.settimeout(args.timeout)  # Seconds.
-
-        if not args.quiet:
-            print(f"Testing:  {hostname}:{port} -> ", end="", flush=True)
-
-        sock_errno = sock.connect_ex((hostname, port))
-        if sock_errno == 0:
             if not args.quiet:
-                print(f"{ansi['FG_WHITE_BG_GREEN']} ✓ Open {ansi['RESET']}")
+                print(f"Testing:  {hostname} ({ip}):{port} -> ", end="", flush=True)
 
-            # Experiment sending stdin like netcat (nc) would do.
-            # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
-            # that HTTPS is expected and this code will not work.
-            # See:  https://stackoverflow.com/questions/31599634/malformed-http-response-with-docker-private-registry-v2-behind-an-nginx-proxy
+            sock_errno = sock.connect_ex((ip, port))
+            if sock_errno == 0:
+                if not args.quiet:
+                    print(f"{ansi['FG_WHITE_BG_GREEN']} ✓ Open {ansi['RESET']}")
 
-            # print(sock.sendmsg(sys.stdin.buffer))
-            # returnTuple=sock.recvmsg(2**16, 2**16)
-            # print(returnTuple)
-            # print(returnTuple[0].decode('utf-8'))
+                # Experiment sending stdin like netcat (nc) would do.
+                # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
+                # that HTTPS is expected and this code will not work.
+                # See:  https://stackoverflow.com/questions/31599634/malformed-http-response-with-docker-private-registry-v2-behind-an-nginx-proxy
 
-        else:
-            if not args.quiet:
-                print(f"{ansi['FG_WHITE_BG_RED']} ✘ Closed {ansi['RESET']} ({sock_errno}:{errno.errorcode[sock_errno]})")
-            exitcode+=1
+                # print(sock.sendmsg(sys.stdin.buffer))
+                # returnTuple=sock.recvmsg(2**16, 2**16)
+                # print(returnTuple)
+                # print(returnTuple[0].decode('utf-8'))
+
+            else:
+                if not args.quiet:
+                    print(f"{ansi['FG_WHITE_BG_RED']} ✘ Closed {ansi['RESET']} ({sock_errno}:{errno.errorcode[sock_errno]})")
+                exitcode+=1
 
 sys.exit(exitcode)
