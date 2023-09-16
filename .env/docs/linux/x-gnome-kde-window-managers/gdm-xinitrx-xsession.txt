@@ -1,0 +1,54 @@
+LINUX & OTHER UNIX (SOLARIS) COEXISTING
+══════════════════════════════════════════════════════════════════════════════
+
+  Content of ~/.xinitrc:
+
+    #!/bin/sh
+
+    if [ `uname` = 'Linux' ]; then
+      # Using system default.
+      . /etc/X11/xinit/xinitrc
+    else
+      . ~/xinitrc.solaris
+    fi
+
+  Content of ~/.xsession
+
+    #!/bin/sh
+
+    if [ `uname` = 'Linux' ]; then
+      # Using system default.
+      . /etc/X11/xdm/Xsession
+    else
+      . ~/xsession.solaris
+    fi
+
+
+
+HOW TO MAKE A SCREENSHOT OF A GDM LOGIN SESSION:
+══════════════════════════════════════════════════════════════════════════════
+  On SLES9:
+
+    export XAUTHORITY=/var/lib/gdm/:0.Xauth
+    export DISPLAY=:0
+    import -window root /tmp/gdm-shot.png
+
+
+TESTING:
+══════════════════════════════════════════════════════════════════════════════
+  gdmthemetester xdmcp ericsson2
+
+  See:  http://www.gnome.org/projects/gdm/docs/2.8/thememanual.html
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
