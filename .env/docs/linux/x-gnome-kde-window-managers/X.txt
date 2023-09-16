@@ -1,0 +1,202 @@
+COMMANDS / BASH / TERMINAL / CONSOLE
+══════════════════════════════════════════════════════════════════════════════
+
+  How to check if X server is running?
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/637005/how-to-check-if-x-server-is-running
+
+    if ! xset q &>/dev/null; then
+      echo "No X server at \$DISPLAY [$DISPLAY]" >&2
+      exit 1
+    fi
+
+
+
+TOOLS
+══════════════════════════════════════════════════════════════════════════════
+
+  xdpyinfo
+
+    Display information about running X instance.
+
+  xev
+
+    Reports all X events on stdout.
+
+  xvidtune
+
+    To setup video alignement and print out mode lines.  To get
+    current mode line, type:  xvidtune -show
+
+  xkill
+
+    Kills X client by selecting them.
+
+  startx
+
+    Start an new X instance.
+
+
+
+XAUTH
+══════════════════════════════════════════════════════════════════════════════
+http://oracleappstechnology.blogspot.com/2008/03/xlib-invalid-mit-magic-cookie-1-key.html
+
+When I executed xhost + command on a Solaris box as root. I got the following error:
+
+root@apps11i # DISPLAY=apps11i:1
+root@apps11i # export DISPLAY
+root@apps11i # xhost +
+Xlib: connection to "apps11i:1.0" refused by server
+Xlib: Invalid MIT-MAGIC-COOKIE-1 key
+xhost: unable to open display "apps11i:1"
+
+This error is the correct behavior because xhost + command can be executed by that user who has started the X session. Solaris is protecting a particular user's processes by disallowing other users to control it. In my case it was a vnc session started through a different user. Once I logged in as that user
+
+root@apps11i # su - applmgr
+applmgr@apps11i # xhost +
+access control disabled, clients can connect from any host
+Posted by Vikram Das at 2:23 PM
+Labels: vnc, xhost, Xlib
+5 comments:
+
+Frits Hoogland said...
+
+    Are you aware that you have opened your X server validated as root for your entire network?
+
+    Doesn't seem like a good idea.
+
+    Better to use SSH X-tunneling, and re-use your X cookie(s) in the root session:
+
+    $ xauth list > /tmp/x.authentication.cookies
+    $ su -
+    # cat /tmp/x.authentication.cookies | while read COOKIE; do
+    xauth add $COOKIE
+    done
+    #
+    March 25, 2008 2:52 AM
+Vikram Das said...
+
+    Yes I am aware of that. I'll try what you have suggested. The other way is to xhost particular hosts only.
+    March 25, 2008 7:17 PM
+frits hoogland said...
+
+    small correction: only "su" works, not "su -"; "su -" resets the environment, which means also the DISPLAY variable is reset.
+
+    Another option is to allow root connections via ssh using localhost, which mean you could forward your tunneled X session using "ssh -X root@localhost". If root & X are really necessary this is an option, but also not a very secure one.
+
+    it may sound a bit paranoid, but it's best not te leave any paths open which could allow traffic to root or a root session directly.
+
+    this means that xhost + particular hosts is not secure.
+
+    If you are curious about X tunneling and a following X session (which means you can hop to any server using ssh and keeping X working), see: http://frits.homelinux.com/wordpress/?p=23
+    March 26, 2008 9:55 AM
+mercury said...
+
+    Adding -ac to the startup command solved my problem. See this for more infomation http://mattfleming.com/node/92
+
+    P.S. This is NOT a link to my blog
+    March 11, 2009 8:46 AM
+Anonymous said...
+
+    also using ssh -YX user@host will turn off xauth completely or ignore it in a pinch.
+
+
+
+TROUBLESHOOTING NVIDIA
+══════════════════════════════════════════════════════════════════════════════
+
+  Syndrom showing up in /etc/var/syslog:
+
+    NVRM: API mismatch: the client has the version 295.49, but
+    NVRM: this kernel module has the version 304.43.  Please
+    NVRM: make sure that this kernel module and all NVIDIA driver
+    NVRM: components have the same version.
+    init: lightdm main process (1431) terminated with status 1
+
+  Solution:
+
+    2 versions of nvidia driver co-exists.  Remove the wrong one:
+
+    apt-get remove nvidia-current-updates
+
+
+  Black border on windows
+  ────────────────────────────────────────────────────────────────────────────
+
+  À essayer:
+
+    https://wiki.archlinux.org/index.php/Compiz#Compiz_starts_without_window_borders_with_NVIDIA_binary_drivers
+
+    http://askubuntu.com/questions/449845/problems-after-upgrading-to-14-04-only-background-and-pointer-after-login
+
+
+
+PRIMARY / SECONDARY CLIPBOARD OR SELECTION
+══════════════════════════════════════════════════════════════════════════════
+
+  IMPORTANT
+  ────────────────────────────────────────────────────────────────────────────
+
+    By default, a selection in PRIMARY (selection in a terminal, for example)
+    will not be saved in CLIPBOARD.
+
+    If you wish this to happen, use CopyQ and in the Preferences / General,
+    select "Store text selected using mouse".
+
+
+  EXPLANATIONS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Paste primary without any middle button:   3 fingers punch on the
+    touchpad.
+
+    De: https://unix.stackexchange.com/questions/139191/whats-the-difference-between-primary-selection-and-clipboard-buffer
+
+
+    PRIMARY selection is typically used by e.g. terminals when selecting text
+    and pasting it by pressing middle mouse button. As in selected text is in
+    Primary Clipboard without any explicit copy action taking place.
+    Quick-Copy is a good name for it. (Not limited to terminal emulators, but
+    as an example.)
+
+    CLIPBOARD is primarily used in connection with MS Windows-style clipboard
+    operations. Select+Copy. The data resides in the buffer.
+
+    SECONDARY is not used.
+
+
+
+  GET AND SET CLIPBOARDS
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://unix.stackexchange.com/questions/84951/copy-markdown-input-to-the-clipboard-as-rich-text
+
+    Copy Markdown file into rich html text in PRIMARY X clibpard.
+
+      pandoc -S file.mkd | xclip -t text/html
+
+    ...and then I can paste it straight into the document in libreoffice,
+    properly formatted. This works with the versions of the programs in the
+    Ubuntu 13.04 repositories (pandoc 1.10.1 and xclip 0.12) -- the -t option
+    for xclip especially is only in version 0.12 or above. The -S option of
+    pandoc makes it produce 'typographically correct output', so -- is turned
+    into an en-dash, --- is turned into an em-dash, and a few other things.
+
+    Copy Markdown file into rich html text in CLIPBOARD clibpard.
+
+      pandoc -S file.mkd | xclip -t text/html -selection clipboard
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
