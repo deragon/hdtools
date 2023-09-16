@@ -14,7 +14,7 @@
 
 SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
 
-PATTERN='.*\.((od[t|s|p])|(txt)|(md)|(res)|(csv)|(json)|(yaml)|(xml)|(msg)|(ppt[x]*)|(doc[x]*)|(xls[x]*)|(pdf)|(html{0,1})|(jpe{0,1}g)|(gif)|(png)|(svg)|(sql)|(tar)|(gz)|(zip)|(jar)|(c)|(java)|(scala)|(groovy)|(js)|(mp.)|(avro)|(avsc)|(properties)|(log))$'
+PATTERN='.*\.((od[t|s|p])|(txt)|(md)|(res)|(csv)|(json)|(ya?ml)|(xml)|(msg)|(pptx?)|(docx?)|(xlsx?)|(pdf)|(html?)|(jpe?g)|(gif)|(png)|(svg)|(sql)|(tar)|(gz)|(bz2)|(zip)|(jar)|(c)|(java)|(scala)|(groovy)|(js)|(mp.)|(avro)|(avsc)|(properties)|(log)|(in)|(toml)|(tf))$'
 
 usage()
 {
@@ -68,6 +68,6 @@ for FILE in ${FILES[@]}; do
     FILE=$(cygpath "${FILE}")
   fi
 
-  find "${FILE}" -type f -regextype posix-extended -regex "${PATTERN}" -print0 | xargs --no-run-if-empty --null chmod -x
+  find "${FILE}" -type f -regextype posix-extended -regex "${PATTERN}" -print0 | xargs --no-run-if-empty --null chmod a-x
 
 done
