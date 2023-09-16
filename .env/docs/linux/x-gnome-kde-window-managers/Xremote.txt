@@ -1,0 +1,227 @@
+VNC & VINO
+══════════════════════════════════════════════════════════════════════════════
+
+  REFERENCES:
+
+    http://www.realvnc.com  (Fedora Core 3 VNC server)
+    http://www.tightvnc.com/
+
+
+  CONFIGURING A VNC SERVER
+
+    First, one must set the password:
+
+      vncpasswd
+
+    To have Gnome starting instead of twm (default),
+    replace content of ~/.vnc/xstartup with:
+
+    ---->
+    #!/bin/sh
+    gnome-session &
+    <----
+
+
+  STARTING A VNC SERVER
+
+    Once the password is set, start a vnc server:
+
+      vncserver :1
+
+  CONNECTING TO A VNC SERVER:
+
+      gvncviewer <hostname>:1
+
+  TO CONNECT TO AN EXISTING X SESSION, SHOWING ON THE CONSOLE.
+
+    Fedore Core 3 & +
+
+      On the remote machine, in Gnome, go
+      <Applications>/<Preferences>/<Remote Desktop>
+      and select the appropriate options.
+
+      On the local machine, run:
+
+        vncviewer <hostname>:0
+
+
+
+XDMCP
+══════════════════════════════════════════════════════════════════════════════
+
+  ENABLING LOCALLY.
+
+    Ubuntu 10.04:
+
+    Old Linux distrubutions:
+
+      To enable others to connect XDMCP to your machine, edit:
+
+        vim /etc/X11/gdm/gdm.conf
+
+      and in the [xdmcp] section, set "Enable=true".
+
+
+  DISPLAYING REMOTELY
+
+    To remotely display an X session using XDMCP, issue on the localhost:
+
+      X :1 -query <hostname>
+
+    This will setup :1 (<ctrl><alt><F8>) to show a new X session running
+    on <hostname>.
+
+  NOTES
+
+    XDMCP will not permit one to connect to an existing X session running
+    on the screen and control it remotely.  To do this, you must run
+    "vino" and use a vnc client.
+
+
+
+gconf-editor
+══════════════════════════════════════════════════════════════════════════════
+
+  SLED10 + & Gnome.
+
+  sous sys.gen.noarch.bash:
+
+  hdgnome-enable-remote()
+  {
+    gconftool-2 -s -t bool /desktop/gnome/remote_access/enabled true
+  }
+
+
+
+KRBD
+══════════════════════════════════════════════════════════════════════════════
+
+  This solution is used to connect to the physical :0 desktop running on
+  the console.  This is the official way for doing it under SuSE SLES 9.
+
+  Rerefence:
+
+
+  STARTING THE SERVER
+
+    On the remote machine, start the server:
+
+      krfb
+
+    This starts a GUI which allows the user to send invitation to his desktop.
+
+
+  STARTING THE CLIENT
+
+    On the local machine, start the client:
+
+      krdc
+
+
+
+SSH
+══════════════════════════════════════════════════════════════════════════════
+
+  Forwarding using ssh can be done with:
+
+    ssh -f <user@remotehost> <command>
+    ssh -f hans@site.deragon.biz /usr/X11R6/bin/xeyes
+
+    ssh -X hans@site.deragon.biz # and at the prompt, type
+                                 # in multiple X commands
+
+  However, ensure that on the remote server, you have
+  in /etc/ssh/sshd_config the following set:
+
+    X11Forwarding yes
+
+  For X forwading to work, YOU DO NOT NEED TO REMOVE THE "-nolisten tcp"
+  parameter from X.  (See "DISPLAY VARIABLE" below)
+
+  However, your remote DISPLAY variable must be properly setup to
+  localhost:10.0.  If not, things will not work.
+
+  Réferences:
+
+    http://www.redhat.com/archives/fedora-legacy-list/2005-December/msg00011.html
+
+
+
+FREENX
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.enterprisenetworkingplanet.com/netos/article.php/3508951
+  http://developer.berlios.de/projects/freenx/
+
+
+
+SLES control
+══════════════════════════════════════════════════════════════════════════════
+
+  By default, even though you would run xhost+ on a SLES machine,
+  remote systems would not be able to display on the local SLES machines.
+
+  To enable this, edit:
+
+    /etc/sysconfig/displaymanager
+
+  and set:
+
+    DISPLAYMANAGER_XSERVER_TCP_PORT_6000_OPEN=yes
+
+  and edit:
+
+    /etc/opt/gnome/gdm/gdm.conf was needed
+
+  and set:
+
+    DisallowTCP=false
+
+
+
+DISPLAY VARIABLE
+══════════════════════════════════════════════════════════════════════════════
+
+  From the web:
+
+    > I see the same symptoms when I do "xeyes -display localhost:0" as
+    > a user who has access to the currently running X session here.  If
+    > I try "xeyes -display :0", xeyes starts right up.  localhost:0
+    > should be equivalent to :0 , but apparently it isn't.
+
+    Not really. "localhost:0" is a TCP connection to the X server (port
+    6000) at the IP address that the host name "localhost" resolves to.
+
+    OTOH, ":0" is a shared memory connection to the local X server that
+    runs display 0.
+
+    The difference is that "localhost:0" expects to talk to the X server
+    through TCP, while ":0" does not. If the OP started his X server
+    with the "-nolisten tcp" flag (as some distros do), then the X
+    server will not listen to TCP port 600x. This will cause any client
+    connections to port 600x to fail, with "cant open display". Clients
+    that attempt to connect via shared memory (MIT-SHM) will be able to
+    connect to the server.
+
+  To fix this, set DisallowTCP=false in gdm.conf.  This will cause X not
+  to be called with the "-nolisten tcp" option, opening connections from
+  anywhere.
+
+  ------------------------------------------------------------
+
+  Do xhost +
+  xhost +LOCAL:
+  See:  http://www.leidinger.net/X/xhost.html
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
