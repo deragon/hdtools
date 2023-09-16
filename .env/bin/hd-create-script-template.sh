@@ -411,8 +411,8 @@ EOM
 # ════════════════════════════════════════════════════════════════════
 echo
 if (( DRYRUN )); then
-  echo -en "${ANSI[FG_WHITE_BG_BLUE]}Command was executed in dry mode; nothing was executed.${ANSI[FG_WHITE_BG_BLUE]}\n${ANSI[FG_WHITE_BG_BLUE]}Rerun with -e to execute the action.${ANSI[RESET]}\n"
-  echo -en "${ANSI[FG_WHITE_BG_BLUE]}Commande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.${ANSI[FG_WHITE_BG_BLUE]}\n${ANSI[FG_WHITE_BG_BLUE]}Rerouler avec l'option -e pour exécuter l'action.${ANSI[RESET]}\n"
+  echo -en "${ANSI[FG_WHITE_BG_BLUE]}Command was executed in dry mode; nothing was executed.${ANSI[RESET]}\n${ANSI[FG_WHITE_BG_BLUE]}Rerun with -e to execute the action.${ANSI[RESET]}\n"
+  echo -en "${ANSI[FG_WHITE_BG_BLUE]}Commande fut exécutée en 'dry mode'; rien n'a vraiment été exécuté.${ANSI[RESET]}\n${ANSI[FG_WHITE_BG_BLUE]}Rerouler avec l'option -e pour exécuter l'action.${ANSI[RESET]}\n"
 else
   echo -en "${ANSI[FG_WHITE_BG_GREEN]}Command was executed.${ANSI[RESET]}\n"
   echo -en "${ANSI[FG_WHITE_BG_GREEN]}Commande fut exécutée.${ANSI[RESET]}\n"
