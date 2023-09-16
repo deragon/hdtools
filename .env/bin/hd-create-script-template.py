@@ -31,8 +31,8 @@ scriptPathAbsParent=os.path.dirname(scriptPathAbs)
 
 scriptNameAndPathAbs=scriptPathAbs + os.sep + scriptName
 
-iso8601Human    = time.strftime("%Y-%m-%d %H:%M:%S")
-iso8601Filename = time.strftime("%Y%m%dT%H%M%S")
+iso8601Human    = "%Y-%m-%d %H:%M:%S"
+iso8601Filename = "%Y%m%dT%H%M%S"
 
 try:
     scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
