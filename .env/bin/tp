@@ -16,6 +16,7 @@
 import os.path
 import sys
 import re
+import errno
 
 from datetime import datetime
 
@@ -156,7 +157,8 @@ for hostport in args.hostport:
         if not args.quiet:
             print(f"Testing:  {hostname}:{port} -> ", end="", flush=True)
 
-        if sock.connect_ex((hostname, port)) == 0:
+        sock_errno = sock.connect_ex((hostname, port))
+        if sock_errno == 0:
             if not args.quiet:
                 print(f"{ansi['FG_WHITE_BG_GREEN']} ✓ Open {ansi['RESET']}")
 
@@ -172,7 +174,7 @@ for hostport in args.hostport:
 
         else:
             if not args.quiet:
-                print(f"{ansi['FG_WHITE_BG_RED']} ✘ Closed {ansi['RESET']}")
+                print(f"{ansi['FG_WHITE_BG_RED']} ✘ Closed {ansi['RESET']} ({sock_errno}:{errno.errorcode[sock_errno]})")
             exitcode+=1
 
 sys.exit(exitcode)
