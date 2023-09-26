@@ -202,10 +202,15 @@ errors = ""
 # if args.hardlink == True:
 #   errors += "\n  --hardlink is required."
 
-if len(errors) > 0:
-    print(f"{ansi['FG_WHITE_BG_RED']}ERROR:{ansi['RESET']}  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
-    print(f"{ansi['FG_WHITE_BG_RED']}ERREUR:{ansi['RESET']}  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
-    sys.exit(1)
+def report_error():
+
+    if len(errors) > 0:
+        print(f"{ansi['FG_WHITE_BG_RED']}ERROR:{ansi['RESET']}  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
+        print(f"{ansi['FG_WHITE_BG_RED']}ERREUR:{ansi['RESET']}  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
+        sys.exit(1)
+
+report_error()
+
 
 #print(args)
 
