@@ -153,7 +153,9 @@ for FILEORPATH in $@ "${EXTRAPATH}"; do
     if [ "${HD_OS_FAMILY}" == "Cygwin" ]; then
       echo "Sorry, option -N is not implemented for Cygwin."
     else
-      for IP in $(ip address | perl -ne 'print if s%\s+inet\s+(.*)/.*(wlo|eth).*%\1%g'); do
+      # Predictable network interfaces 'en[ospx]' are described at:
+      #   https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/
+      for IP in $(ip address | perl -ne 'print if s%\s+inet\s+(.*)/.*\s(en[ospx]|wlo|eth).*%\1%g'); do
         NETWORK_INFO="${USER}@${IP}:"
         [ "${FORMAT_NATIVE}" == 1 ] && printPathAllTypes
       done
