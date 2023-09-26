@@ -303,6 +303,21 @@ def stringToHex(string):
     return ':'.join("{:0>2}".format(hex(ord(x))[2:]) for x in string).upper()
 
 
+# DEBUGGING
+# ────────────────────────────────────────────────────────────────────────────
+
+# Using Stop watch module to measure laps time between calls.
+# See:  https://pypi.org/project/swpy/
+
+# from swpy import Timer.
+#
+# t = Timer("Chronometer")
+#
+# t.split()
+# <long function here
+# t.split()
+
+
 # READ AND WRITE TO A FILES OR STDIN
 # ────────────────────────────────────────────────────────────────────────────
 if len(args.files) == 0:
