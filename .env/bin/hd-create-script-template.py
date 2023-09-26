@@ -458,6 +458,10 @@ def handle_exception(exception):
 
 
 def main_wrapper():
+
+    # Command below is used to suppress JetBrains's IDE PyCharm's warning 'too
+    # broad exception clause'.
+    # noinspection PyBroadException
     try:
 
         time_start = datetime.now()
