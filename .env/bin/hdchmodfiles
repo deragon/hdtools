@@ -26,6 +26,8 @@ Usage:  ${SCRIPT_NAME} [-h] [<file>+]
 Remove 'execute' (-x) permission on all files that should not be executable.
 If no path is provided, defaults to '.'.
 
+  -q  Quiet; do not generate any output.
+  -d  Apply 'chmod go-w' to all sub-diretories of provided paths.
   -h  Display this help text.
 "
 }
@@ -35,12 +37,14 @@ If no path is provided, defaults to '.'.
 # ════════════════════════════════════════════════════════════════════
 
 QUIET=0
+DIRECTORIES=0
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "qh" OPTCMD; do
+while getopts "qdh" OPTCMD; do
   case "${OPTCMD}" in
     "q")    QUIET=1;;
+    "d")    DIRECTORIES=1;;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -69,5 +73,10 @@ for FILE in ${FILES[@]}; do
   fi
 
   find "${FILE}" -type f -regextype posix-extended -regex "${PATTERN}" -print0 | xargs --no-run-if-empty --null chmod a-x
+
+  if [[ "${DIRECTORIES}" == 1 ]]; then
+    (( ! QUIET )) && echo "  Changing all sub-directories with 'chmod go-w'."
+    find "${FILE}" -type d -print0 | xargs --no-run-if-empty --null chmod go-w
+  fi
 
 done
