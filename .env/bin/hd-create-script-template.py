@@ -481,13 +481,15 @@ def main_wrapper():
         print("Ended:     " + time_end_string)
         print("Executed:  {0:02}:{1:02}:{2:02}".format(time_executed_hours, time_executed_minutes, time_executed_seconds))
 
-        print("\nDébuté:    " + time_start_string)
-        print("Terminé:   " + time_end_string)
+        print("\nDébuté:     " + time_start_string)
+        print("Terminé:    " + time_end_string)
         print("Exécution:  {0:02}:{1:02}:{2:02}".format(
             time_executed_hours, time_executed_minutes, time_executed_seconds))
 
     except Exception as exception:
         logger.error("Exception:  %s", exception)
+        stacktrace = traceback.format_exc()
+        logger.error("Exception:  %s", stacktrace)
         handle_exception(exception)
 
 
