@@ -303,28 +303,6 @@ def stringToHex(string):
     return ':'.join("{:0>2}".format(hex(ord(x))[2:]) for x in string).upper()
 
 
-
-
-# WALK A DIRECTORY
-# ────────────────────────────────────────────────────────────────────────────
-
-# WARNING:
-#
-# This script is far from perfect.  It makes use of os.walk that reads
-# in memory all the files.  Thus if you have say 30E06 files, this script
-# will consume Gib of memories.
-#
-# Python is missing a feature which would allow to scan a directory
-# without loading all of its content in memory.
-#
-# This issue is:  http://bugs.python.org/issue11406
-
-
-# New: (from:  https://stackoverflow.com/questions/12420779/simplest-way-to-get-the-equivalent-of-find-in-python)
-
-allfiles = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
-
-
 # READ AND WRITE TO A FILES OR STDIN
 # ────────────────────────────────────────────────────────────────────────────
 if len(args.files) == 0:
@@ -369,8 +347,21 @@ for file in args.files:
 #    print("\r" + curses.tparm(curses.tigetstr("cuf"), indexpos, 0).decode("UTF8") + str(index), end="")
 
 
+# WALK A DIRECTORY
+# ────────────────────────────────────────────────────────────────────────────
 
-# Old
+# New: (from:  https://stackoverflow.com/questions/12420779/simplest-way-to-get-the-equivalent-of-find-in-python)
+
+allfiles = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
+
+# WARNING:
+#
+# This script is far from perfect.  It makes use of os.walk that reads in
+# memory all the files.  Thus if you have say 30E06 files, this script will
+# consume Gib of memories.
+#
+# One should use os.scandir() for large directories.
+# See:  https://peps.python.org/pep-0471/
 index=0
 for root, dirs, files in os.walk(args.inputdir):
     #print "root="  + str(root)
