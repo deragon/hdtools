@@ -68,6 +68,11 @@ hdenv_minimum()
 
 hdenv()
 {
+  # Label annoucing that the environment is being loaded.
+  # Label generated with the following command:
+  #   cat <(echo "Environement de") <(toilet -f pagga "Hans Deragon")  | lolcat -S 1 -t -f >env.label.ansi
+  (( HDENVQUIET != 1 )) && cat "${HDENVDIR}/env.label.ansi"
+
   if (( ! $? )); then
     # Loading private files
     if [ -d "${HOME}/.hans.deragon-private/"*.sh ]; then
@@ -118,11 +123,6 @@ hdenv_minimum  # Loading minimal configuration for all processes.
 # TESTING FOR INTERACTIVE SHELL WITH PS1 IS NOT RELIABLE.  Use 'tty' instead.
 #[ -z "${PS1}" ] && return  # More efficient test; same test used in /etc/profile.
 ! tty -s && return  # Less efficient since tty spawns a new process.
-
-# Label annoucing that the environment is being loaded.
-# Label generated with the following command:
-#   cat <(echo "Environement de") <(toilet -f pagga "Hans Deragon")  | lolcat -S 1 -t -f >env.label.ansi
-(( HDENVQUIET != 1 )) && cat "${HDENVDIR}/env.label.ansi"
 
 # To be evaluated with ((${HD_BASH_INTERACTIVE})).
 export HD_BASH_INTERACTIVE=1 # Terminal is interactive (1 == true)
