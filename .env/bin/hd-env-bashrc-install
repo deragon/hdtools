@@ -56,7 +56,7 @@ USER_HOME=\"\${HOME}\"
 # On RHEL systems, .bash_profile sources .bashrc and then hard code
 # the PATH variable, destroying the PATH setup by 'gohd'.
 # To avoid this, we thus
-if fgrep -q '.bashrc' \"\\\${HOME}/.bash_profile\"; then
+if grep --fixed-strings --quiet '.bashrc' \"\\\${HOME}/.bash_profile\"; then
   BASH_FILE=\"\\\${HOME}/.bash_profile\"
 else
   BASH_FILE=\"\\\${HOME}/.bashrc\"
@@ -71,7 +71,7 @@ alias gohd='source \"\\\${USER_HOME}/.hans.deragon/.corp-\"*\"/gohd\"'
 [ \\\"\\\\\\\${XMODIFIERS}\\\" == 'HDCONNECTION' ] && gohd
 \"
 
-if fgrep -q 'alias gohd' \"\\\${BASH_FILE}\"; then
+if grep --fixed-strings --quiet 'alias gohd' \"\\\${BASH_FILE}\"; then
   printf '\e[1;34m% 8s' \"\\\${USER}\"
   echo -e \":  Hans Deragon's 'gohd' already installed.\\\e[0;00m\"
 else
