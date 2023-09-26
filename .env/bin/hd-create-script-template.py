@@ -287,12 +287,13 @@ with open(filename,'w+') as fd:  # '+' means create if it does not exist.
 
 # JSON
 # ────────────────────────────────────────────────────────────────────────────
-import json
-with open('file.json') as fd:
-    json_dict=json.load(fd)
+def json_example():
+    import json
+    with open('file.json') as fd:
+        json_dict=json.load(fd)
 
-json_dict   = json.loads('{ "test": "Hi there." }') # Load json from str.
-json_string = json.dumps(json_dict, ensure_ascii= False, indent = 2)
+    json_dict   = json.loads('{ "test": "Hi there." }') # Load json from str.
+    json_string = json.dumps(json_dict, ensure_ascii= False, indent = 2)
 
 
 
