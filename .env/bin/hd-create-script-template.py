@@ -266,6 +266,7 @@ if matches != None:
 lines = [ i.strip() for i in open("somefile") ]  # Strips lines
 
 # All in memory
+whole_content = open(file).read()
 lines = open(file).readlines()  # Lines remain intact.
 
 for line in lines:
