@@ -1,0 +1,94 @@
+COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  LSOF
+  ------------------------------------------------------------
+
+    -n  Do not resolve hostnames
+    -P  Do not resolve port names.
+
+    lsof -a -p <pid>  # Affiche tous les fichiers ouverts du process.
+    lsof -i           # Affiche tous les ports écoutés.
+    lsof -P           # Affiche tous les ports écoutés en format numérique.
+
+
+  AUTRES
+  ------------------------------------------------------------
+
+    sensors           # Show all temperatures sensors state.
+    pstree -ap        # Affiche l'arborescence des processes.
+    strace <pid>      # Trace des appels systèmes.
+    ps -eLf           # Liste tous les threads, pas seulement les processus.
+
+    cat /proc/<pid>/limits  # Affiche les limites d'un process
+    ps -efww          # -w == wide-output (no output truncation):
+                      # Use twice for unlimited output.
+
+  CYGWIN:
+
+    ps doesn't display commandline arguments in cygwin for historical
+    reasons. Use the procps package as an alternative. 
+
+    procps est un package qu'il faut installer avec setup.exe
+
+    Ref:  http://cygwin.1069669.n5.nabble.com/ps-ef-difference-linux-cygwin-arguments-td40785.html#a40790
+
+
+
+GRUB
+══════════════════════════════════════════════════════════════════════════════
+
+  grubby - command line tool for configuring grub, lilo, and elilo
+           N'est pas disponible sur Ubuntu 18.04
+
+
+
+COOL COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  newgrp <group>
+
+    Change effective group for a user.  group must have
+    a password in /etc/gshadow and the user must be in its list.
+
+    /etc/gshadow example:
+      apache:fsHw65EZ1I62oxdspHOAxkljBMg=::hans
+
+    # newgroup apache
+
+
+
+SOFTWARE
+══════════════════════════════════════════════════════════════════════════════
+
+  Logstash (http://logstash.net/)
+
+    logstash is a tool for managing events and logs. You can use it to collect
+    logs, parse them, and store them for later use (like, for searching).
+    Speaking of searching, logstash comes with a web interface for searching
+    and drilling into all of your logs.
+
+    It is fully free and fully open source. The license is Apache 2.0, meaning
+    you are pretty much free to use it however you want in whatever way.
+
+
+
+SYSTEM MONITORS
+══════════════════════════════════════════════════════════════════════════════
+
+  - btop - CLI based.
+  - htop - CLI based.
+  - System Monitoring Center - GUI - Very nice.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
