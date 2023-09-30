@@ -1,0 +1,89 @@
+ENABLE/DISABLE USER TO SU TO ROOT
+══════════════════════════════════════════════════════════════════════════════
+
+  In /etc/pam.d/su, uncomment the following line to require a user to be
+  in the "wheel" group.
+
+  #auth       required     /lib/security/$ISA/pam_wheel.so trust use_uid
+
+  Thus, even if a user has the root password, he cannot su to root
+  unless he is part of the wheel group.
+
+
+
+ALLOW USER TO SU TO ROOT WITHOUT PASSWORD
+══════════════════════════════════════════════════════════════════════════════
+
+  1) Add username to wheel group in /etc/group
+  2) Edit /etc/pam.d/su and add line:
+     auth       sufficient   /lib/security/$ISA/pam_wheel.so trust use_uid
+
+
+
+SLASHDOT ROOT ACCESS TRICKS
+══════════════════════════════════════════════════════════════════════════════
+
+  Re:It's just not safe...  (Score:2)
+
+  by ashridah (72567) Alter Relationship on Friday December 30, @01:11
+  (#14363009)
+
+  And, of course, the far more fun variant is the "pissed off worker's
+  revenge", where they use
+
+  sudo chmod u+s /bin/sh /bin/sh and then proceeds to remove the entries
+  in the logs that talk about them running 'sudo', making a copy of the
+  setuid /bin/sh, and restoring the permissions.
+
+  Not so helpful if syslog is logging to an external server or a line
+  printer, but people need to analyse logs for that to stand out, and if
+  you've given them carte-blanche sudo chmod access, they could bury it
+  in a sea of normal looking chmod's, and then it becomes
+  needle-in-haystack-like
+  ----------------------------------------------------------------------
+  Re:It's just not safe...  (Score:4, Insightful) by aralin (107264)
+  Alter Relationship on Friday December 30, @01:12 (#14363013)
+
+  If I do have a sudo chmod, all I need to find is one file that has an
+  owner root. Lets say a /tmp/owned. Then I can do the following
+  commands:
+
+      sudo chmod o+w /tmp/owned
+      cp /bin/bash /tmp/owned
+      sudo chmod u+rs,o+rx /tmp/owned
+      /tmp/owned
+
+  And I have a shell root access. So that is why I don't give a sudo
+  access to any command unless I want to give a sudo to bash.
+
+
+
+ANTI-VIRUS FOR LINUX
+══════════════════════════════════════════════════════════════════════════════
+
+  Clam AntiVirus (ClamAV)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Clam AntiVirus (ClamAV) is a free software, cross-platform and open-source
+    antivirus software toolkit able to detect many types of malicious software,
+    including viruses.
+
+
+  À lire
+  ────────────────────────────────────────────────────────────────────────────
+
+    ● https://linuxhint.com/why_no_antivirus_linux/
+    ● https://fr.safetydetectives.com/blog/meilleurs-antivirus-vraiment-gratuits-pour-linux/
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
