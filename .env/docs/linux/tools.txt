@@ -36,6 +36,45 @@ SCRIPT - IT’S RECORD EVERYTHING DISPLAYED ON YOUR TERMINAL AND OF OTHER USERS
 
 
 
+WGET
+══════════════════════════════════════════════════════════════════════════════
+
+  Commande to download a website, but from the URL leaf and afterwards; it
+  does not download the parent (thus not the whole website):
+
+  -np stop going recusrively back to parent directory.
+      important to finish the directory with a slash!
+
+  Example:
+
+    wget -m -np http://ftp.freshrpms.net/pub/freshrpms/redhat/9/apt/
+
+
+
+DD
+══════════════════════════════════════════════════════════════════════════════
+
+  Copy of hard disk of laptop for example:
+
+
+    sudo time dd if=/dev/sda of=/dev/sdb bs=1M status=progress
+
+
+    # 1Tib ~= 7 heures.
+    # sudo time dd if=/dev/sda of=/dev/sdb bs=1M status=progress
+    2018-05-19 10:46:20 EDT
+
+    689353785344 bytes (689 GB, 642 GiB) copied, 17388 s, 39.6 MB/s  
+    (gvim:14099): GLib-GObject-WARNING **: cannot retrieve class for invalid (unclassed) type '<invalid>'
+    1000202043392 bytes (1.0 TB, 932 GiB) copied, 25275 s, 39.6 MB/s 
+    953869+1 records in
+    953869+1 records out
+    1000204886016 bytes (1.0 TB, 932 GiB) copied, 25317.2 s, 39.5 MB/s
+    10.99user 1454.41system 7:01:57elapsed 5%CPU (0avgtext+0avgdata 3140maxresident)k
+    1947602352inputs+1953525168outputs (0major+349minor)pagefaults 0swaps
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
