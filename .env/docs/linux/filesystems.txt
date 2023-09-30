@@ -1,0 +1,168 @@
+SD Card (SDHC)
+══════════════════════════════════════════════════════════════════════════════
+
+  umount /dev/mmcblk0p1
+  mkdosfs /dev/mmcblk0p1 # Format MS-DOS 32 bits
+  mlabel -i /dev/mmcblk0p1 ::NomICI  # Rename card
+
+
+  Linux fuser command to forcefully unmount a disk partition
+  ────────────────────────────────────────────────────────────────────────────
+
+    fuser -km <mnt point>
+
+    From:  http://www.cyberciti.biz/tips/how-do-i-forcefully-unmount-a-disk-partition.html
+
+
+
+DISK ANALYSIS
+══════════════════════════════════════════════════════════════════════════════
+
+  gnome-disks - Excellent GUI disk utility.
+
+
+  SD CARD STATUS / STATE / VERIFICATION / FRAUD ANALYSER:  F3
+  ────────────────────────────────────────────────────────────────────────────
+
+    Super bon
+
+    Installation:  sudo apt install f3
+    Instructions:  https://fight-flash-fraud.readthedocs.io/en/stable/introduction.html
+
+      Commandes déja utilisées sur une carte SD fautive:
+
+      ./f3write /media/michel/5EBD-5C80/
+      ./f3read /media/michel/5EBD-5C80/
+      ./f3probe --destructive --time-ops /dev/mmcblk0 # ATTENTION!!! DESTRUCTION DU CONTENU.
+
+
+
+ACL
+══════════════════════════════════════════════════════════════════════════════
+
+  DIR=devtpa
+  DIR=inttpa
+
+  # Set Default ACL for newly created files under existing directories
+  find "${DIR}
+
+  # Set ACL for existing directories
+  find "${DIR}" -type d -exec setfacl -m g:groupename:rwx {} \;
+
+  # Set ACL for existing files
+  find "${DIR}" -type f -exec setfacl -m g:groupename:rw {} \;
+
+  # Ensure that new files inherit the group of their directories in which
+  # they reside in.
+  find "${DIR}" -type d -print0 | xargs --null chmod g+s
+
+
+
+
+  FORCE A GROUP ON NEWLY CREATED FILE
+  ────────────────────────────────────────────────────────────────────────────
+
+    Under Linux, if you want newly created files to inherit the group
+    of the directory it resides, you have to setup the sticky bit on
+    that directory with the command:
+
+      chmod g+s "${DIR}"
+
+    Ref:  http://www.linuxquestions.org/questions/linux-general-1/how-to-force-group-577388/
+
+
+
+UMASK
+══════════════════════════════════════════════════════════════════════════════
+
+  umask -S  #
+  umask u=rwx,g=rwx,o=rx
+
+
+
+SWAP
+══════════════════════════════════════════════════════════════════════════════
+
+  Ubuntu:  https://help.ubuntu.com/community/SwapFaq
+
+    cat /proc/swaps
+    swapon
+    swapoff
+
+  To force back swap into RAM, run:
+
+    swapoff -a  # Takes a while
+    swapon -a   # Renable swap.
+
+
+  # From https://help.ubuntu.com/community/SwapFaq
+  # Dans /etc/sysctl.conf, activer:
+  vm.swappiness=1
+
+
+  To completely disable swap at reboot, simply comment off
+  the 'swap' entry in /etc/fstab.
+
+
+
+UUID
+══════════════════════════════════════════════════════════════════════════════
+
+  Find/view UUID to device mapping.
+
+  GUI
+  ────────────────────────────────────────────────────────────────────────────
+
+     Call "disks" on Gnome (/usr/bin/gnome-disks).  Very good.
+
+
+  CLI
+  ────────────────────────────────────────────────────────────────────────────
+
+    $ sudo blkid
+    /dev/sda5: UUID="91189e0a-28ac-4329-97da-0e8775506ab9" TYPE="swap"
+    /dev/sdc1: UUID="44d07ec6-f40f-276e-229d-d6114691bcbe" TYPE="linux_raid_member"
+    /dev/sdc2: UUID="8264406f-b9ae-27d0-229d-d6114691bcbe" TYPE="linux_raid_member"
+    /dev/sdc3: UUID="2c5277e0-485f-0965-229d-d6114691bcbe" TYPE="linux_raid_member"
+    /dev/sdb1: UUID="44d07ec6-f40f-276e-229d-d6114691bcbe" TYPE="linux_raid_member"
+    /dev/sdb2: UUID="8264406f-b9ae-27d0-229d-d6114691bcbe" TYPE="linux_raid_member"
+    /dev/sdb3: UUID="2c5277e0-485f-0965-229d-d6114691bcbe" TYPE="linux_raid_member"
+    /dev/sda1: UUID="c65e7283-032f-43c3-b032-54f73e85b5bc" TYPE="ext4"
+    /dev/md1: LABEL="OS" UUID="530e7898-3aab-4505-9d31-995a1bc75e10" TYPE="ext4"
+    /dev/md0: UUID="OxkEhu-AXNo-kqwz-keh1-aFGq-8oii-cQ2oag" TYPE="LVM2_member"
+    /dev/md2: UUID="64678680-c65c-4560-a365-9e58c3787282" TYPE="swap"
+    /dev/mapper/raid--data-base: UUID="d62c4e7f-cfd0-468d-ba0c-2fc0faeaac1f" TYPE="ext4"
+    /dev/mapper/raid--data-vm: UUID="1307d438-7d7b-4354-9551-f861f6e34f36" TYPE="ext4"
+    /dev/mapper/raid--data-site.deragon.biz: UUID="f69fbcc7-fb76-48a4-bd1f-cfe84e90ca2e" TYPE="ext4"
+    /dev/mapper/raid--data-media: UUID="f4f6fa06-6995-4116-8174-badf323b173b" TYPE="ext4"
+
+
+
+FAT32 / MSDOS
+══════════════════════════════════════════════════════════════════════════════
+
+  HOW TO REPAIR A CORRUPTED FAT32 FILE SYSTEM
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://askubuntu.com/questions/147228/how-to-repair-a-corrupted-fat32-file-system
+
+
+DD
+══════════════════════════════════════════════════════════════════════════════
+
+  Copy disk.  Following command has good defaults.
+
+  dd if=/dev/sda of=./sda-$(hddate -f) bs=1024k status=progress
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
