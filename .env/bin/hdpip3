@@ -114,17 +114,21 @@ ARGUMENTS=("$@") # If you want the number of elements of $@, use $#
 
 ERRORS=""
 
-if (( UPGRADE_PIP == 0 && ${#ARGUMENTS[*]} == 0 )); then
-  ERRORS="${ERRORS} - You must provide at least one module to install.\n"
-fi
-
+printErrorsAndExitIfAny()
+{
   if [ ! -z "${ERRORS}" ]; then
     echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
     echo -e "${ERRORS}"
     echo -e "Command aborted."
     exit 1
   fi
+}
 
+if (( UPGRADE_PIP == 0 && ${#ARGUMENTS[*]} == 0 )); then
+  ERRORS="${ERRORS} - You must provide at least one module to install.\n"
+fi
+
+printErrorsAndExitIfAny
 
 
 # PROCESSING
