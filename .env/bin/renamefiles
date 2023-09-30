@@ -119,7 +119,7 @@ def processFiles(path, files):
     elif gLowercase:
       newFile = file.lower()
     elif gUppercase:
-      newFile = file.lower()
+      newFile = file.upper()
     elif gTitle:
       newFile = file.title()
     elif gExtensionDuplicateRemove:
