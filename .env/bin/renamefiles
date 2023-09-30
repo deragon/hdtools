@@ -126,9 +126,10 @@ def processFiles(path, files):
       newFile = remove_duplicate_extensions(file)
     else:
       newFile = file
-      for pattern in patterns:
-        newFile = re.sub(pattern[0], pattern[1], newFile)
-        debug(str(file) + " -> " + str(newFile) + "  " + str(pattern))
+
+    for pattern in patterns:
+      newFile = re.sub(pattern[0], pattern[1], newFile)
+      debug(str(file) + " -> " + str(newFile) + "  " + str(pattern))
 
     if newFile != file:
       if debug.execution:
