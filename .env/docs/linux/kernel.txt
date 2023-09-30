@@ -1,0 +1,84 @@
+MISC STUFF
+══════════════════════════════════════════════════════════════════════════════
+
+  # Enable/disable a core.  Safe, no bad effect and instanteneous.
+  echo >0 /sys/devices/system/cpu/cpu1/online
+
+
+
+KERNEL PARAMETERS
+══════════════════════════════════════════════════════════════════════════════
+
+  List at:  /usr/share/doc/kernel-doc-*/Documentation/kernel-parameters.txt
+
+    root=/dev/hda1
+    root=LABEL=/
+
+    vga=ask  Prompts to select a different font during the booting sequence
+
+    rhgb
+    quiet
+    splash
+
+  Read the parameters passed to the kernel by the boot manager:
+
+    cat /proc/cmdline
+
+
+
+MODULE MANIPULATION
+══════════════════════════════════════════════════════════════════════════════
+
+  lsmod    - list loaded modules.
+  modprobe - add/remove modules.
+
+  modprobe -l  # List all modules available on the hard drive.
+
+  rc.sysinit - set the $other variable to modules you want to be loaded at
+               boot time.
+
+
+
+syslog - /var/log/messages
+══════════════════════════════════════════════════════════════════════════════
+
+  Technics to filter messages in syslog into a separate logfile:
+  ────────────────────────────────────────────────────────────────────────────
+
+    tail -f /var/log/messages | \
+      fgrep --line-buffered "sftp-server" >/tmp/sftp.log
+
+
+  Command to create an entry in syslog from the CLI:
+  ────────────────────────────────────────────────────────────────────────────
+
+    initlog --string="hans test"
+
+
+  First messages in syslog when kernel 2.6 starts up:
+  ────────────────────────────────────────────────────────────────────────────
+
+    May 19 08:31:53 snah1 syslogd 1.4.1: restart.
+    May 19 08:31:53 snah1 syslog: syslogd startup succeeded
+    May 19 08:31:53 snah1 kernel: klogd 1.4.1, log source = /proc/kmsg started.
+
+
+
+MISC
+══════════════════════════════════════════════════════════════════════════════
+
+  - sudo od -tx1 /dev/input/by-path/platform-i8042-serio-0-event-kbd
+    # Print as hex keyboard activity.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
