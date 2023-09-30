@@ -23,6 +23,7 @@ renamefiles -e -r       \
   --old PNG  --new png  \
   --old AVI  --new avi  \
   --old MKV  --new mkv  \
+  --old MOV  --new mov  \
   --old MP3  --new mp3  \
   --old MP4  --new mp4  \
   --old SVG  --new svg  \
