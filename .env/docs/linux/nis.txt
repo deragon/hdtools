@@ -1,0 +1,33 @@
+If you set /etc/nsswitch.conf with:
+
+  passwd:         files nis dns
+  shadow:         files nis dns
+  group:          files nis dns
+
+...then /etc/passwd does not require to end with +::::::
+However, +:::::: is required if /etc/nsswitch.conf is configured with:
+
+  passwd:         compat
+  shadow:         compat
+  group:          compat
+
+If not present, echo ~<username> will not return
+
+For /etc/nsswitch.conf changes to be effective, you must restart nscd:
+
+  /etc/init.d/nscd restart
+
+see "man nsswitch.conf".
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
