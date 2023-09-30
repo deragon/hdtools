@@ -82,6 +82,18 @@ SYSTEM MONITORS
 
 
 
+/var/crash
+══════════════════════════════════════════════════════════════════════════════
+
+  # Without --stdout, the GUI version shows up on the screen.
+  apport-retrace --stdout /var/crash/<file>.crash
+
+  # Generate text report from 'crash' file.
+  apport-retrace -o _usr_bin_gnome-shell.1000.crash.txt \
+                    _usr_bin_gnome-shell.1000.crash
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
