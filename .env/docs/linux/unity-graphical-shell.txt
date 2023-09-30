@@ -1,0 +1,116 @@
+From:
+
+http://askubuntu.com/questions/28086/what-are-unitys-keyboard-and-mouse-shortcuts
+
+
+Keyboard Shortcuts
+
+This page will document the keyboard shortcuts and mouse tricks for Unity. Please feel free to add more!
+
+    * Unity Terminology
+    * What are the meta, super, and hyper keys?
+
+Launcher
+
+    * Hold Super - Invoke the Launcher.
+    * Hold Super, then 1 or 2 or 3 and so on until 0 - Open or focus an application. The number corresponds to the location of the icon on the launcher from top to bottom.
+          o Adding Shift will open a new instance of the application if it's already open.
+          o Holding the key is also useful when you want to get to the Launcher but do not want to invoke the Dash.
+    * Super-T - Open the rubbish bin/trash can.
+    * Alt-F1 - Put keyboard focus on the Launcher, use arrow keys to navigate, Enter launches an application, Right arrow exposes the quicklists if an application has them.
+    * Ctrl-Alt-T - Launch a terminal window.
+
+Dash
+
+    * Tap Super - Opens the Dash. The open signal is sent when you let go of the key, not when you push it down, so if it feels slow just let go of the key earlier.
+          o Tab - 11.10+ only - Move to the next lens (When the dash is open)
+          o Shift-Tab - 11.10+ only - Move to the previous lens (when the dash is open)
+    * Alt-F2 - Invoke the Dash in a "special mode" to run a command. Typing in a Folder Name will find that folder in Nautilus, you can also use ~ as a shortcut in the field.
+
+    * The Dash opens with focus on the search box to find applications and
+      files. Using the arrow keys will navigate the results, use Enter to
+      launch. Hitting Enter twice in rapid succession after a search term will
+      automatically launch the first match in a search, even if it's still
+      ongoing. (Basically a dash version of "I'm feeling lucky").
+    * Super-A - Open Applications lens
+    * Super-F - Open Files & Folders lens
+    * Super-M (11.10+ only) - Open the music lens
+
+Panel
+
+    *
+
+      F10 - Open the first menu on the panel, use the arrows keys to "scrub" across the menus. (There is no shortcut for the session menu, so hitting F10 and left arrow is a quick way to get there)
+    *
+
+      Press Esc to close the menus without choosing anything.
+
+Window Management
+
+    * Super-W - Spread mode, zoom out on all windows in all workspaces.
+    * Super-D - Minimize all windows; hitting it again restores them.
+    * Alt-Tab - Switch to other applications, you can hold Alt down and then hit tab to switch to the next application.
+    * Alt-` - 11.10+ only - Switch between an application's windows. Hitting this combo when you're already focused on an application will automatically switch only between the windows for that application. The ` key on US layouts, but Unity will use whichever key is above your Tab key. (More info) (Video)
+
+Window Placement
+
+If you cycle through the same key Unity will cycle through different placement widths, so experiment by hitting the numkey multiple times, for example Ctrl-Alt-numpad 5 5 5:
+
+    * Ctrl-Alt-Numpad 7 - Place window in top left corner of screen.
+    * Ctrl-Alt-Numpad 8 - Place window in top half of screen.
+    * Ctrl-Alt-Numpad 9 - Place window in top right corner of screen.
+    * Ctrl-Alt-Numpad 4 - Place window on the left side of the screen.
+    * Ctrl-Alt-Numpad 5 - Center/Maximize the window in the middle of the screen.
+    * Ctrl-Alt-Numpad 6 - Place window on the right side of the screen.
+    * Ctrl-Alt-Numpad 1 - Place window in the bottom left corner of the screen.
+    * Ctrl-Alt-Numpad 2 - Place window in the bottom half of the screen.
+    * Ctrl-Alt-Numpad 3 - Place window in the bottom right corner of the screen.
+    * Ctrl-Alt-Numpad 0 - Maximize window.
+
+Workspace Management
+
+    * Super-S - Expo mode (for everything), zooms out on all the workspaces and lets you manage windows.
+    * Shift-Alt-↑ - Expo mode for all windows in the current workspace only.
+    * Ctrl-Alt-← / → / ↑ / ↓ - Change to a new workspace.
+    * Ctrl-Alt-Shift-← / → / ↑ / ↓ - Place window to a new workspace.
+    * Ctrl-Alt-L - Lock the screen.
+
+Screenshots
+
+    * PrtScn - Take a screenshot of the current workspace
+    * Alt-PrtScn - Take a screenshot of the current window
+
+
+Mouse Tricks
+Launcher
+
+    * Clicking and holding an icon and then dragging it around will allow you to reorder it on the launcher. You can also drag it off to the right of the launcher to move it around. Note that you need to make an explicit movement to the right to move the icon off the launcher before you can move it around.
+    * Dragging and Dropping an icon into the trash can will remove it from the Launcher. The program itself will remain installed and accessible through the dash.
+    * Scrolling the mouse wheel while over the Launcher scrolls the icons if you have too many and need to move around quickly.
+
+Window Management
+
+    * Maximizing - Dragging a window to the top panel will maximize it.
+    * Restore - There are two ways to restore, or unmaximize, the topmost maximized window of the current monitor for this workspace (not using the window controls)
+          o Double clicking on the top panel (but not in the application's menu)
+          o Dragging the top panel down.
+    * Middle click on Maximize - Maximize Window Vertically.
+    * Right click on Maximize - Maximize Window Horizontally
+    * Focus the topmost maximized window of the current monitor for this workspace: Left click on the top panel (but not in the application's menu)
+    * Cycle between maximized windows of the current monitor for this workspace: Middle click on the top panel (but not in the application's menu)
+    * Tiling - Dragging a Window to the left/right border will auto tile it to that side of the screen.
+    * Middle click on an application's launcher icon - Open a new instance of the application in a new window. If the application isn't running it will just open it normally.
+    * Middle click on the top panel (but not the menu) - send the current window behind all other windows.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
