@@ -1,0 +1,99 @@
+COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+  # List commands
+  systemctl list-unit-files                 # BEST - List enabled/disabled status of all services.
+  systemctl --all                           # List all running services.
+  systemctl --all list-timers               # List all timer services.
+
+  systemctl start foo.service               # Activates a service immediately.
+  systemctl stop foo.service                # Deactivates a service immediately.
+  systemctl restart foo.service             # Restarts a service.
+  systemctl status foo.service              # Shows status of a service including whether it is running or not.
+  systemctl enable foo.service              # Enables a service to be started on bootup.
+  systemctl disable foo.service             # Disables a service to not start during bootup.
+  systemctl is-enabled foo.service; echo $? # Check whether a service is already enabled or not: 0 indicates that it is enabled. 1 indicates that it is disabled.
+
+
+
+WRITING SERVICES
+══════════════════════════════════════════════════════════════════════════════
+
+  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+
+  Pas sûr, mais il semblerait qu'il ne faut pas entourer certains champs avec
+  des doubles quotes ("), comme ExecStart et User, et probablement d'autres.
+
+  Read also:
+
+    How I learned to stop worrying and love systemd
+    https://www.redhat.com/sysadmin/love-systemd
+
+
+
+DISABLE XORG, WAYLAND OR MIR
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://askubuntu.com/questions/16371/how-do-i-disable-x-at-boot-time-so-that-the-system-boots-in-text-mode
+
+  You need to tell systemd to not load the graphical login manager:
+
+  sudo systemctl enable multi-user.target --force
+  sudo systemctl set-default multi-user.target
+
+  You will still be able to use X by typing 'startx' after you logged in.
+
+
+
+TO READ
+══════════════════════════════════════════════════════════════════════════════
+
+  - Systemd For (Impatient) Sysadmins (bon)
+    https://blog.tjll.net/systemd-for-impatient-sysadmins/
+
+  - How I learned to stop worrying and love systemd
+    https://www.redhat.com/sysadmin/love-systemd
+
+
+
+CHKSERVICE
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://www.tecmint.com/chkservice-manage-systemd-units-in-terminal/#kj
+
+  Chkservice is an easy-to-use, ncurses-based command line tool for managing
+  systemd units on a terminal. It lists units alphabetically under the
+  categories (services, targets, automounts etc), showing the their status and
+  description, and allows you, with superuser privileges to start, stop,
+  enable and disable units.
+
+
+
+TARGETS
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/sect-Managing_Services_with_systemd-Targets.html
+
+  Table 8.6. Comparison of SysV Runlevels with systemd Targets
+
+    Runlevel  Target Units                          Description
+    0         runlevel0.target, poweroff.target     Shut down and power off the system.
+    1         runlevel1.target, rescue.target       Set up a rescue shell.
+    2         runlevel2.target, multi-user.target   Set up a non-graphical multi-user system.
+    3         runlevel3.target, multi-user.target   Set up a non-graphical multi-user system.
+    4         runlevel4.target, multi-user.target   Set up a non-graphical multi-user system.
+    5         runlevel5.target, graphical.target    Set up a graphical multi-user system.
+    6         runlevel6.target, reboot.target       Shut down and reboot the system.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
