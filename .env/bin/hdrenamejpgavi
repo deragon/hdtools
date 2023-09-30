@@ -15,7 +15,7 @@
 REPERTOIRES=("$@") # If you want the number of elements of $@, use $#
 [ -z "${REPERTOIRES}" ] && REPERTOIRES[0]=.
 
-renamefiles -r          \
+renamefiles -e -r       \
   --old JPG  --new jpg  \
   --old jpeg --new jpg  \
   --old JPEG --new jpg  \
