@@ -94,7 +94,12 @@ while getopts "psh" OPTCMD; do
   esac
 done
 
-(( ! SYSTEM )) && CMD="${CMD} --user"
+if (( ! SYSTEM )); then
+  echo -e "${ANSI[FG_WHITE_BG_GREEN]} USER HOME INSTALLATION ${ANSI[RESET]}"
+  CMD="${CMD} --user"
+else
+  echo -e "${ANSI[FG_BLACK_BG_YELLOW]} SYSTEM INSTALLATION ${ANSI[RESET]}"
+fi
 
 shift $((${OPTIND} - 1))  # Remove options from $@
 IFS=$(echo -en "\n\b")    # Set IFS so if ARGUMENTS in $@ have spaces,
@@ -113,12 +118,12 @@ if (( UPGRADE_PIP == 0 && ${#ARGUMENTS[*]} == 0 )); then
   ERRORS="${ERRORS} - You must provide at least one module to install.\n"
 fi
 
-if [ ! -z "${ERRORS}" ]; then
-  echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
-  echo -e "${ERRORS}"
-  echo -e "Command aborted."
-  exit 1
-fi
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
 
 
 
