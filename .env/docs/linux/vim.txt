@@ -1,0 +1,156 @@
+INSTALLATION
+══════════════════════════════════════════════════════════════════════════════
+
+  For gvim to fetch Hans Deragon's vim configuration at the system level, for
+  all users, run the following command:
+
+    ln -s /vol/data/base/home/hans/.hans.deragon/.env/vim/.vimrc /etc/vim/vimrc.local
+
+
+  GVIM, PYTHON & WINDOWS
+  ────────────────────────────────────────────────────────────────────────────
+
+    Test if python is available to Window's gVim with:
+
+      :echo has("python3")
+
+    If '0' is returned, then Python needs to be installed.
+    The following instructions come from:
+
+      https://stackoverflow.com/questions/4718122/how-to-enable-python-support-in-gvim-on-windows
+
+    First, we must determine if the current version of gVim is 32 or 64 bits.
+
+    We also need to figure out against what version gVim's Python support has
+    been compiled against.
+
+    That is done by typing:
+
+      :version
+
+    The second line will tell if the version is 32 bits or 64 bits.  It will
+    look like this:
+
+      MS-Windows 32-bit GUI version with OLE support
+
+    Lower, in the compilation flags, you will find something like:
+
+      -DDYNAMIC_PYTHON3_DLL=\"python31.dll\"
+
+    In this example, gVim has been compiled against Python 3.1, 32 bits.
+    Thus, that is the version to download.
+
+    Go to:
+
+      https://www.python.org/downloads
+
+    Once you have selected the proper version, on the download page, click on:
+
+      Windows x86-64 web-based installer (for 64 bits version)
+      Windows x86 web-based installer    (for 32 bits version)
+
+    Customize the installation and have it installed only to the local user,
+    not all.
+
+    Once that is done, you need to add the following paths to the User
+    environment variable %PATH%.
+
+      <base of Python directory install>\Python\Python36-32
+      <base of Python directory install>\Python\Python36-32\Scripts
+
+    Logout or reboot, then login again.  Retest with:
+
+      :echo has("python3")
+
+
+
+RUNNING A MACRO ACROSS MANY FILES
+══════════════════════════════════════════════════════════════════════════════
+
+  Save macro in a file.  Then, loop across your files.
+
+    echo ":PrettyXML" >pretty.vim
+    for file in *; do vim -c 'argdo source pretty.vim | update' -c 'quit' "$file"; done
+
+    http://vim.1045645.n5.nabble.com/SHELL-Is-it-possible-to-call-a-vim-macro-from-the-command-line-td1147504.html
+
+  Other means to test:
+
+    http://unix.stackexchange.com/questions/34983/run-a-vim-macro-from-inside-a-bash-script
+
+
+ED
+══════════════════════════════════════════════════════════════════════════════
+
+  To delete all lines containing <text>, exressed as a regular expression.
+
+    ed <file> <<EOC
+    g/<text>/d
+    w
+    q
+    EOC
+
+
+  Voir $HDENVBIN/newcomputer/hdsetnewcomputer
+       97_laptop/lmw-rp_filter-off
+
+
+
+ENCODING / UTF8 / LATIN1
+══════════════════════════════════════════════════════════════════════════════
+
+  Character Encoding Tricks for Vim
+
+  http://spin.atomicobject.com/2011/06/21/character-encoding-tricks-for-vim/
+
+
+
+GPG
+══════════════════════════════════════════════════════════════════════════════
+
+  Pour que gpg marche graphiquement sous vim, il faut installer:
+
+    apt-get install pinentry-gtk2
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - Generate HTML output:  :TOhtml
+
+    This works great to generate an html diff file!  Run this when a vimdiff
+    has been performed.
+
+
+
+SPELLING
+══════════════════════════════════════════════════════════════════════════════
+
+  INTRODUCTION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Files used for spelling are found under ${HDVIM}/spell.  *.add files such
+    as 'en.utf-8.add' are UTF-8 files, but are not used by Vim.  Vim uses the
+    binary files *.spl.  These files must be generated from the source *.add.
+    See next section on how to perform this.
+
+
+  GENERATE .SPL FILES
+  ────────────────────────────────────────────────────────────────────────────
+
+    vim -c "mkspell! ${HDVIM}/spell/en.utf-8.add | quit"
+    vim -c "mkspell! ${HDVIM}/spell/fr.utf-8.add | quit"
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
