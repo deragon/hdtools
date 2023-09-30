@@ -1,0 +1,48 @@
+STRESS TEST
+══════════════════════════════════════════════════════════════════════════════
+
+  STRESS TEST MEMORY
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://unix.stackexchange.com/questions/99334/how-to-fill-90-of-the-free-memory
+
+    stress-ng --vm-bytes $(awk '/MemAvailable/{printf "%d\n", $2 * 0.9;}' < /proc/meminfo)k --vm-keep -m 1  # Safe.  Fill 90% of memory
+
+
+
+SCRIPT - IT’S RECORD EVERYTHING DISPLAYED ON YOUR TERMINAL AND OF OTHER USERS
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.2daygeek.com/automatically-record-all-users-terminal-sessions-activity-linux-script-command/#kj
+
+  By default everyone prefer history command to review the previously entered
+  commands in terminal but unfortunately, that shows only the commands and
+  doesn’t shows the commands output which was performed previously.
+
+  It can be done using script command. Just add the script on /etc/profile
+  file.  It will automatically start recording user terminal sessions activity
+  whenever user logged in.
+
+  What’s Script?
+
+  Script is a Unix command line utility that records a terminal session (in
+  other terms, It’s record everything displayed on your terminal). It stores the
+  output in the current directory as a text file and the default file name is
+  typescript.
+
+  Script is one of the Linux core utility and by default pre-installed in most
+  of the Linux distributions. The script command is part of the util-linux
+  package.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
