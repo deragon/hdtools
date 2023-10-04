@@ -701,7 +701,7 @@ vmap <F9>   gc<CR>
 
 " Execute Python scripts with CTRL-F9
 " From:  https://stackoverflow.com/questions/18948491/running-python-code-in-vim
-autocmd FileType python map <buffer> <C-F9> :w<CR>:exec '!python3' shellescape(@%, 1)<CR>
+autocmd FileType python  map <buffer> <C-F9> :w<CR>:exec      '!python3' shellescape(@%, 1)<CR>
 autocmd FileType python imap <buffer> <C-F9> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
 
 " Pipe the current line into the expand program, the line is taken
@@ -1039,23 +1039,6 @@ map <Leader>c /[^\x00-\x7F]\+<CR>
 
 " Search for null character
 map <Leader>n /[\x00]<CR>
-
-" Ici, on ajoutes toutes les commandes pour overridé:
-"
-"   /usr/share/vim/vim74/ftplugin/python.vim
-"
-" Je le fais ici, particulièrement parce que la tabulation par défaut est 4,
-" et je préfère 2.
-"
-" Voir:  http://stackoverflow.com/questions/21073496/why-does-vim-not-obey-my-expandtab-in-python-files
-function! SetupPython()
-    " Here, you can have the final say on what is set.  So
-    " fixup any settings you don't like.
-    setlocal softtabstop=2
-    setlocal tabstop=2
-    setlocal shiftwidth=2
-endfunction
-command! -bar SetupPython call SetupPython()
 
 " From: http://superuser.com/questions/271471/vim-macro-to-convert-camelcase-to-lowercase-with-underscores
 " Change selected text from NameLikeThis to name_like_this.
