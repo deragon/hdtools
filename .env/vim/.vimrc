@@ -813,17 +813,42 @@ let s:HD_USER_ID_FULL=s:HD_USER_NAME_FULL." (".s:HD_USER_EMAIL.")"
 let commentcharacter=split(&commentstring, '%s')[0]
 
 function! HDSignature(prefix)
-  execute "normal! i".g:commentcharacter." ".a:prefix.s:HD_USER_ID_FULL.", ".strftime(g:hd_timestamp_format_human)."\n"
-endfunction
 
-map <esc>dd O<C-R>=strftime(g:hd_timestamp_format_human)<CR>
+  let l:comment = a:prefix .
+                  \ s:HD_USER_ID_FULL .
+                  \ ", " .
+                  \ strftime(g:hd_timestamp_format_human) .
+                  \ "\n"
+
+  if &filetype == 'vim'
+    " Vim filetype have '&commentstring=#%s', i.e. no space.  However,
+    " the following command to set the commentstring does not work because
+    " for Vim filetype, the commentstring is hardcoded.
+    "
+    "   autocmd FileType vim setlocal commentstring='" %s'  " Does not work.
+    "
+    " To get around this limitation, we simply do not use &commentstring
+    " below.
+    let l:comment_to_insert = '" ' . l:comment
+  else
+    let l:comment_to_insert = substitute(&commentstring, '%s', l:comment, '')
+  endif
+
+  execute "normal! i" . l:comment_to_insert
+
+endfunction
 
 map <esc>da :call HDSignature("Added by ")<CR>
 map <esc>dc :call HDSignature("Comment by ")<CR>
 map <esc>dr :call HDSignature("Created by ")<CR>
 map <esc>dm :call HDSignature("Modified by ")<CR>
+map <esc>dfa :call HDSignature("Ajouté par ")<CR>
+map <esc>dfc :call HDSignature("Commentaire de ")<CR>
+map <esc>dfr :call HDSignature("Créé par ")<CR>
+map <esc>dfm :call HDSignature("Modifié par ")<CR>
 map <esc>dh :call HDSignature("")<CR>
 map <esc>ds :call HDSignature("--")<CR>
+map <esc>dd O<C-R>=strftime(g:hd_timestamp_format_human)<CR>
 map <esc>dl I* <C-R>=strftime($HD_TIMESTAMP_FORMAT_CHANGELOG)<CR>, Hans Deragon<CR>
 
 map m1 ddpkA:  J0j
