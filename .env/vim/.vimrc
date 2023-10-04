@@ -661,7 +661,7 @@ map K k
 "In scripts, one most double the ^V to escape ^M.
 "map  <S-F4> :g/$/s///g<CR>:set fileformat=dos<CR>
 
-" F5:  - Retire les espaces et les \r () en fin de ligne
+" F5:  - Remove trailing spaces and carriage returns (\r, ^M, CR).
 map  <F5> mz:g/\r$/s///g<CR>:g/\s\+$/s///g<CR>:nohlsearch<CR>`z:echoerr ""<CR>
 map  <F6> :nohlsearch<CR>:set nospell<CR>
 map  <S-F6> :g/}\n\n\/\//s//}\r\r\/\//g<CR>
@@ -674,7 +674,7 @@ map  <S-F6> :g/}\n\n\/\//s//}\r\r\/\//g<CR>
 " Usage:
 "
 "   - <F8>ayy  -> Yank full line.
-"   - v<F8>ay  -> For yanking a visual selection, the seleciton must be
+"   - v<F8>ay  -> For yanking a visual selection, the selection must be
 "                 performed first, and then select the register and finally,
 "                 yank the selection into it.
 " See:
@@ -1128,9 +1128,9 @@ endfunction
 " QUICKMENU (plugin setup)
 " ══════════════════════════════════════════════════════════════════════════════
 "
-"   Ce plugin ne marche pas avec la version 7.4
+"   The Quickmenu plugin does not work with version 7.4.
 if v:version > 800
-  " Autres options qui ne marchent qu'avec vim 8+
+  " Other options that only work with vim 8+
   set belloff=all " Disable all bells/sounds.
 
   "source $HDVIM/hd-quickmenu.vim
