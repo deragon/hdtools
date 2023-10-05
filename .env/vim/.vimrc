@@ -1103,9 +1103,6 @@ endfunction
 " this mapping will allow to call it quickly from VIM.
 " map <Leader>g :w<CR>:silent !clear;./generate.sh<CR>
 
-"command! PrettyJson execute "!C:\\cygwin64\\bin\\python3.6m.exe -m json.tool"
-"au FileType json setlocal equalprg=python\ -m\ json.tool
-
 
 
 " QUICKMENU (plugin setup)
