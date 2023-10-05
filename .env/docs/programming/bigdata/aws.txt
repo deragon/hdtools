@@ -263,7 +263,16 @@ ACRONYMS
 COSTS
 ══════════════════════════════════════════════════════════════════════════════
 
-  Good reads:
+  COST EXPLORER
+  ────────────────────────────────────────────────────────────────────────────
+
+    Details - How to get details <<<<-----
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      Under 'Group by', for 'Dimension', select 'Usage type'.
+
+
+  GOOD READS
   ────────────────────────────────────────────────────────────────────────────
 
     - AWS Customers Rack Up Hefty Bills For Moving Data
@@ -283,7 +292,9 @@ COSTS
   ────────────────────────────────────────────────────────────────────────────
 
     - Does not cost much to send data into S3.
-    - COST A LOT to push the data out of S3 into your own server.
+
+    - COST A LOT to push the data out of S3/AWS realm into your own non-AWS
+      server.
 
 
 
