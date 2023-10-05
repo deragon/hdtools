@@ -1211,6 +1211,14 @@ MISC USEFUL STUFF
   GOOD:   sort -t , -k 3,3 -k 1,1 -k 2,2
   WRONG:  sort -t , -k 3   -k 1   -k 2
 
+  Example:
+
+    Sort a list of major, minor and patch version numbers and prints the
+    latest version.
+
+    echo -e "3.4.0\n3.12.7\n3.3.6\n" | sort -t. -k1,1n -k2,2n -k3,3n | tail -n1
+    3.12.7
+
 
 - Sort files according to modification date:
 
@@ -1880,7 +1888,6 @@ ANSI TERMINAL CODES and COLORS
       [46m -- set background color to cyan
       [47m -- set background color to white
       [49m 2.53 set background color to default (black)
-
 
 
   DETECT IF OUTPUT IS A TERMINAL OR A PIPE (DISABLE COLOR FOR PIPE)
