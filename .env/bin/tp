@@ -162,6 +162,9 @@ for hostport in args.hostport:
     except Exception as exception:
         print(f"\x1B[1;37;41mERROR:\x1B[0m:  Attempted with {hostname} - {exception}")
         continue
+
+    ips = set(ips)  # Sometimes, the same IP shows twice, like 127.0.0.1.
+                    # We remove duplicates by creating a set.
     for ip in ips:
         with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
             sock.settimeout(args.timeout)  # Seconds.
