@@ -171,10 +171,34 @@ alias hdawsvarunset='unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_T
 alias hdawsvarprint='printf "export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"\nexport AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\"\nexport AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\"\n"'
 hdawsssh() { ssh "ec2-user@$1"; }; exportfunction hdawsssh
 
+# Interesting reading about proxy* variables:
+#
+#   https://about.gitlab.com/blog/2021/01/27/we-need-to-talk-no-proxy/
+#
 # 169.254.0.0/16 is a Link-local address (https://en.m.wikipedia.org/wiki/Link-local_address)
 # used by AWS and other services and must never have a proxy.
-export no_proxy="localhost,127.0.0.0/8,169.254.0.0/16,${no_proxy}"
-# export no_proxy="localhost,127.0.0.0/8,::1"  # Version avec IPV6 qui ne marche pas partout.
+export no_proxy="localhost,127.0.0.0/8,169.254.0.0/16,172.29.154.0/8,${no_proxy}"
+export no_proxy="$(echo "${no_proxy}" | tr ',' '\n' | grep -Ev '^\s*$' | sort -u | sed ':a;N;$!ba;s/\n/,/g')"  # Removing duplicate entries.
+
+# export no_proxy="localhost,127.0.0.0/8,::1"  # Version with IPV6 does not work at all.
+
+hdproxyunset()
+{
+  unset https_proxy
+  unset http_proxy
+  unset no_proxy
+  unset ftp_proxy
+  unset gohper_proxy
+
+  unset HTTPS_PROXY
+  unset HTTP_PROXY
+  unset NO_PROXY
+  unset FTP_PROXY
+  unset GOHPER_PROXY
+}
+exportfunction hdproxyunset
+
+
 
 
 # KERBEROS
