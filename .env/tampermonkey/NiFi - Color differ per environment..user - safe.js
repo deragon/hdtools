@@ -19,7 +19,8 @@
 // Here, we wait for the element to be loaded and drawn before configuring its color.
 // To know where waitForKeyElements() comes from, see:
 // https://stackoverflow.com/questions/12897446/userscript-to-wait-for-page-to-load-before-executing-code-techniques
-waitForKeyElements("md-toolbar", actionFunction);
+waitForKeyElements("md-toolbar",  actionFunction);  // NiFi Instance
+waitForKeyElements("mat-toolbar", actionFunction);  // NiFi Registry
 
 function actionFunction (jNode) {
 
@@ -38,6 +39,15 @@ function actionFunction (jNode) {
 
   console.log("Tampermonkey - Color choosen:  " + color)
 
-  document.getElementById("header").setAttribute("style", "background-color:" + color);
-  document.querySelector("#global-menu-button").setAttribute("style", "background-color:" + color);
+  try {
+    // Attempt to setup NiFi Instance element.  If element is not present,
+    // an exception is raised but ignored so the next element can be tried.
+    document.getElementById("header").setAttribute("style", "background-color:" + color);
+    document.querySelector("#global-menu-button").setAttribute("style", "background-color:" + color);
+  } catch (e) {;}
+  try {
+    // Attempt to setup NiFi Registry element.  If element is not present,
+    // an exception is raised but ignored so the next element can be tried.
+    document.getElementById("nifi-registry-toolbar").setAttribute("style", "background-color:" + color);
+  } catch (e) {;}
 }
