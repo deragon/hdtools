@@ -156,7 +156,12 @@ for hostport in args.hostport:
         continue
 
     hostname, port, port_in_next_arg = hostportparser(hostport)
-    hostname_real, aliases, ips = socket.gethostbyname_ex(hostname)
+
+    try:
+        hostname_real, aliases, ips = socket.gethostbyname_ex(hostname)
+    except Exception as exception:
+        print(f"\x1B[1;37;41mERROR:\x1B[0m:  Attempted with {hostname} - {exception}")
+        continue
     for ip in ips:
         with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
             sock.settimeout(args.timeout)  # Seconds.
