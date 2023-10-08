@@ -92,6 +92,8 @@ pattern = re.compile("(.*?//)*([^:]+)(?::*(\d+))*(/.*)*$")
 
 
 def hostportparser(hostport):
+
+    global errors
     port_in_next_arg = False
 
     matches = pattern.match(hostport)
@@ -123,6 +125,10 @@ def hostportparser(hostport):
             port = int(port)
         except ValueError:
           errors += "\n  - The port must be an integer.  You provided '" + str(port) + "'"
+    try:
+        hostname = hostname[:hostname.index('/')]  # Remove everything from '/' and afterwards.
+    except ValueError as ve:
+        pass # Ignore if '/' is not present.
 
     return (hostname, port, port_in_next_arg)
 
