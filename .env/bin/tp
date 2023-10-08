@@ -172,24 +172,28 @@ for hostport in args.hostport:
             if not args.quiet:
                 print(f"Testing:  {hostname} ({ip}):{port} -> ", end="", flush=True)
 
-            sock_errno = sock.connect_ex((ip, port))
-            if sock_errno == 0:
-                if not args.quiet:
-                    print(f"{ansi['FG_WHITE_BG_GREEN']} ✓ Open {ansi['RESET']}")
+            try:
+                sock_errno = sock.connect_ex((ip, port))
+                if sock_errno == 0:
+                    if not args.quiet:
+                        print(f"{ansi['FG_WHITE_BG_GREEN']} ✓ Open {ansi['RESET']}")
 
-                # Experiment sending stdin like netcat (nc) would do.
-                # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
-                # that HTTPS is expected and this code will not work.
-                # See:  https://stackoverflow.com/questions/31599634/malformed-http-response-with-docker-private-registry-v2-behind-an-nginx-proxy
+                    # Experiment sending stdin like netcat (nc) would do.
+                    # If you receive b'\x15\x03\x03\x00\x02\x02\n', it means
+                    # that HTTPS is expected and this code will not work.
+                    # See:  https://stackoverflow.com/questions/31599634/malformed-http-response-with-docker-private-registry-v2-behind-an-nginx-proxy
 
-                # print(sock.sendmsg(sys.stdin.buffer))
-                # returnTuple=sock.recvmsg(2**16, 2**16)
-                # print(returnTuple)
-                # print(returnTuple[0].decode('utf-8'))
+                    # print(sock.sendmsg(sys.stdin.buffer))
+                    # returnTuple=sock.recvmsg(2**16, 2**16)
+                    # print(returnTuple)
+                    # print(returnTuple[0].decode('utf-8'))
 
-            else:
-                if not args.quiet:
-                    print(f"{ansi['FG_WHITE_BG_RED']} ✘ Closed {ansi['RESET']} ({sock_errno}:{errno.errorcode[sock_errno]})")
-                exitcode+=1
+                else:
+                    if not args.quiet:
+                        print(f"{ansi['FG_WHITE_BG_RED']} ✘ Closed {ansi['RESET']} ({sock_errno}:{errno.errorcode[sock_errno]})")
+                    exitcode+=1
+            except Exception as exception:
+                print(exception)
+
 
 sys.exit(exitcode)
