@@ -54,6 +54,8 @@ MAXDEPTH="255"
 # 'stat' format
 # ────────────────────────────────────────────────────────────────────
 #
+#   %W     time of birth
+#
 #   %Y     time of last data modification, seconds since Epoch.
 #
 #   %y     time of last data modification, human-readable.
