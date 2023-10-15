@@ -30,8 +30,9 @@
 
 
     # Enable / Disable docker container at host bootup.
-    docker update --restart=always "${DOCKER_CONTAINER_ID}" # Enable autostart at host boot.
-    docker update --restart=no     "${DOCKER_CONTAINER_ID}" # Disable autostart at host boot.
+    docker update --restart=unless-stopped "${DOCKER_CONTAINER_ID}" # Enable autostart at host boot, but only if not stopped manually.
+    docker update --restart=always         "${DOCKER_CONTAINER_ID}" # Enable autostart at host boot.
+    docker update --restart=no             "${DOCKER_CONTAINER_ID}" # Disable autostart at host boot.
 
 
     # Formated outputs.  See:  https://docs.docker.com/engine/reference/commandline/ps/#formatting
