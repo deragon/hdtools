@@ -834,15 +834,6 @@ hd_timestamp_filename()
 }
 exportfunction hd_timestamp_filename
 
-hdproxyunset()
-{
-  unset gohper_proxy
-  unset https_proxy
-  unset http_proxy
-  unset no_proxy
-  unset ftp_proxy
-}
-
 
 # Libreoffice system wide setup to force it to run with GTK 3 instead with
 # KDE.
