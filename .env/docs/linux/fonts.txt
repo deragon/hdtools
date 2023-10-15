@@ -12,7 +12,16 @@ INSTALLATION (MASSIVE)
 
       su - # Need to be root
       FONTS_GOOGLE_DIR="$(locate --regexp '.*Google/fonts/ofl$')"
+
+      # For some unknown reason, 'Noto Color Emoji' from Google's repository
+      # disables color emojis!  We thus delete the directory from the Git clone
+      # before installing the directory.
+      #
+      # Problem exist on Ubuntu 22.04 as of 2023-10-09.
+      rm -rf "${FONTS_GOOGLE_DIR}/notocoloremoji"
+
       cd "/usr/share/fonts/truetype/."
+
       ln -s "${FONTS_GOOGLE_DIR}" google-fonts
 
 
