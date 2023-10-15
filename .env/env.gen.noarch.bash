@@ -247,23 +247,4 @@ hdat()
 # This alias is never being used...
 #alias hdgroups='id -a | sed -r "s/[, ]/\n/g"'  # Shows groups, one group per liene.
 
-if [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]]; then
-
-  hdwsldisplay()
-  {
-    # Fetch IPv4 address assigned to WSL from Windows stand point of view.
-    # This is the address which the Xserver running on Windows can be
-    # contacted with.
-    export DISPLAY="$(ipconfig.exe | perl -0777 -pe 's/.*?WSL.*?IPv4.*?(\d+\.\d+\.\d+\.\d+).*/\1/igs'):0.0"
-
-    if [[ "${1}" != "-q" ]]; then
-      echo "DISPLAY=${DISPLAY}"
-      hdwslxkeepalive
-    else
-      hdwslxkeepalive -q
-    fi
-  }
-  exportfunction hdwsldisplay
-
-  hdwsldisplay -q
-fi
+[[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]] && hdwslxkeepalive -q
