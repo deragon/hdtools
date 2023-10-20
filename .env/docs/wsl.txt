@@ -1,3 +1,26 @@
+IMPORTANT WHEN UPGRADING DISTRIBUTION
+IMPORTANT WHEN UPGRADING DISTRIBUTION
+IMPORTANT WHEN UPGRADING DISTRIBUTION
+IMPORTANT WHEN UPGRADING DISTRIBUTION
+IMPORTANT WHEN UPGRADING DISTRIBUTION
+IMPORTANT WHEN UPGRADING DISTRIBUTION
+══════════════════════════════════════════════════════════════════════════════
+
+  When time comes, to upgrade the distribution, say from Ubuntu 22.04 to 24.04
+  for example, if you installed the latest MESA driver to go around of the
+  WSLg bug reported at https://github.com/microsoft/wslg/discussions/312, YOU
+  MUST REMOVE THE MESA DRIVER BEFORE PROCEEDING WITH THE UPGRADE.
+
+    --- Removal ---
+
+    It's strongly recommended to remove this PPA before upgrading to a newer
+    Ubuntu release or using another mesa PPA.
+
+    sudo apt install ppa-purge
+    sudo ppa-purge ppa:kisak/kisak-mesa
+
+
+
 MISCELLANEOUS
 ══════════════════════════════════════════════════════════════════════════════
 
