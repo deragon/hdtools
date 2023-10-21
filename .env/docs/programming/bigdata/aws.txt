@@ -81,6 +81,55 @@ EOF
 
 
 
+AWS API
+══════════════════════════════════════════════════════════════════════════════
+
+  SERVICES AND VERSION AVAILABLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    To get the list of all services and their version, get to the following
+    page:
+
+      https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/top-level-namespace.html
+
+      Example:
+
+        To get CloudFormation, by looking at:
+
+          https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFormation.html
+
+        You can determine that the identifier for the service is
+        "cloudformation" and the version to use, the only one available as of
+        2023-09, is "2010-05-15".
+
+
+  PYTHON EXAMPLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    from requests_auth_aws_sigv4 import AWSSigV4
+
+    # Doc for AWSSigV4:
+    #
+    #   - https://github.com/DavidMuller/aws-requests-auth
+    #   - https://pypi.org/project/requests-auth-aws-sigv4/
+    #
+    # For version and service name (in this example, "2010-05-15" and
+    # "cloudformation"), see:
+    #
+    # https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFormation.html
+
+    r = requests.request("POST", f"https://cloudformation.{aws_region_name}.amazonaws.com",
+        data= {
+            "Version":    "2010-05-15",
+            "Action":     "GetTemplate",
+            "StackName":  "<stack name>",
+        },
+        auth=AWSSigV4("cloudformation"))
+    print(str(r))
+    print(r.content)
+    print(r.text)
+
+
 AWS IAM
 ══════════════════════════════════════════════════════════════════════════════
 
