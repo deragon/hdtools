@@ -154,10 +154,7 @@ if which vim >/dev/null 2>&1; then
   alias vimdiff='hdvim --hddiff'
   EDITOR='hdgvim --hdvim'
 
-  gvim()     { \
-               [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]] && \
-                 hdwsldisplay -q; \
-               hdgvim "$@"; }
+  gvim()     { hdgvim "$@"; }
   gvimdiff() { hdgvim --hddiff "$@"; }
   gvimw()    { hdgvim "$(which $*)"; }
   gviml()    { locate --null $* | xargs --null --replace="{}" hdgvim "{}"; }
