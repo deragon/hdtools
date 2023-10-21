@@ -579,6 +579,32 @@ CHRISTMAS
   🛐 Place of Worship
   ✝️ Latin Cross
 
+
+
+TECHNICALITIES
+══════════════════════════════════════════════════════════════════════════════
+
+  Variation Selectors
+  ────────────────────────────────────────────────────────────────────────────
+
+    Read:  https://en.wikipedia.org/wiki/Variation_Selectors_%28Unicode_block%29
+
+
+    Variation Selector-16
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+    From:  https://emojipedia.org/variation-selector-16
+    An invisible codepoint which specifies that the preceding character should
+    be displayed with emoji presentation. Only required if the preceding
+    character defaults to text presentation.
+
+    Often used in Emoji ZWJ Sequences, where one or more characters in the
+    sequence have text and emoji presentation, but otherwise default to text
+    (black and white) display.
+
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
