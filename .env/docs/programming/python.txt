@@ -1007,6 +1007,7 @@ PROJECT CREATION
     # 'source virtualenvwrapper.sh' is called if found in ${PATH}, thus
     # there is no need to call it manually.
     source <PATH TO...>/virtualenvwrapper.sh
+    source "${HOME}/.local/bin/virtualenvwrapper.sh"
 
     mkvirtualenv env1
 
