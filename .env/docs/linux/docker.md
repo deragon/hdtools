@@ -48,7 +48,6 @@
       docker pull centos:7.5.1804 # Download to get the image locally.
 
   - Ubuntu:  https://hub.docker.com/_/ubuntu
-      docker pull ubuntu:20.04
       docker pull ubuntu:22.04
 
 
