@@ -173,7 +173,7 @@ for DST in ${DSTS[@]}; do
   echo -e "${SCRIPT}" | /usr/bin/ssh "${DST}"
   /usr/bin/ssh "${DST}" bash "${REMOTE_SCRIPT_PATH}"
 
-  echo "${SCRIPT}" | /usr/bin/ssh "${DST}"
+  hd-env-transfer "${DST}"
 done
 
 
