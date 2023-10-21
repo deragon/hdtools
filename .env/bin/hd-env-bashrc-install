@@ -43,53 +43,57 @@ run()
   fi
 }
 
-SCRIPT="
+# To avoid heredoc expanding variables, add around the variabe single quotes
+# (').
+#
+# See: https://stackoverflow.com/questions/27920806/how-to-avoid-heredoc-expanding-variables
+#read -r -d '' SCRIPT << 'EOS' >"/tmp/${SCRIPT_NAME}"
+REMOTE_SCRIPT_PATH="/tmp/${SCRIPT_NAME}"
+cat << 'EOS' >"${REMOTE_SCRIPT_PATH}"
 #!/bin/bash
 
-FILE_TMP=\"/tmp/328401.tmp\"
-
-cat >\"\${FILE_TMP}\" <<EOS
-#!/bin/bash
-
-USER_HOME=\"\${HOME}\"
+if [[ ! -z "${1}" ]]; then
+  USER_HOME="${1}"
+else
+  USER_HOME="${HOME}"
+fi
 
 # On RHEL systems, .bash_profile sources .bashrc and then hard code
 # the PATH variable, destroying the PATH setup by 'gohd'.
 # To avoid this, we thus
-if grep --fixed-strings --quiet '.bashrc' \"\\\${HOME}/.bash_profile\"; then
-  BASH_FILE=\"\\\${HOME}/.bash_profile\"
+if grep --fixed-strings --quiet '.bashrc' "${HOME}/.bash_profile"; then
+  BASH_FILE="${HOME}/.bash_profile"
 else
-  BASH_FILE=\"\\\${HOME}/.bashrc\"
+  BASH_FILE="${HOME}/.bashrc"
 fi
 
 
-BASH_COMMANDS=\"
+BASH_COMMANDS="
 # ----------------------------------------------------------------------
 # Alias pour charger l'environnement de Hans Deragon.  N'affecte en rien
 # l'environnement s'il n'est pas appelé.
-alias gohd='source \"\\\${USER_HOME}/.hans.deragon/.corp-\"*\"/gohd\"'
-[ \\\"\\\\\\\${XMODIFIERS}\\\" == 'HDCONNECTION' ] && gohd
-\"
+alias gohd='source "${USER_HOME}/.hans.deragon/.corp-"*"/gohd"'
+[ \"\${XMODIFIERS}\" == 'HDCONNECTION' ] && gohd
+"
 
-if grep --fixed-strings --quiet 'alias gohd' \"\\\${BASH_FILE}\"; then
-  printf '\e[1;34m% 8s' \"\\\${USER}\"
-  echo -e \":  Hans Deragon's 'gohd' already installed.\\\e[0;00m\"
+if grep --fixed-strings --quiet 'alias gohd' "${BASH_FILE}"; then
+  printf "\e[1;34m% 8s:  Hans Deragon's 'gohd' already installed.\e[0;00m\n" "${USER}"
 else
-  echo -en \"\\\${BASH_COMMANDS}\" >>\"\\\${BASH_FILE}\"
-  printf '\e[1;32m% 8s' \"\\\${USER}\"
-  echo -e \":  Hans Deragon's 'gohd' installed.\\\e[0;00m\"
+  echo -en "${BASH_COMMANDS}" >>"${BASH_FILE}"
+  printf "\e[1;32m% 8s:  Hans Deragon's 'gohd' installed.\e[0;00m\n" "${USER}"
 fi
-EOS
 
-if [ \"\$(whoami)\" == \"ec2-user\" ]; then
+if [ "$(whoami)" == "ec2-user" ]; then
   # On a AWS EC2 machine, ec2-user has sudo rights, thus we also
   # install the bootstrap on root's .bash(_profile|rc) file.
-  sudo -u root bash \"\${FILE_TMP}\"
+  sudo -u root bash "${0}" "${USER_HOME}"
 fi
 
-bash \"\${FILE_TMP}\"
-rm \"\${FILE_TMP}\"
-"
+# Erase this script, but only once, thus only when it is not
+# recursively called to configure the root account.
+[ "$(whoami)" != "root" ] && rm "${0}"
+EOS
+
 
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
@@ -163,6 +167,11 @@ for DST in ${DSTS[@]}; do
 
   # Print title only if more than one DST is being processed.
   (( ${#DSTS[*]} > 1 )) && title "Processing ${DST}"
+  scp -p "${REMOTE_SCRIPT_PATH}" "${DST}:${REMOTE_SCRIPT_PATH}"
+  #echo -e "${SCRIPT}" >/tmp/a
+  #echo -e "${SCRIPT}" >/tmp/a
+  echo -e "${SCRIPT}" | /usr/bin/ssh "${DST}"
+  /usr/bin/ssh "${DST}" bash "${REMOTE_SCRIPT_PATH}"
 
   echo "${SCRIPT}" | /usr/bin/ssh "${DST}"
 done
