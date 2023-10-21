@@ -778,7 +778,10 @@ NAMING CONVENTION
 USEFULL COMMANDS
 ══════════════════════════════════════════════════════════════════════════════
 
+  # mkdir -p:  from Python >= 3.5
+  pathlib.Path("<directory name/path here>").mkdir(parents=True, exist_ok=True)
   os.makedirs("<directory>")  # mkdir equivalent
+
   os.link(src, dst) # Hard Link
   array = string.split() # split
 
@@ -855,6 +858,7 @@ EXCEPTIONS
 
     For more information and how to overide default behavior of "Exception",
     see:  https://stackoverflow.com/questions/1319615/proper-way-to-declare-custom-exceptions-in-modern-python
+
 
 
 EFFICIENCY / PERFORMANCE
