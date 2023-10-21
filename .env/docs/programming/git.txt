@@ -1302,13 +1302,13 @@ GITHUB
 MISCELLANEOUS
 ══════════════════════════════════════════════════════════════════════════════
 
+  SET '+x' PERMISSION TO ALL EXECUTABLE SCRIPTS
   ────────────────────────────────────────────────────────────────────────────
-Tous les scripts exécutables ont la permission '+x'.
 
-La commande exécutée pour rendre tous les scripts exécutables est:
+    The command to make all scripts executable is:
 
-  egrep -Eri '^#!' . | sed 's/:.*//g' | sort -u | \
-    xargs git update-index --chmod=+x
+    egrep -Eri '^#!' . | sed 's/:.*//g' | sort -u | \
+      xargs git update-index --chmod=+x
 
 
 
