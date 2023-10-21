@@ -195,7 +195,14 @@ ARRAY / LIST / DICTIONNARY (HASH)
 
     newlist = [ applyFunctionToItem(item) for item in list ]  # Lambda iteration
 
-    print(" ".join(list))
+    #  Join all words with a comma and space.
+    list = [ "word1", "word2", "word3" ]
+    print(", ".join(list))
+
+    # Print as a list with bullet
+    file_list = [ "file1", "file2", "file3" ]
+    print("Files are:  \n\n  - " + "\n  - ".join(file_list))
+
 
     for item in list:
       print(item)
