@@ -1,15 +1,11 @@
-LECTURE
+READINGS
 ══════════════════════════════════════════════════════════════════════════════
 
-  From:  Google search 'hortonworks vs amazon'
-         https://www.google.ca/search?q=hortonworks+vs+amazon&hl=en
+  Costs
+  ────────────────────────────────────────────────────────────────────────────
 
-  - Cloudera and Hortonworks merger means Hadoop’s influence is declining
-
-    https://venturebeat.com/2018/10/06/cloudera-and-hortonworks-merger-means-hadoops-influence-is-declining/
-
-
-  - https://www.whizlabs.com/blog/cloudera-and-hortonworks-merger/
+    - We Burnt $72K testing Firebase + Cloud Run and almost went Bankrupt
+      https://blog.tomilkieway.com/72k-1/
 
 
   Europe Frightened By US 'Cloud Act', Fearing National Security Risks
