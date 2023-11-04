@@ -262,8 +262,9 @@ MARKDOWN
 
     7 Best Markdown Editors for Linux
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
-      by Aaron Kili | Published: July 22, 2016 | July 22, 2016
-      http://www.tecmint.com/best-markdown-editors-for-linux/
+
+      https://www.tecmint.com/best-markdown-editors-for-linux/
+      Aaron KiliLast Updated: September 16, 2023
 
 
     List of editors
@@ -271,13 +272,19 @@ MARKDOWN
 
       - ghostwriter
           https://www.ghacks.net/2019/08/27/ghostwriter-is-an-open-source-markdown-editor-with-a-polished-interface/
+
+      - Mind Forger - https://www.mindforger.com/
+          Pretty good.  Packages/PPA available for easy installation.
+
       - Remarkable - https://remarkableapp.github.io/linux.html
-      - mdcharm (abandonné)
-      - Mind Forger - https://www.mindforger.com/ (pas essayé)
+
       - UberWriter - https://uberwriter.github.io/uberwriter/#1 (pas essayé)
           https://www.fossmint.com/uberwriter-gtk-markdown-editor-for-linux/
+
       - ReText: Simple but powerful editor for Markdown and reStructuredText
-        https://github.com/retext-project/retext
+          https://github.com/retext-project/retext
+
+      - mdcharm (abandonné)
 
 
   Renderer
