@@ -31,6 +31,19 @@ WRITING SERVICES
     https://www.redhat.com/sysadmin/love-systemd
 
 
+  CONTROL CPU AND IO USAGE OF THE PROCESS
+  ────────────────────────────────────────────────────────────────────────────
+
+  From:  https://unix.stackexchange.com/questions/494843/how-to-limit-a-systemd-service-to-play-nice-with-the-cpu
+
+    [Service]
+    CPUWeight=20
+    CPUQuota=85%
+    IOWeight=20
+    MemorySwapMax=0
+    MemoryLimit=14G
+    MemorySoftLimit=13G
+
 
 DISABLE XORG, WAYLAND OR MIR
 ══════════════════════════════════════════════════════════════════════════════
