@@ -813,7 +813,7 @@ MULTILINE / MULTI LINE / REPLACE / SUBSTITUTION WITH PYTHON
   ────────────────────────────────────────────────────────────────────────────
 
     echo -e "Line #1\nLine #1\nLine #2\nLine #3\nLine #4\nLine #5\n" |
-      python -c 'import re, os, sys; print re.sub("(.|\n)*Line #2.*\n((?:.|\n)+)\nLine #5(.|\n)", r"Remains only:\n\2\nThat is it.", "".join(sys.stdin.readlines()))'
+      python -c 'import re, os, sys; print(re.sub("(.|\n)*Line #2.*\n((?:.|\n)+)\nLine #5(.|\n)", r"Remains only:\n\2\nThat is it.", "".join(sys.stdin.readlines())))'
 
     INPUT:
 
