@@ -10,5 +10,7 @@
 **/vim/bundle
 **/vim/spell/*.spl
 **/vim/spell/*.sug
+**/vim/.netrwhist
 **/conky
+**/__pycache__
 seafile-ignore.txt
