@@ -136,6 +136,7 @@ FILES=("$@") # If you want the number of elements of $@, use $#
 
 printErrorsAndExitIfAny()
 {
+  printWarnings
   if [ ! -z "${ERRORS}" ]; then
     echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
     echo -e "${ANSI[FG_WHITE_BG_RED]}ERREUR:${ANSI[RESET]}  Les erreurs suivantes furent détectées.\n"
@@ -146,6 +147,16 @@ printErrorsAndExitIfAny()
   fi
 }
 
+printWarnings()
+{
+  if [ ! -z "${WARNINGS}" ]; then
+    echo -e "${ANSI[FG_BLACK_BG_YELLOW]}WARNING:${ANSI[RESET]}  The following warnings were thrown.\n"
+    echo -e "${ANSI[FG_BLACK_BG_YELLOW]}AVERTISSEMENT:${ANSI[RESET]}  Les avertissement suivants furent lancés.\n"
+    echo -e "${WARNINGS}"
+  fi
+}
+
+WARNINGS=""
 ERRORS=""
 
 if ((${#FILES[*]} == 0)); then
