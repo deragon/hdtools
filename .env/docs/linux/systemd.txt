@@ -6,13 +6,14 @@ COMMANDS
   systemctl --all                           # List all running services.
   systemctl --all list-timers               # List all timer services.
 
-  systemctl start foo.service               # Activates a service immediately.
-  systemctl stop foo.service                # Deactivates a service immediately.
-  systemctl restart foo.service             # Restarts a service.
-  systemctl status foo.service              # Shows status of a service including whether it is running or not.
-  systemctl enable foo.service              # Enables a service to be started on bootup.
-  systemctl disable foo.service             # Disables a service to not start during bootup.
-  systemctl is-enabled foo.service; echo $? # Check whether a service is already enabled or not: 0 indicates that it is enabled. 1 indicates that it is disabled.
+  SERVICE="foo"
+  systemctl start      "${SERVICE}"  # Activates a service immediately.
+  systemctl stop       "${SERVICE}"  # Deactivates a service immediately.
+  systemctl restart    "${SERVICE}"  # Restarts a service.
+  systemctl status     "${SERVICE}"  # Shows status of a service including whether it is running or not.
+  systemctl enable     "${SERVICE}"  # Enables a service to be started on bootup.
+  systemctl disable    "${SERVICE}"  # Disables a service so to not start during bootup.
+  systemctl is-enabled "${SERVICE}"; echo $? # Check whether a service is already enabled or not: 0 indicates that it is enabled. 1 indicates that it is disabled.
 
 
 
