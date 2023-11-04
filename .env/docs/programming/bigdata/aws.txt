@@ -327,6 +327,9 @@ COSTS
     - AWS Customers Rack Up Hefty Bills For Moving Data
       https://hardware.slashdot.org/story/19/10/23/0517258/aws-customers-rack-up-hefty-bills-for-moving-data
 
+    - We Burnt $72K testing Firebase + Cloud Run and almost went Bankrupt
+      https://blog.tomilkieway.com/72k-1/
+
     - Basecamp Details 'Obscene' $3.2 Million Bill That Prompted It To Quit the Cloud
       https://news.slashdot.org/story/23/01/16/1723202/basecamp-details-obscene-32-million-bill-that-prompted-it-to-quit-the-cloud
 
