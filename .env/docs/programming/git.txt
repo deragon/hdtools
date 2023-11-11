@@ -230,6 +230,9 @@ BRANCHES
 
     Marche pas:  git branch <branch name> --set-upstream-to remotes/origin/<branch name>
 
+  Delete remote branch
+
+    git push origin --delete "${BRANCH}"
 
 
   COMPARE BRANCHES / DIFF OF COMMITS
