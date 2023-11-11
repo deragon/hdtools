@@ -60,7 +60,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   scalability                -> extensible, évolutivité, scalabilité, adaptable, adaptabilité, modularité
   array                      -> liste, tableau
   thread (email)             -> enfilade, fil de discussion (courriel)
-  append                     -> annexer, joindre, ajouter
+  append                     -> annexer, rattacher, joindre, ajouter
   subprocess                 -> sous-processus
 
 
