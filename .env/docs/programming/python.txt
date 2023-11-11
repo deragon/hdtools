@@ -862,6 +862,17 @@ EXCEPTIONS
     see:  https://stackoverflow.com/questions/1319615/proper-way-to-declare-custom-exceptions-in-modern-python
 
 
+  ADD INFORMATION TO AN EXCEPTION AND THROW IT AGAIN
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/6062576/adding-information-to-an-exception
+
+      try:
+          return [permission() for permission in self.permission_classes]
+      except TypeError as e:
+          raise TypeError("<Put here your custom message, adding information>") from e
+
+
 
 EFFICIENCY / PERFORMANCE
 ══════════════════════════════════════════════════════════════════════════════
