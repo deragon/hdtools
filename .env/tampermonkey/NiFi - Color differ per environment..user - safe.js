@@ -1,3 +1,11 @@
+// jQuery WARNING:
+//
+//    If your require jQuery (like @require
+//    https://code.jquery.com/jquery-3.7.1.min.js) jQuery will cause all error
+//    messages to show up as '[object Object]' instead of showing the actual
+//    error message.  Fortunately, jQuery is not needed with NiFi.  But think
+//    twice if one day, you plan to @require jQuery.
+
 // ==UserScript==
 // @name         NiFi - Color differ per environment.
 // @description  NiFi - Color differ per environment.
@@ -5,7 +13,6 @@
 // @version      0.1
 // @author       Hans Deragon
 // @include      https://<rest of URL of target website here>
-// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
 // @grant        none
 // ==/UserScript==
