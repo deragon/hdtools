@@ -1,4 +1,4 @@
-#!/usr/bin/dash
+#!/bin/dash
 
 # ─ Copyright Notice ───────────────────────────────────────────────────
 #
@@ -47,9 +47,9 @@ if [ -e /etc/fedora-release ]; then
 elif [ -e /etc/redhat-release ]; then
   export HD_OS_CODE="redhat"
   export HD_OS_ARCH=`uname -i`
-  export HD_OS_VERSION=`cat /etc/redhat-release | awk '{print $7$5}'`
+  export HD_OS_VERSION="$(cat /etc/redhat-release | grep -oP '(?<=release ).*(?= \()')"
   export HD_OS_PATCHLEVEL=`fgrep Update /etc/redhat-release | perl -pe "s/.*?Update ([\d|\.]+).*/\1/g"`
-  export HD_OS_NAME="Red Hat Enterprise Linux ${HD_OS_VERSION}"
+  export HD_OS_NAME="$(cat /etc/redhat-release)"
 elif [ -e /etc/novell-release ]; then
   export HD_OS_CODE="suse"
   if fgrep -q "SUSE Linux Enterprise" /etc/novell-release; then
