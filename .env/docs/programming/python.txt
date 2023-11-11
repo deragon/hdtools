@@ -180,6 +180,8 @@ ARRAY / LIST / DICTIONNARY (HASH)
   ────────────────────────────────────────────────────────────────────────────
 
     list = []
+    list = [ None ] * 5  # Initialize the array with 5 entries.
+
     len(list)
     list.append(<data>)  # Modify, add to list.
     list + ListB  # Concatenation, merge.
