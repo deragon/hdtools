@@ -830,9 +830,13 @@ function! HDSignature(prefix)
     " To get around this limitation, we simply do not use &commentstring
     " below.
     let l:comment_to_insert = '" ' . l:comment
+  elseif &filetype == 'text'
+    let l:comment_to_insert = l:comment
   else
     let l:comment_to_insert = substitute(&commentstring, '%s', l:comment, '')
   endif
+  "echo l:comment
+  "echo l:comment_to_insert
 
   execute "normal! i" . l:comment_to_insert
 
