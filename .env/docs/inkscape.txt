@@ -1,0 +1,34 @@
+INKSCAPE - ADJUSTING THE CANVAS SIZE TO FIT YOUR IMAGE
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://wiki.inkscape.org/wiki/index.php/Tricks_and_tips#Adjusting_the_Canvas_Size_to_Fit_Your_Image
+
+  Use the button "Fit Page to Selection" under File > Document Properties. If
+  nothing is selected then the page is adjusted to the whole drawing.
+
+  HD NOTE:  you have to actually go to File -> Document Properties -> Page ->
+  Custum Size -> Resize page to content (expand this by clicking on the
+  triangle)
+
+
+INKSCAPE - change canvas background color
+══════════════════════════════════════════════════════════════════════════════
+
+  File -> Document Properties -> Background
+
+  Click on the box on the right of "Background color:" You can select the
+  color and transparency.  Go full transparent for a transparent background
+  regardless of the color choosen.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
