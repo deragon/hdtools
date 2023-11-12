@@ -162,17 +162,20 @@ def runDsCommand(command, failOnError):
         logger.error("Failed command with exit code #%d:  %s", completedProcess.returncode, commandAsHuman)
         sys.exit(completedProcess.returncode)
 
-    output = completedProcess.stdout.decode('850').rstrip().strip('"').replace('\r', '')
+    output = completedProcess.stdout.decode('850').rstrip().replace('\r', '')
     logger.debug("output = >>%s<<", output)
     return (output, completedProcess.returncode)
 
 
 def showUser(username: str):
     (userOU, exitcode) = runDsCommand([ "dsquery.exe",   "user", "-name", username ], True)
+    userOU = userOU.strip('"')
     output=runDsCommand([ "dsget.exe",   "user", userOU, "-fn", "-ln", "-email" ], True)
     outputstdout = re.sub(r"dsget.*", "", output[0])
     print(f"Information:\n\n  {userOU}\n\n{outputstdout}")
-    print(f"\n{text['fr']['Group']}s:\n\n" + runDsCommand([ "dsget.exe",   "user", userOU, "-memberof" ], True)[0])
+    groups=sorted(runDsCommand([ "dsget.exe", "user", userOU, "-memberof" ], True)[0].split('\n'))
+    groups="\n".join(groups)
+    print(f"\n{text['fr']['Group']}s:\n\n" + str(groups))
 
 
 firstTime = True
