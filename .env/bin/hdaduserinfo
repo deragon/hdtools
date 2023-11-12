@@ -175,8 +175,8 @@ def showUser(username: str):
     print(f"Information:\n\n  {userOU}\n\n{outputstdout}")
     groups=sorted(runDsCommand([ "dsget.exe", "user", userOU, "-memberof" ], True)[0].split('\n'))
     groups = [ group.strip('"') for group in groups ]
-    groups="\n".join(groups)
-    print(f"\n{text['fr']['Group']}s:\n\n" + str(groups))
+    groups="\n  ".join(groups)
+    print(f"\n{text['fr']['Group']}s:\n\n  " + str(groups))
 
 
 firstTime = True
