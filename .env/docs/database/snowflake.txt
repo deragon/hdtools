@@ -264,8 +264,9 @@ MISCELLANEOUS
 USER MANAGEMENT
 ══════════════════════════════════════════════════════════════════════════════
 
- UNLOCK USER
+  UNLOCK USER / CHANGE PASSWORD
   ────────────────────────────────────────────────────────────────────────────
 
       use role accountadmin;  -- Curiously, securityadmin is not enough.
       alter user <USERNAME> set mins_to_unlock=0;
+      alter user <USERNAME> set password = '<somegoodpassword>';
