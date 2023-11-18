@@ -145,7 +145,7 @@ SQL
   PERCENTAGE OF TOTAL USING GROUP BY WITH COUNT() AND SUM()
   ────────────────────────────────────────────────────────────────────────────
 
-    show users
+    show users;
     set LAST_QUERY_ID=(select last_query_id());
     select count(*) as Number,
            round(Number*100/sum(number) over(), 2) as Percentage,
@@ -240,6 +240,25 @@ TERRAFORM
 
   Plugin code at:
     https://github.com/Snowflake-Labs/terraform-provider-snowflake
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  - USE SECONDARY ROLES NONE;  -- USE SECONDARY ROLES { ALL | NONE }
+    USE SECONDARY ROLES ALL;   -- USE SECONDARY ROLES { ALL | NONE }
+
+  -- Test table
+
+     CREATE TABLE IF NOT EXISTS DB.SCHEMA.TABLE_NAME
+     (
+         STRING_COL  VARCHAR(16),
+         INTEGER_COL INT NOT NULL
+     );
+
+  - show users starts with 'SVC_';  -- Here, '_' is not a wildcard but is literal.
+
 
 
 USER MANAGEMENT
