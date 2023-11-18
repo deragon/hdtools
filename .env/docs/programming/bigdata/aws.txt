@@ -302,6 +302,19 @@ KMS - Key Management Service
 
 
 
+SERVICE CATALOG
+══════════════════════════════════════════════════════════════════════════════
+
+  Template - fetch it
+  ────────────────────────────────────────────────────────────────────────────
+
+    Go to: Service Catalog > Portfolio > Imported
+
+    Then search for the product, click on it and then select the tab called
+    "template"
+
+
+
 ACRONYMS
 ══════════════════════════════════════════════════════════════════════════════
 
