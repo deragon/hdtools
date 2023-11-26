@@ -210,6 +210,13 @@ AWS LAMBDA
 
 
 
+AWS EC2
+══════════════════════════════════════════════════════════════════════════════
+
+  - aws ec2 describe-instances --instance-ids i-<####>
+
+
+
 AWS ROOT ACCOUNT
 ══════════════════════════════════════════════════════════════════════════════
 
@@ -345,12 +352,6 @@ COSTS
 
     - Basecamp Details 'Obscene' $3.2 Million Bill That Prompted It To Quit the Cloud
       https://news.slashdot.org/story/23/01/16/1723202/basecamp-details-obscene-32-million-bill-that-prompted-it-to-quit-the-cloud
-
-
-  T3 cheaper than T2
-  ────────────────────────────────────────────────────────────────────────────
-
-    - https://www.densify.com/articles/aws-ec2-t3-burstable-instances
 
 
   S3
