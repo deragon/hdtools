@@ -247,4 +247,7 @@ hdat()
 # This alias is never being used...
 #alias hdgroups='id -a | sed -r "s/[, ]/\n/g"'  # Shows groups, one group per liene.
 
-[[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]] && hdwslxkeepalive -q
+if [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]]; then\
+  hdwslxkeepalive -q
+  alias wslshutdown='wsl.exe --shutdown'
+fi
