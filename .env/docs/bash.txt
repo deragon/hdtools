@@ -24,6 +24,8 @@ ARRAYS
     Slicing:  See https://gist.github.com/steakknife/8294792
 
   printf '%s\n' "${ENTRIES[@]}"   # Print all values on separate lines.
+  printf "%s\n" "$@"              # Only way this works with $@
+
   printf '%s\0' "${ENTRIES[@]}" | xargs --null -I "{}" echo -e "{}"  # Print all values separate with nulls, useful for sending to xargs.
   readarray -d '' ENTRIES < <(git ls-files -z)  # Read into an array entries separated with nulls.
 
