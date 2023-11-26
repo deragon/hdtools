@@ -85,14 +85,17 @@ Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <file>+
 "
 }
 
+
 run()
 {
   if (( DRYRUN )); then
     echo "DRYRUN:  $@"
   else
     "$@"
+    eval $(printf \""%s\" " "$@")
   fi
 }
+
 
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
