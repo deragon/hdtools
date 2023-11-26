@@ -122,6 +122,9 @@ set show-all-if-ambiguous on
 #   https://en.wikipedia.org/wiki/ANSI_escape_code
 #   http://misc.flogisoft.com/bash/tip_colors_and_formatting
 #   https://github.com/robertknight/konsole/blob/master/developer-doc/old-documents/More/villanova-vt100-esc-codes.txt
+
+
+
 export HD_SCREEN_EFFECT_REVERSE="\e[07m"
 export HD_SCREEN_COLOR_RED="\e[1;31m"
 export HD_SCREEN_COLOR_YELLOW="\e[1;33m"
@@ -132,34 +135,34 @@ export HD_SCREEN_ATTRIBUTES_BLINK="\e[5m"
 export HD_SCREEN_ATTRIBUTES_OFF="\e[0m"
 export HD_SCREEN_COLOR_WHITE_ON_RED="\e[1;37;41m"
 
+# For description of '\e]11;#XXXXXX\a' code, see:
+#
+#   https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+#
+# Search for 'ESC]11;' within the page.  This works for Cygwin's mintty.
 export HD_SCREEN_BG_COLOR_RED="\e]11;#440000\a"
 export HD_SCREEN_BG_COLOR_GREEN="\e]11;#003300\a"
 export HD_SCREEN_BG_COLOR_BLUE="\e]11;#000033\a"
 export HD_SCREEN_BG_COLOR_BLACK="\e]11;#000000\a"
+export HD_SCREEN_BG_COLOR_ORANGE="\e]11;#504000\a"
 
 alias redbg='echo -ne "${HD_SCREEN_BG_COLOR_RED}"'
 alias greenbg='echo -ne "${HD_SCREEN_BG_COLOR_GREEN}"'
 alias bluebg='echo -ne "${HD_SCREEN_BG_COLOR_BLUE}"'
 alias blackbg='echo -ne "${HD_SCREEN_BG_COLOR_BLACK}"'
+alias orangebg='echo -ne "${HD_SCREEN_BG_COLOR_ORANGE}"'
 
 hd_term_color_bg()
 {
-  # For description of '\e]11;#XXXXXX\a' code, see:
-  #
-  #   https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-  #
-  # Search for 'ESC]11;' within the page.  This works for Cygwin's mintty.
-  if [[ "${HD_PRD_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    #echo -ne '\e]11;#440000\a' # Red background
+  if [[ "${HD_PR_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
     redbg
   elif [[ "${HD_QA_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    #echo -ne '\e]11;#000033\a' # Blue background
     bluebg
-  elif [[ "${HD_DEV_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    #echo -ne '\e]11;#003300\a' # Green background
+  elif [[ "${HD_DV_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
     greenbg
+  elif [[ "${HD_OR_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
+    orangebg
   else
-    #echo -ne '\e]11;#000000\a' # Black background
     blackbg
   fi
 }
