@@ -4,6 +4,9 @@ ARRAYS
   # -g makes the array global, else it is created only locally, if declared in
   # a function like if when a variable is declared with 'local'.
   declare -ag ENTRIES=(${VARIABLE_WITH_ENTRIES_SEPERATED_WITH_LF});
+
+  local IFS=$'\n'   # IMPORTANT to setup so that entries are only separated by
+                    # linefeed, not spaces that could be found in filenames.
   declare -ag ENTRIES=($(find .))
   declare -ag ENTRIES=() # empty array
   declare -ag ENTRIES=(
