@@ -62,6 +62,8 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   thread (email)             -> enfilade, fil de discussion (courriel)
   append                     -> annexer, rattacher, joindre, ajouter
   subprocess                 -> sous-processus
+  BTW (By The Way)           -> En passant, au passage, à propos, d'ailleurs, au fait
+
 
 
 ACRONYMS
