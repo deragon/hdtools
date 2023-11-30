@@ -243,7 +243,11 @@ setxauth()
 fi
 
 alias cddownloads='cdprint "${HOME}/Downloads"'
-alias bashr='sudo XMODIFIERS=HDCONNECTION bash --init-file "${HD_CORP_DIR}/gohd" --login -i'  # bashr == Bash as root
+if [[ -e "${HD_CORP_DIR}/gohd" ]]; then
+  alias bashr='sudo XMODIFIERS=HDCONNECTION bash --init-file "${HD_CORP_DIR}/gohd" --login -i'  # bashr == Bash as root
+else
+  alias bashr='su - '
+fi
 
 add2path PATH /var/lib/flatpak/exports/bin
 
