@@ -326,3 +326,6 @@ venv
 PPA
 WSLg
 jQuery
+printf
+xargs
+UTF8
