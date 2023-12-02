@@ -1,0 +1,126 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+unset COLORS
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
+  # remain unset and no ANSI codes are sent out.
+  declare -A COLORS=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["NORMAL"]="\e[0;00m"
+  )
+fi
+
+
+let TS_TIMEOUT=30*60
+
+
+usage()
+{
+  echo -e "
+${COLORS[FG_WHITE_BG_GREEN]} SAFE ${COLORS[NORMAL]}
+
+Continuously check if a directory got an update within ${TS_TIMEOUT}s and
+prints a warning if none occurred during that period.
+
+Usage:  ${SCRIPT_NAME} [-h] <directory to watch>
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+DIRECTORY="$1"
+DIRECTORY="$(dirname "$(readlink -f "${DIRECTORY}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+# Display format of timestamps.
+TIMESTAMP_FORMAT_HUMAN_WITHNANO="%Y-%m-%d %H:%M:%S %N"
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+TIMESTAMP_FORMAT_FILE="%Y%m%dT%H%M%S" # ISO 8601 format.
+
+# All timestamps below start with exactly the same time.
+TIMESTAMP_START="$(date +"%s")" # Seconds since epoch.
+TIMESTAMP_HUMAN="$(date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}")"
+TIMESTAMP_FILE="$( date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_FILE}")"
+
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+# Directory is 'log', not 'logs', to follow Linux standard '/var/log'.
+LOGDIR="${HOME}/log/${SCRIPT_NAME_BASE}"
+mkdir -p "${LOGDIR}"
+LOGFILE="${LOGDIR}/${SCRIPT_NAME_BASE}.log"
+
+(
+{
+  echo "${SCRIPT_NAME} - Watch started with time period ${TS_TIMEOUT}s on:  ${DIRECTORY}"
+  while ((1)); do
+    TS_MOSTRECENT=$(hdfindfiles -f "%Y" -n 1 "${DIRECTORY}")
+    TS_NOW=$(date +"%s")
+    let TS_DIFF=TS_NOW-TS_MOSTRECENT
+    #echo ${TS_DIFF}
+    if (( TS_DIFF > TS_TIMEOUT )); then
+      echo "WARNING - Limit of ${TS_TIMEOUT}s exceeded since it been more than ${TS_DIFF}s there was a change under '${DIRECTORY}'."
+    fi
+    sleep 10
+  done
+} 2>&1 | \
+while IFS= read -r LINE; do
+  # Linux solution.
+  NOW=$(date +"${TIMESTAMP_FORMAT_HUMAN}")  # ISO 8601 Format, to the nano seconds.  For Linux.
+  NOW="${NOW:0:23}"  # The remaining nanoseconds are removed.  Milliseconds remain.
+
+  echo "${NOW} ${LINE}"
+done
+
+) >"${LOGFILE}" &
+
+cat <<EOM
+
+${SCRIPT_NAME} is running in the background.
+The content of the log file can be displayed with the following command:
+
+  tail -f "${LOGFILE}"
+
+<CTRL-C> to abort.
+EOM
+
+tail -f "${LOGFILE}"
