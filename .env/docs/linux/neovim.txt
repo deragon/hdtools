@@ -1,0 +1,49 @@
+GUI
+══════════════════════════════════════════════════════════════════════════════
+
+  In active development
+  ────────────────────────────────────────────────────────────────────────────
+
+    --Goneovim - BEST, not tested.
+      https://github.com/akiyosi/goneovim
+
+    - Neovim QT
+      https://github.com/equalsraf/neovim-qt
+
+    - Neovide
+      https://neovide.dev/
+
+      This is a simple, no-nonsense, cross-platform graphical user interface
+      for Neovim (an aggressively refactored and updated Vim editor). Where
+      possible there are some graphical improvements, but functionally it
+      should act like the terminal UI.
+
+      Code:  https://github.com/neovide/neovide
+
+
+  As of 2023-11-20, those that seams abandoned
+  ────────────────────────────────────────────────────────────────────────────
+
+    - gnvim, last update 2023-08-26
+      https://github.com/vhakulinen/gnvim
+
+    - FVim, last update 2023-05-11
+      https://github.com/yatli/fvim
+
+    - Reovim, last update 2023-01-14
+      https://github.com/songww/reovim
+
+    - nvim-ui, last update 2022-12-06
+      https://github.com/sakhnik/nvim-ui
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
