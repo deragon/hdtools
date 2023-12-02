@@ -110,7 +110,7 @@ ansi = {
 # gettext.translation('guess', localedir='locale', languages=['fr']).install()
 
 
-parser = argparse.ArgumentParser(description="""
+parser = argparse.ArgumentParser(description=f"""
 {ansi['FG_WHITE_BG_GREEN']} SAFE {ansi['RESET']}
 {ansi['FG_BLACK_BG_YELLOW']} SLIGHT DANGER {ansi['RESET']}
 {ansi['FG_WHITE_BG_RED']} DANGER {ansi['RESET']}
