@@ -1064,6 +1064,39 @@ EOF
 
 
 
+DATE CHANGE
+══════════════════════════════════════════════════════════════════════════════
+
+  Last Commit date change
+  ────────────────────────────────────────────────────────────────────────────
+
+    If you want to update the date of the last commit to a specific date, you
+    can use the following command:
+
+      GIT_COMMITTER_DATE="Tue Fan 25 12:00 2022 +0000" git commit --amend --no-edit
+
+    Basically, instead of using the date variable, you can manually set the
+    date of the commit to any date you want.
+
+
+  Any commit date change
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://codewithhugo.com/change-the-date-of-a-git-commit/
+
+    - git rebase <commit-hash>^ -i
+
+    - Replace pick with e (edit) on the line with that commit.  Quit the editor.
+
+    - Execute:
+
+      export GIT_COMMITTER_DATE="2023-11-26 10:58:32 -0500"
+      git commit --amend --no-edit --date "$GIT_COMMITTER_DATE"
+
+    - git rebase --continue
+
+
+
 GITIGNORE
 ══════════════════════════════════════════════════════════════════════════════
 
