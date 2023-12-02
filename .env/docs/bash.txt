@@ -67,6 +67,19 @@ ARRAYS
     http://stackoverflow.com/questions/5564418/exporting-an-array-in-bash-script
 
 
+  Pass an array to a function
+  ────────────────────────────────────────────────────────────────────────────
+
+    function_name()
+    {
+      local ENTRIES=("$@")
+      ...
+      printf '%s\n' "${ENTRIES[@]}"   # Print all values on separate lines.
+    }
+
+    function_name "${ARRAY[@]}"
+
+
   LENGTH OF LONGEST STRING IN AN ARRAY
   ────────────────────────────────────────────────────────────────────────────
 
@@ -74,7 +87,7 @@ ARRAYS
     printf '%s\0' "${ENTRIES[@]}" | xargs --null --replace="{}" -n 1 bash -c 'echo "{}" | wc --chars' | sort -n | tail -1
 
 
-  BASH ARGURMENTS $@
+  BASH ARGUMENTS $@
   ────────────────────────────────────────────────────────────────────────────
 
     Quick recipes
