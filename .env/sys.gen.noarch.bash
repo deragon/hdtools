@@ -152,16 +152,25 @@ alias bluebg='echo -ne "${HD_SCREEN_BG_COLOR_BLUE}"'
 alias blackbg='echo -ne "${HD_SCREEN_BG_COLOR_BLACK}"'
 alias orangebg='echo -ne "${HD_SCREEN_BG_COLOR_ORANGE}"'
 
+hd_test_string_in_array()
+{
+  local STRING="$1"; shift
+  local ARRAY=("$@")
+  (( "${#ARRAY[*]}" == 0 )) && return 255  #  List empty, thus no match.
+  echo "${STRING}" | grep -qE "($(printf '%s|' "${ARRAY[@]}" | sed 's/\|.$//g'))"
+  return $?
+}
+
 hd_term_color_bg()
 {
-  if [[ "${HD_PR_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
+  if hd_test_string_in_array "${HOSTNAME}" "${HD_PR_HOSTNAMES[@]}"; then
     redbg
-  elif [[ "${HD_QA_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    bluebg
-  elif [[ "${HD_DV_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
-    greenbg
-  elif [[ "${HD_OR_HOSTNAMES[@]}" =~ "${HOSTNAME}" ]]; then
+  elif hd_test_string_in_array "${HOSTNAME}" "${HD_OR_HOSTNAMES[@]}"; then
     orangebg
+  elif hd_test_string_in_array "${HOSTNAME}" "${HD_QA_HOSTNAMES[@]}"; then
+    bluebg
+  elif hd_test_string_in_array "${HOSTNAME}" "${HD_DV_HOSTNAMES[@]}"; then
+    greenbg
   else
     blackbg
   fi
