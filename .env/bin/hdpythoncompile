@@ -1,0 +1,264 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+
+unset COLORS
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
+  # remain unset and no ANSI codes are sent out.
+  declare -A COLORS=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True Colors (24 bits) terminal.
+    ["NORMAL"]="\e[0;00m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${COLORS[FG_WHITE_BG_GREEN]} SAFE ${COLORS[NORMAL]}
+
+Downloads and compiles the latest version of Python in a Python virtual
+environment.
+
+  -h  Display this help text.
+"
+}
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+printErrorsAndExitIfAny()
+{
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${COLORS[FG_WHITE_BG_RED]}ERROR:${COLORS[NORMAL]}  The following errors where detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
+}
+
+ERRORS=""
+
+
+
+# Display format of timestamps.
+TIMESTAMP_FORMAT_HUMAN_WITHNANO="%Y-%m-%d %H:%M:%S %N"
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+TIMESTAMP_FORMAT_FILE="%Y%m%dT%H%M%S" # ISO 8601 format.
+
+# All timestamps below start with exactly the same time.
+TIMESTAMP_START="$(date +"%s")" # Seconds since epoch.
+TIMESTAMP_HUMAN="$(date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}")"
+TIMESTAMP_FILE="$( date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_FILE}")"
+
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+
+logWrapper()
+{
+  LOGDIR="."
+  LOGFILE="${LOGDIR}/${SCRIPT_NAME_BASE}.log"
+
+  (
+    {
+      echo -en "Started:  ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+
+      $@
+
+      TIMESTAMP_END=$(date +"%s") # Seconds since epoch.
+      TIMESTAMP_DIFF=$((${TIMESTAMP_END}-${TIMESTAMP_START}))
+
+      echo -en "Started:    ";date -d @"${TIMESTAMP_START}" +"${TIMESTAMP_FORMAT_HUMAN}"
+      echo -en "Ended:      ";date -d @"${TIMESTAMP_END}"   +"${TIMESTAMP_FORMAT_HUMAN}"
+
+      TIMESTAMP_DIFF_DAYS=$(printf '% 8d' $(($(date -u -d @"${TIMESTAMP_DIFF}" +'%j')-1)))
+
+      echo -en "Timelapse:  ${TIMESTAMP_DIFF_DAYS} ";date -u -d @"${TIMESTAMP_DIFF}" +'%H:%M:%S'
+
+    } 2>&1 | \
+    while IFS= read -r LINE; do
+      # From:  http://mywiki.wooledge.org/BashFAQ/001#Trimming
+      #
+      # The read command modifies each line read; by default it removes all leading
+      # and trailing whitespace characters (spaces and tabs, or any whitespace
+      # characters present in IFS). If that is not desired, the IFS variable has to
+      # be cleared.
+      #
+      # -r instructions 'read' to not consider backslashes as an escape character.
+
+      # If Cygwin, choose 'printf', else use 'date' since it is more accurate (to the nano)
+
+      # Cygwin solution
+      printf -v NOW '%(%F %T)T'  # ISO 8601 Format, to the seconds.  For Cygwin (faster, no fork)
+                                 # Nanoseconds is not available, unfortunately.
+
+      # Linux solution.
+      NOW=$(date +"${TIMESTAMP_FORMAT_HUMAN}")  # ISO 8601 Format, to the nano seconds.  For Linux.
+      NOW="${NOW:0:23}"  # The remaining nanoseconds are removed.  Milliseconds remain.
+
+      echo "${NOW} ${LINE}" | tee -a "${LOGFILE}"
+    done
+
+  ) 2>&1 | tee "${LOGFILE}"
+}
+
+
+installOsDependencies()
+{
+  if [[ -e "/etc/redhat-release" ]]; then
+    # Why RHEL does not comes with '/etc/lsb-release'?  Sigh...
+    DISTRIB_ID="RHEL"
+  else
+    source /etc/lsb-release
+  fi
+
+  if [[ "${DISTRIB_ID}" == "Ubuntu" ]]; then
+
+    sudo apt install --yes \
+      build-essential      \
+      zlib1g-dev           \
+      libssl-dev           \
+      libffi-dev
+
+  elif [[ "${DISTRIB_ID}" == "RHEL" ]]; then
+
+    # RHEL 8 confirmed dependencies.  Probably would work with more recent version of RHEL.
+    sudo dnf install \
+      zlib-devel     \
+      openssl-devel  \
+      libffi-devel
+
+  else
+    ERRORS="${ERRORS} - Could not identify the OS.\n"
+    printErrorsAndExitIfAny
+  fi
+}
+
+
+findPythonVersionLatest()
+{
+  # Code generated by ChatGPT 3.5 on 2023-08-18 15:06:12 EDT
+  PYTHON_VERSION_LATEST=$(curl --silent --insecure --location https://www.python.org/downloads  | grep -oP '(?<=Download the latest <a href="https:\/\/www\.python\.org\/ftp\/python\/)\d+\.\d+\.\d+(?=\/Python-\d+\.\d+\.\d+\.tar\.xz">Python \d+<\/a> source\.)')
+
+  if [[ -z "${PYTHON_VERSION_LATEST}" ]]; then
+    ERRORS="${ERRORS} - Could not identify the OS.\n"
+    printErrorsAndExitIfAny
+  fi
+
+  WORK_DIR="Python-${PYTHON_VERSION_LATEST}-Compile"
+  PWD_BASENAME="${PWD/*\/}" # Basename, efficient form.
+
+  if [[ "${PWD_BASENAME}" != "${WORK_DIR}" ]]; then
+    if [[ -d "${WORK_DIR}" ]]; then
+      cd "${WORK_DIR}"
+    else
+      mkdir "${WORK_DIR}"
+      cd "${WORK_DIR}"
+    fi
+  fi
+
+  echo "Working directory:  ${PWD}"
+  WORK_DIR_ABS="${PWD}"
+}
+
+downloadPython()
+{
+
+  COMPRESS_FILE="Python-${PYTHON_VERSION_LATEST}.tgz"
+  if [[ ! -r "${COMPRESS_FILE}" ]]; then
+    curl -o "${COMPRESS_FILE}" "https://www.python.org/ftp/python/${PYTHON_VERSION_LATEST}/Python-${PYTHON_VERSION_LATEST}.tgz"
+    tar xvzf "${COMPRESS_FILE}"
+  else
+    echo "Already downloaded and decompressed:  ${COMPRESS_FILE}"
+  fi
+}
+
+compilePython()
+{
+  cd "${SRC_DIR}"
+  echo "Working directory:  ${PWD}"
+
+  ./configure \
+    --enable-optimizations
+
+  make
+
+  cd -
+}
+
+setupPythonInVenv()
+{
+  SRC_DIR_ABS="$(readlink -f "${SRC_DIR}")"
+  PYTHON_BIN="$(find "${SRC_DIR_ABS}" -name "python" -o -name "python.exe")"
+
+  python -m pip install virtualenv
+  source "$(which virtualenvwrapper.sh)"
+  mkvirtualenv --python "${PYTHON_BIN}" "${WORK_DIR_ABS}/virtualenv"
+  source "${WORK_DIR}/virtualenv/bin/activate"
+
+  python -m pip install \
+    --trusted-host pypi.org \
+    --trusted-host files.pythonhosted.org \
+    gnureadline
+}
+
+
+buildPython()
+{
+  set -e
+
+  installOsDependencies
+  findPythonVersionLatest
+  SRC_DIR="Python-${PYTHON_VERSION_LATEST}"
+  downloadPython
+  compilePython
+  set +e
+  setupPythonInVenv
+
+  cat <<EOM
+
+To test Python ${PYTHON_VERSION_LATEST}, run:
+
+  source "${PWD}/virtualenv/bin/activate"
+  "${PYTHON_BIN}"
+
+EOM
+}
+
+logWrapper "buildPython"
