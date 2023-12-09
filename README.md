@@ -8,10 +8,11 @@ Personal various Linux scripts (in Python and Bash mostly) I wrote through the y
 Licence
 ==================================================
 
-All scripts I wrote are licenced under the GPL 3.0 licence and are identified
-as such within.  That said, not all scripts in this repository have been
-written by me and can thus bare another licence.  Also, many of my scripts
-have snippets obtained from the web.
+All scripts I wrote are licenced under the [GNU AFFERO GENERAL PUBLIC LICENSE
+3.0](https://www.gnu.org/licenses/agpl-3.0.en.html) and are identified as such
+within.  That said, not all scripts in this repository have been written by me
+and can thus bare another licence.  Also, many of my scripts have snippets
+without a licence obtained from the web.
 
 If in any case, you find / feel that I have relicence a script or piece of
 code that should not have been, please do not hesitate to contact me; I will
