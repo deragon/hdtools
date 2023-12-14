@@ -1,22 +1,31 @@
 SAFEST KEY - HOW TO GENERATE
 ══════════════════════════════════════════════════════════════════════════════
 
-  Why not use larger cipher keys?
+  ssh-keygen -t ed25519
 
-    http://security.stackexchange.com/questions/25375/why-not-use-larger-cipher-keys
-
-    With every doubling of the RSA key length, decryption is 6-7 times times
-    slower.
-
-  # Slow for file transfers
-  ssh-keygen -b 4096 -t rsa
-
-  ssh-keygen -b 4096 -t rsa -N "" -f "${HOME}/.ssh/id_rsa_nopass"
-  cat "${HOME}/.ssh/id_rsa_nopass.pub"
+  ssh-keygen -t ed25519 -N "" -f "${HOME}/.ssh/id_ed25519_nopass"
+  cat "${HOME}/.ssh/id_id_ed25519_nopass.pub"
 
   From:  http://security.stackexchange.com/questions/5096/rsa-vs-dsa-for-ssh-authentication-keys
 
-  DSA est moins sécure, et dois être 1024 bits.
+  ED25519 is more secure and performant than RSA and DSA
+  RSA is less secure and cannot be over 4096 bits.
+  DSA is even less secure and cannot be over 1024 bits.
+
+
+  RSA
+  ────────────────────────────────────────────────────────────────────────────
+
+    RSA is less secure and cannot be over 4096 bits.  Use ed25519 instead.
+
+    Still if using RSA, remember that using larger cipher keys is more secure,
+    but slows file transfers.  But, in modern times, it not so much an issue
+    and it is preferable to use 4096 bits.
+
+      http://security.stackexchange.com/questions/25375/why-not-use-larger-cipher-keys
+
+      With every doubling of the RSA key length, decryption is 6-7 times times
+      slower.
 
 
 
