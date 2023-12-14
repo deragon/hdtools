@@ -734,7 +734,9 @@ GUI
   Reading
   ────────────────────────────────────────────────────────────────────────────
 
-    - https://unix.stackexchange.com/questions/48469/gui-for-git-similar-to-sourcetree
+    - Source Tree from Atlassian is only available on Windows and Mac OS.
+      Alternatives listed at:
+      https://unix.stackexchange.com/questions/48469/gui-for-git-similar-to-sourcetree
 
 
   gitg  https://github.com/tibirna/gitg
