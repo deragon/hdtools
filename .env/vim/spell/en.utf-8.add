@@ -329,3 +329,5 @@ jQuery
 printf
 xargs
 UTF8
+virtualenv
+RHEL
