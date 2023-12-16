@@ -1,0 +1,61 @@
+Garbage collection (GC)
+══════════════════════════════════════════════════════════════════════════════
+
+  Read:  https://manual.seafile.com/maintain/seafile_gc/
+
+  Just run 'seaf-gc.sh' without any repo and all the repository will execute.
+  The name of the repo is not enough to identify it.  Maybe it is the UUID of
+  the repo that needs to be provided.  The manual is not clear about this.
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  File path contains symbols that are not supported by Windows - I use Linux!
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://forum.seafile.com/t/file-path-contains-symbols-that-are-not-supported-by-windows-i-use-linux/14769
+
+    Solution:  Install the lastest version of the client.
+
+
+  Impossible to delete file for repository setup to keep full history.
+  ────────────────────────────────────────────────────────────────────────────
+
+    Consequences:
+
+    - If you copied files by accident into a library, such as an large iso file,
+      then that useless ISO file will be stored permanently
+
+    - Confidential files can never be totally deleted; their history will always
+      remain available
+
+    - The database storing the library always continues to grow with time, since
+      cleanup is impossible.
+
+
+  Cannot copy files by any means (including with the API) between encrypted
+  libraries.
+  ────────────────────────────────────────────────────────────────────────────
+
+    Seafile does not provide the means to copy files from one encrypted
+    library to another encrypted library.
+
+    $ hd-seafile-copy-files.sh
+    $ tail -f seahub.log
+
+    2022-09-04 16:03:03,031 [ERROR] django.request:224 log_response Internal Server Error: /api/v2.1/repos/sync-batch-copy-item/
+    2022-09-04 16:03:21,781 [ERROR] seahub.api2.endpoints.repos_batch:1378 post Can't copy files between encrypted repo(s)
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█
+█ It is released under the GPL 3 licence which can be found at:
+█
+█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
