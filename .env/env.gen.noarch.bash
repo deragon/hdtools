@@ -249,5 +249,5 @@ hdat()
 
 if [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]]; then\
   hdwslxkeepalive -q
-  alias wslshutdown='wsl.exe --shutdown'
+  alias hdwslshutdown='wsl.exe --shutdown'
 fi
