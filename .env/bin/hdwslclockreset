@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+#
+# It is released under the GPL 3 licence which can be found at:
+#
+#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Under WSL, when the computer resumes/wakes up from sleep (S3), the Linux clock
+can be out of sync.  This script simply resynchronize the Linux clock with the
+one of Windows.
+
+Usage:  ${SCRIPT_NAME} [-z]
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+sudo hwclock -s
