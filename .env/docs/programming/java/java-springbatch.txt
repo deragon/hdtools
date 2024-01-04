@@ -78,14 +78,15 @@ SAVING DATA IN THE EXECUTION CONTEXT:
     to be skipped. Any item that throws a NullPointerException causes the step
     to end in error.
 
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
-█ Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
 █
-█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
 █
-█ It is released under the GPL 3 licence which can be found at:
-█
-█     https://www.gnu.org/licenses/gpl-3.0.en.html
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
 █
 █ ─────────────────────────────────────────────────── Copyright Notice ─

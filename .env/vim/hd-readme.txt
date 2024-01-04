@@ -32,3 +32,16 @@ WINDOWS GVIM AND DEAD KEYS
 
   https://code.google.com/p/vim/issues/detail?id=250&sort=-id
   http://stackoverflow.com/questions/3937237/gvim-us-international-not-combining-dead-keys-with-space
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─

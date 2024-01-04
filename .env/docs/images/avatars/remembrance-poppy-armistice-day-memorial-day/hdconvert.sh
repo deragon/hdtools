@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General public Picense which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
 # Comment by Hans Deragon (hans@deragon.biz), 2020-07-17 12:46:47 EDT
 # Le script hdsvg2png pourrait aussi être utilisé, mais j'ai décidé autrement.
 

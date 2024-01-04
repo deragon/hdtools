@@ -1,12 +1,11 @@
 REM ─ Copyright Notice ───────────────────────────────────────────────────
 REM
-REM Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+REM Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
 REM
-REM Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+REM Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+REM released under the GNU Affero General public Picense which can be found at:
 REM
-REM It is released under the GPL 3 licence which can be found at:
-REM
-REM     https://www.gnu.org/licenses/gpl-3.0.en.html
+REM     https://www.gnu.org/licenses/agpl-3.0.en.html
 REM
 REM ─────────────────────────────────────────────────── Copyright Notice ─
 

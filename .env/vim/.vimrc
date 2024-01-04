@@ -1,3 +1,14 @@
+" ─ Copyright Notice ───────────────────────────────────────────────────
+"
+" Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+"
+" Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+" released under the GNU Affero General public Picense which can be found at:
+"
+"     https://www.gnu.org/licenses/agpl-3.0.en.html
+"
+" ─────────────────────────────────────────────────── Copyright Notice ─
+
 " Aide:  \h
 
 " VIM configuration written by Hans Deragon, hans@deragon.biz
@@ -689,9 +700,6 @@ map  <S-F6> :g/}\n\n\/\//s//}\r\r\/\//g<CR>
 noremap <F8> "
 
 map  <S-F8> :set columns=80<CR>
-imap <S-F11> Copyright 2023, Hans Deragon<CR>Consultant en informatique/Software Consultant<CR><CR>Deragon Informatique inc.<CR>https://www.deragon.biz<CR>mailto:hans@deragon@biz
-"map <S-F12> O<esc>!!cat ${HDENVDIR}/signature.txt<CR>
-
 " Hexadecimal editor
 " See:  http://nion.modprobe.de/blog/archives/628-vim-as-hex-editor.html
 map ,hon :%!xxd<CR>
