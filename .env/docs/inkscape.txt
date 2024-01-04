@@ -11,6 +11,17 @@ INKSCAPE - ADJUSTING THE CANVAS SIZE TO FIT YOUR IMAGE
   triangle)
 
 
+
+ACTIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  Get list of all actions
+  ────────────────────────────────────────────────────────────────────────────
+
+    ./Inkscape.AppImage --action-list > Inkscape-actions.txt
+
+
+
 INKSCAPE - change canvas background color
 ══════════════════════════════════════════════════════════════════════════════
 
