@@ -660,17 +660,11 @@ map K k
 "map <F1> <esc>
 "imap <F1> <esc>
 
-"map  <F2> :s/,/,/g<CR>:s/AND/AND/g<CR>:nohlsearch<CR>
-" <F2> reserved for composing.  See hans-deragon.vim
-"map  <F2> :s/,/,portAddress<C-V><C-V>/g<CR>:s/AND/AND<C-V><C-V>/g<CR>:nohlsearch<CR>
-
-
 " F4 COULD BE REUSED.  It was used for indentation, but I never use it.
 "vmap <F4> :s/^/  /g<CR>:nohlsearch<CR>
 "nmap <F4>a :g/^/s//  /g<CR>:nohlsearch<CR>
 "nmap <F4>p vap:s/^/  /g<CR>:nohlsearch<CR>
 "In scripts, one most double the ^V to escape ^M.
-"map  <S-F4> :g/$/s///g<CR>:set fileformat=dos<CR>
 
 " F5:  - Remove trailing spaces and carriage returns (\r, ^M, CR).
 map  <F5> mz:g/\r$/s///g<CR>:g/\s\+$/s///g<CR>:nohlsearch<CR>`z:echoerr ""<CR>
@@ -714,15 +708,6 @@ vmap <F9>   gc<CR>
 " From:  https://stackoverflow.com/questions/18948491/running-python-code-in-vim
 autocmd FileType python  map <buffer> <C-F9> :w<CR>:exec      '!python3' shellescape(@%, 1)<CR>
 autocmd FileType python imap <buffer> <C-F9> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
-
-" Pipe the current line into the expand program, the line is taken
-" as a indented keyword to expand.
-"
-" map!  0!!kexpand0/@<CR>
-" map!  o{}ko
-" map!  ( @ )bs
-" map  :r ~/cut<CR>
-" map  :w! ~/cut<CR>
 
 map <esc>e :setlocal spell spelllang=en_us<CR>
 map <esc>f :setlocal spell spelllang=fr<CR>
