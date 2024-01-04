@@ -976,6 +976,9 @@ PIP / MODULES/PACKAGES DOWNLOADS
   EXPAND PYTHON SEARCH PATH TO OTHER SOURCE / MODULES
   ────────────────────────────────────────────────────────────────────────────
 
+    FIRST, ensure your Python file ends with '.py'.  Without the extension,
+    Python will not find your module.
+
     https://stackoverflow.com/questions/3144089/expand-python-search-path-to-other-source
 
     Here are a few possible ways to do this:
