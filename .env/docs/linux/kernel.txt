@@ -71,6 +71,25 @@ MISC
     # Print as hex keyboard activity.
 
 
+KWORKER
+══════════════════════════════════════════════════════════════════════════════
+
+  https://bugs.launchpad.net/ubuntu/+source/linux/+bug/887793/comments/84
+  ────────────────────────────────────────────────────────────────────────────
+
+    Hans Deragon (deragon) wrote on 2012-09-13:   #84
+
+    Sean Kibler is right! Removeing e1000 and e1000e modules works.
+
+      sudo modprobe -r e1000
+      sudo modprobe -r e1000e
+
+    Had the problem running:
+
+      Linux sittra 3.2.0-30-generic #48-Ubuntu SMP Fri Aug 24 16:52:48 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+
+    on a Lenovo T61p.
+
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
