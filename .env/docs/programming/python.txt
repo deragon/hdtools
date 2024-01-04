@@ -1010,7 +1010,7 @@ PROJECT CREATION
     - https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe
 
 
-  Virtualenv
+  🟢 Virtualenv
   ────────────────────────────────────────────────────────────────────────────
 
     Virtualenv is better than venv.
@@ -1029,13 +1029,15 @@ PROJECT CREATION
 
     workon        # List all available environment
     workon env1   # Work in 'env1' environment.
+    deactivate    # Leave Python virtual environment and return to normal shell.
 
     echo "${VIRTUAL_ENV}" # Show directory where the environment lies.
 
     Virtual environments are saved at:  "${HOME}/.virtualenvs"
 
 
-  venv (use Virtualenv above, it is better)
+
+  🟡 venv (use Virtualenv above, it is better)
   ────────────────────────────────────────────────────────────────────────────
 
     Native Python 3 solution, but less good than virtualenv.
@@ -1125,7 +1127,6 @@ TESTING
 ══════════════════════════════════════════════════════════════════════════════
 
   Example:  https://realpython.com/python-continuous-integration/#write-unit-tests
-
 
 
 
