@@ -2,7 +2,18 @@
 
 " VIM configuration written by Hans Deragon, hans@deragon.biz
 "
-" DEBUG
+" REGISTERS Named:
+" ════════════════════════════════════════════════════════════════════
+"
+"   You copy items directly to named registers [a-z] by prepending your yank
+"   command with the register name. For example, yanking a word to register a
+"   use "ayw and then "ap to paste.
+"
+"   If you use a capital letter, [A-Z], the same corresponding named register
+"   is used, but the content is appended to the register, not replaced.
+"
+"
+" DEBUG:
 " ════════════════════════════════════════════════════════════════════
 "
 "   :echo <variable>  -> echo v:version  " Print a vim variable's value.
