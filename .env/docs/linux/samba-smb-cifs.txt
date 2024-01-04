@@ -26,9 +26,12 @@ SAMBA SERVER
 COMMANDS
 ══════════════════════════════════════════════════════════════════════════════
 
+  - sudo smbstatus --shares # List current connection on server
+
   - systemctl start   smbd.service
   - systemctl restart smbd.service
   - systemctl stop    smbd.service
+  - systemctl status  smbd.service
 
   - sudo pdbedit -L -v  # List all users
 
