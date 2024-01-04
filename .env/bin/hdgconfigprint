@@ -2,15 +2,15 @@
 
 # ─ Copyright Notice ───────────────────────────────────────────────────
 #
-# Copyright 2000-2023 Hans Deragon - GPL 3.0 licence.
+# Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
 #
-# Hans Deragon (hans@deragon.biz) owns the copyright of this work.
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General public Picense which can be found at:
 #
-# It is released under the GPL 3 licence which can be found at:
-#
-#     https://www.gnu.org/licenses/gpl-3.0.en.html
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
+
 if [[ ! -z "${HD_GIT_DATE_OFFSET}" ]]; then
   FG_WHITE_BG_ORANGERED="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"
   NORMAL="\e[0;00m"
