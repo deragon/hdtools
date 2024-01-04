@@ -5,8 +5,8 @@ UNICODE UTF-8 UTF8
 a ⃠b
 
   Mon 2₵.  My 2₵.
-  👍😀 😂 😛 🙄 😖 😠 😱
-  💤 sleep
+  👍 😀 😂 😛 🙄 😖 😠 😱
+  ⚠️  warning  ⚡ electricity  💤 sleep
   🟢 Green circle
   🟡 Yellow circle
   🔴 Red circle
@@ -48,6 +48,7 @@ a ⃠b
   🏖️ Vacation      🌈 Rainbow         📡 Radar
   🎆 Fireworks     🎉 Party Popper    🎊 Confetti Ball
   🥂 Clinking Glasses  🍾 Bottle of Champagne  🔫 Gun/Pistol
+  🎆 🎉 🎊 🥂 🍾 Party / festivity / celebration related characters
 
   🆘SOS  ● ● ● ▬ ▬ ▬ ● ● ●
   💻Personal Computer                          🖪 Black Hard Shell Floppy Disk
@@ -62,8 +63,7 @@ a ⃠b
   ▚ 259A   ▞ 259E    © 00A9    ® 00AE    ™ 2122
   ☠ 2620   シ30B7    ₵ 20B5    € 20AC    ⋘ 22D8    ⋙ 22D9
   ♥ 2665   ♡ 2661    ❤ 2764    ° 00B0 (degree)
-
-  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)    🆘 SOS
+  ⚠️  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)    🆘 SOS
   🔗 (web link) 📧 (email) ✉ (enveloppe) 🌊 (wave) 🗑 (trash)
   ? 1F44B  ∞ 221E (infinit)    ↔ 2194 (double arrow)   ¤ 00A4 (currency)
   ⏪23EA   ⏩23E9    ⏫23EB    ⏬23EC   ∕ (division slash)
@@ -577,7 +577,7 @@ CHRISTMAS
   🍴 Fork and Knife
   ⛪ Church
   🛐 Place of Worship
-  ✝️ Latin Cross
+  ✝️  Latin Cross
 
 
 
