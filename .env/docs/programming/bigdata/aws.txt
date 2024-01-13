@@ -351,6 +351,7 @@ COSTS
       https://blog.tomilkieway.com/72k-1/
 
     - Basecamp Details 'Obscene' $3.2 Million Bill That Prompted It To Quit the Cloud
+      https://basecamp.com/cloud-exit
       https://news.slashdot.org/story/23/01/16/1723202/basecamp-details-obscene-32-million-bill-that-prompted-it-to-quit-the-cloud
 
 
