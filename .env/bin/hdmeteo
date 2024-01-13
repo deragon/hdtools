@@ -12,5 +12,5 @@
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
 # From: http://www.webupd8.org/2016/04/get-weather-information-from-terminal.html#more
-echo -e "La première température affichée est celle ressentie.  La deuxième est la véritable température.\n"
-curl wttr.in/"montreal?m&lang=fr"
+echo -e "La première température affichée est la véritable température.  La deuxième entre parenthèses est celle ressentie.\n"
+curl "https://wttr.in/Montreal?m&lang=fr"
