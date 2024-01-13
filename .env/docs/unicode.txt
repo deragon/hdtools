@@ -4,12 +4,25 @@ UNICODE UTF-8 UTF8
 
 a ⃠b
 
+
+
   Mon 2₵.  My 2₵.
-  👍 😀 😂 😛 🙄 😖 😠 😱
-  ⚠️  warning  ⚡ electricity  💤 sleep
-  🟢 Green circle
-  🟡 Yellow circle
-  🔴 Red circle
+  👍 😀 😂 😛 🙄 😖 😠 😱 😲
+  ⚠️  warning  ⚡ electricity      🚨 Alarm
+  💤 sleep    🛂 control/passport 🏫 school (to tag examples)
+
+  Circles
+
+    🔴 Red     🟠 Orange  🟤 Brown
+    🟡 Yellow  🔵 Blue    ⚫ Empty
+    🟢 Green   🟣 Purple  ⚪ White
+
+  Squares
+
+    🟥 Red     🟧 Orange  🟫 Brown
+    🟨 Yellow  🟦 Blue    ⬛ Black
+    🟩 Green   🟪 Purple  ⬜ White
+
 
   👍👎 Thumbs up / down
   Vim dig:  0M→● (bullet)
