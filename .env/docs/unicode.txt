@@ -107,7 +107,8 @@ UNICODE UTF-8 UTF8
   Music:      ♪ ♫ 🎶 🎼 🎹 🎻 🎷 🎸 🎺 🥁 🎙 🎚 🎛 🎤 🎧 📻
               ♪ di du ♫ dum dum ♪ di dum dum ♫ (musique d'ascenseur) :)
               ♪ Bonne fête à toi, ♪ ♫ Les cadeaux sont à moi! ♪ ♫ ♪ Bonne fête, ♪♪ Bonne fête, ♪ ♫ ♪ Bonne fête à toi ♪
-  Art:  ¯\_(ツ)_/¯
+  Art:        ¯\_(ツ)_/¯
+  3D blocks:  ❏ ❐ ❑ ❒ ❍
 
   From:  http://en.wikipedia.org/wiki/List_of_Unicode_characters#Supplemental_Arrows-A
 
