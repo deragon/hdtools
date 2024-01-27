@@ -123,14 +123,29 @@ for FILE in ${FILES[@]}; do
   # Print title only if more than one file is being processed.
   (( ${#FILES[*]} > 1 )) && title "Processing ${FILE}"
 
+  EXTENSION="${FILE##*.}"
+  if [ "${EXTENSION}" == "${FILE}" ]; then
+    # No extension found.
+    EXTENSION=""
+    FILENAME="${FILE}"
+  else
+    # An extension was found.  Stripping it from ${FILE}.
+    FILENAME="${FILE%.*}"
+  fi
+
   if [[ "${FILE}" == "<STDIN>" ]]; then
     FILE="-"
   else
     [[ -z "${FILE_TYPE}" ]] && FILE_TYPE="$(file "${FILE}")"
   fi
 
-  if [[ "${FILE_TYPE,,}" =~ "xml" ]]; then
-      xmlstarlet ed -d '//comment()' "${FILE}"
+  # 'file' cannot detect YAML files.  It only returns
+  # 'Unicode text, UTF-8 text'.  Thus, we use the file's
+  # extension to determine if the file is a YAML file.
+  if [[ "${EXTENSION,,}" =~ "yml" || "${EXTENSION,,}" =~ "yaml" ]]; then
+    sed --regexp-extended "/^${RE_PREFIX}"'(#|$)/d' "${FILE}"
+  elif [[ "${FILE_TYPE,,}" =~ "xml" ]]; then
+    xmlstarlet ed -d '//comment()' "${FILE}"
   else
     # -- Comments are for SQL.
     sed --regexp-extended "/^${RE_PREFIX}"'(;|#|\/\/|\"|--|$)/d' "${FILE}"
