@@ -644,17 +644,15 @@ endif
 " for B&W terminals, but you do want it for color terminals, put this in your
 " .vimrc
 "
-"WARNING:  On AIX systems, syntax must be set prior colorscheme or else
-"          the colors are all wrong and psychadelic.
+" WARNING:  On AIX systems, syntax must be set prior colorscheme or else
+"           the colors are all wrong and psychedelic.
 syntax on
 
 "if($HD_OS_FAMILY != "AIX")
-"  colorscheme hdblue
+  colorscheme hdblue
 "else
-"  colorscheme hdblack
+"  colorscheme <put here an AIX compatible color scheme>
 "endif
-
-colorscheme hdblue
 
 " K is map to perform "man" on the command right under the cursor.  This is
 " annoying since I often mistakenly tip K instead of k to move the cursor up.
