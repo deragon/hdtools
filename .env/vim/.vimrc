@@ -260,6 +260,14 @@ if($HDVIM != "")
   Plug 'tpope/vim-unimpaired'
   Plug 'vim-scripts/SQLUtilities'
   Plug 'hashivim/vim-terraform'
+
+  " Only one mapping (or one command) provides all features of this plugin.
+  " Briefly, move cursor to the position and run :GitMessenger or <Leader>gm.
+  " If you see an error message, please try health check.
+  "
+  " More options documented at:  https://github.com/rhysd/git-messenger.vim
+  Plug 'rhysd/git-messenger.vim'
+
   Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
   "Plug 'vim-textobj-comment'   " Bug; runs deprecated code.  Had to comment out.
   "Plug 'vim-textobj-user'      " Bug; runs deprecated code.  Had to comment out.
