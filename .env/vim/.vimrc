@@ -220,7 +220,7 @@ if($HDVIM != "")
   "echo "${HDVIM} set." $HDVIM
 
 
-  " VIM-PLUG
+  " VIM-PLUG - Plugin manager / packager
   " ════════════════════════════════════════════════════════════════════
   "
   "   https://github.com/junegunn/vim-plug
