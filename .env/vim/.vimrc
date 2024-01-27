@@ -279,6 +279,7 @@ else
   echo "rtp=" &rtp
 endif
 
+
 " ════════════════════════════════════════════════════════════════════
 
 let g:GPGDebugLevel=200
@@ -317,6 +318,7 @@ map <Leader>a\ :Tabularize /\\/<CR><CR>
 map <Leader>a[ :Tabularize /^[^\[]*\zs\[/l2l0<CR><CR>
 map <Leader>at :Tabularize /\t/<CR><CR>
 map <Leader>a# :Tabularize /#/<CR><CR>
+map <Leader>a, :Tabularize /^[^,]*\zs,\zs/<CR><CR>
 " map <Leader>aa <Leader>acgv<Leader>a=gv<Leader>a# " Needs some work.
 
 " Align on spaces ->  Visually select and type:  \tsp
