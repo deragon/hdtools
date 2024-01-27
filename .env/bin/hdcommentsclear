@@ -147,7 +147,8 @@ for FILE in ${FILES[@]}; do
   elif [[ "${FILE_TYPE,,}" =~ "xml" ]]; then
     xmlstarlet ed -d '//comment()' "${FILE}"
   else
-    # -- Comments are for SQL.
+    # '$'  Removes empty lines.
+    # '--' Comments are for SQL scripts.
     sed --regexp-extended "/^${RE_PREFIX}"'(;|#|\/\/|\"|--|$)/d' "${FILE}"
   fi
 done
