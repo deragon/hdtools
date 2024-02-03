@@ -821,8 +821,19 @@ endif
 
 let s:HD_USER_ID_FULL=s:HD_USER_NAME_FULL." (".s:HD_USER_EMAIL.")"
 
-" Fetch first character of the comment string, to get the comment character.
-let commentcharacter=split(&commentstring, '%s')[0]
+if !has('nvim')
+  " Fetch first character of the comment string, to get the comment character.
+  " Does not exists in Nvim.
+  let commentcharacter=split(&commentstring, '%s')[0]
+
+  " There is no printer facility in Nvim.  There use to be the 'hardcopy'
+  " command, but that has been removed.
+  "
+  " http://vim.wikia.com/wiki/Printing_using_kprinter
+  " kprinter non disponible pour Ubuntu >=11.04.  gtklp est l'alternative.
+  "set printexpr=system('kprinter'\ .\ '\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
+  set printexpr=system('gtklp'\ .\ '\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
+endif
 
 function! HDSignature(prefix)
 
@@ -979,11 +990,6 @@ command! XMLPretty call DoPrettyXML()
 
 " Plugins settings.
 let g:miniBufExplSplitToEdge = 0
-
-" http://vim.wikia.com/wiki/Printing_using_kprinter
-" kprinter non disponible pour Ubuntu >=11.04.  gtklp est l'alternative.
-"set printexpr=system('kprinter'\ .\ '\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
-set printexpr=system('gtklp'\ .\ '\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
 
 
 
