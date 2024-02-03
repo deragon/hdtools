@@ -1,0 +1,50 @@
+DUPLEX WITHOUT DUPLEX PRINTER
+══════════════════════════════════════════════════════════════════════════════
+
+  This method is proven for an even number of pages.
+
+  1. Reverse & Even sheets
+  2. Normal & Odd sheets
+
+  ATTENTION:
+
+    You may need to be careful if the recipe will work for a number
+    of odd pages. I'm not sure of it.
+
+
+
+PHOTO 4" x 6" or 10cm x 15cm
+══════════════════════════════════════════════════════════════════════════════
+
+  HP OfficeJet Pro 6978 (Kaput Printer)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Printer:
+
+      - Place the photo sheet with the side to be printed on the bottom.
+      - Configure the printer for 4"x6" or 10cm x 15cm paper
+
+    Linux printing dialog:
+
+      Page Setup
+
+        Paper type:   HP Photo Papers
+        Paper size:   Photo 4x6in or 10cm x 15cm
+        Orientation:  Landscape
+
+      Image Quality
+
+        High-Resolution Photo
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
