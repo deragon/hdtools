@@ -1009,6 +1009,20 @@ DIFF
   DIFF TOOL
   ────────────────────────────────────────────────────────────────────────────
 
+    Usage
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      git difftool --tool=<tool as defined in ~/.gitconfig>
+
+      Examples:
+
+        git difftool --tool=meld
+        git difftool --tool=dif
+
+
+    Configuration
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
     Configure vimdiff as diff tool to use, with Hans's Vim setup (works on
     Cygwin too):
 
