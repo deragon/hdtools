@@ -1,10 +1,13 @@
 UNICODE UTF-8 UTF8
 ══════════════════════════════════════════════════════════════════════════════
 
-  Mon 2₵.  My 2₵.
+  💯  Mon 2₵.  My 2₵.
   👍 😀 😂 😛 🙄 😖 😠 😱 😲
-  ⚠️  warning  ⚡ electricity      🚨 Alarm
-  💤 sleep    🛂 control/passport 🏫 school (to tag examples)
+  ⚠️  Warning  ⚡ Electricity      🚨 Alarm
+  💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)
+  🧱 Brick wall/Blocked           🚧 Construction/Blocked
+  🐔👍 (pull request)
+  👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹
 
   Circles
 
@@ -19,7 +22,6 @@ UNICODE UTF-8 UTF8
     🟩 Green   🟪 Purple  ⬜ White
 
 
-  👍👎 Thumbs up / down
   Vim dig:  0M→● (bullet)
 
   🇨🇦 🇺🇸     ⃠ combination a ⃠b
@@ -30,7 +32,6 @@ UNICODE UTF-8 UTF8
   Useful/Interesting codes:
   → ← hard space    ‑ Non breaking hyphen/dash
   ◄►
-  🐔👍 (pull request)
 
    ✓ ✖ ✘    ✓ ✕ ✗  ❌  █ ⛀⛁⛂⛃
   ┏━▶ ◀━┓ ▲ ━┓ ┏━ ▲ ▲ ┃
@@ -63,9 +64,9 @@ UNICODE UTF-8 UTF8
   🖥Desktop Computer                           🖫 White Hard Shell Floppy Disk
   🖧 Three Networked Computers                  🖬 Soft Shell Floppy Disk
   🖳 Old Personal Computer                      🖴 Hard Disk
+  ⛁ 26C1 (database)
   ☰ Burger Menu
-  ◉ Radio on
-  ◯ Radio off
+  ◉ Radio on  ◯ Radio off
 
   ❏ 274F   ─ 2504    ━ 2505    ▬ 25AC
   ▚ 259A   ▞ 259E    © 00A9    ® 00AE    ™ 2122
@@ -75,9 +76,9 @@ UNICODE UTF-8 UTF8
   🔗 (web link) 📧 (email) ✉ (enveloppe) 🌊 (wave) 🗑 (trash)
   ? 1F44B  ∞ 221E (infinit)    ↔ 2194 (double arrow)   ¤ 00A4 (currency)
   ⏪23EA   ⏩23E9    ⏫23EB    ⏬23EC   ∕ (division slash)
-  💍 💯
+  🐧 Linux / Penguin
+  💍 ring
   █ 2588
-  ⛁ 26C1 (database)
   ß 00DF -> compose + s + s
 
   ─ Line
@@ -89,7 +90,6 @@ UNICODE UTF-8 UTF8
   🎴Flower Playing Cards
   💮White Flower
   🥀Wilted Flower
-  🎉Party Popper
   🆓 Free
   ⌘ ✲ ⎈ ^ ⌃ ❖ ⌘ ⎇ ⌥ ◆ ◇ ✦ ✧ ⇧ ⇪ 🄰 🅰 ⇪ ⇫ ⇬ ⇮ ⇯ 🔠 🔡 ⇭ 🔢 🔤 ↩ ↵ ⏎ ⮰ ⌤ ⎆ ▤ ☰ 𝌆
   ⎄ ⭾ ↹ ⇄ ⇤ ⇥ ↤ ↦ ⎋ ⌫ ⟵ ⌦ ⎀ ⎚ ⌧ ↖ ↘ ⇤ ⇥ ⤒ ⤓ ⇱ ⇲ ⇞ ⇟ △ ▽ ▲ ▼ ⎗ ⎘ ↑ ↓ ← → ◀ ▶ ▲
