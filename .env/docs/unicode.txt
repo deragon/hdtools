@@ -264,6 +264,31 @@ UNICODE UTF-8 UTF8
     1F64E 🙎  person with pouting face
 
 
+  Weather / Cloud
+  ────────────────────────────────────────────────────────────────────────────
+
+    ☁ cloud
+    ⛅ sun behind cloud
+    ⛈ thunder cloud and rain
+    🌤 white sun small cloud
+    🌥 white sun behind cloud
+    🌦 white sun behind cloud rain
+    🌧 cloud rain
+    🌨 cloud snow
+    🌩 cloud lightning
+    🌪 cloud tornado
+    🌫 fog
+    🌬 wind blowing face
+    ☁️  cloud
+    ⛈️ cloud lightning and rain
+    🌤️ sun behind small cloud
+    🌥️ sun behind large cloud
+    🌦️ sun behind rain cloud
+    🌧️ cloud rain
+    🌨️ cloud snow
+    🌩️ cloud lightning
+
+
 
 INPUT & COMPATIBILITY
 ══════════════════════════════════════════════════════════════════════════════
