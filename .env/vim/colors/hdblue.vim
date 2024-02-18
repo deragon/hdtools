@@ -26,7 +26,7 @@ let g:colors_name = "hdblue"
 
 " Nice dark blue.
 "let background_color="#0000ac"
-
+set termguicolors
 
 
 " Cursor
