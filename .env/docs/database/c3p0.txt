@@ -1,0 +1,56 @@
+DOCUMENTATION
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.mchange.com/projects/c3p0
+  https://developer.jboss.org/wiki/HowToConfigureTheC3P0ConnectionPool?_sscc=t
+
+
+
+OVERRIDING C3P0 DEFAULTS VIA C3P0.PROPERTIES
+══════════════════════════════════════════════════════════════════════════════
+
+  http://www.mchange.com/projects/c3p0/#c3p0_properties
+
+  To override the library's built-in defaults, create a file called
+  c3p0.properties and place it at the "root" of your classpath or classloader.
+  For a typical standalone application, that means place the file in a
+  directory named in your CLASSPATH environment variable. For a typical
+  web-application, the file should be placed in WEB-INF/classes. In general,
+  the file must be available as a classloader resource under the name
+  /c3p0.properties, in the classloader that loaded c3p0's jar file. Review the
+  API docs (especilly getResource... methods) of java.lang.Class,
+  java.lang.ClassLoader, and java.util.ResourceBundle if this is unfamiliar.
+
+
+
+INTERESTING PROPERTIES
+══════════════════════════════════════════════════════════════════════════════
+
+  WARNING:  In the c3p0.properties files, all the parameters listed below
+            and on the website must be preceeded by 'c3p0.'
+
+            Example:  c3p0.checkoutTimeout=60000
+
+
+  checkoutTimeout  http://www.mchange.com/projects/c3p0/#checkoutTimeout
+
+    Default: 0
+
+    The number of milliseconds a client calling getConnection() will wait for
+    a Connection to be checked-in or acquired when the pool is exhausted. Zero
+    means wait indefinitely. Setting any positive value will cause the
+    getConnection() call to time-out and break with an SQLException after the
+    specified number of milliseconds.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
