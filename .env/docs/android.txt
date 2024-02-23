@@ -1,0 +1,282 @@
+Android versions
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://en.wikipedia.org/wiki/Android_version_history
+
+  Cupcake              1.5
+  Donut                1.6
+  Eclair               2.0 – 2.1
+  Froyo                2.2 – 2.2.3
+  Gingerbread          2.3 – 2.3.7
+  Honeycomb            3.0 – 3.2.6
+  Ice Cream Sandwich   4.0 – 4.0.4
+  Jelly Bean           4.1 – 4.3.1
+  KitKat               4.4 – 4.4.4
+  Lollipop             5.0 – 5.1.1
+  Marshmallow          6.0 – 6.0.1
+  Nougat               7.0 – 7.1.2
+  Oreo                 8.0 – 8.1      Samsung S7 de Hans
+  Pie                  9
+  Android 10           10
+  Android 11           11
+  Android 12           12             Pixel 5
+
+
+
+BACKUP - FILE / DATA
+══════════════════════════════════════════════════════════════════════════════
+
+  See:  "/vol/data/base/software/Android/Android Samsung S10 - Lyne de Vidéotron/backups/hd-backup-android"
+
+
+
+BACKUP - APPS
+══════════════════════════════════════════════════════════════════════════════
+
+  VIA USB CABLE (meilleur façon)
+  ────────────────────────────────────────────────────────────────────────────
+
+    This is the best solution as of 2020-09-29 (works on Android 9 Pie)
+    which backups the application AND its data.  Example for SSH Button:
+
+    Both source and destination phones must have developer mode enabled.
+
+    adb -d backup com.pd7l.sshbutton "-noapk -obb -shared" -f com.pd7l.sshbutton.adb
+    adb restore com.pd7l.sshbutton.adb
+
+    Read:  https://android.stackexchange.com/questions/207965/adb-backup-and-restore-app-data-between-device-and-emulator
+
+
+  SEEDVAULT (OPEN SOURCE)
+  ────────────────────────────────────────────────────────────────────────────
+
+    Prometteur, mais requiert Android 10.
+
+    https://github.com/stevesoltys/seedvault
+
+
+  APK Share - apkshare
+  ────────────────────────────────────────────────────────────────────────────
+
+    Excellente application pour faire un backup de toutes les applications,
+    en format apk.
+
+    https://play.google.com/store/apps/details?id=labs.kibzorg.apkshare
+
+
+
+TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+  adb: unable to connect for backup: insufficient permissions for device: user in plugdev group; are your udev rules wrong?
+  ────────────────────────────────────────────────────────────────────────────
+
+    Nothing is wrong with you udev rules.  Just look at your phone screen and
+    you will see a checkbox giving permission to the computer to connect to
+    the phone.  Check it and retry your adb command.
+
+
+
+APK
+══════════════════════════════════════════════════════════════════════════════
+
+  To decompress a APK file, run:
+
+    /vol/data/base/software/Android/Adebar/tools/ab2tar <file>.apk
+
+
+
+CONNECTIONS / TRANSFERT
+══════════════════════════════════════════════════════════════════════════════
+
+  - sshhelper
+
+
+
+APPS / APPLICATIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  - https://www.simplemobiletools.com/ <<--- bon, open source
+  - 'Tiny Flashlight' de Nikolay Ananiev - Lampe de poche
+  - Widgetsoid
+  - Espace Client +
+  - Fdroid
+
+  - Hacker's keyboard
+
+    From:  https://android.stackexchange.com/questions/128138/hackers-keyboard-v1-38-2-doesnt-show-any-suggestions-other-than-android
+
+    After installing 'Hacker's keyboard', you must also install completion
+    dictionaries (French and English) to get keyboard completion (word
+    suggestions) working.
+
+    Select the completion dictionnaries from:
+
+    https://play.google.com/store/search?q=pub%3A%22Klaus%20Weidner%22&c=apps&hl=en
+
+  - UpnPlay
+
+
+  Call Recorder
+  ────────────────────────────────────────────────────────────────────────────
+
+    - Cube ACR (Excellent, marche avec Android 10, Google pixel 5)
+
+      Lors de l'installation, juste donner toutes les permissions requises.
+
+        https://play.google.com/store/apps/details?id=com.catalinagroup.callrecorder
+
+
+
+uPnPlayer (OPEN SOURCE)
+═════════════════════════════════════════════════════════════════════════════
+
+  https://bebopfreak.wordpress.com/upnplayer/
+
+  Ne se trouve plus sur Google play car l'auteur n'a pas eu le temps de remplir
+  tous les formulaires.  Faut télécharger de:
+
+    http://lkj.sytes.net/upnplay/upnplay/
+    Exemple silanoid.v0.0.98.apk
+
+
+
+SD CARD AS INTERNAL STORAGE
+══════════════════════════════════════════════════════════════════════════════
+
+  Voici ce que j'ai tenté de faire pour l'ancien téléphone de Claudette LG K4
+  pour que la carte SD comme storage interne.  Cependant, cela ne marche pas.
+
+  Voici le commentaire que j'ai laissé sur le vidéo YouTube ci-dessous:
+
+    LG K4 / LG-M151 - Does not work.  'sm has-adoptable' returns 'false'.  This feature is not supported on that mobile.
+
+    https://www.youtube.com/watch?v=N6pWo2U-Xuk&feature=emb_logo
+
+
+
+LINK / SHORTCUT
+══════════════════════════════════════════════════════════════════════════════
+
+  Amaze file manager
+  ────────────────────────────────────────────────────────────────────────────
+
+    Just click long enough on a file or folder you would like to be able to
+    enter to with a shortcut from the home screen and tap the 3 dots menu
+    button at the top right corner (not the 3 dots on the right of the
+    selected file/folder), then choose 'add shortcut'.
+
+
+
+ICONS
+══════════════════════════════════════════════════════════════════════════════
+
+  ADAPTIVE ICONS (ICONS THAT ARE ROUNDED)
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://mobileinternist.com/disable-adaptive-icons-android-oreo
+
+
+  Icône avec cadre sous Samsung
+  ────────────────────────────────────────────────────────────────────────────
+
+    Old android:  Paramètres -> Affichage -> Cadres des icônes
+
+    Newer:
+
+      From: https://forum.xda-developers.com/galaxy-note-9/themes/icons-frame-pie-galaxy-s9-s9-note-9-t3896656
+
+      The option to remove the frame has been dropped from the UI. The only
+      option is to load a custom icons set from Themes... I did that and it
+      sort of fixes the issue. Only problem then is I don't really like any of
+      the icons set I've seen in half hour (can't spend more time on this),
+      and after switching icons I now see Icon badges don't show when they
+      should.
+
+
+
+Ringtones Location
+══════════════════════════════════════════════════════════════════════════════
+
+ http://android-tricks.blogspot.com/
+
+  There are 2 locations from which G1 can pick ringtones.
+
+  1. On SDCard. /sdcard/Music/ringtones
+  2. On filesystem. /system/media/audio/ringtones
+    (You need to mount /system read-write)
+  Posted by Nirnimesh at 10:21 PM 47 comments
+
+
+
+DEVELOPMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  FLUTTER.IO
+  ────────────────────────────────────────────────────────────────────────────
+
+
+  KIVY - https://kivy.org
+  ────────────────────────────────────────────────────────────────────────────
+
+    Python multiplatform, including Android & IOS
+
+
+
+MISCELLANEOUS
+══════════════════════════════════════════════════════════════════════════════
+
+  Android secret / hidden codes:
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://www.xda-developers.com/codes-hidden-android/
+
+    To enter these codes just pull up the default dialer app and use your chubby
+    fingers to press the correct buttons.
+
+      Code                           Description
+      *#*#4636#*#*                   Display information about Phone, Battery and Usage statistics
+      *#*#7780#*#*                   Restting your phone to factory state-Only deletes application data and applications
+      *2767*3855#                    It’s a complete wiping of your mobile also it reinstalls the phones firmware
+      *#*#34971539#*#*               Shows completes information about the camera
+      *#*#7594#*#*                   Changing the power button behavior-Enables direct poweroff once the code enabled
+      *#*#273283*255*663282*#*#*     For a quick backup to all your media files
+      *#*#197328640#*#*              Enabling test mode for service activity
+      *#*#232339#*#* OR *#*#526#*#*  Wireless Lan Tests
+      *#*#232338#*#*                 Displays Wi-Fi Mac-address
+      *#*#1472365#*#*                For a quick GPS test
+      *#*#1575#*#*                   A Different type GPS test
+      *#*#0283#*#*                   Packet Loopback test
+      *#*#0*#*#*                     LCD display test
+      *#*#0673#*#* OR *#*#0289#*#*   Audio test
+      *#*#0842#*#*                   Vibration and Backlight test
+      *#*#2663#*#*                   Displays touch-screen version
+      *#*#2664#*#*                   Touch-Screen test
+      *#*#0588#*#*                   Proximity sensor test
+      *#*#3264#*#*                   Ram version
+      *#*#232331#*#*                 Bluetooth test
+      *#*#7262626#*#*                Field test
+      *#*#232337#*#                  Displays bluetooth device address
+      *#*#8255#*#*                   For Google Talk service monitoring
+      *#*#4986*2650468#*#*           PDA, Phone, Hardware, RF Call Date firmware info
+      *#*#1234#*#*                   PDA and Phone firmware info
+      *#*#1111#*#*                   FTA Software version
+      *#*#2222#*#*                   FTA Hardware verion
+      *#*#44336#*#*                  Displays Build time and change list number
+      *#06#                          Displsys IMEI number
+      *#*#8351#*#*                   Enables voice dialing logging mode
+      *#*#8350#*#*                   Disables voice dialing logging mode
+      ##778 (+call)                  Brings up Epst menu
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
