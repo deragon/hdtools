@@ -1,0 +1,66 @@
+ANONYMIZING / TOKENIZATION DATA
+══════════════════════════════════════════════════════════════════════════════
+
+  - Wikipedia Tokenization (data security)
+    https://en.wikipedia.org/wiki/Tokenization_(data_security)
+
+  - New NIST Security Standard Can Protect Credit Cards, Health Information
+
+  - How to Secure Personally Identifiable Information against Loss or Compromise
+    https://digitalguardian.com/blog/how-secure-personally-identifiable-information-against-loss-or-compromise
+
+  - New NIST Security Standard Can Protect Credit Cards, Health Information
+    https://www.nist.gov/news-events/news/2016/03/new-nist-security-standard-can-protect-credit-cards-health-information
+
+  - “Vaultless” or “Reversible” Tokenization - Is it really just encryption with a fancy marketing name?
+    https://security.stackexchange.com/questions/187379/vaultless-or-reversible-tokenization-is-it-really-just-encryption-with-a-f
+
+  - Addressing the government data security problem
+    https://www.cyberdefensemagazine.com/addressing-the-government
+
+
+
+ACRONYMS
+══════════════════════════════════════════════════════════════════════════════
+
+  PPI    Personally Identifiable Information
+  FPE    Format Preserving Encryption
+  GDPR   General Data Protection Regulation (EU) 2016/679
+
+
+
+THE CLOUD ACT
+══════════════════════════════════════════════════════════════════════════════
+
+  The CLOUD Act (Clarifying Lawful Overseas Use of Data Act)gives the US
+  authorities the authority to request data from US service providers,
+  wherever in the world this data is stored.
+
+  Read:
+
+    - U.S. CLOUD Act vs. GDPR: Catch 22 for your company?
+      https://www.lexology.com/library/detail.aspx?g=a57d463a-9013-4e7e-a160-9dd2dd0be2bd
+
+
+
+GDPR - GENERAL DATA PROTECTION REGULATION (EU) 2016/679
+══════════════════════════════════════════════════════════════════════════════
+
+  GDPR, General Data Protection Regulation (EU) 2016/679 is a new regulation
+  in EU law focused on data protection and privacy for all individuals within
+  the European Union. It will apply to all EU member states from 25th of May
+  2018, including the UK, where it will automatically be incorporated into UK
+  legislation.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
