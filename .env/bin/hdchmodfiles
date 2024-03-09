@@ -13,7 +13,7 @@
 
 SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
 
-PATTERN='.*\.((od[t|s|p])|(txt)|(md)|(res)|(csv)|(json)|(ya?ml)|(xml)|(msg)|(pptx?)|(docx?)|(xlsx?)|(pdf)|(html?)|(jpe?g)|(gif)|(png)|(svg)|(sql)|(tar)|(gz)|(bz2)|(zip)|(jar)|(c)|(java)|(scala)|(groovy)|(js)|(mp.)|(avro)|(avsc)|(properties)|(log)|(in)|(toml)|(tf))$'
+PATTERN='.*\.((od[t|s|p])|(txt)|(md)|(res)|(csv)|(json)|(ya?ml)|(xml)|(msg)|(pptx?)|(docx?)|(xlsx?)|(pdf)|(html?)|(jpe?g)|(gif)|(png)|(svg)|(sql)|(tar)|(gz)|(bz2)|(zip)|(jar)|(c)|(java)|(scala)|(groovy)|(js)|(mp.)|(avro)|(avsc)|(properties)|(log)|(in)|(toml)|(tf)|(rdp)|(deb)|(rpm)|(flatpak)|(snap))$'
 
 usage()
 {
