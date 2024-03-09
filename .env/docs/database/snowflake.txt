@@ -4,6 +4,10 @@ SNOWFLAKE
 LIKE
 ══════════════════════════════════════════════════════════════════════════════
 
+  - Any documentation from Snowflake with the term 'Considerations' are
+    actually guides to best practices.  To get the list, visit:
+    https://docs.snowflake.com/search?q=considerations
+
   From:  https://docs.snowflake.com/en/sql-reference/functions/like
 
   - SQL wildcards are supported in pattern:
