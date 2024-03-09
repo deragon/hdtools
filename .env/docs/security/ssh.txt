@@ -38,6 +38,11 @@ MISCELLANEOUS
   - ssh-keygen -y -f "${PRIVATE_KEY}.pem"  # Fetch public key from .pem file.
                                            # Useful for AWS EC2 key pairs.
 
+  - sshfs \
+      -o default_permissions,IdentityFile=${HOME}/.ssh/<ssh key file> \
+      <user>@<server>:/<directory> \
+      /mnt/<directory>
+
 
 
 TUNNELS
