@@ -21,18 +21,6 @@ UNICODE UTF-8 UTF8
     🟨 Yellow  🟦 Blue    ⬛ Black
     🟩 Green   🟪 Purple  ⬜ White
 
-
-  Vim dig:  0M→● (bullet)
-
-  🇨🇦 🇺🇸     ⃠ combination a ⃠b
-
-  https://en.wikibooks.org/wiki/Unicode/List_of_useful_symbols
-  ༼ つ ◕_◕ ༽つ
-
-  Useful/Interesting codes:
-  → ← hard space    ‑ Non breaking hyphen/dash
-  ◄►
-
    ✓ ✖ ✘    ✓ ✕ ✗  ❌  █ ⛀⛁⛂⛃
   ┏━▶ ◀━┓ ▲ ━┓ ┏━ ▲ ▲ ┃
   ┣━▶ ◀━┫ ┃  ┃ ┃  ┃ ┃ ┃
@@ -49,6 +37,17 @@ UNICODE UTF-8 UTF8
     The ™ and ® marks have no legal significance or meaning in Canada. Thus
     there are no repercussions to using these marks. Surprisingly neither the
     ™ nor the ® mark appears in official Canadian Trademark Law.
+
+  Vim dig:  0M→● (bullet)
+
+  🇨🇦 🇺🇸     ⃠ combination a ⃠b
+
+  https://en.wikibooks.org/wiki/Unicode/List_of_useful_symbols
+  ༼ つ ◕_◕ ༽つ
+
+  Useful/Interesting codes:
+  → ← hard space    ‑ Non breaking hyphen/dash
+  ◄►
 
   ⎘ External link
   ℃  Celcius  €  Euro
