@@ -145,13 +145,15 @@ if len(errors) > 0:
 
 text =  {
            "en": {
-                    "MembersOfGroups": "Members of group",
-                    "Empty":           "This group is empty"
+                    "MembersOfGroups":    "Members of group",
+                    "Empty":              "This group is empty",
+                    "GroupDoesNotExist":  "Group does not exist"
                  },
 
            "fr": {
-                    "MembersOfGroups": "Membres du groupe",
-                    "Empty":           "Ce groupe est vide"
+                    "MembersOfGroups":    "Membres du groupe",
+                    "Empty":              "Ce groupe est vide",
+                    "GroupDoesNotExist":  "Groupe n'existe pas"
                  }
         }
 
@@ -195,6 +197,11 @@ def findPositionsOfFields(header):
 
 def showGroupUsers(groupName, indent):
     (groupOU, exitcode)      = runDsCommand(["dsquery.exe", "group", "-name",    groupName ], True)
+    if groupOU == "":
+        msg=text[language]["GroupDoesNotExist"]
+        print(f"\n{groupName} - {msg}.\n")
+        return
+
     (groupMembers, exitcode) = runDsCommand(["dsget.exe",   "group", "-members", groupOU   ], True)
     groupMembers = groupMembers.split("\n")
     groupMembers = [ x.strip('"') for x in groupMembers ]
