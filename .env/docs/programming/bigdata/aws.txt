@@ -74,11 +74,14 @@ EOF
         destination object.
 
 
-  List all objects in a bucket
+  Miscellaneous
   ────────────────────────────────────────────────────────────────────────────
 
+    # List all objects in a bucket.  SAFE.
     aws s3 ls s3://${S3_BUCKET} --recursive --human-readable --summarize | tee "${S3_BUCKET}.txt"
 
+    # Get current account, user and role information.  SAFE.
+    aws sts get-caller-identity
 
 
 AWS API
