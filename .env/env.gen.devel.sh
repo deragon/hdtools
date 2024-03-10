@@ -64,6 +64,11 @@ if (( $? == 0 )); then
   alias hdgitgvim='git difftool --tool=hdgvimdiff --no-prompt &'
   alias cdgroot='cdprint "$(git rev-parse --show-toplevel)"'  # Return root directory of current Git repo.
 
+  # Aliases to switch branches very quickly.
+  alias gdev='git switch develop'
+  alias gmain='git switch main'
+  alias gmaster='git switch main'
+
   hdgvarclear()
   {
     unset \
