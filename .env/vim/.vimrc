@@ -690,25 +690,26 @@ map  <F5> mz:g/\r$/s///g<CR>:g/\s\+$/s///g<CR>:nohlsearch<CR>`z:echoerr ""<CR>
 map  <F6> :nohlsearch<CR>:set nospell<CR>
 map  <S-F6> :g/}\n\n\/\//s//}\r\r\/\//g<CR>
 
-" Defining F8 as double quotes.  Double quotes are used to access registers,
-" but on US-intl keyboard maps, double quotes are a dead key and is very
 " F7 mapped to 'go to mark' ` or ' which are dead keys on US-INTERNATIONAL
 " keyboards.
 nmap <F7> `
+
+" Defining F8 as CTRL-".  Double quotes are used to access registers, but on
+" US-INTERNATIONAL keyboard maps, double quotes are a dead key and is very
 " annoying to use.  Thus we use <F8> instead of the double quotes to perform
 " the operation.
 "
 " Usage:
 "
-"   - <F8>ayy  -> Yank full line.
+"   - <F8>ayy  -> Yank full line in register 'a'.
 "   - v<F8>ay  -> For yanking a visual selection, the selection must be
-"                 performed first, and then select the register and finally,
-"                 yank the selection into it.
+"                 performed first, and then select the register (here 'a')
+"                 and finally, yank the selection into it.
 " See:
 "
 "   - https://stackoverflow.com/questions/35279859/vim-cmap-lhs-only-at-the-beginning
 "   - https://stackoverflow.com/questions/21849105/vim-how-to-yank-a-visual-block-to-a-register/21849236
-noremap <F8> "
+map <F8> <C-">
 
 map  <S-F8> :set columns=80<CR>
 " Hexadecimal editor
