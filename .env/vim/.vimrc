@@ -692,6 +692,9 @@ map  <S-F6> :g/}\n\n\/\//s//}\r\r\/\//g<CR>
 
 " Defining F8 as double quotes.  Double quotes are used to access registers,
 " but on US-intl keyboard maps, double quotes are a dead key and is very
+" F7 mapped to 'go to mark' ` or ' which are dead keys on US-INTERNATIONAL
+" keyboards.
+nmap <F7> `
 " annoying to use.  Thus we use <F8> instead of the double quotes to perform
 " the operation.
 "
