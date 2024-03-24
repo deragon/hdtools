@@ -37,6 +37,8 @@ INSTALLATION (MASSIVE)
 FONTS / POLICES
 ══════════════════════════════════════════════════════════════════════════════
 
+  - fc-list  # Print list of fonts.
+
   Inconsolata    http://levien.com/type/myfonts/inconsolata.html
 
   MERCHANT-COPY
@@ -64,8 +66,6 @@ GLYPH RENDERING
 
 FONTS SUBSTITUTIONS
 ══════════════════════════════════════════════════════════════════════════════
-
-
 
   $ font-manager &
 
