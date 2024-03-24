@@ -347,6 +347,9 @@ COSTS
   GOOD READS
   ────────────────────────────────────────────────────────────────────────────
 
+    - Why Companies Are Leaving the Cloud
+      https://it.slashdot.org/story/24/02/11/0227250/why-companies-are-leaving-the-cloud
+
     - AWS Customers Rack Up Hefty Bills For Moving Data
       https://hardware.slashdot.org/story/19/10/23/0517258/aws-customers-rack-up-hefty-bills-for-moving-data
 
