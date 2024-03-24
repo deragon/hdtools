@@ -6,7 +6,7 @@ UNICODE UTF-8 UTF8
   ⚠️  Warning  ⚡ Electricity      🚨 Alarm
   💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)
   🧱 Brick wall/Blocked           🚧 Construction/Blocked
-  🐔👍 (pull request)
+  🐔👍 (pull request)             💀 Dead/Abanned  ⏼ Poweroff  ⏻ Poweron
   👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹
 
   Circles
