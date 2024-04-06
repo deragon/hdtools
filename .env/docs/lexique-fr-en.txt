@@ -48,8 +48,8 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   parse                      -> analyser, décortiquer
   parser                     -> analyseur syntaxique, décortiqueur(?)
   onboarding                 -> accompagnement, processus d'intégration
-  race condition             -> situation de compétition
-                                condition de concurrence
+  race condition             -> condition de concurrence (selon Co-pilote)
+                                situation de compétition
   canonical                  -> canonique
   trailing spaces            -> espaces de fin
   reset                      -> réinitialiser / remettre (à l'heure|à zéro|en place)
