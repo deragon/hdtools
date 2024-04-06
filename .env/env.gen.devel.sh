@@ -67,7 +67,7 @@ if (( $? == 0 )); then
   # Aliases to switch branches very quickly.
   alias gdev='git switch develop'
   alias gmain='git switch main'
-  alias gmaster='git switch main'
+  alias gmaster='git switch master'
 
   hdgvarclear()
   {
