@@ -1,0 +1,125 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General public Picense which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True ANSI (24 bits) terminal.
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["ITALIC"]="\e[2m"
+    ["UNDERLINE"]="\e[3m"
+    ["REVERSE"]="\e[7m"
+    ["STRIKETHROUGH"]="\e[9m"
+    ["BOLD_OFF"]="\e[21m"
+    ["ITALIC_OFF"]="\e[22m"
+    ["UNDERLINE_OFF"]="\e[23m"
+    ["REVERSE_OFF"]="\e[27m"
+    ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLACK"]="\e[30m"
+    ["RED"]="\e[31m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+    ["MAGENTA"]="\e[35m"
+    ["CYAN"]="\e[36m"
+    ["WHITE"]="\e[37m"
+    ["BG_RED"]="\e[41m"
+    ["BG_GREEN"]="\e[42m"
+    ["BG_YELLOW"]="\e[43m"
+    ["BG_BLUE"]="\e[44m"
+    ["BG_MAGENTA"]="\e[45m"
+    ["BG_CYAN"]="\e[46m"
+    ["BG_WHITE"]="\e[47m"
+    ["BG_DEFAULT"]="\e[49m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Usage:  ${SCRIPT_NAME} [-h]
+
+  -h  Display this help text.
+"
+}
+
+powershell()
+{
+  powershell.exe -nologo -Command "$@" | sed 's/^/  /g'
+}
+
+
+WSL_OUTPUT="$(powershell 'Get-AppxPackage |? { $_.Name -like "*WindowsSubsystemforLinux*" } | tee-object -Variable packageMatches' &)"
+DIST_OUTPUT="$(powershell 'Get-ChildItem "HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss" -Recurse' &)"
+
+# There is a better way with Powershell's Get-VHD but you need administrator
+# rights.  Below administrator rights are not needed.  One day, the code below
+# should be improved.
+FIND_PATH="/mnt/c/Users/${USER}/AppData/Local/Packages"
+FIND_OUTPUT="$(find "${FIND_PATH}" -name '*.vhdx' -type f -print0 | xargs --null ls -lh | sed 's/^/  /g' &)"
+wait
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+echo -e "$(cat <<EOM
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Windows Subsystem Linux - General Information
+══════════════════════════════════════════════════════════════════════════════
+${WSL_OUTPUT}
+Distributions installed
+══════════════════════════════════════════════════════════════════════════════
+${DIST_OUTPUT}
+
+Files containing WSL instances
+══════════════════════════════════════════════════════════════════════════════
+
+  ${ANSI[FG_BLACK_BG_YELLOW]}⚠️  WARNING ⚠️ ${ANSI[RESET]}
+
+      The following output comes from a search in a specific path, thus
+      *.vhdx files outside that path are not accounted for below.
+
+      Path being scanned:  '${FIND_PATH}'
+
+${FIND_OUTPUT}
+EOM
+)"
+
+# https://askubuntu.com/questions/1363015/understanding-disk-space-using-wsl2
+
