@@ -347,6 +347,9 @@ COSTS
   GOOD READS
   ────────────────────────────────────────────────────────────────────────────
 
+    - UK Govt Office Admits Ability To Negotiate Billions in Cloud Spending Curbed By Vendor Lock-in
+      https://news.slashdot.org/story/24/04/05/1529251/uk-govt-office-admits-ability-to-negotiate-billions-in-cloud-spending-curbed-by-vendor-lock-in
+
     - Why Companies Are Leaving the Cloud
       https://it.slashdot.org/story/24/02/11/0227250/why-companies-are-leaving-the-cloud
 
