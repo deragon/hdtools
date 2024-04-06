@@ -297,7 +297,7 @@ map <Leader>h :sp $HDVIM/doc/hdvim.md<CR>zR<CR>
 " ════════════════════════════════════════════════════════════════════
 map <Leader>1 <esc>078i═<esc>a<CR>
 map <Leader>2 <esc>02i <esc>76a─<esc>a<CR>
-map <Leader>3 <esc>04i <esc>74a‑<esc>a<CR>
+map <Leader>3 <esc>04i <esc>74a-<esc>a<CR>
 map <Leader>4 <esc>06i <esc>72a⚋<esc>a<CR>
 map <Leader>6 <esc>078i=<esc>a<CR>
 map <Leader>7 <esc>02i <esc>76a-<esc>a<CR>
