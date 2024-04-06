@@ -84,6 +84,6 @@ done
 set -xe
 taskkill.exe /f /im explorer.exe
 #taskkill.exe /im explorer.exe
-sleep 3
+#sleep 3
 explorer.exe &
 disown
