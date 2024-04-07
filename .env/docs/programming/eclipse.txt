@@ -74,6 +74,39 @@ MAVEN
   See maven.txt for Eclipse particularities.
 
 
+LAUNCH FILES
+══════════════════════════════════════════════════════════════════════════════
+
+  Lauch files are stored in ${REPOSITORY_DIR}/.metadata/.plugins/org.eclipse.debug.core/.launches/
+
+
+
+PROJECT OUTPUT FOLDER SET OUTSIDE OF THE PROJECT
+══════════════════════════════════════════════════════════════════════════════
+
+  From:
+
+    http://stackoverflow.com/questions/1470827/external-output-folder-in-eclipse
+
+  Hi, Is there a way in eclipse to make the project's output folder an
+  external folder, instead of a folder located under the project root?
+
+  Yes, you can define it as a linked folder.
+
+    To create a new linked folder select New->Folder, input bin in the
+    folder name: field then click Advanced>>
+
+    Click Link to folder in the file system Click on Variables... to
+    bring up the Select Path Variable dialog.
+
+    If this is your first time, or you are linking to a new location
+    select New... and give the variable a sensible name and path.
+
+  More precisely, you define your output directory (say 'bin') as a
+  linked folder, then you set that directory as the official output one
+  of your project. 
+
+
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
