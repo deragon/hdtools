@@ -6,7 +6,7 @@ UNICODE UTF-8 UTF8
   ⚠️  Warning  ⚡ Electricity      🚨 Alarm
   💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)
   🧱 Brick wall/Blocked           🚧 Construction/Blocked
-  🐔👍 (pull request)             💀 Dead/Abanned  ⏼ Poweroff  ⏻ Poweron
+  🐔👍 (pull request)             💀 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
   👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹
 
   Circles
@@ -98,6 +98,8 @@ UNICODE UTF-8 UTF8
   ␀ 2400 null                  ␉ 2409 horizontal tabulation
   ␆ 2406 acknowledge           ␊ 240A line feed
   ␈ 2408 backspace             ␍ 240D carriage return
+
+  Alternatives for common ASCII characters:  ∕ ╱ ╲ │ ː ‑
 
   Characters:   «» ¡¿ ¢£¤¥¦§¨©ª¬­®¯°±´µ¶·¸☠␣
   Super/sub:    ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱ  ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎
