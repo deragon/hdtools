@@ -161,7 +161,12 @@ COMMANDES
 STASH
 ══════════════════════════════════════════════════════════════════════════════
 
+  Note:  stash@{0} is always on the top of the stack and is the next to be
+         removed with 'git stash pop'.
+
   git stash list
+  git stash pop              # Apply stash@{0} and drop it from the stack.
+  git stash show             # Show file affected in stash@{0}.
   git stash save "Message"   # Saving data temporally.
   git stash apply            # Apply latest stash
 
