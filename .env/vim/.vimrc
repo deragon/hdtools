@@ -878,7 +878,7 @@ map <esc>dfc :call HDSignature("Commentaire de ")<CR>
 map <esc>dfr :call HDSignature("Créé par ")<CR>
 map <esc>dfm :call HDSignature("Modifié par ")<CR>
 map <esc>dh :call HDSignature("")<CR>
-map <esc>ds :call HDSignature("--")<CR>
+map <esc>ds :call HDSignature("-- ")<CR>
 map <esc>dd O<C-R>=strftime(g:hd_timestamp_format_human)<CR>
 map <esc>dl I* <C-R>=strftime($HD_TIMESTAMP_FORMAT_CHANGELOG)<CR>, Hans Deragon<CR>
 
