@@ -82,7 +82,7 @@ add2path PATH /usr/lib/git-core  # git-gui and other git commands.
 add2path PATH -b "${HOME}/.local/bin"
 
 alias hdupdate='sudo apt-get update'
-alias hdupgrade='sudo snap refresh;sudo apt-get -y dist-upgrade; sudo apt-get -y autoremove'
+alias hdupgrade='sudo snap refresh; sudo apt-get -y dist-upgrade; sudo apt-get -y autoremove; sudo flatpak update --assumeyes'
 alias hdmaj='hdupdate;hdupgrade;hdrebootrequired;hddate -n'
 
 if ( type wmctrl >/dev/null 2>&1 ) then
