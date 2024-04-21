@@ -2,12 +2,12 @@ UNICODE UTF-8 UTF8
 ══════════════════════════════════════════════════════════════════════════════
 
   💯  Mon 2₵.  My 2₵.
-  👍 😀 😂 😛 🙄 😖 😠 😱 😲
+  👍 😀 😂 😛 🙄 😖 😠 😱 😲 🤯 👶
   ⚠️  Warning  ⚡ Electricity      🚨 Alarm
-  💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)
+  💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)  🔑 key
   🧱 Brick wall/Blocked           🚧 Construction/Blocked
   🐔👍 (pull request)             💀 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
-  👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹
+  👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹            🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
 
   Circles
 
@@ -52,7 +52,6 @@ UNICODE UTF-8 UTF8
   ⎘ External link
   ℃  Celcius  €  Euro
   ☕ Café (hot beverage)  💤 Sleep  🐔 Chicken  🥔 Potato
-  🤯 Mindblowing   👶 Baby
   🏖️ Vacation      🌈 Rainbow         📡 Radar
   🎆 Fireworks     🎉 Party Popper    🎊 Confetti Ball
   🥂 Clinking Glasses  🍾 Bottle of Champagne  🔫 Gun/Pistol
