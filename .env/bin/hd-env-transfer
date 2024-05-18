@@ -113,7 +113,6 @@ RSYNC_OPTIONS="
   --exclude='*.out' \
   --exclude='*.sw?' \
   --exclude='**/personal' \
-  --exclude='**/pj' \
   --exclude='.netrwhist' \
   --exclude='Feuille de temps' \
   --exclude='conky' \
@@ -127,7 +126,6 @@ RSYNC_OPTIONS="
   --exclude='*/windows' \
   --exclude='**/archive' \
   --exclude='**/mus*e' \
-  --exclude='*/ericsson' \
   --exclude='*home*' \
   --exclude='env.hd.linux.sh' \
   --exclude='*/bin/rsync*' \
@@ -137,7 +135,6 @@ RSYNC_OPTIONS="
   --exclude='env.pers*' \
   --exclude='seafile-ignore.txt' \
   --exclude='zCopy' \
-  --exclude='corp-transfer-env' \
   --exclude='${SCRIPT_NAME}' \
 "
 
