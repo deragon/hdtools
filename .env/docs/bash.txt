@@ -1861,15 +1861,16 @@ ANSI TERMINAL CODES and COLORS
     hdtermcolortest
     hdtermcolortestwithcodes # <-- Practical, with codes for 'echo -e ""'
 
-    echo -e "\e[1;32;40mGREEN  \e[0;37;40m NORMAL" # Green
-    echo -e "\e[1;33;40mYELLOW \e[0;37;40m NORMAL" # Yellow
-    echo -e "\e[0;31;40mRED    \e[0;37;40m NORMAL" # Red
-    echo -e "\e[0;34;40mBLUE   \e[0;37;40m NORMAL" # Blue
+    echo -e "\e[1;32mGREEN  \e[0m NORMAL" # Green
+    echo -e "\e[1;33mYELLOW \e[0m NORMAL" # Yellow
+    echo -e "\e[0;31mRED    \e[0m NORMAL" # Red
+    echo -e "\e[0;34mBLUE   \e[0m NORMAL" # Blue
+    echo -e "\e[0;37mWHITE  \e[0m NORMAL" # Blue
 
-    echo -e "\e[1;37;42mREVERSED GREEN  \e[0;37;40m NORMAL" # Reversed Green
-    echo -e "\e[1;37;43mREVERSED YELLOW \e[0;37;40m NORMAL" # Reversed Yellow
-    echo -e "\e[1;37;41mREVERSED RED    \e[0;37;40m NORMAL" # Reversed Red
-    echo -e "\e[1;37;44mREVERSED BLUE   \e[0;37;40m NORMAL" # Reversed Blue
+    echo -e "\e[1;37;42mREVERSED GREEN  \e[0m NORMAL" # Reversed Green
+    echo -e "\e[1;37;43mREVERSED YELLOW \e[0m NORMAL" # Reversed Yellow
+    echo -e "\e[1;37;41mREVERSED RED    \e[0m NORMAL" # Reversed Red
+    echo -e "\e[1;37;44mREVERSED BLUE   \e[0m NORMAL" # Reversed Blue
 
     echo -e "\e[0mNormal Text"  # RESET all attributes.
 
