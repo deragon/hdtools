@@ -80,6 +80,10 @@ parser.add_argument('-f', '--french', dest='french', default=False,
                     action="store_true", required=False,
                     help='Switch output to french.')
 
+parser.add_argument('-q', '--quick', dest='quick', default=False,
+                    action="store_true", required=False,
+                    help='Print quickly only the names of members, not their details.')
+
 # Optional argument with parameter (--user USER).  By putting 'type=str', we
 # tell the parser that the argument must take a parameter with it.
 # parser.add_argument('-u', '--user', type=str, dest='user',
@@ -219,26 +223,29 @@ def showGroupUsers(groupName, indent):
     groupsToExpandInto = []
     for member in groupMembers:
 
-        (memberData, exitcode) = runDsCommand(["dsget.exe", "user", member, "-fn", "-ln", "-email"], False)
-        if exitcode == 0 and memberData == "":
-            # Nothing to show / print.
-            pass
-        elif exitcode == 0:
-            #print(f"{indent}{memberData}")
-            memberDataLines   = memberData.split('\n')
-            header            = memberDataLines[0]
-            positionsOfFields = findPositionsOfFields(header) + [ len(header) ]
-
-            memberData = memberDataLines[1]
-            firstName  = memberData[positionsOfFields[0]:positionsOfFields[1]].strip()
-            lastName   = memberData[positionsOfFields[1]:positionsOfFields[2]].strip()
-            email      = memberData[positionsOfFields[2]:positionsOfFields[3]].strip()
-
-            print(f"{indent}    {firstName} {lastName} ({email})")
-        elif exitcode == 87:
-            groupsToExpandInto.append(extractCNfromOU(member))
+        if args.quick:
+            print(f"{indent}    {member}")
         else:
-            logger.error("Failure with exit code #%d:  %s", exitcode, memberData)
+            (memberData, exitcode) = runDsCommand(["dsget.exe", "user", member, "-fn", "-ln", "-email"], False)
+            if exitcode == 0 and memberData == "":
+                # Nothing to show / print.
+                pass
+            elif exitcode == 0:
+                #print(f"{indent}{memberData}")
+                memberDataLines   = memberData.split('\n')
+                header            = memberDataLines[0]
+                positionsOfFields = findPositionsOfFields(header) + [ len(header) ]
+
+                memberData = memberDataLines[1]
+                firstName  = memberData[positionsOfFields[0]:positionsOfFields[1]].strip()
+                lastName   = memberData[positionsOfFields[1]:positionsOfFields[2]].strip()
+                email      = memberData[positionsOfFields[2]:positionsOfFields[3]].strip()
+
+                print(f"{indent}    {firstName} {lastName} ({email})")
+            elif exitcode == 87:
+                groupsToExpandInto.append(extractCNfromOU(member))
+            else:
+                logger.error("Failure with exit code #%d:  %s", exitcode, memberData)
 
     for group in groupsToExpandInto:
         showGroupUsers(group, indent+"    ")
@@ -251,3 +258,5 @@ for groupName in args.groupNames:
 
     showGroupUsers(groupName, "")
     firstTime = False
+
+print()
