@@ -41,6 +41,7 @@ if [ -t 1 ] ; then
     ["UNDERLINE_OFF"]="\e[23m"
     ["REVERSE_OFF"]="\e[27m"
     ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLINK"]="\e[5m"
     ["BLACK"]="\e[30m"
     ["RED"]="\e[31m"
     ["GREEN"]="\e[32m"
@@ -171,6 +172,8 @@ fi
 
 printErrorsAndExitIfAny
 
+# Blinking warning.
+#echo -e "${ANSI[FG_WHITE_BG_RED]}${ANSI[BLINK]} WARNING ${ANSI[RESET]}"
 
 
 # Display format of timestamps.
