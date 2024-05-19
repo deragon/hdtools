@@ -23,7 +23,7 @@ git remote update origin --prune
 
 OUTPUT=$(
   git branch -av | \
-  sed -rn 's/^(\s+)[*|\+](\S+)\s+.*\[gone\].*/\2/gp' | tr '\n' '\0' | \
+  sed -rn 's/^[*|+|\s](\s+)(\S+)\s+.*\[gone\].*/\2/gp' | tr '\n' '\0' | \
   xargs --null --no-run-if-empty git branch -d 2>&1
 )
 
