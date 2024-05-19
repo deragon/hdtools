@@ -145,15 +145,17 @@ OPERATION_ORG="${OPERATION}"
 for FILE in ${FILES[@]}; do
 
   title "Processing ${FILE}"
+  FILE_BASENAME="${FILE/*\/}" # Basename, efficient form.
 
   EXTENSION="${FILE##*.}"
   if [ "${EXTENSION}" == ${FILE} ]; then
     # No extension found.
     EXTENSION=""
-    [ -z "${STACK_NAME}" ] && STACK_NAME="${FILE}"
+
+    [ -z "${STACK_NAME}" ] && STACK_NAME="${FILE_BASENAME}"
   else
     # An extension was found.  Stripping it from ${FILE}.
-    [ -z "${STACK_NAME}" ] && STACK_NAME="${FILE%.*}"
+    [ -z "${STACK_NAME}" ] && STACK_NAME="${FILE_BASENAME%.*}"
   fi
 
   EXTRA_OPTIONS=""
