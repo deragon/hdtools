@@ -37,10 +37,61 @@ PRIVATE KEYS
     gpg> save
 
 
-  SIGN A KEY
+
+GENERATE PGP KEY
+══════════════════════════════════════════════════════════════════════════════
+
+  Full recipe
   ────────────────────────────────────────────────────────────────────────────
 
-    gpg --sign-key <key email>
+    To simplify PGP key management, run and use the alias below. The alias
+    forces the use of a Key Ring used exclusively for mykey (you might not want
+    this and use the default keyring found under '${HOME}/.gnupg').
+
+    alias gpg-extended='gpg --no-default-keyring --keyring "./mykey-ring.kbx" --pinentry-mode loopback --passphrase-file ./password.txt'
+    echo "<complex passphrase here>" >./password.txt
+
+    # Generate the key
+    gpg-extended --batch --generate-key <<EOF
+    Key-Type:       RSA
+    Key-Length:     4096
+    Subkey-Type:    RSA
+    Subkey-Length:  4096
+    Name-Real:      FirstName LastName
+    Name-Comment:   Lives in MyCity, loves playing music.
+    Name-Email:     myname@myemailprovider.com
+    Expire-Date:    0
+    Passphrase:     <complex passphrase here>
+    %commit
+    EOF
+
+    gpg-extended --armor --export             >"mykey.pgp.pub.key.asc"  # Generate public key in ASCII format.
+    gpg-extended --armor --export-secret-keys >"mykey.pgp.key"          # Generate private key in ASCII format.
+
+    gpg-extended --edit-key CDPQ  # Edit key.  Can change email, comment, etc...  Search the web for details.
+
+    TIMESTAMP_FILE="$(date +"%Y%m%dT%H%M%S")"  # ISO 8601 format.
+    FILE_TO_ENCRYPT="test-file-${TIMESTAMP_FILE}.txt"
+    echo "Test file generated:  ${TIMESTAMP_FILE}." >"${FILE_TO_ENCRYPT}"
+
+    # There is no standard nomenclature for naming encrypted files.  Here,
+    # arbitrarily, we end the file with '.encrypted.pgp'.
+    gpg-extended --output "${FILE_TO_ENCRYPT}.encrypted.pgp" \
+                 --encrypt --recipient "${KEY_ID}" "${FILE_TO_ENCRYPT}"
+    gpg-extended --decrypt "${FILE_TO_ENCRYPT}.encrypted.pgp"
+
+
+  Quick recipes
+  ────────────────────────────────────────────────────────────────────────────
+
+    gpg --gen-key  # Create/generate a key with interactive prompt.
+
+      Use RSA and RSA with 4096 bits, not DSA and Elgamal
+        See:  https://www.reddit.com/r/crypto/comments/327ubg/noob_question_which_is_more_secure_rsa_or_dsa/
+
+    gpg --quick-generate-key --batch --passphrase "your_passphrase" "Your Name <your.email@example.com>" rsa4096 encrypt 0y
+      # 'encrypt'  specifies that the key should be used for encryption.  Other value, 'cert' for use for certificates.
+      # '0y'       means that the key never expires.  To expire in 1 year, set to '1y'.
 
 
 
