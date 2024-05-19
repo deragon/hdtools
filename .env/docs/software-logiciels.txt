@@ -39,10 +39,25 @@ BUG, TRACKING, LIFE-CYCLE
 
 
 
+TEAMS / MICROSOFT
+══════════════════════════════════════════════════════════════════════════════
+
+  Teams usually does not provide a way to save/export a chat conversation.
+  There is a way around, which is to use the web version of Teams at
+  https://teams.microsoft.com/v2/ and use the print option of your browser
+  (<CTRL-P>).
+
+  However, it will only print what you see on the screen, not the whole
+  conversation.  To get around this limitation, change the scale to 10% for
+  instance and hopefully the whole conversation will be printed in a single
+  page.
+
+
+
 SCREENCAST
 ══════════════════════════════════════════════════════════════════════════════
 
-  De:  https://www.linuxlinks.com/screencasting/
+  From:  https://www.linuxlinks.com/screencasting/
 
   -> OBS Studio            Real-time source and device capture, scene composition, encoding, recording and broadcasting
      Kazam                 Well designed and easy to use interface
