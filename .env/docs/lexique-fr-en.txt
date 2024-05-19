@@ -8,6 +8,7 @@ SITES
 LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
+  token                      -> jeton
   monitoring                 -> surveiller / vérifier
   deprecated                 -> déclassé, obsolète, dépassé, déprécié
   batch                      -> lot / traitement par lots
