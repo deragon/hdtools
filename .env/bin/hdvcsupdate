@@ -44,9 +44,9 @@ IFS=$(echo -en "\n\b")    # Set IFS so if entries in $@ have spaces,
 title()
 {
   local LINE="═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════"
-  local TITLE="${1} "$(date "+${TIMESTAMP_FORMAT_HUMAN}")
+  local TITLE="${1}"
   local SEPARATOR=$(printf "%s %s %s\n" "${LINE:1:1}" "${TITLE}" "${LINE:${#TITLE}}")
-  echo -e "\e[1;32;40m${SEPARATOR}\e[0;37;40m" # Green
+  echo -e "\e[1;32m${SEPARATOR}\e[0;37m" # Green
 }
 
 vcsupdate()
