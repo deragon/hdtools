@@ -1,6 +1,23 @@
 SNOWFLAKE
 
 
+COMMON COMMANDS - CHEAT SHEET
+══════════════════════════════════════════════════════════════════════════════
+
+set LAST_QUERY_ID=(select last_query_id());
+select * from table(result_scan($LAST_QUERY_ID));
+
+  ────────────────────────────────────────────────────────────────────────────
+
+-- Remove all grants from a role.
+-- SAFE because this generates the commands to revoke, but does not
+-- executed them.
+show grants to role "< role name here >";
+set LAST_QUERY_ID=(select last_query_id());
+select * from table(result_scan($LAST_QUERY_ID));
+select 'REVOKE ' || "privilege" || ' ON ' || "granted_on" || ' FROM ' || "granted_to" || ' FROM ' || "grantee_name" || ';' from table(result_scan($LAST_QUERY_ID));
+
+
 LIKE
 ══════════════════════════════════════════════════════════════════════════════
 
