@@ -6,9 +6,9 @@ SAFEST KEY - HOW TO GENERATE
   ssh-keygen -t ed25519 -N "" -f "${HOME}/.ssh/id_ed25519_nopass"
   cat "${HOME}/.ssh/id_id_ed25519_nopass.pub"
 
-  From:  http://security.stackexchange.com/questions/5096/rsa-vs-dsa-for-ssh-authentication-keys
+  From:  https://security.stackexchange.com/questions/5096/rsa-vs-dsa-for-ssh-authentication-keys
 
-  ED25519 is more secure and performant than RSA and DSA
+  Ed25519 is more secure and performant than RSA and DSA
   RSA is less secure and cannot be over 4096 bits.
   DSA is even less secure and cannot be over 1024 bits.
 
