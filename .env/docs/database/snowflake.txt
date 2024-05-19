@@ -175,6 +175,25 @@ SQL
       group by "default_role" order by number desc;
 
 
+VARIABLES
+══════════════════════════════════════════════════════════════════════════════
+
+  set DATABASE_NAME = '<Database name>';
+  set SCHEMA_NAME   = '<Schema name>';
+
+  -- Always concatenate and assign to variables.  Usually, concatenating
+  -- directly in a command such as 'use database' does not work.
+  set DB_AND_SC = $DATABASE_NAME || '.' || $SCHEMA_NAME;
+
+  select $DATABASE_NAME as DB, $SCHEMA_NAME as SC, $DB_AND_SC as DB_AND_SC;  -- To debug variables.
+
+  -- One needs to use identifier() to referencing an object.
+  use database identifier($DATABASE_NAME);
+  use schema   identifier($SCHEMA_NAME);
+
+  select current_database();
+
+
 
 RESULT_SCAN
 ══════════════════════════════════════════════════════════════════════════════
