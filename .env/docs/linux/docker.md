@@ -278,15 +278,21 @@ From:  https://www.bitcoininsider.org/article/23859/top-10-docker-commands-you-c
 
 # Cleanup
 
-WARNING:  This will remove:
+## Prune
 
-- ALL STOPPED CONTAINERS
-- all volumes not used by at least one container
-- all networks not used by at least one container
-- all images without at least one container associated to them
+[Documentation](https://docs.docker.com/engine/reference/commandline/system_prune/)
 
-    # Doc:  https://docs.docker.com/engine/reference/commandline/system_prune/
+### ⚠️  WARNING:  This will destroy/remove:
+
+- ALL STOPPED CONTAINERS.
+- All volumes not used by at least one container.
+- All networks not used by at least one container.
+- All images without at least one container associated to them.
+
+### Command line
+
     docker system prune --all --force --volumes
+
       # --all, -a      Remove all unused images not just dangling ones
       # --force, -f    Do not prompt for confirmation
       # --volumes      Prune volumes too
