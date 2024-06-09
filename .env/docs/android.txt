@@ -67,6 +67,21 @@ BACKUP - APPS
 
 
 
+BROWSERS
+══════════════════════════════════════════════════════════════════════════════
+
+  Mini-Opera
+  ────────────────────────────────────────────────────────────────────────────
+
+    The main feature of this browser which I cannot find in any other
+    Android browser is that when you zoom for reading, text is automatically
+    wrapped and this works for every website I visit.
+
+    This is a must have feature for me and why I am not inclined to use
+    another browser.
+
+
+
 TROUBLESHOOTING
 ══════════════════════════════════════════════════════════════════════════════
 
