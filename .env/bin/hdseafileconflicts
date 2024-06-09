@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General public Picense which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+import os.path
+import sys
+from datetime import datetime
+import re
+import argparse
+
+scriptName=os.path.basename(sys.argv[0])
+
+iso8601Human    = "%Y-%m-%d %H:%M:%S"
+
+try:
+    scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
+except IndexError:
+    scriptNameBase=scriptName # There is no extension.
+
+ansi = {
+    "FG_WHITE_BG_GREEN":      "\033[1;37;42m",
+    "FG_BLACK_BG_YELLOW":     "\033[1;30;43m",
+    "FG_WHITE_BG_RED":        "\033[1;37;41m",
+    "FG_WHITE_BG_BLUE":       "\033[1;37;44m",
+    "FG_WHITE_BG_ORANGERED":  "\033[38;2;255;255;255m\033[48;2;255;69;0m",  # Requires True Colors (24 bits) terminal.
+    "RESET":                  "\033[0;00m",
+    "BOLD":                   "\033[1m",
+    "ITALIC":                 "\033[2m",
+    "UNDERLINE":              "\033[3m",
+    "REVERSE":                "\033[7m",
+    "STRIKETHROUGH":          "\033[9m",
+    "BOLD_OFF":               "\033[21m",
+    "ITALIC_OFF":             "\033[22m",
+    "UNDERLINE_OFF":          "\033[23m",
+    "REVERSE_OFF":            "\033[27m",
+    "STRIKETHROUGH_OFF":      "\033[29m",
+    "BLACK":                  "\033[30m",
+    "RED":                    "\033[31m",
+    "GREEN":                  "\033[32m",
+    "YELLOW":                 "\033[33m",
+    "BLUE":                   "\033[34m",
+    "MAGENTA":                "\033[35m",
+    "CYAN":                   "\033[36m",
+    "WHITE":                  "\033[37m",
+    "BG_RED":                 "\033[41m",
+    "BG_GREEN":               "\033[42m",
+    "BG_YELLOW":              "\033[43m",
+    "BG_BLUE":                "\033[44m",
+    "BG_MAGENTA":             "\033[45m",
+    "BG_CYAN":                "\033[46m",
+    "BG_WHITE":               "\033[47m",
+    "BG_DEFAULT":             "\033[49m"
+}
+
+# PARSING ARGUMENTS
+# ────────────────────────────────────────────────────────────────────────────
+
+parser = argparse.ArgumentParser(description=f"""
+{ansi['FG_WHITE_BG_GREEN']} SAFE {ansi['RESET']}
+
+Find Seafile conflict files (SFConflict) and compare it to the original file.
+
+""", formatter_class=argparse.RawTextHelpFormatter)
+
+# Positional arguments.
+# If <files> is mandatory, use "nargs='+'".  If optional, use "nargs='*'".
+parser.add_argument('files', metavar='files', type=str, nargs='*',
+                    help='List of files to rename.')
+
+parser.add_argument('-d', '--delete', dest='delete',
+                    default=False, action="store_true",
+                    help='Create hard links instead of moving files.')
+
+args = parser.parse_args()
+
+errors = ""
+
+def report_error():
+
+    if len(errors) > 0:
+        print(f"{ansi['FG_WHITE_BG_RED']}ERROR:{ansi['RESET']}  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
+        print(f"{ansi['FG_WHITE_BG_RED']}ERREUR:{ansi['RESET']}  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
+        sys.exit(1)
+
+report_error()
+
+
+pattern = re.compile("(.*?) \(SFConflict.*?\)(.*)")
+
+allfiles = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
+
+for file_conflict in allfiles:
+    if "SFConflict" in file_conflict:
+        modif_time_conflict_epoch=os.path.getmtime(file_conflict)
+        modif_time_conflict_human=datetime.fromtimestamp(modif_time_conflict_epoch).strftime(iso8601Human)
+        modif_size_conflict=os.path.getsize(file_conflict)
+        #print(f"{modif_time_conflict_human}    {file_conflict}")
+
+        matches = pattern.match(file_conflict)
+        if matches != None:
+            file_base=matches.group(1)+matches.group(2)
+            modif_time_base_epoch=os.path.getmtime(file_base)
+            modif_time_base_human=datetime.fromtimestamp(modif_time_base_epoch).strftime(iso8601Human)
+            modif_size_base=os.path.getsize(file_base)
+
+            if modif_time_conflict_epoch <= modif_time_base_epoch:
+                color=f"{ansi['FG_WHITE_BG_GREEN']}"
+            else:
+                color=f"{ansi['FG_WHITE_BG_RED']}"
+            print(f"{color}{modif_time_conflict_human}{ansi['RESET']} {modif_size_conflict}   {file_conflict}\n"
+                  f"{color}{modif_time_base_human}{ansi['RESET']} {modif_size_base}   {file_base}\n")
+        else:
+            print(f"{ansi['FG_BLACK_BG_YELLO']} ORPHANED:  {modif_time_conflict_human}    {file_conflict}{ansi['RESET']}")
+
+
+        if args.delete == True:
+            print(f"{ansi['FG_BLACK_BG_YELLOW']}DELETING:{ansi['RESET']}  {file_conflict}\n")
+            os.remove(file_conflict)

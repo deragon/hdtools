@@ -186,8 +186,6 @@ hdxman()
   gnome-terminal --command="man $@"
 }
 
-alias hdseafileconflicts='find . -name "*(SFConflict *"'
-alias hdseafileconflictsrm='hdseafileconflicts -print0 | xargs --null rm'
 alias psw='psg -w'
 alias hg='history | egrep'
 alias hdhistoryclear='cat /dev/null >"${HOME}/.bash_history" && history -c'
