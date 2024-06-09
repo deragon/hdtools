@@ -67,7 +67,7 @@ The actual command executed is:
 
   ${CMD} \$@
 
-Usage:  ${SCRIPT_NAME} [-h] <python module to install>+ | -u
+Usage:  ${SCRIPT_NAME} [-h] <python module to install>+ | -p
 
   -p  Upgrade pip instead of installing a module.
   -s  Install in system instead of user directory (--user)
