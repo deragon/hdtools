@@ -213,6 +213,7 @@ TOOLS
     Very good, very easy.
 
     fgallery <input dir> <output dir>
+    fgallery --no-sRGB <input dir> <output dir> # If there are any problems with gray scale color space.
 
 
   Docfetcher
