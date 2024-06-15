@@ -1,0 +1,127 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General public Picense which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True ANSI (24 bits) terminal.
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["ITALIC"]="\e[2m"
+    ["UNDERLINE"]="\e[3m"
+    ["REVERSE"]="\e[7m"
+    ["STRIKETHROUGH"]="\e[9m"
+    ["BOLD_OFF"]="\e[21m"
+    ["ITALIC_OFF"]="\e[22m"
+    ["UNDERLINE_OFF"]="\e[23m"
+    ["REVERSE_OFF"]="\e[27m"
+    ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLINK"]="\e[5m"
+    ["BLACK"]="\e[30m"
+    ["RED"]="\e[31m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+    ["MAGENTA"]="\e[35m"
+    ["CYAN"]="\e[36m"
+    ["WHITE"]="\e[37m"
+    ["BG_RED"]="\e[41m"
+    ["BG_GREEN"]="\e[42m"
+    ["BG_YELLOW"]="\e[43m"
+    ["BG_BLUE"]="\e[44m"
+    ["BG_MAGENTA"]="\e[45m"
+    ["BG_CYAN"]="\e[46m"
+    ["BG_WHITE"]="\e[47m"
+    ["BG_DEFAULT"]="\e[49m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Pass a string to this script and it will generate 'switch' statement with
+proper branch names for Git, removing illegal characters or replacing them.
+
+Example:
+
+  $ hdgbranchname "[JIRA-1234] Adaptation to API 2.0"
+
+  git switch -c 'bug/JIRA-1234_Adaptation_to_API_2.0'
+  git switch -c 'hotfix/JIRA-1234_Adaptation_to_API_2.0'
+  git switch -c 'feature/JIRA-1234_Adaptation_to_API_2.0'
+
+Usage:  ${SCRIPT_NAME} [-h] '<string for branch name>'
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+STRING=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+printErrorsAndExitIfAny()
+{
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
+}
+
+WARNINGS=""
+ERRORS=""
+
+if ((${#STRING[*]} == 0)); then
+  ERRORS="${ERRORS} - You must provide the string to use for the Git branch name.\n"
+fi
+
+printErrorsAndExitIfAny
+
+BRANCH_NAME_BASE=$(echo "$@" | sed -r 's/[:]//g;s/ /_/g;' | tr -d '[]')
+
+cat <<EOM
+git switch -c 'bug/${BRANCH_NAME_BASE}'
+git switch -c 'hotfix/${BRANCH_NAME_BASE}'
+git switch -c 'feature/${BRANCH_NAME_BASE}'
+EOM
