@@ -292,20 +292,41 @@ PIPE
 ARITHMETIC
 ══════════════════════════════════════════════════════════════════════════════
 
-  IFS='
-  '
-  index=0
-  cat <file> |
-  while read -r LINE
-  do
-    ((index=index+1))
-    (( index % 100 == 0 )) && echo -n "."
+  Integers
+  ────────────────────────────────────────────────────────────────────────────
 
-    ...
-  done
+    Integer comparison
+    --------------------------------------------------------------------------
+
+      if (( ${INTEGER_1} >= ${INTEGER_2} )); then...
 
 
-  Boolean
+    IFS='
+    '
+    index=0
+    cat <file> |
+    while read -r LINE
+    do
+      ((index=index+1))
+      (( index % 100 == 0 )) && echo -n "."
+
+      ...
+    done
+
+
+  Floats
+  ────────────────────────────────────────────────────────────────────────────
+
+    Float comparison
+    --------------------------------------------------------------------------
+
+      # Bash does not have built-in facility to compare floats, but using
+      # 'bc', it is easy to do so.
+
+      if (( $(echo "${FLOAT_1} >= ${FLOAT_2}" | bc -l) )); then...
+
+
+  Booleans
   ────────────────────────────────────────────────────────────────────────────
 
     Reverse:  isSomething=$(( ! ${isNotSomthing} ))
