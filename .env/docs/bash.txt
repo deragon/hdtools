@@ -67,6 +67,15 @@ ARRAYS
     http://stackoverflow.com/questions/5564418/exporting-an-array-in-bash-script
 
 
+  # Concatenate the arrays
+  concatenated_array=("${array1[@]}" "${array2[@]}")  # Duplicates possible
+
+  # Remove duplicates to create the union
+  union_array=($(printf "%s\n" "${concatenated_array[@]}" | sort -u))  # Duplicates removed.
+
+
+
+
   Pass an array to a function
   ────────────────────────────────────────────────────────────────────────────
 
