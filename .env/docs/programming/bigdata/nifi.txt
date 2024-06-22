@@ -22,8 +22,8 @@ DECRYPT PASSWORD / SENSITIVE DATA
   what user on the AWS side is being used by the NiFi flow!
 
   Unfortunately, there is no simple quick way to decrypt these.  All the
-  passwords and sensitive data is found in flow.xml.gz, surrounded with the
-  'enc(...)' string.
+  passwords and sensitive data is found in flow.json.gz, surrounded with the
+  'enc{...}' string.
 
   Read:
 
