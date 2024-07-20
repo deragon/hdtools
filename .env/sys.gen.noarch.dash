@@ -133,7 +133,7 @@ fi
 #        Cygwin:  /etc/vimrc
 #
 #   Ce commentaire fut revisé le 2016-05-31 13:25:58 EDT
-
+#
 export HDVIM="${HDENVDIR}/vim"
 export HDVIMRC="${HDVIM}/.vimrc"
 
@@ -151,12 +151,15 @@ if which vim >/dev/null 2>&1; then
   alias vi='hdvim'
   alias vim='hdvim'
   alias vimdiff='hdvim --hddiff'
+  alias nvimdiff='nvim -d'
+  alias gnvim='hdvim --hdgnvim'
+
   EDITOR='hdgvim --hdvim'
 
-  gvim()     { hdgvim "$@"; }
-  gvimdiff() { hdgvim --hddiff "$@"; }
-  gvimw()    { hdgvim "$(which $*)"; }
-  gviml()    { locate --null $* | xargs --null --replace="{}" hdgvim "{}"; }
+  gvim()     { hdvim --hdgvim "$@"; }
+  gvimdiff() { hdvim --hdgvim --hddiff "$@"; }
+  gvimw()    { hdvim --hdgvim "$(which $*)"; }
+  gviml()    { locate --null $* | xargs --null --replace="{}" hdvim --hdgvim "{}"; }
 
 else
   EDITOR="vi"   # Here, the alias 'vi' will be called which is desired.
