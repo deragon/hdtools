@@ -63,6 +63,6 @@ for root, dirs, files in os.walk(doc_dirs):
             print("alias hdd" + alias_name + "='hdvim --hdgvim \"" + fullpath + "\"';")
 
 print("""
-alias hddbashtemplate='hdgvim "${HDENVDIR}/bin/hd-create-script-template.sh"';
-alias hddpythontemplate='hdgvim "${HDENVDIR}/bin/hd-create-script-template.py"';
+alias hddbashtemplate='hdvim --hdgvim "${HDENVDIR}/bin/hd-create-script-template.sh"';
+alias hddpythontemplate='hdvim --hdgvim "${HDENVDIR}/bin/hd-create-script-template.py"';
 """)
