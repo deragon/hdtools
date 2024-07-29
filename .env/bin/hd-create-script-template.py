@@ -307,6 +307,26 @@ def linux_conf_dir():
 
 
 
+# YAML
+# ────────────────────────────────────────────────────────────────────────────
+#
+# To install yaml module, you must run:  'pip install pyyaml'.
+#
+# See:  https://stackoverflow.com/questions/14261614/how-do-i-install-the-yaml-package-for-python
+import yaml
+
+def yaml_example():
+    config_path=linux_conf_dir()+f"{os.sep}myproject{os.sep}myfile.yaml"
+
+    with open(config_path, 'r') as stream:
+        print(f"Reading configuration file:  {config_path}")
+        yaml_conf = yaml.safe_load(stream)
+
+    logger.debug(f"yaml_conf = {yaml_conf}")
+    return yaml_conf
+
+
+
 # MISCELLANEOUS
 # ────────────────────────────────────────────────────────────────────────────
 def stringToHex(string):
