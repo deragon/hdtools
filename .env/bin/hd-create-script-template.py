@@ -296,6 +296,17 @@ def json_example():
 
 
 
+# RETURN LINUX STANDARD CONFIGURATION DIRECTORY FOR A USER.
+# ────────────────────────────────────────────────────────────────────────────
+def linux_conf_dir():
+    try:
+        config_dir=os.environ["XDG_CONFIG_HOME"]
+    except:
+        config_dir=os.environ["HOME"] + os.sep + ".config"
+    return config_dir
+
+
+
 # MISCELLANEOUS
 # ────────────────────────────────────────────────────────────────────────────
 def stringToHex(string):
