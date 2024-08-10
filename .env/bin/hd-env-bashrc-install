@@ -29,6 +29,7 @@ of Hans Deragon's environment.
 Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-n <nom>] [-h] <DST>+
 
   -d  Dry-run.
+  -f  Full copy of the environment, with no exclusions.
   -h  Display this help text.
 "
 }
@@ -98,12 +99,14 @@ EOS
 # ════════════════════════════════════════════════════════════════════
 
 DRYRUN=0
+FULL=0
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "dh" OPTCMD; do
+while getopts "dfh" OPTCMD; do
   case "${OPTCMD}" in
     "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "f")    FULL=1;;    # Copy over everything.
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -172,7 +175,8 @@ for DST in ${DSTS[@]}; do
   echo -e "${SCRIPT}" | /usr/bin/ssh "${DST}"
   /usr/bin/ssh "${DST}" bash "${REMOTE_SCRIPT_PATH}"
 
-  hd-env-transfer "${DST}"
+  (( FULL )) && HD_ENV_TRANSFER_OPTIONS='-f'
+  hd-env-transfer ${HD_ENV_TRANSFER_OPTIONS} "${DST}"
 done
 
 
