@@ -301,6 +301,44 @@ MISCELLANEOUS
 
 
 
+SNOWPARK & PYTHON
+══════════════════════════════════════════════════════════════════════════════
+
+  NOTES
+  ────────────────────────────────────────────────────────────────────────────
+
+    It is as of 2024-07-11 impossible to write a Python stored procedure that
+    can execute DDL statements such as "create", "drop", "grant", "revoke" and
+    more.
+
+
+
+  DOCUMENTATION
+  ────────────────────────────────────────────────────────────────────────────
+
+    Session object:
+
+      https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.Session#snowflake.snowpark.Session
+
+
+  SNOWPARK - PYTHON - EXAMPLE
+  ────────────────────────────────────────────────────────────────────────────
+
+    CREATE OR REPLACE PROCEDURE python_test_1(string_1 varchar)
+    RETURNS STRING
+    LANGUAGE PYTHON
+    RUNTIME_VERSION = '3.11'
+    PACKAGES = ('snowflake-snowpark-python')
+    HANDLER = 'run'
+    AS
+    $$
+
+    def run(session, string_1)
+        return(f"String received:  {string_1}")
+    $$;
+
+
+
 USER MANAGEMENT
 ══════════════════════════════════════════════════════════════════════════════
 
