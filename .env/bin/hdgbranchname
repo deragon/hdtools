@@ -118,10 +118,19 @@ fi
 
 printErrorsAndExitIfAny
 
-BRANCH_NAME_BASE=$(echo "$@" | sed -r 's/[:]//g;s/ /_/g;' | tr -d '[]')
+INPUT="$(echo "$@" | tr -d '\n')"
 
-cat <<EOM
+declare -ag ENTRIES=("")
+[ ! -z "${USER}"              ] && ENTRIES+=("-${USER}-1")
+[ ! -z "${HD_USER_NAME_FULL}" ] && ENTRIES+=("-${HD_USER_NAME_FULL}-1")
+
+for ENDING in "${ENTRIES[@]}"; do
+  BRANCH_NAME_BASE=$(echo "${INPUT}${ENDING}" | sed -r 's/[:]//g;s/ /_/g;' | tr -d '[]')
+  cat <<EOM
+# '${ENDING}' ending.
 git switch -c 'bug/${BRANCH_NAME_BASE}'
 git switch -c 'hotfix/${BRANCH_NAME_BASE}'
 git switch -c 'feature/${BRANCH_NAME_BASE}'
+
 EOM
+done
