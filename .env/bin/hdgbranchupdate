@@ -21,9 +21,11 @@ git remote update origin --prune
 # that cannot be safely delete, an error message will show on screen
 # and the user could then decide what to do about them.
 
+# SED:  For some reason, need to use [:space:] in []; \s does not work
+#       there.
 OUTPUT=$(
   git branch -av | \
-  sed -rn 's/^[*|+|\s](\s+)(\S+)\s+.*\[gone\].*/\2/gp' | tr '\n' '\0' | \
+  sed -rn 's/^[*|+|[:space:]](\s+)(\S+)\s+.*\[gone\].*/\2/gp' | tr '\n' '\0' | \
   xargs --null --no-run-if-empty git branch -d 2>&1
 )
 
