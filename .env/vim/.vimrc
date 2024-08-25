@@ -261,6 +261,7 @@ if($HDVIM != "")
   Plug 'tpope/vim-unimpaired'
   Plug 'vim-scripts/SQLUtilities'
   Plug 'hashivim/vim-terraform'
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " https://github.com/nvim-treesitter/nvim-treesitter
 
   " Only one mapping (or one command) provides all features of this plugin.
   " Briefly, move cursor to the position and run :GitMessenger or <Leader>gm.
