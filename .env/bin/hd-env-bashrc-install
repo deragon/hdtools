@@ -73,7 +73,10 @@ BASH_COMMANDS="
 # Alias pour charger l'environnement de Hans Deragon.  N'affecte en rien
 # l'environnement s'il n'est pas appelé.
 alias gohd='source "${USER_HOME}/.hans.deragon/.corp-"*"/gohd"'
-[ \"\${XMODIFIERS}\" == 'HDCONNECTION' ] && gohd
+if [[ \"\${XMODIFIERS}\" == 'HDCONNECTION' ]] || \\
+   [[ \"\$(dig +noall +short -x \${SSH_CLIENT/ *})\" == *'<SRC_COMPUTER>'* ]]; then
+  gohd
+fi
 "
 
 if grep --fixed-strings --quiet 'alias gohd' "${BASH_FILE}"; then
@@ -93,6 +96,11 @@ fi
 # recursively called to configure the root account.
 [ "$(whoami)" != "root" ] && rm "${0}"
 EOS
+
+# Because of the heredoc expansion was suppressed above, no use of variable or
+# call to another processor was possible. Thus below, <SRC_COMPUTER> is
+# substituted for the hostname from which this script is executing.
+sed -ir "s/<SRC_COMPUTER>/$(hostname)/g" "${REMOTE_SCRIPT_PATH}"
 
 
 # ARGUMENT PARSING
