@@ -237,8 +237,14 @@ def showGroupUsers(groupName, indent):
                 firstName  = memberData[positionsOfFields[0]:positionsOfFields[1]].strip()
                 lastName   = memberData[positionsOfFields[1]:positionsOfFields[2]].strip()
                 email      = memberData[positionsOfFields[2]:positionsOfFields[3]].strip()
+                to_print=f"{indent}    {firstName}"
 
-                print(f"{indent}    {firstName} {lastName} ({email})")
+                if firstName != lastName:
+                    to_print=f"{to_print} {lastName}"
+                if len(email) > 0:
+                    to_print=f"{to_print} ({email})"
+
+                print(to_print)
             elif exitcode == 87:
                 groupsToExpandInto.append(extractCNfromOU(member))
             else:
