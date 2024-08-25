@@ -4,8 +4,18 @@ GUI
   In active development
   ────────────────────────────────────────────────────────────────────────────
 
-    --Goneovim - BEST, not tested.
+    - Goneovim - BEST, not tested.
+
       https://github.com/akiyosi/goneovim
+
+      As of 2024-07-12, in active development, but does not work on WSL2.
+      Get error:
+
+        : CommandLine Error: Option 'simd-mode' registered more than once!
+        LLVM ERROR: inconsistency in registered CommandLine options
+        SIGABRT: abort
+
+      And cannot compile the source under WSL2.
 
     - Neovim QT
       https://github.com/equalsraf/neovim-qt
