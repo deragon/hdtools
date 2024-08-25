@@ -17,9 +17,6 @@ import logging
 import subprocess
 import re
 
-from datetime import datetime
-import time
-
 import argparse
 
 # os.path.realpath(os.curdir) # Current directory, canonical form.
