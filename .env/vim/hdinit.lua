@@ -27,15 +27,6 @@ ts.setup {
 
 -- Setup the sign column
 -- vim.cmd [[ autocmd User LspDiagnosticsChanged set signcolumn=yes:2 ]]
---
---
---a
---
---
---
---don't call globals unneccessarily
---
---
 
 -- From:  https://www.reddit.com/r/neovim/comments/lf6zlb/setting_nvim_options_in_lua/
 
