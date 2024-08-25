@@ -196,6 +196,7 @@ set foldlevel=99
 
 set nocompatible " Use Vim defaults (much better!)
 set nobackup
+set title
 
 " ════════════════════════════════════════════════════════════════════
 " Setting the RunTime Path.
