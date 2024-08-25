@@ -19,7 +19,9 @@ require 'lspconfig'.pyright.setup{}
 
 local ts = require 'nvim-treesitter.configs'
 ts.setup {
-  ensure_installed = { 'bash', 'python', 'java', 'javascript',  'lua' },
+  -- List of languages supported out-of-the-box at:
+  --   https://github.com/nvim-treesitter/nvim-treesitter/?tab=readme-ov-file#supported-languages
+  ensure_installed = { 'bash', 'python', 'java', 'javascript', 'typescript', 'sql', 'terraform', 'lua', 'c_sharp' }, -- 'powershell' does not work!
   highlight = { enable = true }
 }
 
