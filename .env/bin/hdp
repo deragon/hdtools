@@ -14,11 +14,12 @@
 import getopt
 import os.path
 import re
-import HDLibNetwork
-
-from hdlib2 import *
+import sys
+import subprocess
 
 # See:  http://www.cyberciti.biz/howto/question/linux/dpkg-cheat-sheet.php
+
+gScriptName=os.path.basename(sys.argv[0])
 
 # ----------------------------------------------------------------------
 def usage(code=255):
@@ -38,7 +39,6 @@ def usage(code=255):
                                                  "executable" then query
                                                  database.
 
-      [ -z <debug level> | --debug=<debug level> ]
       [ -h | --help ]
 
   If a package name is provided and is an actual file, then that file
@@ -53,7 +53,7 @@ def usage(code=255):
 ######################################################################
 # Main
 
-pkgsystem = getEnv("HD_OS_CODE")
+pkgsystem = os.environ["HD_OS_CODE"]
 DEB=1
 RPM=2
 
@@ -92,10 +92,11 @@ def performAction(package, title, hPkgSystems):
 def runCommand(title, cmd):
   global rv
   print(str(title + " (Running '" + str(cmd) + "') ").ljust(70) + "\n")
-  rv, lines = execute(cmd, printLines=True)
-  rv=rv >> 8
-  debug("runCommand():  rv=" + str(rv), 60)
-  return lines
+  completedProcess = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
+  rv=completedProcess.returncode
+  lines = completedProcess.stdout.decode('utf-8').rstrip()
+  print(lines)
+  return lines.split('\n')
 
 if pkgsystem == "ubuntu":
   pkgsystem=DEB
@@ -139,7 +140,7 @@ def showContents(arg):
 def findFile(arg):
   title="\nSearching for file"
   if pkgsystem == DEB:
-    cannonicalExecutable = runCommand("Canonical search for " + arg, [ "hdcanonical",  arg ])[0].strip()
+    cannonicalExecutable = runCommand("Canonical search for " + arg, [ "hdcanonical", arg ])[0]
     return runCommand(title, [ pkgtool, "-S", cannonicalExecutable ])
   else:
     return runCommand(title, [ pkgtool, "-qf", arg ])
@@ -154,75 +155,72 @@ def showList(args):
     runCommand("List", [ pkgtool, "-qa", "|", "fgrep" ] + args )
 
 try:
-  opts, args = getopt.gnu_getopt( \
-      sys.argv[1:], "cliefz:h", \
-        ["content", "list", "info", \
-         "search-file", "search-executable", \
-         "help", "debug="])
+    opts, args = getopt.gnu_getopt( \
+        sys.argv[1:], "cliefz:h", \
+          ["content", "list", "info", \
+           "search-file", "search-executable", \
+           "help"])
+
+    gShowContents=False
+    gShowList=False
+    gShowInfo=False
+    gFindFile=False
+    gFindExecutable=False
+
+    for option, arg in opts:
+      #print "argv: " + option + arg
+      if option in ("-h", "--help"):
+        usage(1)
+      elif option in ("-c", "--content"):
+        gShowContents=True
+      elif option in ("-i", "--info"):
+        gShowInfo=True
+      elif option in ("-l", "--list"):
+        gShowList=True
+      elif option in ("-f", "--search-file"):
+        gFindFile=True
+      elif option in ("-e", "--search-executable"):
+        gFindFile=True
+        gFindExecutable=True
+        gShowInfo=True
+
+    pkgs=[]
+    if gFindFile:
+      regex=re.compile("^(.*):.*");
+      for arg in args:
+        if gFindExecutable:
+          completedProcess = subprocess.run(["which", arg], stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
+          code = completedProcess.returncode
+          lines = completedProcess.stdout.decode('utf-8').rstrip().split('\n')
+          if code > 0:
+            print("Error:  `which` exited with code: " + str(code))
+            print("        Is '" + str(arg) + "' really an executable?")
+            sys.exit(code)
+          else:
+            arg = lines[0]
+        currentPkgs=findFile(arg)
+        for currentPkg in currentPkgs:
+          mo=regex.match(currentPkg)
+          if mo:
+            pkgs.append(mo.group(1))
+
+      print()
+    else:
+      pkgs = args
+
+    for pkg in pkgs:
+      if gShowInfo:
+        showInfo(pkg)
+      if gShowContents:
+        showContents(pkg)
+
+    if gShowList:
+      showList(pkgs)
+
+    # Going
+    sys.exit(rv)
+
 except getopt.GetoptError:
   # print help information and exit:
   print("Error:  invalid argument(s).")
   usage(2)
-
-gShowContents=False
-gShowList=False
-gShowInfo=False
-gFindFile=False
-gFindExecutable=False
-
-for option, arg in opts:
-  debug("argv: " + option + arg)
-  #print "argv: " + option + arg
-  if option in ("-h", "--help"):
-    usage(1)
-  elif option in ("-c", "--content"):
-    gShowContents=True
-  elif option in ("-i", "--info"):
-    gShowInfo=True
-  elif option in ("-l", "--list"):
-    gShowList=True
-  elif option in ("-f", "--search-file"):
-    gFindFile=True
-  elif option in ("-e", "--search-executable"):
-    gFindFile=True
-    gFindExecutable=True
-    gShowInfo=True
-  elif option in ("-z", "--debug"):
-    debug.setLevel(int(arg))
-    print("Debug level set to " + arg)
-
-pkgs=[]
-if gFindFile:
-  regex=re.compile("^(.*):.*");
-  for arg in args:
-    if gFindExecutable:
-      code, lines = execute(["which", arg])
-      if code > 0:
-        print("Error:  `which` exited with code: " + str(code))
-        print("        Is '" + str(arg) + "' really an executable?")
-        sys.exit(code)
-      else:
-        arg = lines[0][:-1]  # Get first line and strip newline.
-    currentPkgs=findFile(arg)
-    for currentPkg in currentPkgs:
-      mo=regex.match(currentPkg)
-      if mo:
-        pkgs.append(mo.group(1))
-
-  print()
-else:
-  pkgs = args
-
-debug("pkgs = " + str(pkgs), 10)
-
-for pkg in pkgs:
-  if gShowInfo:
-    showInfo(pkg)
-  if gShowContents:
-    showContents(pkg)
-
-if gShowList:
-  showList(pkgs)
-
-# Going
-sys.exit(rv)
