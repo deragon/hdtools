@@ -39,7 +39,7 @@ args = parser.parse_args()
 # MAIN
 # ────────────────────────────────────────────────────────────────────────────
 
-pattern = re.compile(".*\.(txt|md)")
+pattern = re.compile(r".*\.(txt|md)")
 
 doc_dirs=os.path.join(os.environ["HDENVDIR"], "docs")
 
@@ -58,7 +58,7 @@ for root, dirs, files in os.walk(doc_dirs):
             fullpath=os.path.join(root, file)
 
             # Path.stem() removes the extension.
-            alias_name=Path(re.sub('[^\w|\.|\-|+|=]', '¤', file_basename, flags=re.IGNORECASE)).stem
+            alias_name=Path(re.sub(r"[^\w|\.|\-|+|=]", '¤', file_basename, flags=re.IGNORECASE)).stem
 
             print("alias hdd" + alias_name + "='hdvim --hdgvim \"" + fullpath + "\"';")
 
