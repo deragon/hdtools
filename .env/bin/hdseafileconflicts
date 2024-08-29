@@ -67,18 +67,17 @@ ansi = {
 parser = argparse.ArgumentParser(description=f"""
 {ansi['FG_WHITE_BG_GREEN']} SAFE {ansi['RESET']}
 
-Find Seafile conflict files (SFConflict) and compare it to the original file.
+Find Seafile conflict files (SFConflict) in current folder and
+sub-folders, and compare them to the original file.
+
+{ansi['FG_WHITE_BG_GREEN']}Green{ansi['RESET']} == SFConflict file is old and probably obsolete.
+{ansi['FG_WHITE_BG_RED']}Red  {ansi['RESET']} == SFConflict file is more recent.  Need to check what's up.
 
 """, formatter_class=argparse.RawTextHelpFormatter)
 
-# Positional arguments.
-# If <files> is mandatory, use "nargs='+'".  If optional, use "nargs='*'".
-parser.add_argument('files', metavar='files', type=str, nargs='*',
-                    help='List of files to rename.')
-
 parser.add_argument('-d', '--delete', dest='delete',
                     default=False, action="store_true",
-                    help='Create hard links instead of moving files.')
+                    help='Delete conflict file.')
 
 args = parser.parse_args()
 
@@ -88,13 +87,12 @@ def report_error():
 
     if len(errors) > 0:
         print(f"{ansi['FG_WHITE_BG_RED']}ERROR:{ansi['RESET']}  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
-        print(f"{ansi['FG_WHITE_BG_RED']}ERREUR:{ansi['RESET']}  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
         sys.exit(1)
 
 report_error()
 
 
-pattern = re.compile("(.*?) \(SFConflict.*?\)(.*)")
+pattern = re.compile(r"(.*?) \(SFConflict.*?\)(.*)")
 
 allfiles = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
 
@@ -114,12 +112,16 @@ for file_conflict in allfiles:
 
             if modif_time_conflict_epoch <= modif_time_base_epoch:
                 color=f"{ansi['FG_WHITE_BG_GREEN']}"
+                diff_cmd=f"meld '{file_conflict}' '{file_base}' &\n"
             else:
                 color=f"{ansi['FG_WHITE_BG_RED']}"
+                diff_cmd=f"meld '{file_base}' '{file_conflict}' &\n"
+
             print(f"{color}{modif_time_conflict_human}{ansi['RESET']} {modif_size_conflict}   {file_conflict}\n"
-                  f"{color}{modif_time_base_human}{ansi['RESET']} {modif_size_base}   {file_base}\n")
+                  f"{color}{modif_time_base_human}{ansi['RESET']} {modif_size_base}   {file_base}\n"
+                  f"{diff_cmd}")
         else:
-            print(f"{ansi['FG_BLACK_BG_YELLO']} ORPHANED:  {modif_time_conflict_human}    {file_conflict}{ansi['RESET']}")
+            print(f"{ansi['FG_BLACK_BG_YELLOW']} ORPHANED:  {modif_time_conflict_human}    {file_conflict}{ansi['RESET']}")
 
 
         if args.delete == True:
