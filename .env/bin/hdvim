@@ -41,6 +41,11 @@ if "--hddiff" in sys.argv:
     vimType += "diff"
     sys.argv.remove("--hddiff")
 
+fork=True
+if "--nofork" in sys.argv:
+    sys.argv.remove("--nofork")
+    fork=False
+
 try:
     gvim_from_env = [ os.environ['HD_GVIM'] ]
 except:
@@ -158,10 +163,10 @@ if "cygwin" in platform.system().lower() and "gvim" in executable.lower():
 #print("nominalArgs:  " + str(nominalArgs))
 #print("argv:  " + str(argv))
 cmd = [ executable ] + nominalArgs
-print("cmd:  " + str(cmd))
-print("cmd:  " + str(" ".join(cmd)))
+# print("cmd:  " + str(cmd))
+# print("cmd:  " + str(" ".join(cmd)))
 
-if "gvim" in executable.lower() and display != None:
+if "gvim" in executable.lower() and display != None and fork == True:
 
     # Forking here to allow user to go back to the terminal prompt quickly.
     # Sometimes, gvim takes time to start, for instance when the DISPLAY
