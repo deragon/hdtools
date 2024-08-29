@@ -14,7 +14,7 @@
 
 setVarIfDirsExist HD_SEAFILE_BASE_DIR  "/vol/data/base/seafile"
 setVarIfDirsExist HD_SOFTWARE_BASE_DIR "/vol/data/base/software" "${HD_SEAFILE_BASE_DIR}/software" "${HD_SEAFILE_BASE_DIR}/Software"
-setVarIfDirsExist HD_SOFTWARE_NODIST_ARCH_DIR "${HD_SOFTWARE_NODIST_ARCH_DIR}/nodist/${HD_OS_ARCH}"
+setVarIfDirsExist HD_SOFTWARE_NODIST_ARCH_DIR "${HD_SOFTWARE_BASE_DIR}/nodist/${HD_OS_ARCH}"
 
 [ ! -z "${HD_SOFTWARE_NODIST_ARCH_DIR}" ] && \
   PATH=${HD_SOFTWARE_NODIST_ARCH_DIR}/bin:${PATH}
