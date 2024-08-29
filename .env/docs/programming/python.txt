@@ -1044,6 +1044,24 @@ PROJECT CREATION
     Virtual environments are saved at:  "${HOME}/.virtualenvs"
 
 
+    Troubleshooting
+    --------------------------------------------------------------------------
+
+      Problem:
+
+        $ pip
+        Traceback (most recent call last):
+          File "/home/hans/.virtualenvs/marketmanager/bin/pip", line 5, in <module>
+            from pip._internal.cli.main import main
+        ModuleNotFoundError: No module named 'pip'
+
+      Solution:
+
+        From:  https://stackoverflow.com/questions/21826859/setting-up-a-virtualenv-no-module-named-pip
+
+        wget https://bootstrap.pypa.io/get-pip.py
+        python get-pip.py
+
 
   🟡 venv (use Virtualenv above, it is better)
   ────────────────────────────────────────────────────────────────────────────
