@@ -32,6 +32,7 @@ Usage:  ${SCRIPT_NAME} [-d] [-h] <username@fqdn>
   <username@fqdn>  Destination to which the files should be transferred.
 
   -d  Dry-run.
+  -f  Full copy of the environment, with no exclusions.
   -h  Display this help text.
 "
 }
@@ -49,13 +50,15 @@ run()
 # ════════════════════════════════════════════════════════════════════
 
 DRYRUN=0
+FULL=0   # Do not copy over everything.
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "o:deh" OPTCMD; do
+while getopts "o:defh" OPTCMD; do
   case "${OPTCMD}" in
     "o")    OPTIONS="${OPTARG}";;
     "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "f")    FULL=1;;    # Copy over everything.
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -95,7 +98,8 @@ if [ ! -z "${ERRORS}" ]; then
   exit 1
 fi
 
-RSYNC_OPTIONS="
+if (( FULL == 0 )); then
+  RSYNC_OPTIONS="
   --include='COPYRIGHT.txt' \
   --exclude='*.txt*' \
   --exclude='*.doc*' \
@@ -137,6 +141,7 @@ RSYNC_OPTIONS="
   --exclude='zCopy' \
   --exclude='${SCRIPT_NAME}' \
 "
+fi
 
 if [[ "${OPTIONS}" == *"excludeprivate"* ]]; then
   RSYNC_OPTIONS="${RSYNC_OPTIONS}
