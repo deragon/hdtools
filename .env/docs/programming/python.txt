@@ -922,6 +922,14 @@ DATABASE
     database connectivity from Python.
 
 
+  MySQL
+  ────────────────────────────────────────────────────────────────────────────
+
+    The module to install is:
+
+    pip install mysql-connector-python
+
+
 
 PIP / MODULES/PACKAGES DOWNLOADS
 ══════════════════════════════════════════════════════════════════════════════
