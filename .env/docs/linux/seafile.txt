@@ -15,9 +15,11 @@ TROUBLESHOOTING
   File path contains symbols that are not supported by Windows - I use Linux!
   ────────────────────────────────────────────────────────────────────────────
 
-    https://forum.seafile.com/t/file-path-contains-symbols-that-are-not-supported-by-windows-i-use-linux/14769
+    Go to
 
-    Solution:  Install the lastest version of the client.
+      - Settings (mechanical wheel just right of user name)
+      - Basic tab
+      - Check "Hide Windows incompatiblity paths Message"
 
 
   Impossible to delete file for repository setup to keep full history.
