@@ -85,7 +85,7 @@ alias hdupdate='sudo apt-get update'
 alias hdupgrade='sudo snap refresh; sudo apt-get -y dist-upgrade; sudo apt-get -y autoremove; sudo flatpak update --assumeyes'
 alias hdmaj='hdupdate;hdupgrade;hdrebootrequired;hddate -n'
 
-if ( type wmctrl >/dev/null 2>&1 ) then
+if [[ ! -z "${XDG_CURRENT_DESKTOP}" ]]; then
   # Desktop environment detected.
   #
   # Strictly speaking, there might be no desktop running, but if wmctrl is
