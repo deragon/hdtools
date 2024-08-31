@@ -52,7 +52,7 @@ def evalEnv(listOrString, warning=False, variables=os.environ):
     newlist = []
     for string in list:
         if string != None:
-            for variable in re.compile('(\${[\w]+})').findall(string):
+            for variable in re.compile(r'(\${[\w]+})').findall(string):
                 # print "variable:  " + variable
                 try:
                     string = string.replace(

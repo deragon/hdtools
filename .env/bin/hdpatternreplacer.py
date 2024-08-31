@@ -28,7 +28,7 @@ scriptName=os.path.basename(sys.argv[0])
 # of Python.  One might replace the code below with 'argparse' if needed.
 import getopt
 
-patternRe = re.compile("\[\[.*?\]\]", re.DOTALL)
+patternRe = re.compile(r"\[\[.*?\]\]", re.DOTALL)
 notFoundString = " : not found"
 inPlace = False
 outputFilename = None
@@ -162,7 +162,7 @@ def processContent(contentOrg, replacements):
   # Clever and efficient algorithm used to replace all Strings in the file.
   # From:  http://stackoverflow.com/questions/6116978/python-replace-multiple-strings
   if len(patternArray) > 0:
-    pattern = re.compile("|".join(list(patternArray.keys())))
+    pattern = re.compile(r"|".join(list(patternArray.keys())))
     contentNew = pattern.sub(lambda m: patternArray[re.escape(m.group(0))], contentOrg)
   else:
     contentNew = contentOrg

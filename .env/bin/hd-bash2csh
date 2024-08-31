@@ -20,7 +20,7 @@ import sys
 
 # Exporting only variables that start with an alphabetic character.
 # We try to avoid exporting variables like $_, $1, etc...
-regexp = re.compile("^([a-zA-Z]+\w*)=(.+)")
+regexp = re.compile(r"^([a-zA-Z]+\w*)=(.+)")
 environment = subprocess.getoutput( \
                 "bash -c \". " + sys.argv[1] + "; env\"").split("\n")
 

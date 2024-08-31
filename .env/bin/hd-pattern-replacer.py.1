@@ -68,8 +68,8 @@ if not inPlace and outputFilename is None:
 
 notFoundString = " : not found"
 
-#pattern = re.compile("(?:.*?(\[\[.*?\]\]).*?)*", re.DOTALL)
-patternRe = re.compile("\[\[.*?\]\]", re.DOTALL)
+#pattern = re.compile(r"(?:.*?(\[\[.*?\]\]).*?)*", re.DOTALL)
+patternRe = re.compile(r"\[\[.*?\]\]", re.DOTALL)
 
 for inputFilename in inputFilenames:
 
@@ -110,7 +110,7 @@ for inputFilename in inputFilenames:
   # Clever and efficient algorithm used to replace all Strings in the file.
   # From:  http://stackoverflow.com/questions/6116978/python-replace-multiple-strings
   if len(patternArray) > 0:
-    pattern = re.compile("|".join(list(patternArray.keys())))
+    pattern = re.compile(r"|".join(list(patternArray.keys())))
     contentNew = pattern.sub(lambda m: patternArray[re.escape(m.group(0))], contentOrg)
   else:
     contentNew = contentOrg

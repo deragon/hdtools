@@ -177,7 +177,7 @@ def execute(command, logfile=None, logfileAppend=True,
     return exitstatus, lines
 
 
-whiteSpacePatterns = re.compile('[\s|\(|\)]')
+whiteSpacePatterns = re.compile(r'[\s|\(|\)]')
 
 # This functon takes a list used for a command to execute and returns a string
 # representation of it with arguments containing whitespaces quoted.
@@ -382,7 +382,7 @@ HDLib.evalVariables("Today is ${DATE}.", { "Date" : str(date) } )
 
 def evalVariables(string, variables):
     # for variable in re.compile("([^\\]\${\w+})").findall(string):
-    for variable in re.compile("(\${\w+})").findall(string):
+    for variable in re.compile(r"(\${\w+})").findall(string):
         try:
             string = string.replace(variable, variables[variable[2:-1]])
         except KeyError:

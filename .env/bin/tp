@@ -87,7 +87,7 @@ args = parser.parse_args()
 errors=""
 
 port = None
-pattern = re.compile("(.*?//)*([^:]+)(?::*(\d+))*(/.*)*$")
+pattern = re.compile(r"(.*?//)*([^:]+)(?::*(\d+))*(/.*)*$")
 
 
 def hostportparser(hostport):

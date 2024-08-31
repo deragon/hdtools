@@ -223,9 +223,9 @@ if not gRegex:
   gOldString=re.escape(gOldString)
 
 gMainRE=re.compile(gOldString)
-gFindSarRE=re.compile(".*\.sar$")
-gExcludeRE=re.compile(".*\.svn.*")
-#greFileMatch=re.compile("")
+gFindSarRE=re.compile(r".*\.sar$")
+gExcludeRE=re.compile(r".*\.svn.*")
+#greFileMatch=re.compile(r"")
 
 gsetProcessedPaths = set()
 

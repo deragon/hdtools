@@ -252,7 +252,7 @@ os.chdir("<dir>")  # cd "<dir">
 # ────────────────────────────────────────────────────────────────────────────
 
 import re
-pattern = re.compile("<regex>")
+pattern = re.compile(r"<regex>")
 matches = pattern.match(line)
 if matches != None:
     data=matches.group(1)

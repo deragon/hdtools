@@ -228,8 +228,8 @@ if not gRegex:
 debug("gOldString = " + str(gOldString), 20)
 debug("reFlags =    " + str(reFlags), 20)
 gMainRE=re.compile(gOldString, reFlags)
-gFindSarRE=re.compile(".*\.sar$")
-gExcludeRE=re.compile(".*(\.idea/.*|\.git/.*|\.svn/.*|\.sw.|\.jar|\.sar)$")
+gFindSarRE=re.compile(r".*\.sar$")
+gExcludeRE=re.compile(r".*(\.idea/.*|\.git/.*|\.svn/.*|\.sw.|\.jar|\.sar)$")
 gsetProcessedPaths = set()
 
 for path in gDirectoriesAndFiles:

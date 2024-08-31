@@ -11,7 +11,7 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-gRe=re.compile("(https*://)([^/|:]*)(.*)")
+gRe=re.compile(r"(https*://)([^/|:]*)(.*)")
 
 lines = sys.stdin.readlines()
 import sys

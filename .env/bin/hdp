@@ -186,7 +186,7 @@ try:
 
     pkgs=[]
     if gFindFile:
-      regex=re.compile("^(.*):.*");
+      regex=re.compile(r"^(.*):.*");
       for arg in args:
         if gFindExecutable:
           completedProcess = subprocess.run(["which", arg], stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +

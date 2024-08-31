@@ -126,10 +126,10 @@ if not gShowAll and \
 
 if os.environ["HD_OS_FAMILY"].lower().find("cygwin") >= 0:
   command = [ "ipconfig" ]
-  reInitAddr=re.compile("\s+Adresse IP.*?:\s+(\d+\.\d+\.\d+\.\d+).*")
+  reInitAddr=re.compile(r"\s+Adresse IP.*?:\s+(\d+\.\d+\.\d+\.\d+).*")
 else:
   command = [ "ip", "address" ]
-  reInitAddr=re.compile("\s+inet (\d+\.\d+\.\d+\.\d+).*")
+  reInitAddr=re.compile(r"\s+inet (\d+\.\d+\.\d+\.\d+).*")
 
 completedProcess = subprocess.run(
                     command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -135,7 +135,7 @@ logging.debug(str(lines))
 in_certificate = False
 certificate = []
 
-cn_regex=re.compile(".*CN\s=\s(\S+).*")
+cn_regex=re.compile(r".*CN\s=\s(\S+).*")
 
 for index, line in enumerate(lines):
 
