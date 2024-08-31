@@ -47,6 +47,7 @@ If -d is used, create a directory with the ISO 8601 timestamp.
   -s <suffix>     Suffix filename with <suffix>.  Note that the suffix
                   will show up before the extension of the file.
   -e <suffix>     Suffix filename after the extension with <suffix>.
+  -n              No timestamp added.
 
   -h              Display this help text.
 EOM
@@ -59,11 +60,12 @@ MOVE=0
 MAKEDIR=0
 BTAR=0
 TIMESTAMP_TYPE="file"
+TIMESTAMP_ACTIVATED=1
 unset PREFIX SUFFIX ENDSUFFIX
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "bcdmp:s:e:h" OPTCMD; do
+while getopts "bcdmnp:s:e:h" OPTCMD; do
   case "${OPTCMD}" in
     "b")    BTAR=1;;
     "c")    TIMESTAMP_TYPE="now";;
@@ -72,6 +74,7 @@ while getopts "bcdmp:s:e:h" OPTCMD; do
     "e")    ENDSUFFIX=".${OPTARG}";;
     "d")    MAKEDIR=1;;
     "m")    MOVE=1;;
+    "n")    TIMESTAMP_ACTIVATED=0;;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -122,12 +125,14 @@ fi
 
 setTimeStampFile()
 {
+  (( ! TIMESTAMP_ACTIVATED )) && return
+
   local FILE_SRC="${1}"
   # All time formats are following the ISO 8601 standard.
   if [ "${TIMESTAMP_TYPE}" == "file" ]; then
-    TIMESTAMP_FILE=$(date --date="@$(stat -c "%Y" ${FILE_PATH}${FILE_SRC})" +"%Y%m%dT%H%M%S")
+    TIMESTAMP_FILE="-$(date --date="@$(stat -c "%Y" ${FILE_PATH}${FILE_SRC})" +"%Y%m%dT%H%M%S")"
   else
-    TIMESTAMP_FILE=$(date +"%Y%m%dT%H%M%S")
+    TIMESTAMP_FILE="-$(date +"%Y%m%dT%H%M%S")"
   fi
 }
 
@@ -136,7 +141,7 @@ setTimeStampFile()
 if ((BTAR)); then
   setTimeStampFile "${FILES[0]}"
   [[ ! -z "${PREFIX}" ]] && PREFIX="${PREFIX}-"  # Appending '-' if set.
-  FILE_DST="${PREFIX}${FILES[0]}-${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
+  FILE_DST="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
   tar cvjf "${FILE_DST}" ${FILES[@]}
   echo "Created:  ${FILE_DST}"
   if ((MOVE)); then
@@ -193,14 +198,19 @@ else
     [[ ! -z "${PREFIX}" ]] && PREFIX="${PREFIX}-"  # Appending '-' if set.
     setTimeStampFile "${FILE_SRC}"
 
-    FILE_DST="${FILE_PATH}${PREFIX}${FILENAME}-${TIMESTAMP_FILE}${SUFFIX}${EXTENSION}${ENDSUFFIX}"
+    FILE_DST="${FILE_PATH}${PREFIX}${FILENAME}${TIMESTAMP_FILE}${SUFFIX}${EXTENSION}${ENDSUFFIX}"
+    FILE_SRC="${FILE_PATH}${FILE_SRC}"
 
-    if (( ${MOVE} )); then
-      echo "Moving ${FILE_SRC} ▶▶ ${FILE_DST}"
-      mv "${FILE_PATH}${FILE_SRC}" "${FILE_DST}"
+    if [[ "${FILE_SRC}" == "${FILE_DST}" ]]; then
+      echo "SRC and DST files are the same.  Aborted for '${FILE_SRC}'"
     else
-      echo "Copying ${FILE_SRC} ▶▶ ${FILE_DST}"
-      cp -rp "${FILE_PATH}${FILE_SRC}" "${FILE_DST}"
+      if (( ${MOVE} )); then
+        echo "Moving ${FILE_SRC} ▶▶ ${FILE_DST}"
+        mv "${FILE_SRC}" "${FILE_DST}"
+      else
+        echo "Copying ${FILE_SRC} ▶▶ ${FILE_DST}"
+        cp -rp "${FILE_SRC}" "${FILE_DST}"
+      fi
     fi
 
   done
