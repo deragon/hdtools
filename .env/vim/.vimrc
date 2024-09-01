@@ -261,7 +261,35 @@ if($HDVIM != "")
   Plug 'tpope/vim-unimpaired'
   Plug 'vim-scripts/SQLUtilities'
   Plug 'hashivim/vim-terraform'
+
+  " mason.nvim is a Neovim plugin that allows you to easily manage external
+  " editor tooling such as LSP servers, DAP servers, linters, and formatters
+  " through a single interface.
+  "
+  "   https://github.com/williamboman/mason.nvim
+  Plug 'williamboman/mason.nvim'
+  " From:  https://github.com/williamboman/mason-lspconfig.nvim?tab=readme-ov-file#vim-plug
+  Plug 'williamboman/mason-lspconfig.nvim'
+  Plug 'neovim/nvim-lspconfig'
+
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " https://github.com/nvim-treesitter/nvim-treesitter
+
+  " nvim-cmp
+  " ────────────────────────────────────────────────────────────────────────────
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'hrsh7th/cmp-buffer'
+    Plug 'hrsh7th/cmp-path'
+    Plug 'hrsh7th/cmp-cmdline'
+    Plug 'hrsh7th/nvim-cmp'
+
+    " For vsnip users.
+    Plug 'hrsh7th/cmp-vsnip'
+    Plug 'hrsh7th/vim-vsnip'
+
+
+
+  "Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
   " Only one mapping (or one command) provides all features of this plugin.
   " Briefly, move cursor to the position and run :GitMessenger or <Leader>gm.
@@ -271,6 +299,14 @@ if($HDVIM != "")
   Plug 'rhysd/git-messenger.vim'
 
   Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+  " https://github.com/dense-analysis/neural
+  "
+  "   A ChatGPT Vim plugin, an OpenAI Neovim plugin, and so much more! Neural
+  "   integrates various machine learning tools so you can let AI write code
+  "   for you in Vim/Neovim, among other helpful things.
+  "Plug 'dense-analysis/neural'
+  "Plug 'muniftanjim/nui.nvim'
+  "Plug 'elpiloto/significant.nvim'
   "Plug 'vim-textobj-comment'   " Bug; runs deprecated code.  Had to comment out.
   "Plug 'vim-textobj-user'      " Bug; runs deprecated code.  Had to comment out.
 
@@ -282,6 +318,21 @@ else
 endif
 
 
+" Neural plugin - https://github.com/dense-analysis/neural
+" ════════════════════════════════════════════════════════════════════
+"
+"   A ChatGPT Vim plugin, an OpenAI Neovim plugin, and so much more! Neural
+"   integrates various machine learning tools so you can let AI write code for
+"   you in Vim/Neovim, among other helpful things.
+"
+" MUST PAY A SUBSCRIPTION TO USE THE API.
+let g:neural = {
+\   'source': {
+\       'openai': {
+\           'api_key': $OPENAI_API_KEY_SECRET,
+\       },
+\   },
+\}
 " ════════════════════════════════════════════════════════════════════
 
 let g:GPGDebugLevel=200
