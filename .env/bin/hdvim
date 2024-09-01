@@ -87,8 +87,7 @@ elif "gnvim" in vimType:
     else:
         nominalArgs = terminalArgs + [ "nvim", "-d" ]
 
-elif vimType == "gvim":
-
+elif "gvim" in vimType:
     gvim     = [ "gvim"    , "gvim.exe"     ]
     gvimdiff = [ "gvimdiff", "gvimdiff.exe" ]
 
