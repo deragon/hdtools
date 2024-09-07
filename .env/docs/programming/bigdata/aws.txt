@@ -152,6 +152,14 @@ AWS CLOUDFORMATION
 
       https://stackoverflow.com/questions/39678784/validationerror-when-calling-the-createstack-operation-template-format-error
 
+  - Descrition on multiple line are defined as:
+
+      Description: >
+
+        Some text here.
+
+        Now more on another paragraph
+
   - Understanding AWS CloudFormation !Sub syntax
       https://www.fischco.org/technica/2017/cloud-formation-sub/
 
