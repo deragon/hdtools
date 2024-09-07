@@ -64,7 +64,7 @@ run()
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
 
-PARAMETERS=""
+PARAMETERS_FILE=""
 DRYRUN=1
 OPERATION="create-stack"
 STACK_SUFFIX=""
@@ -78,7 +78,7 @@ while getopts "xcuzp:n:s:deh" OPTCMD; do
     "c")    OPERATION="create-stack";;
     "u")    OPERATION="update-stack";;
     "z")    OPERATION="delete-stack";;
-    "p")    PARAMETERS="${OPTARG}";;
+    "p")    PARAMETERS_FILE="${OPTARG}";;
     "n")    STACK_NAME="${OPTARG}";;
     "s")    STACK_SUFFIX="${OPTARG}";;
     "d")    DRYRUN=1;;  # Run in dry-run mode.
@@ -127,11 +127,11 @@ if ((${#FILES[*]} == 0)); then
   ERRORS="${ERRORS} - You must provide at least one file.\n"
 fi
 
-if [ ! -z "${PARAMETERS}" ]; then
-  if [ -e  "${PARAMETERS}" ]; then
-    PARAMETERS="--parameters '$(cat "${PARAMETERS}" | egrep -vE "^\s*#" | envsubst | tr -d '\r')'"
+if [ ! -z "${PARAMETERS_FILE}" ]; then
+  if [ -e  "${PARAMETERS_FILE}" ]; then
+    PARAMETERS_JSON="$(cat "${PARAMETERS_FILE}" | egrep -vE "^\s*#" | envsubst | tr -d '\r')"
   else
-    ERRORS="${ERRORS} - Parameters file does not exists:  ${PARAMETERS}\n"
+    ERRORS="${ERRORS} - Parameters file does not exists:  ${PARAMETERS_FILE}\n"
   fi
 fi
 
@@ -201,10 +201,29 @@ for FILE in ${FILES[@]}; do
       EXTRA_OPTIONS="${EXTRA_OPTIONS} --capabilities \"CAPABILITY_NAMED_IAM\" --template-body \"file://./${FILE}\""
     fi
 
-    EXTRA_OPTIONS="${EXTRA_OPTIONS} ${PARAMETERS}"
-
     shopt -s extglob                        # Important:  This option must be set for trimming to work.
     EXTRA_OPTIONS="${EXTRA_OPTIONS##*( )}"  # Trim all spaces (' ') from the left.
+
+    case "${OPERATION}" in
+
+      "create-stack");;  # Nothing to prepare in advance for this operation.
+
+      "create-change-set"|"update-stack"|"delete-stack")
+        if [[ -z "${PARAMETERS_JSON}" ]]; then
+          PARAMETERS_JSON="$(aws cloudformation describe-stacks --stack-name "${STACK_NAME}${STACK_SUFFIX}" |  jq -r '.Stacks[].Parameters')"
+        fi
+        if [[ ! -z "${PARAMETERS_JSON}" && "${PARAMETERS_JSON}" != "null" ]]; then
+          PARAMETERS_ARG="--parameters '${PARAMETERS_JSON}'"
+        fi
+        EXTRA_OPTIONS="${EXTRA_OPTIONS} ${PARAMETERS_ARG}"
+        ;;
+
+      *)
+          ERRORS="${ERRORS} - BUG:  Operation not implemented:  ${OPERATION}\n"
+          printErrorsAndExitIfAny
+        ;;
+    esac
+
     run aws cloudformation "${OPERATION}" \
       --stack-name "${STACK_NAME}${STACK_SUFFIX}" \
       ${EXTRA_OPTIONS} 2>&1
