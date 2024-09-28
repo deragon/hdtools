@@ -69,34 +69,36 @@ if display is None or vimType[0] != "g":
     gvimdiff      = []
     gvim_from_env = []
 
-elif "gnvim" in vimType:
-
-    # A good graphical nvim does not really exist as of 2024-07-01.  Thus we
-    # emulate a graphical nvim by starting a fresh terminal and running nvim
-    # within it.
-
-    # gvim     = [ "terminator" ]
-    # gvimdiff = [ "terminator" ]
-    # terminalArgs = [ "--maximize", "--icon", "/usr/share/icons/hicolor/48x48/apps/gvim.png", "-x" ]  # -x:  Run the rest of the command line.
-
-    gvim     = [ "gnome-terminal" ]
-    gvimdiff = [ "gnome-terminal" ]
-    terminalArgs = [ "--" ]
-    if "diff" in vimType:
-        nominalArgs = terminalArgs + [ "nvim" ]
-    else:
-        nominalArgs = terminalArgs + [ "nvim", "-d" ]
-
-elif "gvim" in vimType:
-    gvim     = [ "gvim"    , "gvim.exe"     ]
-    gvimdiff = [ "gvimdiff", "gvimdiff.exe" ]
-
-if "nvim" in vimType:
+if "nvim" in vimType:  # Neovim / NVIM
     vim      = [ "nvim"    ]
     vimdiff  = [ "nvim -d" ]
-else:
+
+    if "gnvim" in vimType:
+
+        # A good graphical nvim does not really exist as of 2024-07-01.  Thus we
+        # emulate a graphical nvim by starting a fresh terminal and running nvim
+        # within it.
+
+        # gvim     = [ "terminator" ]
+        # gvimdiff = [ "terminator" ]
+        # terminalArgs = [ "--maximize", "--icon", "/usr/share/icons/hicolor/48x48/apps/gvim.png", "-x" ]  # -x:  Run the rest of the command line.
+
+        gvim     = [ "gnome-terminal" ]
+        gvimdiff = [ "gnome-terminal" ]
+        terminalArgs = [ "--" ]
+        if "diff" in vimType:
+            nominalArgs = terminalArgs + [ "nvim" ]
+        else:
+            nominalArgs = terminalArgs + [ "nvim", "-d" ]
+
+else:  # Regular Vim/gVim
     vim      = [ "vim",      "vim.exe"     ]
     vimdiff  = [ "vimdiff",  "vimdiff.exe" ]
+
+    if "gvim" in vimType:
+        gvim     = [ "gvim"    , "gvim.exe"     ]
+        gvimdiff = [ "gvimdiff", "gvimdiff.exe" ]
+
 
 if "diff" in vimType or ( len(gvim_from_env) > 0 and "diff" in gvim_from_env[0] ):
     vim_to_try = gvim_from_env + gvimdiff + vimdiff
