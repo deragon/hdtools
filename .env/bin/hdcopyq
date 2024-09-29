@@ -14,5 +14,6 @@
 # For some reason, upon startup, the CopyQ icon does not show up on in the tray section.
 # Adding a delay to so Gnome has time so settle before.
 sleep 10
+export QT_QPA_PLATFORM=xcb
 /usr/bin/copyq &
 disown
