@@ -124,12 +124,7 @@ if os.path.isfile(hdvimrc) and os.access(hdvimrc, os.R_OK):
 if os.path.isfile(hdvimrcpost) and os.access(hdvimrcpost, os.R_OK):
   nominalArgs  += [ "-S", hdvimrcpost]
 
-if "vim" not in executable:
-    # Adding double quotes to arguments meant for vim.
-    #nominalArgs += [ f"\"{x}\"" for x in sys.argv[1:] ]
-    nominalArgs += sys.argv[1:]
-else:
-    nominalArgs += sys.argv[1:]
+nominalArgs += sys.argv[1:]
 
 if "cygwin" in platform.system().lower() and "gvim" in executable.lower():
     # Windows Gvim being used here.
