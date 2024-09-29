@@ -250,6 +250,9 @@ fi
 
 add2path PATH /var/lib/flatpak/exports/bin
 
+alias cdnm='cdprint /etc/NetworkManager/dispatcher.d/'
+
+
 
 # MUSÉE
 # ══════════════════════════════════════════════════════════════════════════════
