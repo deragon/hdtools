@@ -167,7 +167,7 @@ setxauth()
   add2path PATH -b "${HD_SOFTWARE_BASE_DIR}/nodist/i386/acroread/bin"
 
   alias battery='upower -i /org/freedesktop/UPower/devices/battery_BAT0'
-  alias cdbattery='cdprint "/sys/devices/platform/smapi/BAT0"; echo "You may use the \"tlp stat\" command for full status."'
+  # alias cdbattery='cdprint "/sys/devices/platform/smapi/BAT0"; echo "You may use the \"tlp stat\" command for full status."'
 
   #alias ur='unity --replace &' # Hopefully, temporary alias.
 
