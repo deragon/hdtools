@@ -19,10 +19,14 @@ import platform
 
 
 def flatpak_exists(flatpak_id):
-    completedProcess = subprocess.run([ "flatpak", "info", flatpak_id ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if completedProcess.returncode == 0:
-        return flatpak_id
-    else:
+    try:
+        completedProcess = subprocess.run([ "flatpak", "info", flatpak_id ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if completedProcess.returncode == 0:
+            return flatpak_id
+        else:
+            return None
+    except FileNotFoundError:
+        # Command 'flatpak' is not installed on the system.
         return None
 
 def flatpak_vim_exists():
