@@ -62,4 +62,4 @@ if [ ! -z "${ERRORS}" ]; then
   exit 1
 fi
 
-eval git difftool ${OPTIONS} --tool meld "'$@'" &
+git difftool ${OPTIONS} --tool meld "$@" &
