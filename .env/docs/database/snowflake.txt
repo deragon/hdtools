@@ -77,9 +77,9 @@ SQL
     select *
     from table(
       information_schema.QUERY_HISTORY_BY_USER(
-        USER_NAME >= '<some user>',
-        end_time_range_start >= to_timestamp_ltz('2021-09-03 18:05:00.000 -0500'),
-        end_time_range_end   >= to_timestamp_ltz('2021-09-03 18:06:00.000 -0500')
+        USER_NAME => '<some user>',
+        end_time_range_start => to_timestamp_ltz('2021-09-03 18:05:00.000 -0500'),
+        end_time_range_end   => to_timestamp_ltz('2021-09-03 18:06:00.000 -0500')
        ))
     order by start_time;
 
@@ -87,8 +87,8 @@ SQL
     select *
     from table(
       information_schema.QUERY_HISTORY(
-        end_time_range_start >= TIMESTAMPADD(DAY, -1, current_timestamp()),
-        end_time_range_end   >= current_timestamp()
+        end_time_range_start => TIMESTAMPADD(DAY, -1, current_timestamp()),
+        end_time_range_end   => current_timestamp()
        ))
     order by start_time;
 
