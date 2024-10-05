@@ -131,9 +131,14 @@ fi
 #   The following 'sed' command removes the added seconds since Epoch from the
 #   output and if "${FORMAT}" includes human-readable dates, nanoseconds and
 #   the timezone are removed from them.
-eval "
-  find \"${DIRECTORIES[@]}\" -maxdepth ${MAXDEPTH} -type f -print0 |
-  xargs --null stat --format '%Y|${FORMAT}' |
-  sort -nr |
-  sed -r 's/.*?\|//g;s/([[:digit:]]+:[[:digit:]]+:[[:digit:]]+)\.[[:digit:]]+ .[[:digit:]]+/\1/g' |
-  ${HEADTAIL_CMD} -n ${NUMBER}"
+FILES="$(find "${DIRECTORIES[@]}" -maxdepth ${MAXDEPTH} -type f)"
+if [[ -z "${FILES}" ]]; then
+  echo "No files found in directories provided."
+else
+  eval "
+    printf \"${FILES}\" |
+    xargs -d '\n' stat --format '%Y|${FORMAT}' |
+    sort -nr |
+    sed -r 's/.*?\|//g;s/([[:digit:]]+:[[:digit:]]+:[[:digit:]]+)\.[[:digit:]]+ .[[:digit:]]+/\1/g' |
+    ${HEADTAIL_CMD} -n ${NUMBER}"
+fi
