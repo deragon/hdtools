@@ -17,7 +17,7 @@ SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real d
 
 SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
 SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
-SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+SCRIPT_PATH_ABS_PARENT="$(dirname "${SCRIPT_PATH_ABS}")"
 
 unset ANSI
 if [ -t 1 ] ; then
