@@ -104,6 +104,20 @@ net.ipv4.tcp_keepalive_time = 300
 EOM
 
 
+  Mounting network locations
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://learn.microsoft.com/fr-fr/archive/blogs/wsl/file-system-improvements-to-the-windows-subsystem-for-linux
+
+    $ sudo mkdir /mnt/d$ sudo mount -t drvfs D: /mnt/d
+
+    When you wish to mount a network location, you can of course create a
+    mapped network drive in Windows and mount that as indicated above.
+    However, it's also possible to mount them directly using a UNC path:
+
+    $ sudo mount -t drvfs '\\server\share' /mnt/share
+
+
 
 TROUBLESHOOTING
 ══════════════════════════════════════════════════════════════════════════════
