@@ -337,6 +337,7 @@ let g:neural = {
 
 let g:GPGDebugLevel=200
 let g:GPGUseAgent=1
+"let g:GPGDebugLog="/tmp/vimgpg.log"
 
 " ════════════════════════════════════════════════════════════════════
 let mapleader = "\\"  " Actually, just type '\'
