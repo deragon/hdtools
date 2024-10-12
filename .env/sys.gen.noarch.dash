@@ -151,11 +151,16 @@ if which vim >/dev/null 2>&1; then
   alias vi='hdvim'
   alias vim='hdvim'
   alias vimdiff='hdvim --hddiff'
-  alias nvimdiff='nvim -d'
-  alias gnvim='hdvim --hdgnvim'
+  alias ndiff='nvim -d'
+  alias gn='hdvim --hdgnvim'
+  alias gndiff='hdvim --hdgnvim --hddiff'
+  gnw() { hdvim --hdgnvim "$(which $*)"; }
+  alias nv='hdvim --hdnvim'
   alias nvim='hdvim --hdnvim'
+  alias nvdiff='hdvim --hddiff'
+  nw() { hdvim "$(which $*)"; }
 
-  EDITOR='hdvim --hdgvim'
+  EDITOR='hdvim --hdnvim'
 
   gvim()     { hdvim --hdgvim "$@"; }
   gvimdiff() { hdvim --hdgvim --hddiff "$@"; }
