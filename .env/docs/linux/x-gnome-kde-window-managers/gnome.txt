@@ -114,6 +114,12 @@ TROUBLESHOOTING
 NAUTILUS
 ══════════════════════════════════════════════════════════════════════════════
 
+  Nautilus - Configure top left bar section directories
+  ────────────────────────────────────────────────────────────────────────────
+
+     vim ~/.config/user-dirs.dirs  # Nautilus - Configure top left bar section directories
+
+
   Nautilus - Cannot delete file to trash
   ────────────────────────────────────────────────────────────────────────────
 
