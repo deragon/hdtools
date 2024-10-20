@@ -136,7 +136,7 @@ if [[ -z "${FILES}" ]]; then
   echo "No files found in directories provided."
 else
   eval "
-    printf \"${FILES}\" |
+    printf \"\${FILES}\" |
     xargs -d '\n' stat --format '%Y|${FORMAT}' |
     sort -nr |
     sed -r 's/.*?\|//g;s/([[:digit:]]+:[[:digit:]]+:[[:digit:]]+)\.[[:digit:]]+ .[[:digit:]]+/\1/g' |
