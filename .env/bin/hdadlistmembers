@@ -197,13 +197,15 @@ def findPositionsOfFields(header):
 
 
 def showGroupUsers(groupName, indent):
-    (groupOU, exitcode)      = runDsCommand(["dsquery.exe", "group", "-name",    groupName ], True)
+    (groupOU, exitcode) = runDsCommand(["dsquery.exe", "group", "-name", groupName], True)
     if groupOU == "":
         msg=text[language]["GroupDoesNotExist"]
         print(f"\n{groupName} - {msg}.\n")
         return
 
-    (groupMembers, exitcode) = runDsCommand(["dsget.exe",   "group", "-members", groupOU   ], True)
+    groupName = extractCNfromOU(groupOU)  # Fetch name of group with proper, official case.
+
+    (groupMembers, exitcode) = runDsCommand(["dsget.exe", "group", "-members", groupOU], True)
     groupMembers = groupMembers.split("\n")
     groupMembers = [ x.strip('"') for x in groupMembers ]
     logger.debug("groupMembers = >>%s<<", groupMembers)
