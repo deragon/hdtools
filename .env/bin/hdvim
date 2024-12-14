@@ -78,9 +78,14 @@ except:
     gvim_from_env = []
 
 executables_to_try = []
+vimArgs = []
+debug_cmds = []
+hdvimrc     = os.environ['HDVIMRC']
+hdvimrcpost = os.environ['HDVIMRC'] + "-post"
+
 if "nvim" in vimType:  # Neovim / NVIM
     executables_to_try = [ "nvim" ]
-
+    #debug_cmds = [ "unshare", "--net", "--map-root-user" ]  # Block any network access to nvim.
     if graphical:
 
         # A good graphical nvim does not really exist as of 2024-07-01.  Thus we
@@ -90,7 +95,14 @@ if "nvim" in vimType:  # Neovim / NVIM
         # terminal_cmd = [ "terminator", "--maximize", "--icon", "/usr/share/icons/hicolor/48x48/apps/gvim.png", "-x" ]  # -x:  Run the rest of the command line.
         terminal_cmd = [ "gnome-terminal", "--maximize", "--" ]
 
+    if os.path.isfile(hdvimrc) and os.access(hdvimrc, os.R_OK):
+        vimArgs  += [ "-u", hdvimrc]
 else:  # Regular Vim/gVim
+    if os.path.isfile(hdvimrc) and os.access(hdvimrc, os.R_OK):
+        vimArgs  += [ "-u", hdvimrc]
+    if os.path.isfile(hdvimrcpost) and os.access(hdvimrcpost, os.R_OK):
+        vimArgs  += [ "-S", hdvimrcpost]
+
     if graphical:
         nominalArgs += [ "-g" ]
 
@@ -126,14 +138,6 @@ if executable is None:
     print("ERROR:  Could not find [n]vim executable.  Aborting")
     sys.exit(1)
 
-hdvimrc     = os.environ['HDVIMRC']
-hdvimrcpost = os.environ['HDVIMRC'] + "-post"
-
-if os.path.isfile(hdvimrc) and os.access(hdvimrc, os.R_OK):
-  nominalArgs  += [ "-u", hdvimrc]
-if os.path.isfile(hdvimrcpost) and os.access(hdvimrcpost, os.R_OK):
-  nominalArgs  += [ "-S", hdvimrcpost]
-
 nominalArgs += sys.argv[1:]
 
 if "cygwin" in platform.system().lower() and "gvim" in executable.lower():
@@ -168,7 +172,7 @@ if "cygwin" in platform.system().lower() and "gvim" in executable.lower():
 
 #print("nominalArgs:  " + str(nominalArgs))
 #print("argv:  " + str(argv))
-cmd = terminal_cmd + [ executable ] + nominalArgs
+cmd = terminal_cmd + debug_cmds + [ executable ] + vimArgs + nominalArgs
 # print("cmd:  " + str(cmd))
 # print("cmd:  " + str(" ".join(cmd)))
 
