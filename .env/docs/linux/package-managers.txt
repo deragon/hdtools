@@ -1,0 +1,121 @@
+APT
+══════════════════════════════════════════════════════════════════════════════
+
+  PURGE CONFIGURATION FILES OF PACKAGES ALREADY REMOVED
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://askubuntu.com/questions/376253/is-not-installed-residual-config-safe-to-remove-all
+
+    Those package are just that has configuration files that hasn't been
+    removed. Unless you are planning to reinstall the packages again, and want
+    to keep the configuration, yes, you can remove them safely.
+
+      dpkg -l | grep '^rc' | awk '{print $2}' | xargs sudo apt-get purge
+
+
+
+  MISCELLANEOUS
+  ────────────────────────────────────────────────────────────────────────────
+
+    - apt-get download <package>  # Download .deb into current directory.  No installation will be performed.  Safe.
+
+
+
+DEB
+══════════════════════════════════════════════════════════════════════════════
+
+  Uncompress a deb file
+  ────────────────────────────────────────────────────────────────────────────
+
+    ar t "${DEB_FILE}"  # List content of the deb file.
+    ar x "${DEB_FILE}"  # Extract content of the deb file in ${CWD}.
+
+      Once extracted, newly showing *.xz files can be extracted using:
+
+        tar xvg *.xz
+
+
+  Install a local .deb but have dependencies that need to be downloaded.
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  http://superuser.com/questions/196864/how-to-install-local-deb-packages-with-apt-get/698249
+
+    sudo apt-get install gdebi-core    # Install gdebi
+    sudo gdebi /path/to/filename.deb   # Use gdebi
+
+
+
+HOW TO CREATE A .DEB PACKAGE FROM SOURCE & INSTALL IT AUTOMATICALLY / RPM ALSO
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  http://community.linuxmint.com/tutorial/view/162
+
+
+  I've found this method to work in most but NOT all cases, as sometimes
+  additional depencies are required in order to build the package.
+
+  STEP 1:
+
+    The required packages are:
+
+    build-essential
+    automake
+    autoconf
+    libtool
+    pkg-config
+    libcurl4-openssl-dev
+    intltool
+    libxml2-dev
+    libgtk2.0-dev
+    libnotify-dev
+    libglib2.0-dev
+    libevent-dev
+    checkinstall
+
+    Or simply run the following command:
+
+    $ sudo apt-get install build-essential automake autoconf libtool \
+    pkg-config libcurl4-openssl-dev intltool libxml2-dev libgtk2.0-dev \
+    libnotify-dev libglib2.0-dev libevent-dev checkinstall
+
+  STEP 2:
+
+    The source tarball "transmission-1.76.tar.bz2" is used in this example
+    (sub the .bz2 tarball of the source code for the app you are working on
+    for this one)
+
+    $ tar xvjf transmission-1.76.tar.bz2 (alt:or you can extract the data from
+    the tarball using the archive manager the right-click menu)
+
+    $ cd transmission-1.76 (alt: or you can highlight the newly created folder
+    and from the right click menu choose "open terminal here")
+
+    $ ./configure && make && sudo checkinstall
+
+    This will create a .deb package for you and automatically install it on
+    your system, which can then be easily removable via Synaptic (look in the
+    local section), or via the Software Manager or by:
+
+    $ sudo dpkg -r
+
+    Then you can remove the source .tar.gz from your computer.
+
+
+
+RPM
+══════════════════════════════════════════════════════════════════════════════
+
+  rpm -Uhv <rpm file>.rpm
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
