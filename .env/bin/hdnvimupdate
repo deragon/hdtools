@@ -1,0 +1,183 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General public Picense which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+# SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
+
+LATEST_RELEASE_URL="https://api.github.com/repos/neovim/neovim/releases/latest"
+THIRD_PARTY_DIR="${HOME}/3rdparty"
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True ANSI (24 bits) terminal.
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["ITALIC"]="\e[2m"
+    ["UNDERLINE"]="\e[3m"
+    ["REVERSE"]="\e[7m"
+    ["STRIKETHROUGH"]="\e[9m"
+    ["BOLD_OFF"]="\e[21m"
+    ["ITALIC_OFF"]="\e[22m"
+    ["UNDERLINE_OFF"]="\e[23m"
+    ["REVERSE_OFF"]="\e[27m"
+    ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLINK"]="\e[5m"
+    ["BLACK"]="\e[30m"
+    ["RED"]="\e[31m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+    ["MAGENTA"]="\e[35m"
+    ["CYAN"]="\e[36m"
+    ["WHITE"]="\e[37m"
+    ["BG_RED"]="\e[41m"
+    ["BG_GREEN"]="\e[42m"
+    ["BG_YELLOW"]="\e[43m"
+    ["BG_BLUE"]="\e[44m"
+    ["BG_MAGENTA"]="\e[45m"
+    ["BG_CYAN"]="\e[46m"
+    ["BG_WHITE"]="\e[47m"
+    ["BG_DEFAULT"]="\e[49m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Downloads latest stable version of Neovim (nvim) from:
+
+  ${LATEST_RELEASE_URL}
+
+...and install it under:
+
+  ${THIRD_PARTY_DIR}
+
+It then add/updates a symbolic link under '${THIRD_PARTY_DIR}/bin' to nvim's
+binary.
+
+Usage:  ${SCRIPT_NAME} [-h]
+
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "n:dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+FILES=("$@") # If you want the number of elements of $@, use $#
+
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+printErrorsAndExitIfAny()
+{
+  printWarnings
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
+}
+
+printWarnings()
+{
+  if [ ! -z "${WARNINGS}" ]; then
+    echo -e "${ANSI[FG_BLACK_BG_YELLOW]}WARNING:${ANSI[RESET]}  The following warnings were thrown.\n"
+    echo -e "${WARNINGS}"
+  fi
+}
+
+WARNINGS=""
+ERRORS=""
+
+printErrorsAndExitIfAny
+
+# Blinking warning.
+#echo -e "${ANSI[FG_WHITE_BG_RED]}${ANSI[BLINK]} WARNING ${ANSI[RESET]}"
+
+
+
+
+
+# Directory to store the downloaded release
+DOWNLOAD_DIR="${HOME}/Downloads"
+
+# Get the latest release info from GitHub API
+LATEST_RELEASE="$(curl -s "${LATEST_RELEASE_URL}")"
+
+# Extract the tag name (version) and tarball URL
+LATEST_VERSION=$(echo "${LATEST_RELEASE}" | sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p')
+#TARBALL_URL_SRC=$(echo "${LATEST_RELEASE}" | sed -nE 's/.*"tarball_url": "([^"]+)".*/\1/p')
+#TARBALL_URL="$(echo $LATEST_RELEASE | jq -r '.assets[]|select(.name=="nvim-linux64.tar.gz")|.browser_download_url')"
+TARBALL_URL="https://github.com/neovim/neovim/releases/download/${LATEST_VERSION}/nvim-linux64.tar.gz"
+
+DST_NAME="nvim-${LATEST_VERSION}-linux"
+DST_DIR="${THIRD_PARTY_DIR}/${DST_NAME}"
+
+if [[ -e "${DST_DIR}" ]]; then
+  echo -e "${ANSI[FG_BLACK_BG_YELLOW]} WARNING ${ANSI[RESET]}  Already installed:  ${DST_DIR}"
+  exit 1
+fi
+
+# Download the tarball
+TARBALL_FILE_PATH="${DOWNLOAD_DIR}/nvim-${LATEST_VERSION}-linux.tar.gz"
+if [[ -e "${TARBALL_FILE_PATH}" ]]; then
+  echo -e "${ANSI[FG_BLACK_BG_YELLOW]} WARNING ${ANSI[RESET]}  Already downloaded:  ${TARBALL_FILE_PATH}"
+else
+  curl -L "${TARBALL_URL}" --output "${TARBALL_FILE_PATH}"
+  echo "Download complete."
+fi
+
+COMPRESSED_FILE_ROOT_DIR="$(tar -tf "${TARBALL_FILE_PATH}" | head -1 | sed -r 's/([^\/]+).*/\1/g')"
+cd "${THIRD_PARTY_DIR}"
+echo "Decompressing:  ${TARBALL_FILE_PATH}"
+tar xvzf "${TARBALL_FILE_PATH}" >/dev/null
+mv "${COMPRESSED_FILE_ROOT_DIR}" "${DST_NAME}"
+
+cd "${THIRD_PARTY_DIR}/bin"
+rm -f nvim
+ln -s "${DST_DIR}/bin/nvim" .
+
+echo -e "${ANSI[GREEN]} New version available at: ${DST_DIR}${ANSI[RESET]}"
