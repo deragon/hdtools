@@ -148,29 +148,27 @@ require("mason-lspconfig").setup({
 })
 
 
-
-
--- Setup the sign column
--- vim.cmd [[ autocmd User LspDiagnosticsChanged set signcolumn=yes:2 ]]
-
--- From:  https://www.reddit.com/r/neovim/comments/lf6zlb/setting_nvim_options_in_lua/
+-- NVIM OPTIONS
+-- ══════════════════════════════════════════════════════════════════════════════
+--
+--  From:  https://www.reddit.com/r/neovim/comments/lf6zlb/setting_nvim_options_in_lua/
 
 local go = vim.o
 local bo = vim.bo --> buffer only use bo
 local wo = vim.wo --> window only use wo
 
--- no need for a global function
+-- No need for a global function
 local set_options = function(locality, options)
   for key, value in pairs(options) do
     locality[key] = value
-    end
+  end
 end
 
--- define our options
 local options_global = {
-  -- From:
+  -- Setup the sign column.  From:
+  --
   --   - https://www.reddit.com/r/neovim/comments/wceanu/how_do_i_stop_the_screen_from_shifting_when_the/
-  --   -  https://www.reddit.com/r/neovim/comments/neaeej/only_just_discovered_set_signcolumnnumber_i_like/
+  --   - https://www.reddit.com/r/neovim/comments/neaeej/only_just_discovered_set_signcolumnnumber_i_like/
   signcolumn = "yes:1",
 
   --hlsearch = true, -- don't highlight matching search
