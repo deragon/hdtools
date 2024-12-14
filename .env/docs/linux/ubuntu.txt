@@ -1,0 +1,445 @@
+VERSION OF UBUNTU
+══════════════════════════════════════════════════════════════════════════════
+
+  lsb_release -a;uname -a
+
+
+
+SUPPORT / FORUMS
+══════════════════════════════════════════════════════════════════════════════
+
+  DISCOURSE FORUMS - https://discourse.ubuntu.com/
+  ────────────────────────────────────────────────────────────────────────────
+
+    This community resource is for people working at all levels of the stack
+    on Ubuntu. We welcome discussion of Ubuntu itself and other closely
+    related topics.
+
+    The site is new, and as such the structure will evolve over time. To that
+    end, we welcome your site feedback.
+
+    This site is not for technical support.
+    (Use IRC, Ubuntu Forums, or askubuntu.com for support questions.)
+
+
+  TECHNICAL SUPPORT
+  ────────────────────────────────────────────────────────────────────────────
+
+    Use IRC, Ubuntu Forums, or askubuntu.com.
+
+
+
+ADD A PPA LOCATION WITH THE COMMAND LINE
+══════════════════════════════════════════════════════════════════════════════
+
+  sudo add-apt-repository ppa:<name>
+
+
+  How can I know the source ppa of an installed package?
+  ────────────────────────────────────────────────────────────────────────────
+
+    apt-cache madison <package-name>  # See:  https://askubuntu.com/questions/164114/how-can-i-know-the-source-ppa-of-an-installed-package
+
+
+
+UBUNTU VIDEO WASHED COLORS
+══════════════════════════════════════════════════════════════════════════════
+
+  http://ubuntuforums.org/showthread.php?p=913975
+  http://ubuntuforums.org/showthread.php?t=231521
+
+
+
+SOUND NOT WORKING
+══════════════════════════════════════════════════════════════════════════════
+
+  http://ubuntuforums.org/showthread.php?t=205449
+  http://ubuntuforums.org/showthread.php?t=1744966
+
+
+
+ALTERNATIVE GUIS
+══════════════════════════════════════════════════════════════════════════════
+
+  Lubuntu
+
+    sudo apt-get install lubuntu-desktop
+    http://www.techdrivein.com/2011/05/top-4-lightweight-official-ubuntu-based.html
+
+  Kubuntu
+
+    sudo apt-get install kubuntu-desktop
+
+  Xubuntu
+
+    sudo apt-get install xfce4 xfce4-goodies
+
+    OU
+
+    # ATTENTION:
+    #
+    # La ligne suivante semble suggéré que ubuntu-desktop sera retiré.  Elle
+    # n'est pas idéale.  Utilisez la commande ci-dessus qui n'installe que
+    # xfce4.
+    # sudo apt-get install xubuntu-desktop  # DANGER
+
+
+
+UNETBOOTIN (UNIVERSAL NETWORK INSTALLER)
+══════════════════════════════════════════════════════════════════════════════
+
+  ...is a superb little tool that makes it dead easy to create bootable USB drives
+
+  http://www.itworld.com/operating-systems/288633/how-get-your-linux-feet-wet-unetbootin
+  http://unetbootin.sourceforge.net/
+
+
+
+XFCE
+══════════════════════════════════════════════════════════════════════════════
+
+  SCREENSAVER:  UTILISER GNOME-SCREENSERVER AU LIEU DE XSCREENSAVER
+  ------------------------------------------------------------
+
+  Le fichier suivant regarde si xscreensaver roule déjà.  Sinon, il vérifie
+  pour gnome-screensaver.  Donc, il suffit que xscreensaver ne roule pas
+  mais gnome-screensaver roule pour que cela marche.
+
+  /usr/bin/xflock4
+
+  http://www.linuxquestions.org/questions/linux-software-2/using-gnome-screensaver-in-xfce-and-not-xscreensaver-458516/
+
+  https://bugzilla.xfce.org/show_bug.cgi?id=5927
+
+
+  CONFIGURATION
+  ------------------------------------------------------------
+
+    xfce4-settings-manager
+
+
+  CONFIGURE USB AUTO MOUNTING
+  ------------------------------------------------------------
+
+  - Start Thunar, XFCE's file manager (CLI:  thunar)
+  - Edit / Preferences / Advanced / Configure the management of removable
+    drives and media.
+
+
+  REMOVE ORCA
+  ------------------------------------------------------------
+  sudo dpkg -r gnome-orca
+
+
+
+PULSEAUDIO
+══════════════════════════════════════════════════════════════════════════════
+
+  MIC LOOPBACK UBUNTU – HEAR MY SOUND THROUGH SPEAKERS
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://mozinc.wordpress.com/2017/07/06/mic-loopback-ubuntu-hear-my-sound-through-speakers/
+
+    Now we will route your microphone to your speakers. Do this by running the
+    following command:
+
+      pactl load-module module-loopback latency_msec=1 # Pulseaudio loop enabled.
+
+    On the Recording tab of pavucontrol, you can show all streams (combobox at
+    the bottom) and then configure which microphone (if you have more than
+    one) should loopback into the built-in analog stereo
+
+    To stop it running, run:
+
+      pactl unload-module module-loopback # Pulseaudio loop disabled.
+
+
+  pulseaudio[8390]: sap.c: sendmsg() failed: Operation not permitted
+  ────────────────────────────────────────────────────────────────────────────
+
+
+    Cela se produit après un suspend/resume?
+
+    Solution:  http://ubuntuforums.org/showthread.php?t=1031095
+
+      did you enable multicast traffic on your interface?
+
+      route -n
+      Destination Gateway Genmask Flags Metric Ref Use Iface
+      224.0.0.0 0.0.0.0 240.0.0.0 U 0 0 0 lo
+
+      /etc/network/interfaces
+      up route add -net 224.0.0.0 netmask 240.0.0.0 lo
+      down route del -net 224.0.0.0 netmask 240.0.0.0 lo
+
+    Je confirme que c'est le problème.  -- Hans Deragon, 2013/03/24, 09:33 EDT
+
+
+
+  USING PULSEAUDIO TO SHARE SOUND ACROSS ALL YOUR COMPUTERS
+  ----------------------------------------------------------------------
+
+    https://www.linux.com/learn/tutorials/332418:weekend-project-using-pulseaudio-to-share-sound-across-all-your-computers
+
+
+
+DEFAULT ON BOOT
+══════════════════════════════════════════════════════════════════════════════
+
+  Boot defaullts at:  /etc/default/rcS
+
+  FORCE REBOOT
+  ────────────────────────────────────────────────────────────────────────────
+
+    Linux is not Windows XP and if reboot fail you usually still connect by
+    SSH and do something. This commands will show you how to remotely hard
+    reboot machine. Hard reboot mean that shutdown scripts will not run and
+    machine reboot immediately without syncing hard disk drives, shutdown
+    applications etc, it’s more like hitting the reset button.
+
+    echo 1 > /proc/sys/kernel/sysrq
+    echo b > /proc/sysrq-trigger
+
+    This commands enable sysrq and after this calls fast reboot. If you want
+    to force shutdown machine try this.  Force shutdown
+
+    echo 1 > /proc/sys/kernel/sysrq
+    echo o > /proc/sysrq-trigger
+
+    See:  http://www.linux-geex.com/hard-reset-on-linux-command-line/
+
+
+  HAVE DISK CHECKED UPON REBOOT (FSCK)
+  ────────────────────────────────────────────────────────────────────────────
+
+    See:  https://askubuntu.com/questions/476313/force-fsck-safe
+
+    sudo touch /forcefsck  # Force reboot
+
+
+
+SAUVETAGE (RESCUE) UN FILESYSTEM/DISK AVEC FSCK
+══════════════════════════════════════════════════════════════════════════════
+
+  Source: http://ubuntuforums.org/showthread.php?t=726724
+
+  NOTE:  Dans les instructions ci-dessous, à partir de 12.04, il n'est
+         pas nécessaire de configurer dm-crypt et autre.  Le filesystem
+         encrypté est automatiquement disponible sur /dev/dm-*.
+
+  In short:
+
+    - Get a ubuntu live cd
+      from http://www.ubuntu.com/desktop/get-ubuntu/download
+    - open a terminal
+    - sudo apt-get update && sudo apt-get install lvm2 cryptsetup
+    - sudo modprobe dm-crypt
+    - sudo cryptsetup luksOpen /dev/sda5 crypt1
+    - sudo vgscan --mknodes
+    - sudo vgchange -ay
+    - sudo e2fsck /dev/dm-2 OR sudo fsck /dev/dm-2
+
+    /dev/sda5 and /dev/dm-2 is specific to your setup
+
+  For a overview over your partions start System-->Administration-->Disk
+  Utility or GParted Partition Editor
+
+
+
+APT
+══════════════════════════════════════════════════════════════════════════════
+
+  WARNING: The following packages cannot be authenticated!
+  ------------------------------------------------------------
+  Solution:  apt-get clean; apt-get update; apt-get -y dist-upgrade
+  Réf:  http://ubuntuforums.org/showthread.php?p=7001019#7001019
+
+
+
+  LET BACK / FREEZE DEBIAN PACKAGE AT A A SPECIFIC VERSION
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  http://askubuntu.com/questions/18654/how-to-prevent-updating-of-a-specific-package
+
+    sudo apt-mark showhold               # Print the list of packages on hold
+    sudo apt-mark   hold <package name>  # Freeze version
+    sudo apt-mark unhold <package name>  # Unfreeze version
+
+
+  THE FOLLOWING PACKAGES HAVE BEEN KEPT BACK
+  ────────────────────────────────────────────────────────────────────────────
+
+    Phase upgrades
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      From:  https://askubuntu.com/questions/1421222/update-upgrade-not-working-because-of-phased-updates
+
+      Phased Updates is one precaution to prevent everybody from receiving a
+      buggy package via upgrade: Some people get the upgraded a few days
+      earlier, others a few days later. This provides an opportunity to pause
+      distribution if early folks report problems.
+
+      There is nothing wrong. Your system is NOT broken.
+
+      JUST BE PATIENT AND WAIT YOUR TURN
+
+
+    Other reason why this could happen (much less often)
+    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+
+      If the dependencies have changed on one of the packages you have
+      installed so that a new package must be installed to perform the upgrade
+      then that will be listed as "kept-back".
+
+      http://askubuntu.com/questions/601/the-following-packages-have-been-kept-back-why-and-how-do-i-solve-it
+
+      That article says sudo apt-get dist-upgrade will force the installation
+      of those newer packages.
+
+      Note:
+
+        dist-upgrade will install all pending updates, with their new
+        dependencies.  If for some reason, you don't want to do that, you
+        should use apt-get install package-name dependency-package-name
+        instead.
+
+
+  DISABLE AUTOMATIC UPDATES
+  ────────────────────────────────────────────────────────────────────────────
+
+    From: https://www.garron.me/en/linux/turn-off-stop-ubuntu-automatic-update.html
+
+    Using your favorite editor open the file /etc/apt/apt.conf.d/10periodic
+    and change:
+
+      APT::Periodic::Update-Package-Lists "1";
+
+    To:
+
+      APT::Periodic::Update-Package-Lists "0";
+
+    That's it. Automatic update is now off.
+
+
+  APT-KEY GPG KEY MISSING
+  ────────────────────────────────────────────────────────────────────────────
+
+    Error:
+
+      W: GPG error: http://ppa.launchpad.net precise Release: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 3FBD715A53E5501D
+
+    Solution:
+
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3FBD715A53E5501D
+
+
+
+INIT
+══════════════════════════════════════════════════════════════════════════════
+
+  Pour les services qui n'ont pas migrés à systemd (valide pour 20.04):
+
+    update-rc.d <service> disable
+    update-rc.d <service> enable
+
+  'update-rc.d' replaces the old 'chkconfig' tool.
+
+
+
+SCHEDULER
+══════════════════════════════════════════════════════════════════════════════
+
+  Ubuntu server uses CFQ scheduler instead of deadline
+    https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1008400
+
+
+
+TRASH BIND
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://askubuntu.com/questions/1177100/how-to-fix-not-working-trash-on-bind-mounts-in-ubuntu-19-04-and-hide-them-in-n
+
+  Cannot move files from bind mounts to trash (neither using Nautilus GUI, nor
+  via gio trash):
+
+    $ gio trash file.txt
+    gio: file:///home/user/data/file.txt:
+    Trashing on system internal mounts is not supported
+
+  Bug ouvert sur le sujet:  https://gitlab.gnome.org/GNOME/gvfs/issues/159
+
+  Commit that causes this error:
+
+    https://gitlab.gnome.org/GNOME/glib/commit/d1eaf72c001279aa15a2135a0749ef864c8edb42
+
+
+
+REMOVE OLD KERNELS
+══════════════════════════════════════════════════════════════════════════════
+
+  --->>>  Rouler:  hdkernelremoveold
+  au lieu du script ci-dessous.  Effacer le script ci-dessous lorsque
+  prouvé que ça marche.
+
+  apt-get autoremove
+
+  # Ménage dans /boot
+  unset PACKAGE_TO_DELETE
+  for (( subversion = 44; subversion < 56; subversion = subversion +1 )); do
+    kernel="3.2.0-${subversion}"
+      if [ -f "/boot/vmlinuz-${kernel}-generic" ]; then
+        echo "Removing ${kernel}"
+        PACKAGE_TO_DELETE="${PACKAGE_TO_DELETE} linux-image-${kernel}-generic linux-headers-${kernel}-generic"
+      fi
+  done
+  apt-get remove --purge --yes ${PACKAGE_TO_DELETE}
+  update-grub
+
+
+  # Si jamais un kernel linux s'est mal installé, il suffit de le réinstaller
+  # avec la commande suivante:
+  apt-get install --reinstall linux-image-3.2.0-58-generic linux-image-generic linux-generic
+
+  # Autre commande utile...
+  dpkg --configure -a
+
+
+
+WHOOPSIE / APPORT
+══════════════════════════════════════════════════════════════════════════════
+
+  From:  https://askubuntu.com/questions/135540/what-is-the-whoopsie-process-and-how-can-i-remove-it
+
+  What's whoopsie?  It's the "Ubuntu Error Reporting" daemon, and is installed
+  by default in both desktop/server installations.
+
+  When something crashes, whoopsie does two things:
+
+  - Collects the crash report generated by Apport and
+  - Can send them to Ubuntu/Canonical (specifically to https://daisy.ubuntu.com in BSON)
+
+
+  DISABLING IT
+  ────────────────────────────────────────────────────────────────────────────
+
+    You can disable it by going into System Settings -> Privacy -> Diagnostics
+    and unchecking the box labelled "Send error reports to Canonical."
+
+    To disable it on Ubuntu Server, edit the /etc/default/whoopsie file and
+    change report_crashes= to false, then run sudo stop whoopsie.
+
+    Note that if you do this, we will not be made aware of the problems
+    affecting your computer and may be unable to fix them.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
