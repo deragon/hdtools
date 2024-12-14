@@ -1,0 +1,53 @@
+SREEEN (terminal attachment software)
+══════════════════════════════════════════════════════════════════════════════
+
+  $ screen
+
+  * <now run commands in your screen session>
+
+  # To detach
+  * <CTRL-a> d
+
+  # To list screen session
+  $ screen -ls
+
+  # To attach to a particular screen session
+  $ screen -r <id>
+
+  or connect to the most recent one:
+
+  $ screen -r
+
+  ────────────────────────────────────────────────────────────────────────────
+
+  From:  https://uisapp2.iu.edu/confluence-prd/pages/viewpage.action?pageId=115540034
+
+  From the command prompt, just run screen. This will give you a new subshell.
+  Run your desired program
+
+  Detatch from the screen session using the key sequence Ctrl-a Ctrl-d (note
+  that all screen key bindings start with Ctrl-a). This will drop you back to
+  your original shell and display a message "[detached]", indicating that the
+  screen session is still running.
+
+  You can then list the available screen sessions by running "screen -list"
+
+  You can reattach to this screen session by running "screen -r". Once
+  reattached, you will be able to take off where you left off and see any
+  output that was printed to the screen during the time that you were
+  detached. If you have multiple screen sessions, then you can specify the tty
+  name (as displayed by screen -list) as an argument to screen -r to attach to
+  a particular session.
+
+
+
+█ ─ Copyright Notice ───────────────────────────────────────────────────
+█
+█ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+█
+█ Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+█ released under the GNU Affero General public Picense which can be found at:
+█
+█     https://www.gnu.org/licenses/agpl-3.0.en.html
+█
+█ ─────────────────────────────────────────────────── Copyright Notice ─
