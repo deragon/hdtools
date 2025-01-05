@@ -187,7 +187,10 @@ else:
 # logging.debug("Test of logging %s", "here. :)")
 logging.basicConfig(
     format='%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s',
-    datefmt=iso8601Human)
+    datefmt=iso8601Human,
+    # filename=f"/var/log/{scriptName}.log",
+    # filemode="a",
+    )
 
 # Creating a logger with the script's name and setting it to a specific log
 # level.
@@ -195,6 +198,9 @@ logger = logging.getLogger(scriptName)
 logger.setLevel(level)
 logger.debug("Test of logging %s", "here. :)")
 
+# fh = logging.FileHandler(f"/var/log/{scriptName}.log", mode='a')
+# fh.setLevel(level)
+# logger.addHandler(fh)  # For some reason, the basicConfig format does not apply.  Need to investigate more on this.
 
 errors = ""
 
