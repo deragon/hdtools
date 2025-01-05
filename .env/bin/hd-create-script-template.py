@@ -345,7 +345,7 @@ def stringToHex(string):
 # Using Stop watch module to measure laps time between calls.
 # See:  https://pypi.org/project/swpy/
 
-# from swpy import Timer.
+# from swpy import Timer
 #
 # t = Timer("Chronometer")
 #
