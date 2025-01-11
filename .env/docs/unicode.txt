@@ -1,13 +1,12 @@
 UNICODE UTF-8 UTF8
 ══════════════════════════════════════════════════════════════════════════════
-
   💯  Mon 2₵.  My 2₵.
   👍 😀 😂 😛 🙄 😖 😠 😱 😲 🤯 👶
-  ⚠️  Warning  ⚡ Electricity      🚨 Alarm
-  💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)  🔑 key
+  ⚠️  Warning  ⚡ Electricity      🚨 Alarm    🔧 Wrench
+  💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)  🔑 Key
   🧱 Brick wall/Blocked           🚧 Construction/Blocked
   🐔👍 (pull request)             💀 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
-  👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹            🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
+  👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹 🎯         🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
 
   Circles
 
@@ -56,6 +55,7 @@ UNICODE UTF-8 UTF8
   🎆 Fireworks     🎉 Party Popper    🎊 Confetti Ball
   🥂 Clinking Glasses  🍾 Bottle of Champagne  🔫 Gun/Pistol
   🎆 🎉 🎊 🥂 🍾 Party / festivity / celebration related characters
+  🪰 🦟 🪳 🐝 🦋 🪲 🐞 🐜 🦗 🕷 🕸 🦂 🪱 🐛  Bugs/insects
 
   🆘SOS  ● ● ● ▬ ▬ ▬ ● ● ●
   💻Personal Computer                          🖪 Black Hard Shell Floppy Disk
@@ -75,6 +75,7 @@ UNICODE UTF-8 UTF8
   ? 1F44B  ∞ 221E (infinit)    ↔ 2194 (double arrow)   ¤ 00A4 (currency)
   ⏪23EA   ⏩23E9    ⏫23EB    ⏬23EC   ∕ (division slash)
   🐧 Linux / Penguin
+  🪟 Windows
   💍 ring
   █ 2588
   ß 00DF -> compose + s + s
