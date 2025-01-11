@@ -74,6 +74,8 @@ Example:
 
 Usage:  ${SCRIPT_NAME} [-h] '<string for branch name>'
 
+  -s  Strict mode - Replace every character with '_' except
+      alpha-numeric characters (as defined in 'sed').
   -h  Display this help text.
 "
 }
@@ -82,8 +84,10 @@ Usage:  ${SCRIPT_NAME} [-h] '<string for branch name>'
 # ARGUMENT PARSING
 # ════════════════════════════════════════════════════════════════════
 
-while getopts "h" OPTCMD; do
+STRICT=0
+while getopts "sh" OPTCMD; do
   case "${OPTCMD}" in
+    "s")    STRICT=1;;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -125,7 +129,12 @@ declare -ag ENTRIES=("")
 [ ! -z "${HD_USER_NAME_FULL}" ] && ENTRIES+=("-${HD_USER_NAME_FULL}-1")
 
 for ENDING in "${ENTRIES[@]}"; do
-  BRANCH_NAME_BASE=$(echo "${INPUT}${ENDING}" | sed -r 's/[:]//g;s/ /_/g;' | tr -d '[]')
+  if (( STRICT )); then
+    BRANCH_NAME_BASE=$(echo "${INPUT}${ENDING}" | sed -r 's/[^[:alnum:]]/_/g;')
+  else
+    BRANCH_NAME_BASE=$(echo "${INPUT}${ENDING}" | sed -r 's/[:]//g;s/ /_/g;' | tr -d '[]')
+  fi
+
   cat <<EOM
 # '${ENDING}' ending.
 git switch -c 'bug/${BRANCH_NAME_BASE}'
