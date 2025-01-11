@@ -366,6 +366,34 @@ USER MANAGEMENT
 
 
 
+TIME TRAVEL
+══════════════════════════════════════════════════════════════════════════════
+
+  Restore a database that was replaced (or dropped)
+  ────────────────────────────────────────────────────────────────────────────
+
+    If one ran 'CREATE OR REPLACE DATABASE <name>' by accident, a new database
+    with the same name replaces the old one with all the old data gone.  To
+    revert to the old database using time travel, one must first obtain the
+    unique database id of the previous database of the same name.  This is
+    accomplished with the following SELECT:
+
+      SELECT database_id, database_name, created, deleted, comment
+      FROM SNOWFLAKE.ACCOUNT_USAGE.DATABASES
+      WHERE database_name = '<name>'
+      AND deleted IS NOT NULL
+      ORDER BY deleted;
+
+    With the <database id> on hand, now we drop the new, current empty database:
+
+      DROP DATABASE <name>;
+
+    Finally, we restore the old database:
+
+      UNDROP DATABASE IDENTIFIER(<database id>);
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
