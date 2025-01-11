@@ -252,6 +252,8 @@ add2path PATH /var/lib/flatpak/exports/bin
 
 alias cdnm='cdprint /etc/NetworkManager/dispatcher.d/'
 
+# Rust Language cargo binary folder.
+add2path PATH "${HOME}/.cargo/bin"
 
 
 # MUSÉE
