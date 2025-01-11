@@ -188,4 +188,5 @@ fi
 export EDITOR
 
 
-cdwhich() { eval cd '"$(which $*)"'; }
+cdtype()  { eval cd '"$(type -P $*)"'; }
+cdwhich() { eval cd '"$(which $*)"';   }
