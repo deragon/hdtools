@@ -394,6 +394,31 @@ TIME TRAVEL
 
 
 
+WAREHOUSE
+══════════════════════════════════════════════════════════════════════════════
+
+  List all warehouses a user has access to
+  ────────────────────────────────────────────────────────────────────────────
+
+    select * from snowflake.account_usage.grants_to_roles
+    where 1=1
+    and deleted_on      is null
+    and granted_on      = 'WAREHOUSE'
+    and privilege       = 'USAGE'
+    and granted_to      = 'ROLE'
+    and grantee_name in
+    (
+        select ROLE from snowflake.account_usage.grants_to_users
+        where 1=1
+        and deleted_on is null
+        and grantee_name = current_user()
+        -- Every user has role PUBLIC, but PUBLIC does not show up in the
+        -- select above, thus the UNION below to include it.
+        UNION ( select 'PUBLIC' as ROLE )
+    );
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
