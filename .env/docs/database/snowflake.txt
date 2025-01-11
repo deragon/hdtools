@@ -67,6 +67,21 @@ GRANT
 
 
 
+VIEWS
+══════════════════════════════════════════════════════════════════════════════
+
+  Transfer of rights when a view points to another view
+  ────────────────────────────────────────────────────────────────────────────
+
+    If you create a view A on DB 1 that retrieves data from a view B on DB 2,
+    users with read access to view A will be able to see the data coming from
+    view B, provided that the owner of view A has the necessary rights to view
+    B. Users do not need direct access to view B, but the owner of view A must
+    have the necessary rights to the view B so users can query view A and see
+    the data.
+
+
+
 SQL
 ══════════════════════════════════════════════════════════════════════════════
 
