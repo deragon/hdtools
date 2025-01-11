@@ -367,6 +367,12 @@ hdsshadd()
 }
 exportfunction hdsshadd
 
+# Safe, because if key already exists, user will be prompted if it is
+# desired to overwrite the exisging key.
+alias hdsshkeygen='ssh-keygen -t ed25519; cat "${HOME}/.ssh/id_ed25519.pub"'
+alias hdsshkeygennopass='ssh-keygen -t ed25519 -N "" -f "${HOME}/.ssh/id_ed25519_nopass"; echo -e "\nPublic key:"; cat "${HOME}/.ssh/id_ed25519_nopass.pub"'
+
+
 sshenv()
 {
   "${HDENVDIR}/bin/ssh-agent-setup" -q
