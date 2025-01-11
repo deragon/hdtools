@@ -671,7 +671,8 @@ alias addcurpath='export PATH=`pwd`:$PATH;export PATH="$("${HDENVDIR}/bin/minpat
 alias hup='killall -HUP'
 alias surf='hd-decompose'
 
-alias netosdetect='nmap -A -T aggressive -p "[-65535]" -P0'
+type nmap >/dev/null 2>&1 && \
+  alias netosdetect='nmap -A -T aggressive -p "[-65535]" -P0'
 
 alias cdenv='cdprint "${HDENVDIR}"'
 alias cdbin='cdprint "${HDENVDIR}/bin"'
