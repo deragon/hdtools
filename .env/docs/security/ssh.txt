@@ -33,7 +33,8 @@ MISCELLANEOUS
 ══════════════════════════════════════════════════════════════════════════════
 
   - Usage with rsync:
-      rsync -e "ssh -i ${HOME}/.ssh/id_rsa_nopass -o GSSAPIAuthentication=no -l <dst_userid>"
+
+      rsync -e "ssh -i ${HOME}/.ssh/id_ed25519_nopass -o GSSAPIAuthentication=no -l <dst_userid>"
 
   - ssh-keygen -y -f "${PRIVATE_KEY}.pem"  # Fetch public key from .pem file.
                                            # Useful for AWS EC2 key pairs.
