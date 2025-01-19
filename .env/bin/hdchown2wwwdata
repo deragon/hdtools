@@ -81,5 +81,6 @@ for FILEPATH in ${FILEPATHS[@]}; do
   # recursively.
   sudo chown -R www-data:www-data "${FILEPATH}"
   sudo chmod -R o-rwx "${FILEPATH}"
+  ls -la "${FILEPATH}"
 
 done
