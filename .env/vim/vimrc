@@ -322,29 +322,6 @@ augroup LargeFile
 augroup END
 
 
-" STATUS LINE / STATUS BAR AT THE BOTTOM
-" ────────────────────────────────────────────────────────────────────────────
-"
-"   Show the character itself is not easily possible.
-"   See:  https://stackoverflow.com/questions/40508385/vim-statusline-show-the-character-itself
-"
-" Setting status line / bar format.
-"set statusline='%F%m%r%h%w\ %{&encoding}/%{&fileencoding}/%{&ff}/%Y\ [\%05.5b\ x\%04.4B]\ C%03v\ L%04l\ %L\/%p\%%'
-let &statusline="%F%m%r%h%w %{&encoding}/%{&fileencoding}/%{&ff}/%Y "
-
-" Showing the current character and value in decimal and hexadecimal.
-let &statusline .= "◄"
-let &statusline .= "%2.2(%{matchstr(getline('.'), '\\%' . col('.') . 'c.')}%)"
-let &statusline .= " %04.6b x%04.6B ►"
-
-" Show column number, line number, total lines and % of the document.
-let &statusline .= " C%03v\ L%04l\ %L\/%p\%%'"
-
-set laststatus=2  " Always show the status line in every window.
-
-
-
-
 
 " From:  https://github.com/tpope/vim-markdown
 "
