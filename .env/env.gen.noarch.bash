@@ -248,3 +248,81 @@ if [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]]; then\
   hdwslxkeepalive -q
   alias hdwslshutdown='wsl.exe --shutdown'
 fi
+
+
+
+# VIM
+# ══════════════════════════════════════════════════════════════════════════════
+#
+#   ⚡⚡⚡ AVERTISSEMENT ⚡⚡⚡
+#   ────────────────────────────────────────────────────────────────────────────
+#
+#     NE PAS CONFIGURER ${VIM}. Si ${VIM} est configuré, vim s'attend à
+#     retrouver tous ses fichiers standard sous ${VIM}, comme par exemple
+#     syntax/syntax.vim.  Ce n'est pas une façon d'appliquer une configuration
+#     system-wide.
+#
+#
+#   System-wide
+#   ────────────────────────────────────────────────────────────────────────────
+#
+#     La meilleure façon de configurer vim sur tout le système, c'est d'ajouter
+#     les lignes suivantes:
+#
+#        # Added by Hans Deragon (hans@deragon.biz)
+#        # Using fnameescape to handle potential spaces in path.
+#        exec 'source '.fnameescape('${HDVIM}/.vimrc')
+#
+#     Dans un des fichiers suivants:
+#
+#        Linux:   /etc/vim/vimrc
+#        Cygwin:  /etc/vimrc
+#
+#   Ce commentaire fut revisé le 2016-05-31 13:25:58 EDT
+#
+export HDVIM="${HDENVDIR}/vim"
+export HDVIMRC="${HDVIM}/.vimrc"
+
+unset   vi  >/dev/null 2>&1
+unalias vi  >/dev/null 2>&1
+unset   vim >/dev/null 2>&1
+unalias vim >/dev/null 2>&1
+
+if type -P nvim >/dev/null 2>&1; then
+  # Neovim / Nvim detected in path.
+  alias gnvim='hdvim --hdgnvim'
+  alias gn='hdvim --hdgnvim'
+  alias gndiff='hdvim --hdgnvim --hddiff'
+  alias nv='hdvim --hdnvim'
+  alias nvim='hdvim --hdnvim'
+  alias nvdiff='hdvim --hddiff'
+
+  nw() { hdvim "$(type -P $*)"; }
+  gnw()  { eval hdvim --hdgnvim '"$(hdtype -P $*)"'; }
+fi
+
+if type -P vim >/dev/null 2>&1; then
+  # Vim detected in path.
+
+  # Vim's -S ensure that the file is sourced last of all the files being
+  # sources during Vim's initialization.  To get the list of all files
+  # being sources during Vim's initialization, in their order, call
+  # :scriptnames
+  alias vi='hdvim'
+  alias vim='hdvim'
+  alias vimdiff='hdvim --hddiff'
+  vimw() { eval hdvim '"$(type -P $*)"'; }
+  viml() { locate --null $* | eval xargs --null --replace="{}" hdvim "{}"; }
+
+  gvim()     { hdvim --hdgvim "$@"; }
+  gvimdiff() { hdvim --hdgvim --hddiff "$@"; }
+  gvimw()    { hdvim --hdgvim "$(type -P $*)"; }
+  gviml()    { locate --null $* | xargs --null --replace="{}" hdvim --hdgvim "{}"; }
+
+
+  EDITOR='hdvim --hdnvim'
+
+else
+  EDITOR="vi"   # Here, the alias 'vi' will be called which is desired.
+fi
+export EDITOR
