@@ -15,7 +15,7 @@ STRING MANIPULATION
   REPLACE A STRING WITH ANOTHER USING REGEX
   ────────────────────────────────────────────────────────────────────────────
 
-    result = re.sub(r"(\d.*?)\s(\d.*?)", r"\g<1> \g<2>", string1)
+    result = re.sub(r"(\d.*?)\s(\d.*?)", r"\g<1> \g<2>", string1, flags=re.IGNORECASE)
 
     re.sub(".*need", "Accomplished", "Full string that need replacement.")
     'Accomplished replacement.'
