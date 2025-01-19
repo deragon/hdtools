@@ -89,8 +89,7 @@ else
   # Order is important here.
   hd_source "${HDENVDIR}/env.gen.noarch.bash"
   hd_source "${HDENVDIR}/env.spec.noarch.sh"
-  [ -f "${HDENVDIR}/env.${HOSTNAME}.sh" ] && \
-  hd_source "${HDENVDIR}/env.${HOSTNAME}.sh"
+  [ -f "${HDENVDIR}/env.${HOSTNAME}.sh" ] && hd_source "${HDENVDIR}/env.${HOSTNAME}.sh"
 
   # *.home.*.sh files need to be sourced before calling env.devel.sh.  If
   # none is sourced, it is not critical, but if they do, the development
