@@ -104,6 +104,21 @@ else
 fi
 
 
+# Run 'type' but if 'type' returns nothing, probably argument is an alias
+# and thus try to simply to find out to what it points to.
+hdtype()
+(
+  local TYPE="$(type $*)"
+  if [[ -z "${TYPE}" ]]; then
+    # Maybe argument is an alias.  Trying something to find out to what
+    # it points to.
+    TYPE="$(echo "$*" | sed -E 's/(^| )-[^ ]+//g' | sed 's/^ *//;s/ *$//')"
+    TYPE="$(type ${TYPE})"
+    TYPE="$(echo "${TYPE}" | sed -E 's/.*?is aliased to .//g')"
+    TYPE="${TYPE::-1}"  # Remove ending apostrophe (').
+  fi
+  echo "${TYPE}"
+)
 
 cdtype()  { eval cd '"$(type -P $*)"'; }
 cdwhich() { eval cd '"$(which $*)"';   }
