@@ -699,13 +699,25 @@ QRCODE
   url.term()
 
 
-REGULAR EXPRESSIONS
+REGULAR EXPRESSIONS (REGEX)
 ══════════════════════════════════════════════════════════════════════════════
 
   import re
   uid_re=re.compile("uid=(\w+)")
   uid_matches=uid_re.search("mail=null:uid=hderagon:attr1=null")
   uid_matches.group(1)
+
+
+  Optional text detection
+  ────────────────────────────────────────────────────────────────────────────
+
+    From:  https://stackoverflow.com/questions/73428787/regular-expression-using-non-greedy-to-catch-optional-string
+
+      Date:\s+(\S+)(?:.*?(Optional line here which sometimes does not show))?.*?Amount:\s+(?P<amount>\S+)
+
+      In this pattern, .*?(Optional line here which sometimes does not show)?
+      ({0,1} = ?) is wrapped with an optional non-capturing group, (?:...)?,
+      that must be tried at least once since ? is a greedy quantifier.
 
 
   Get the python regex parse tree to debug your regex.
