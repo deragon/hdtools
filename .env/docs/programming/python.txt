@@ -737,6 +737,12 @@ REGULAR EXPRESSIONS (REGEX)
   re.search() vs re.match()
   ────────────────────────────────────────────────────────────────────────────
 
+    Feature              re.search()                                                         re.match()
+
+    Starting position    Can start anywhere in the string                                    Must start at the beginning of the string
+    Returns              A match object if the pattern is found, otherwise None              A match object if the pattern is found at the start, otherwise None
+    Performance          Less efficient for large strings as it searches the entire string   More efficient as it only checks the beginning
+
     From:  https://www.geeksforgeeks.org/python-re-search-vs-re-match/
 
       There is a difference between the use of both functions. Both return the
