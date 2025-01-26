@@ -31,10 +31,10 @@ Usage:  ${SCRIPT_NAME} [-h] <file>+
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-OPTIONS=""
+declare -ag OPTIONS
 while getopts "sh" OPTCMD; do
   case "${OPTCMD}" in
-    "s")    OPTIONS="${OPTIONS} --staged";;
+    "s")    OPTIONS+=("--staged");;
     "h"|*)  usage; exit 1;;
   esac
 done
