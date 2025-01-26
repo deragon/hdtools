@@ -130,11 +130,11 @@ declare -ag ENTRIES=("")
 
 for ENDING in "${ENTRIES[@]}"; do
   if (( STRICT )); then
-    BRANCH_NAME_BASE=$(echo "${INPUT}${ENDING}" | sed -r 's/[^[:alnum:]]/_/g;')
+    BRANCH_NAME_BASE="$(echo "${INPUT}${ENDING}" | sed -r 's/[^[:alnum:]-]/_/g')"
   else
-    BRANCH_NAME_BASE=$(echo "${INPUT}${ENDING}" | sed -r 's/[:]//g;s/ /_/g;' | tr -d '[]')
+    BRANCH_NAME_BASE="$(echo "${INPUT}${ENDING}" | sed -r 's/[:]//g;s/ /_/g')"
   fi
-
+  BRANCH_NAME_BASE="$(echo "${BRANCH_NAME_BASE}" | sed -r 's/_+/_/g;s/_+/_/g;s/(\[|\])//g;s/^_//g')"
   cat <<EOM
 # '${ENDING}' ending.
 git switch -c 'bug/${BRANCH_NAME_BASE}'
