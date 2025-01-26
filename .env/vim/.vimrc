@@ -19,36 +19,35 @@ endif
 
 if has('nvim')
 
-
   source $HDVIM/commonrc
 
   "let mapleader = "\\"  " Actually, just type '\'
   lua <<EOF
 
--- require() does not make use of VIM's rtp setup.  It uses package.path to
--- which we must add ${HDVIM}.
+  -- require() does not make use of VIM's rtp setup.  It uses package.path to
+  -- which we must add ${HDVIM}.
 
-local custom_path = os.getenv("HDVIM")
-if custom_path then
-    -- Append the custom path to package.path
-    package.path = package.path .. ";" .. custom_path .. "/?.lua"
-else
-    print("ERROR:  ${HDVIM} is not set.  'package.path' is missing that path.")
-    print(package.path)
-end
+  local custom_path = os.getenv("HDVIM")
+  if custom_path then
+      -- Append the custom path to package.path
+      package.path = package.path .. ";" .. custom_path .. "/?.lua"
+  else
+      print("ERROR:  ${HDVIM} is not set.  'package.path' is missing that path.")
+      print(package.path)
+  end
 
--- NvChad
---
---package.path = package.path .. ";" .. os.getenv("HDVIM") .. '/?.lua' .. ";" .. os.getenv("HOME") .. '/.config/nvim/?.lua'
---print(package.path)
---print(package.searchpath('init', package.path))
---require(os.getenv("HOME") .. '/.config/nvim/init')
---
---require('init')  -- NvChad init.lua loaded.
+  -- NvChad
+  --
+  --package.path = package.path .. ";" .. os.getenv("HDVIM") .. '/?.lua' .. ";" .. os.getenv("HOME") .. '/.config/nvim/?.lua'
+  --print(package.path)
+  --print(package.searchpath('init', package.path))
+  --require(os.getenv("HOME") .. '/.config/nvim/init')
+  --
+  --require('init')  -- NvChad init.lua loaded.
 
 
--- print(vim.o.runtimepath)
-require('hdinit')  -- Hans Deragon's init.lua loaded.
+  -- print(vim.o.runtimepath)
+  require('hdinit')  -- Hans Deragon's init.lua loaded.
 EOF
 else
   source $HDVIM/vimrc
