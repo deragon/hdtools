@@ -249,6 +249,8 @@ if [[ "${HD_OS_FAMILY,,}" =~ "windows subsystem for linux" ]]; then\
   alias hdwslshutdown='wsl.exe --shutdown'
 fi
 
+alias hdchowncuruser='sudo chown $(id -u):$(id-g)'
+
 
 
 # VIM
