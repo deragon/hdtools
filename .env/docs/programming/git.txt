@@ -89,6 +89,8 @@ COMMANDES
                                   # the files are not reverted to the version
                                   # stored in the repository.
 
+              git reset           # SAFE.  Unstage ALL staged files.
+
               git checkout <file>
 
               1) Works well
@@ -506,6 +508,22 @@ COMMITS
 MERGE / REBASE
 ══════════════════════════════════════════════════════════════════════════════
 
+  Rebase + fast forward
+  ────────────────────────────────────────────────────────────────────────────
+
+    # Go to your development branch.
+    git switch "feature/<development branch>"
+
+    # Create new branch base on current development branch, appending to it
+    # the current time (ISO 8601 format).  Thus, the original development branch
+    # will remain untouched if something goes wrong (we keep it as a backup).
+    git switch -c "$(git branch --show-current)-$(date +"%Y%m%dT%H%M%S")"
+
+    # Perform the merge
+    git rebase origin/develop
+    git rebase origin/main
+
+
   Azure DevOps options
   ────────────────────────────────────────────────────────────────────────────
 
@@ -849,7 +867,7 @@ LOGS / COMMENTS
     git log --author="deragon" --all # List only logs related to the user.
       ┗▶ See:  https://stackoverflow.com/questions/4259996/how-can-i-view-a-git-log-of-just-one-users-commits
 
-    git log --folllow <file> # For renamed files, show all logs including prior rename.
+    git log --follow <file> # For renamed files, show all logs including prior rename.
 
 
   FORMAT OF COMMENTS / COMMIT MESSAGES
