@@ -85,6 +85,8 @@ JAVA
     - GUI -> KeyStore Explorer - Open source, Linux, Win, Mac.
              Very good.  https://keystore-explorer.org/
 
+             kse & # Call the binary to start the application.
+
 
 
   KEYSTORE
