@@ -34,6 +34,7 @@ PEM FILE - USE THIS FORMAT
   PEM (originally “Privacy Enhanced Mail”) is the most common format for X.509
   certificates, CSRs, and cryptographic keys.
 
+      # INFORMATION - SAFE
       openssl x509 -text -noout -in "${FILE_PEM}"  # Safe.  Show content of trusted certificates.
       openssl req  -text -in "${FILE_PEM}" # Safe.  Show content of CSR file.
       file "${FILE_PEM}" # Safe.  Test if the file is really a PEM file.
