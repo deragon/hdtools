@@ -20,6 +20,21 @@ APT
     - apt-get download <package>  # Download .deb into current directory.  No installation will be performed.  Safe.
 
 
+    List all available versions of a package
+    --------------------------------------------------------------------------
+
+      apt list -a "${PACKAGE_NAME}"
+      apt-cache madison "${PACKAGE_NAME}"
+
+
+    Install a specific version of a package
+    --------------------------------------------------------------------------
+
+      sudo apt-get install ${PACKAGE_NAME}=${PACKAGE_VERSION}
+
+      Example:  sudo apt-get install apache2=2.2.20-1ubuntu1
+
+
 
 DEB
 ══════════════════════════════════════════════════════════════════════════════
