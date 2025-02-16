@@ -33,7 +33,7 @@ UNICODE UTF-8 UTF8
     there are no repercussions to using these marks. Surprisingly neither the
     ™ nor the ® mark appears in official Canadian Trademark Law.
 
-  Vim dig:  0M→● (bullet)
+  Vim dig:  <CTRL-K>0M→● (bullet)
 
   🇨🇦 🇺🇸     ⃠ combination a ⃠b
 
