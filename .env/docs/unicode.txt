@@ -10,17 +10,11 @@ UNICODE UTF-8 UTF8
   👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹 🎯         🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
   🌟 Feature  🪰 Bug  𒁈  CPU
 
-  Circles
+  Circles                               Squares
 
-    🔴 Red     🟠 Orange  🟤 Brown
-    🟡 Yellow  🔵 Blue    ⚫ Empty
-    🟢 Green   🟣 Purple  ⚪ White
-
-  Squares
-
-    🟥 Red     🟧 Orange  🟫 Brown
-    🟨 Yellow  🟦 Blue    ⬛ Black
-    🟩 Green   🟪 Purple  ⬜ White
+    🔴 Red     🟠 Orange  🟤 Brown        🟥 Red     🟧 Orange  🟫 Brown
+    🟡 Yellow  🔵 Blue    ⚫ Empty        🟨 Yellow  🟦 Blue    ⬛ Black
+    🟢 Green   🟣 Purple  ⚪ White        🟩 Green   🟪 Purple  ⬜ White
 
    ✓ ✖ ✘    ✓ ✕ ✗  ❌  █ ⛀⛁⛂⛃
   ┏━▶ ◀━┓ ▲ ━┓ ┏━ ▲ ▲ ┃
