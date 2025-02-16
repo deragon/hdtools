@@ -1,5 +1,6 @@
 UNICODE UTF-8 UTF8
 ══════════════════════════════════════════════════════════════════════════════
+
   💯  Mon 2₵.  My 2₵.
   👍 😀 😂 😛 🙄 😖 😠 😱 😲 🤯 👶
   ⚠️  Warning  ⚡ Electricity      🚨 Alarm    🔧 Wrench
@@ -7,6 +8,7 @@ UNICODE UTF-8 UTF8
   🧱 Brick wall/Blocked           🚧 Construction/Blocked
   🐔👍 (pull request)             💀 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
   👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹 🎯         🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
+  🌟 Feature  🪰 Bug  𒁈  CPU
 
   Circles
 
