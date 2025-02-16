@@ -38,7 +38,7 @@ ARRAYS
   ENTRIES[0]="data 0"
   ENTRIES[1]="data 12"
   ENTRIES[2]="data 234"
-  ENTRIES+=("data 4567")  # Equivalent of push / put; add element at end of array.
+  ENTRIES+=("data 4567")  # Equivalent of push / put; add/append element at end of array.
   ENTRIES=("data -1" "${ENTRIES[@]}" "data 3")   # Add elements at beginning and end of array.
 
   Read:  https://unix.stackexchange.com/questions/328882/how-to-add-remove-an-element-to-from-the-array-in-bash
@@ -168,7 +168,6 @@ STRING MANIPULATIONS
 ══════════════════════════════════════════════════════════════════════════════
 
   SUBSTRINGS
-  ────────────────────────────────────────────────────────────────────────────
 
     "${VAR:1}"            # Chop first character.
     "${VAR:1:3}"          # VAR[1:3]
@@ -176,20 +175,10 @@ STRING MANIPULATIONS
     "${VAR: -1}"          # Last character (note; the space is important!)
     "${VAR::-1}"          # Chop last character.
 
+  MISCELLANEOUS
 
-    FILTERING AND PARSING A NETWORK URL
-    ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
-
-      DST="ec2-user@192.168.1.3:3992"
-
-      DST_USER="${DST/@*}"
-      [[ "${DST_USER}" == ${DST} ]] && unset DST_USER  # No user provided.
-
-      DST_PORT="${DST/*:}"
-      [[ "${DST_PORT}" == ${DST} ]] && unset DST_PORT  # No port provided.
-
-      DST_HOST="${DST/:*}"       # Filter out any port definition.
-      DST_HOST="${DST_HOST/*@}"  # Filter out any user definition.
+    "${VAR,,}"            # Lowercase conversion.
+    "${VAR^^}"            # Uppercase conversion.
 
 
   TEST IF STRING CONTAINS/STARTS/ENDS WITH SOME TEXT
@@ -208,12 +197,19 @@ STRING MANIPULATIONS
       matched
 
 
-  UPPER/LOWERCASE, EFFICIENT FORM (BASH VERSION >=4):
+  FILTERING AND PARSING A NETWORK URL
   ────────────────────────────────────────────────────────────────────────────
 
-      ID="AbCd"
-      ID_LC="${ID,,}"
-      ID_UC="${ID^^}"
+      DST="ec2-user@192.168.1.3:3992"
+
+      DST_USER="${DST/@*}"
+      [[ "${DST_USER}" == ${DST} ]] && unset DST_USER  # No user provided.
+
+      DST_PORT="${DST/*:}"
+      [[ "${DST_PORT}" == ${DST} ]] && unset DST_PORT  # No port provided.
+
+      DST_HOST="${DST/:*}"       # Filter out any port definition.
+      DST_HOST="${DST_HOST/*@}"  # Filter out any user definition.
 
 
 
