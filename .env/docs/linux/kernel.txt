@@ -71,6 +71,26 @@ MISC
     # Print as hex keyboard activity.
 
 
+
+SLEEP STATES
+══════════════════════════════════════════════════════════════════════════════
+
+  Documentation
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://www.kernel.org/doc/html/latest/admin-guide/pm/sleep-states.html
+    https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate
+
+
+  Notes as of 2025
+  ────────────────────────────────────────────────────────────────────────────
+
+    On Linux systems, S3 sleep state is gradually being replaces by S2idle
+    which is being used by Windows 11 and is better supported by the
+    industry.
+
+
+
 KWORKER
 ══════════════════════════════════════════════════════════════════════════════
 
