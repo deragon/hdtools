@@ -108,6 +108,12 @@ SQL
     order by start_time;
 
 
+    TIMESTAMPS and WHERE
+    --------------------------------------------------------------------------
+
+        and DATE_TRUNC('day', <timestamp_field_name_here>) = current_date() -- Timestamp field match today.
+
+
   DUAL
   ────────────────────────────────────────────────────────────────────────────
 
