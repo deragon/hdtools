@@ -325,8 +325,10 @@ TERRAFORM
 MISCELLANEOUS
 ══════════════════════════════════════════════════════════════════════════════
 
-  - USE SECONDARY ROLES NONE;  -- USE SECONDARY ROLES { ALL | NONE }
-    USE SECONDARY ROLES ALL;   -- USE SECONDARY ROLES { ALL | NONE }
+  - USE SECONDARY ROLES NONE;
+    USE SECONDARY ROLES ALL;
+
+    alter user "<USERNAME>" set DEFAULT_SECONDARY_ROLES = NONE;  -- { ALL | NONE }
 
   -- Test table
 
