@@ -53,7 +53,10 @@ BACKUP - APPS
   SEEDVAULT (OPEN SOURCE)
   ────────────────────────────────────────────────────────────────────────────
 
-    Prometteur, mais requiert Android 10.
+    A backup application for the Android Open Source Project. Needs to be
+    integrated in your Android ROM and can not be installed as a regular app.
+
+    Requires Android 10.
 
     https://github.com/stevesoltys/seedvault
 
