@@ -21,7 +21,8 @@ Android versions
   Android 11           11
   Android 12           12             Pixel 5
   Android 13           13             Pixel 5
-  Android 14           14             Pixel 5
+  Android 14           14             Pixel 5, Pixel 8
+  Android 15           15             Pixel 8
 
 
 
