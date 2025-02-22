@@ -77,12 +77,34 @@ BROWSERS
   Mini-Opera
   ────────────────────────────────────────────────────────────────────────────
 
-    The main feature of this browser which I cannot find in any other
-    Android browser is that when you zoom for reading, text is automatically
-    wrapped and this works for every website I visit.
+    Text reflow / wrap
+    --------------------------------------------------------------------------
 
-    This is a must have feature for me and why I am not inclined to use
-    another browser.
+      The main feature of this browser which I cannot find in any other
+      Android browser is that when you zoom for reading, text is automatically
+      wrapped and this works for every website I visit.
+
+      This is a must have feature for me and why I am not inclined to use
+      another browser.
+
+
+    Import speed dials from an old phone to a new one
+    --------------------------------------------------------------------------
+
+      Subtle, not easy to find, but this is how to do this in 2025.
+
+      From:  https://forums.opera.com/topic/52819/cannot-import-speed-dials-from-other-devices/13
+
+      @topmar Looking at my phone in settings i ihave sync and backup enabled
+      then I have "bookmarks and speed dials" enabled.  On my speeddial page
+      there's an icon of monitor/phone which then opens a page with all the
+      devices that i have synced, including several versions of a particular
+      device where I must have logged in/out at some stage and at different
+      states of the speeddial for that device
+
+      If your phone is listed there, then you can select those speeddials and
+      import them to your new phone and they will be imported to your current
+      speed dial. If they are not you'll have add them back again manually.
 
 
 
