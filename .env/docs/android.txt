@@ -64,10 +64,10 @@ BACKUP - APPS
   APK Share - apkshare
   ────────────────────────────────────────────────────────────────────────────
 
-    Excellente application pour faire un backup de toutes les applications,
-    en format apk.
+    Excellent application for making a backup of all applications, in apk
+    format.  Perceptive Apps - Contains ads
 
-    https://play.google.com/store/apps/details?id=labs.kibzorg.apkshare
+    https://play.google.com/store/apps/details?id=com.taskmanager.appshare
 
 
 
