@@ -139,25 +139,52 @@ CONNECTIONS / TRANSFERT
 APPS / APPLICATIONS
 ══════════════════════════════════════════════════════════════════════════════
 
-  - https://www.simplemobiletools.com/ <<--- bon, open source
-  - 'Tiny Flashlight' de Nikolay Ananiev - Lampe de poche
-  - Widgetsoid
-  - Espace Client +
-  - Fdroid
+  AntennaPod
+  ────────────────────────────────────────────────────────────────────────────
 
-  - Hacker's keyboard
+    Podcast app.  Very good.
 
-    From:  https://android.stackexchange.com/questions/128138/hackers-keyboard-v1-38-2-doesnt-show-any-suggestions-other-than-android
+    To mark old podcast as already read:
 
-    After installing 'Hacker's keyboard', you must also install completion
-    dictionaries (French and English) to get keyboard completion (word
-    suggestions) working.
+    Select an episode and keep your finger on it.  Then 'Select all below' and,
+    important, scroll down to load them all on the screen so they get all
+    selected.  Then "mark as read".
 
-    Select the completion dictionnaries from:
+    Finally, select the filter icon (funnel) and shoes "only as non read".
 
-    https://play.google.com/store/search?q=pub%3A%22Klaus%20Weidner%22&c=apps&hl=en
 
-  - UpnPlay
+  Other
+  ────────────────────────────────────────────────────────────────────────────
+
+    - Espace Client +
+
+    - F-droid Fdroid
+
+      Major problem with F-droid is that applications are not migrated from
+      and old phone to a new one and that is a serious pain.
+
+    - Hacker's keyboard
+
+      From:  https://android.stackexchange.com/questions/128138/hackers-keyboard-v1-38-2-doesnt-show-any-suggestions-other-than-android
+
+      After installing 'Hacker's keyboard', you must also install completion
+      dictionaries (French and English) to get keyboard completion (word
+      suggestions) working.
+
+      Select the completion dictionnaries from:
+
+      https://play.google.com/store/search?q=pub%3A%22Klaus%20Weidner%22&c=apps&hl=en
+
+    - Stratumauth - https://github.com/stratumauth/app
+
+        A free open-source two factor authentication app for Android. It
+        features encrypted backups, icons, categories and a high level of
+        customisation.
+
+    - https://www.simplemobiletools.com/ <<--- bon, open source
+    - 'Tiny Flashlight' de Nikolay Ananiev - Lampe de poche
+    - Widgetsoid
+    - UpnPlay
 
 
   Call Recorder
@@ -170,31 +197,16 @@ APPS / APPLICATIONS
         https://play.google.com/store/apps/details?id=com.catalinagroup.callrecorder
 
 
+  uPnPlayer (OPEN SOURCE)
+  ────────────────────────────────────────────────────────────────────────────
 
-uPnPlayer (OPEN SOURCE)
-═════════════════════════════════════════════════════════════════════════════
+    https://bebopfreak.wordpress.com/upnplayer/
 
-  https://bebopfreak.wordpress.com/upnplayer/
+    Ne se trouve plus sur Google play car l'auteur n'a pas eu le temps de remplir
+    tous les formulaires.  Faut télécharger de:
 
-  Ne se trouve plus sur Google play car l'auteur n'a pas eu le temps de remplir
-  tous les formulaires.  Faut télécharger de:
-
-    http://lkj.sytes.net/upnplay/upnplay/
-    Exemple silanoid.v0.0.98.apk
-
-
-
-SD CARD AS INTERNAL STORAGE
-══════════════════════════════════════════════════════════════════════════════
-
-  Voici ce que j'ai tenté de faire pour l'ancien téléphone de Claudette LG K4
-  pour que la carte SD comme storage interne.  Cependant, cela ne marche pas.
-
-  Voici le commentaire que j'ai laissé sur le vidéo YouTube ci-dessous:
-
-    LG K4 / LG-M151 - Does not work.  'sm has-adoptable' returns 'false'.  This feature is not supported on that mobile.
-
-    https://www.youtube.com/watch?v=N6pWo2U-Xuk&feature=emb_logo
+      http://lkj.sytes.net/upnplay/upnplay/
+      Exemple silanoid.v0.0.98.apk
 
 
 
@@ -311,6 +323,28 @@ MISCELLANEOUS
       *#*#8350#*#*                   Disables voice dialing logging mode
       ##778 (+call)                  Brings up Epst menu
 
+
+
+SD CARD AS INTERNAL STORAGE
+══════════════════════════════════════════════════════════════════════════════
+
+  Voici ce que j'ai tenté de faire pour l'ancien téléphone de Claudette LG K4
+  pour que la carte SD comme storage interne.  Cependant, cela ne marche pas.
+
+  Voici le commentaire que j'ai laissé sur le vidéo YouTube ci-dessous:
+
+    LG K4 / LG-M151 - Does not work.  'sm has-adoptable' returns 'false'.  This feature is not supported on that mobile.
+
+    https://www.youtube.com/watch?v=N6pWo2U-Xuk&feature=emb_logo
+
+
+Google Pixel 5
+══════════════════════════════════════════════════════════════════════════════
+
+  - Google Pixel 5 and HDMI - Not implemented in the hardware.  No support - Does not work.
+
+    See:  https://www.reddit.com/r/GooglePixel/comments/iydwyy/pixel_5_hdmi_out/
+          https://forums.androidcentral.com/google-pixel-5/1012053-hdmi-output-via-usb-c-port.html
 
 
 █ ─ Copyright Notice ───────────────────────────────────────────────────
