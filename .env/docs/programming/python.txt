@@ -133,6 +133,12 @@ ARRAY / LIST / DICTIONARY (HASH)
     for key in sorted dictionary.keys():
       value=dictionary[key]
 
+    # Copies of dictionaries.
+    dictionary_shallow_copy = dictionary
+
+    import copy
+    dictionary_deep_copy = copy.deepcopy(dictionary)
+
 
     PRETTY DICTIONARY
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
