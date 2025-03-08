@@ -81,10 +81,6 @@ parser.add_argument('-q', '--quick', dest='quick', default=False,
                     action="store_true", required=False,
                     help='Print quickly only the names of members, not their details.')
 
-# Optional argument with parameter (--user USER).  By putting 'type=str', we
-# tell the parser that the argument must take a parameter with it.
-# parser.add_argument('-u', '--user', type=str, dest='user',
-#                     default=os.environ["USER"], help='Provide user id.')
 
 # Optional argument with choices.
 # See:  https://stackoverflow.com/questions/40324356/python-argparse-choices-with-a-default-choice
