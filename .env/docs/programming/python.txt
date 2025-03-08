@@ -111,30 +111,30 @@ FORMATING & PADDING
 
 
 
-ARRAY / LIST / DICTIONNARY (HASH)
+ARRAY / LIST / DICTIONARY (HASH)
 ══════════════════════════════════════════════════════════════════════════════
 
   DICTIONARY (HASH TABLES)
   ────────────────────────────────────────────────────────────────────────────
 
-    dictionnary = {} # Dictionnary / hash table created.
-    dictionnary = {1: 2, 3: 4, 4:3, 2:1, 0:0}
-    dictionnary['key'] = 'value' # This is the equivalent of a put() function.
-    sorted(dictionnary.keys())
-    dictionnary.pop('key')  # Remove item.  KeyError if not existing.
+    dictionary = {} # dictionary / hash table created.
+    dictionary = {1: 2, 3: 4, 4:3, 2:1, 0:0}
+    dictionary['key'] = 'value' # This is the equivalent of a put() function.
+    sorted(dictionary.keys())
+    dictionary.pop('key')  # Remove item.  KeyError if not existing.
 
-    if "key1" in dictionnary:  # Test if key is in dictionnary, only at the
-                               # 1st level, not in the whole hierarchy.
+    if "key1" in dictionary:  # Test if key is in dictionary, only at the
+                              # 1st level, not in the whole hierarchy.
 
-    for key, value in dictionnary.items():  # Python 3
-    for key, value in dictionnary.iteritems(): # Python 2
+    for key, value in dictionary.items():  # Python 3
+    for key, value in dictionary.iteritems(): # Python 2
 
-    # Go through dictionnary sorted by keys.
-    for key in sorted dictionnary.keys():
-      value=dictionnary[key]
+    # Go through dictionary sorted by keys.
+    for key in sorted dictionary.keys():
+      value=dictionary[key]
 
 
-    PRETTY DICTIONNARY
+    PRETTY DICTIONARY
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
 
       PPRINT - BEST IF WANTED TO RE REREAD BY PYTHON
