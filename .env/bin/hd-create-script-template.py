@@ -165,15 +165,15 @@ parser.add_argument('-l', '--log-level', dest='loglevel', default='info',
 args = parser.parse_args()
 
 if args.loglevel=="debug":
-    level=logging.DEBUG
+    log_level=logging.DEBUG
 elif args.loglevel=="warning":
-    level=logging.WARNING
+    log_level=logging.WARNING
 elif args.loglevel=="error":
-    level=logging.ERROR
+    log_level=logging.ERROR
 elif args.loglevel=="critical":
-    level=logging.CRITICAL
+    log_level=logging.CRITICAL
 else:
-    level=logging.INFO
+    log_level=logging.INFO
 
 
 # When setting the log level with logging.basicConfig(), the log level is set
@@ -195,11 +195,11 @@ logging.basicConfig(
 # Creating a logger with the script's name and setting it to a specific log
 # level.
 logger = logging.getLogger(scriptName)
-logger.setLevel(level)
+logger.setLevel(log_level)
 logger.debug("Test of logging %s", "here. :)")
 
 # fh = logging.FileHandler(f"/var/log/{scriptName}.log", mode='a')
-# fh.setLevel(level)
+# fh.setLevel(log_level)
 # logger.addHandler(fh)  # For some reason, the basicConfig format does not apply.  Need to investigate more on this.
 
 errors = ""
