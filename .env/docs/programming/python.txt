@@ -189,7 +189,9 @@ ARRAY / LIST / DICTIONARY (HASH)
     list = [ None ] * 5  # Initialize the array with 5 entries.
 
     len(list)
-    list.append(<data>)  # Modify, add to list.
+
+    list..insert(0, <data>)  # Preprend to the list, insert at position 0.
+    list.append(<data>)      # Modify, add to list.
     list + ListB  # Concatenation, merge.
     list.extends(listB) # Same as 'list + listB' (Concatenation, merge).
     list.sort()
