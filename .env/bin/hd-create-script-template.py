@@ -19,6 +19,7 @@ from datetime import datetime
 import time
 
 import argparse
+import subprocess
 
 # os.path.realpath(os.curdir) # Current directory, canonical form.
 
@@ -529,12 +530,27 @@ def main_wrapper():
         handle_exception(exception)
 
 
+def run_os_command(command_as_array: list[str]) -> tuple[int, str, str]:
+
+    logger.debug("Executing:  " + " ".join(command_as_array))
+    completedProcess = subprocess.run(command_as_array, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
+    stdout = completedProcess.stdout.decode('utf-8').rstrip()
+    stderr = completedProcess.stderr.decode('utf-8').rstrip()
+
+    logger.debug(f"stdout  = >>{stdout}<<")
+    logger.debug(f"stderr  = >>{stderr}<<")
+    logger.debug(f"retcode = >>{completedProcess.returncode}<<")
+
+    return (completedProcess.returncode, stdout, stderr)
+
+
 def main():
 
-    # completedProcess = subprocess.run(["ls", "-l", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
-    # print(completedProcess.stdout.decode('utf-8').rstrip())
-    # print(completedProcess.stderr.decode('utf-8').rstrip())
-    # print(completedProcess.returncode)
+    (returncode, stdout, stderr) = run_os_command(["cat", "/etc/services"])
+
+    # stdout_text = os.popen("cat /etc/services").read()  # stderr is not catched and is sent out to the terminal.
+    # return_code = os.system("cat /etc/services")  # stdout and stderr cannot be caught and is sent to the terminal.
+
     pass # <code here>
 
 
