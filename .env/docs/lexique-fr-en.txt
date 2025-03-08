@@ -8,6 +8,11 @@ SITES
 LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
+  wildcard                   -> métacaractère, caractère générique, caractère de remplacement, électron libre
+  snapshot                   -> instantané
+  throttle                   -> régularisation, mettre au ralenti, ralentir
+  refactoring                -> refactorisation
+  override                   -> surcharge
   token                      -> jeton
   monitoring                 -> surveiller / vérifier
   deprecated                 -> déclassé, obsolète, dépassé, déprécié
