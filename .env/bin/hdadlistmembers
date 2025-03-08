@@ -81,6 +81,8 @@ parser.add_argument('-q', '--quick', dest='quick', default=False,
                     action="store_true", required=False,
                     help='Print quickly only the names of members, not their details.')
 
+parser.add_argument('-d', '--deepInHierarchy', type=int, dest='deep_in_hierarchy',
+                    default=256, help='How deep in the hierarchy to go.')
 
 # Optional argument with choices.
 # See:  https://stackoverflow.com/questions/40324356/python-argparse-choices-with-a-default-choice
@@ -192,7 +194,11 @@ def findPositionsOfFields(header):
     return positionsOfFields
 
 
-def showGroupUsers(groupName, indent):
+def showGroupUsers(groupName, hierarchy_level):
+
+    if hierarchy_level > args.deep_in_hierarchy:
+        return
+
     (groupOU, exitcode) = runDsCommand(["dsquery.exe", "group", "-name", groupName], True)
     if groupOU == "":
         msg=text[language]["GroupDoesNotExist"]
@@ -207,6 +213,7 @@ def showGroupUsers(groupName, indent):
     logger.debug("groupMembers = >>%s<<", groupMembers)
 
 
+    indent = hierarchy_level * " "
     if len(groupMembers) == 0:
         msg=text[language]["Empty"]
         print(f"\n{indent}{groupName} - {msg}:\n")
@@ -249,15 +256,16 @@ def showGroupUsers(groupName, indent):
                 logger.error("Failure with exit code #%d:  %s", exitcode, memberData)
 
     for group in groupsToExpandInto:
-        showGroupUsers(group, indent+"    ")
+        showGroupUsers(group, hierarchy_level)
 
 firstTime = True
+hierarchy_level=0
 for groupName in args.groupNames:
 
     if not firstTime:
         print("\n\n")
 
-    showGroupUsers(groupName, "")
+    showGroupUsers(groupName, hierarchy_level)
     firstTime = False
 
 print()
