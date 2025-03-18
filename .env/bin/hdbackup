@@ -43,6 +43,7 @@ If -d is used, create a directory with the ISO 8601 timestamp.
   -m              Rename / move instead of copying the directories.
   -d              Create directory using the generated ISO 8601 timestamp.
   -b              .tar.bz2 compression
+  -z              .zip compression
   -p <prefix>     Prefix filename with <prefix>.
   -s <suffix>     Suffix filename with <suffix>.  Note that the suffix
                   will show up before the extension of the file.
@@ -59,15 +60,17 @@ EOM
 MOVE=0
 MAKEDIR=0
 BTAR=0
+ZIP=0
 TIMESTAMP_TYPE="file"
 TIMESTAMP_ACTIVATED=1
 unset PREFIX SUFFIX ENDSUFFIX
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "bcdmnp:s:e:h" OPTCMD; do
+while getopts "bzcdmnp:s:e:h" OPTCMD; do
   case "${OPTCMD}" in
     "b")    BTAR=1;;
+    "z")    ZIP=1;;
     "c")    TIMESTAMP_TYPE="now";;
     "p")    PREFIX="${OPTARG}";;
     "s")    SUFFIX="-${OPTARG}";;
@@ -104,6 +107,10 @@ if [ "${BTAR}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
   ERRORS="${ERRORS} - -b and -e options are not compatible.  Choose one or the other.\n"
 fi
 
+if [ "${ZIP}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
+  ERRORS="${ERRORS} - -z and -e options are not compatible.  Choose one or the other.\n"
+fi
+
 if [ ! -z "${ERRORS}" ]; then
   echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
   echo -e "${ERRORS}"
@@ -138,11 +145,16 @@ setTimeStampFile()
 
 # Running through remaining arguments
 
-if ((BTAR)); then
+if (( BTAR || ZIP )); then
   setTimeStampFile "${FILES[0]}"
   [[ ! -z "${PREFIX}" ]] && PREFIX="${PREFIX}-"  # Appending '-' if set.
-  FILE_DST="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
-  tar cvjf "${FILE_DST}" ${FILES[@]}
+  if (( BTAR )); then
+    FILE_DST="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
+    tar cvjf "${FILE_DST}" ${FILES[@]}
+  else
+    FILE_DST="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}.zip"
+    zip -r "${FILE_DST}" ${FILES[@]}
+  fi
   echo "Created:  ${FILE_DST}"
   if ((MOVE)); then
     echo "Deleting ${FILES[@]} since move option has been provided."
