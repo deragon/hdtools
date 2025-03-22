@@ -49,7 +49,8 @@ if has('nvim')
 
 
   -- print(vim.o.runtimepath)
-  require('hdinit')  -- Hans Deragon's init.lua loaded.
+  --require('hdinit')  -- Hans Deragon's init.lua loaded.
+  dofile(custom_path .. '/hdinit.lua')  -- Hans Deragon's init.lua loaded.
 EOF
 else
   source $HDVIM/vimrc
