@@ -22,12 +22,20 @@
 --   end
 -- end
 
+
 -- LSP - LANGUAGE SERVER PROTOCOL
 -- ══════════════════════════════════════════════════════════════════════════════
-
-require 'lspconfig'.pyright.setup{}
---require 'lspconfig'.bash.setup{}
---require 'lspconfig'.java.setup{}
+--
+--   List of languages available at:
+--
+--     Locally:   '${HDVIM}/plugged/nvim-lspconfig/doc/configs.md'
+--     Web:       https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
+local lspconfig = require 'lspconfig'
+lspconfig.pyright.setup{}               -- Python
+lspconfig.bashls.setup{}                -- Bash
+-- lspconfig.java_language_server.setup{}  -- Java
+lspconfig.sqlls.setup{}                 -- SQL
+-- lspconfig.terraform_lsp.setup{}         -- Terraform
 
 
 -- nvim-treesitter - https://github.com/nvim-treesitter/nvim-treesitter
