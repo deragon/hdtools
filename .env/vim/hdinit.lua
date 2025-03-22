@@ -48,11 +48,12 @@ lspconfig.sqlls.setup{}                 -- SQL
 --  The goal of nvim-treesitter is both to provide a simple and easy way to
 --  use the interface for tree-sitter in Neovim and to provide some basic
 --  functionality such as highlighting based on it.
-local ts = require 'nvim-treesitter.configs'
-ts.setup {
+local treesitter = require 'nvim-treesitter.configs'
+treesitter.setup {
   -- List of languages supported out-of-the-box at:
   --   https://github.com/nvim-treesitter/nvim-treesitter/?tab=readme-ov-file#supported-languages
-  ensure_installed = { 'bash', 'python', 'java', 'javascript', 'typescript', 'sql', 'terraform', 'lua', 'c_sharp' }, -- 'powershell' does not work!
+  -- comment:  Highlight keywords in comments such as 'TODO', 'FIXME', 'BUG'.
+  ensure_installed = { 'comment', 'bash', 'python', 'java', 'javascript', 'typescript', 'sql', 'terraform', 'lua', 'c_sharp' }, -- 'powershell' does not work!
   highlight = { enable = true }
 }
 
@@ -182,14 +183,12 @@ local options_global = {
   --hlsearch = true, -- don't highlight matching search
   --cursorline = true, -- enable cursorline
 }
-
-local options_buffer = {
-}
-
-local options_window = {
-}
-
---set locally. no need to call elsewhere
 set_options(go, options_global)
-set_options(bo, options_buffer)
-set_options(wo, options_window)
+
+-- local options_buffer = {
+-- }
+-- set_options(bo, options_buffer)
+
+-- local options_window = {
+-- }
+-- set_options(wo, options_window)
