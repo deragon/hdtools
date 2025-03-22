@@ -193,7 +193,8 @@ set foldlevel=99
 " script, because some will reset values and otions if they were set before.
 
 set nobackup
-set title
+set title     " Update terminal title once Vim started.
+set titleold= " Restore previous terminal title after leaving Vim.
 
 " Set Git URI format to 'git' instead of default 'http'.
 let g:plug_url_format = 'git@github.com:%s.git'
