@@ -58,11 +58,10 @@ treesitter.setup {
 }
 
 
-
--- nvim-cmp - Code completion
+-- nvim-cmp - Completion for code and command-line (CMP == completion)
 -- ────────────────────────────────────────────────────────────────────────────
 --   From:  https://github.com/hrsh7th/nvim-cmp
-local cmp = require'cmp'
+local cmp = require 'cmp'
 
 cmp.setup({
   snippet = {
@@ -79,12 +78,22 @@ cmp.setup({
     -- completion = cmp.config.window.bordered(),
     -- documentation = cmp.config.window.bordered(),
   },
+  preselect = cmp.PreselectMode.FirstItem,
   mapping = cmp.mapping.preset.insert({
-    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    -- ['<C-b>']     = cmp.mapping.scroll_docs(-4),
+    -- ['<C-f>']     = cmp.mapping.scroll_docs(4),
+    ['<C-<Up>']     = cmp.mapping.scroll_docs(-4),
+    ['<C-<Down>']   = cmp.mapping.scroll_docs(4),
+    ['<C-Space>']   = cmp.mapping.complete(),
+    -- ['<C-e>']     = cmp.mapping.abort(),
+    ['<Tab>']       = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    -- From:  https://www.reddit.com/r/neovim/comments/10x2ryc/how_to_prevent_enter_key_select_first_suggestion/
+    -- ["<CR>"] = cmp.config.disable,
+    -- ["<C-p>"] = cmp.mapping.select_prev_item(),
+    -- ["<C-n>"] = cmp.mapping.select_next_item(),
+    ["<C-e>"] = cmp.mapping.abort(),
+    ["<C-y>"] = cmp.mapping.confirm()
+
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
@@ -116,14 +125,42 @@ cmp.setup.cmdline({ '/', '?' }, {
   }
 })
 
+local cmp_custom_mappings = {
+    -- ['<C-b>']     = cmp.mapping.scroll_docs(-4),
+    -- ['<C-f>']     = cmp.mapping.scroll_docs(4),
+
+    -- Code copied and adapted from nvim-cmp/lua/cmp/config/mapping.lua,
+    -- mapping.preset.cmdline = function(override)
+    ['<Down>'] = {
+      c = function()
+        local cmp = require('cmp')
+        if cmp.visible() then
+          cmp.select_next_item()
+        -- else
+        --   cmp.complete()
+        end
+      end,
+    },
+    ['<Up>'] = {
+      c = function()
+        local cmp = require('cmp')
+        if cmp.visible() then
+          cmp.select_prev_item()
+        else
+          cmp.complete()
+        end
+      end,
+    }
+}
+
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-    { name = 'cmdline' }
-  }),
+  -- Original code:  mapping = cmp.mapping.preset.cmdline(),
+  mapping = cmp.mapping.preset.cmdline(cmp_custom_mappings),
+  sources = cmp.config.sources(
+    { { name = 'path'    } },
+    { { name = 'cmdline' } }
+  ),
   matching = { disallow_symbol_nonprefix_matching = false }
 })
 
