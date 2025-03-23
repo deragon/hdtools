@@ -51,6 +51,8 @@ LIKE
 
     'SOMETHING%' LIKE '%\\%%' ESCAPE '\\';
 
+  - LIKE ANY (<pattern1> [, <pattern2> ... ] )
+
 
 
 GRANT
