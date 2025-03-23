@@ -466,23 +466,36 @@ WAREHOUSE
 
 
 
+STORAGE / SPACE TAKEN BY THE ACCOUNT
+══════════════════════════════════════════════════════════════════════════════
 
-    select * from snowflake.account_usage.grants_to_roles
-    where 1=1
-    and deleted_on      is null
-    and granted_on      = 'WAREHOUSE'
-    and privilege       = 'USAGE'
-    and granted_to      = 'ROLE'
-    and grantee_name in
-    (
-        select ROLE from snowflake.account_usage.grants_to_users
-        where 1=1
-        and deleted_on is null
-        and grantee_name = current_user()
-        -- Every user has role PUBLIC, but PUBLIC does not show up in the
-        -- select above, thus the UNION below to include it.
-        UNION ( select 'PUBLIC' as ROLE )
-    );
+  -- Storage as TiB (power of 1024)
+  select
+    USAGE_DATE,
+    STORAGE_BYTES              / POW(1024,4) AS STORAGE_BYTES_AS_TIB
+    STAGE_BYTES                / POW(1024,4) AS STAGE_BYTES_AS_TIB
+    FAILSAFE_BYTES             / POW(1024,4) AS FAILSAFE_BYTES_AS_TIB
+    HYBRID_TABLE_STORAGE_BYTES / POW(1024,4) AS HYBRID_TABLE_STORAGE_BYTES_AS_TIB
+  from SNOWFLAKE.ACCOUNT_USAGE.STORAGE_USAGE order by usage_date desc limit 5;
+
+  -- Storage as TB (power of 1000)
+  select
+    USAGE_DATE,
+    STORAGE_BYTES              / POW(1000,4) AS STORAGE_BYTES_AS_TB
+    STAGE_BYTES                / POW(1000,4) AS STAGE_BYTES_AS_TB
+    FAILSAFE_BYTES             / POW(1000,4) AS FAILSAFE_BYTES_AS_TB
+    HYBRID_TABLE_STORAGE_BYTES / POW(1000,4) AS HYBRID_TABLE_STORAGE_BYTES_AS_TB
+  from SNOWFLAKE.ACCOUNT_USAGE.STORAGE_USAGE order by usage_date desc limit 5;
+
+  -- Per table
+  select * from snowflake.account_usage.tables;
+  set LAST_QUERY_ID=(select last_query_id());
+  -- select "TABLE_CATALOG" as "Database", sum("ROW_COUNT") as "Rows", sum("BYTES") as "Bytes" from table(result_scan($LAST_QUERY_ID)) where 1=1
+  select * from table(result_scan($LAST_QUERY_ID)) where 1=1
+  and "DELETED" is null
+  and "TABLE_TYPE" = 'BASE TABLE'
+  GROUP BY "TABLE_CATALOG"
+  order by "Rows" desc;
 
 
 
