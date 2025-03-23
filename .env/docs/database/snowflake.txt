@@ -433,8 +433,39 @@ TIME TRAVEL
 WAREHOUSE
 ══════════════════════════════════════════════════════════════════════════════
 
-  List all warehouses a user has access to
-  ────────────────────────────────────────────────────────────────────────────
+  -- List all warehouses a user has access to
+  -- ────────────────────────────────────────────────────────────────────────────
+
+  with user_role as
+  (
+      with u as
+      (
+          select USER from
+          (values
+            ('user1'),
+            ('user2')
+          ) as pseudofunctionfornewcolumn(user)
+      )
+      select ROLE, grantee_name as USER from snowflake.account_usage.grants_to_users
+      join u on
+          grantee_name = u.user
+      and deleted_on is null
+      -- Every user has role PUBLIC, but PUBLIC does not show up in the
+      -- select above, thus the UNION below to include it.
+      UNION (SELECT 'PUBLIC' AS ROLE, USER FROM u)
+  )
+  select user_role.USER, warehouse.NAME AS WAREHOUSE, warehouse.GRANTEE_NAME AS ROLE from snowflake.account_usage.grants_to_roles g
+  join user_role on
+      warehouse.grantee_name = user_role.ROLE
+  and deleted_on      is null
+  and granted_on      = 'WAREHOUSE'
+  and privilege       = 'USAGE'
+  and granted_to      = 'ROLE'
+  and name not like '%SYSTEM$%'
+  order by USER, WAREHOUSE;
+
+
+
 
     select * from snowflake.account_usage.grants_to_roles
     where 1=1
