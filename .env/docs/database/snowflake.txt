@@ -128,6 +128,14 @@ SQL
     MULTIPLE ROWS
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
 
+      -- Example #0
+
+      -- pseudofunctionfornewcolumn() is not a function, just an artefact to
+      -- generate the column named 'model'.
+      select '1970' as year, model
+      from (values ('model1'), ('model2')) as pseudofunctionfornewcolumn(model);
+
+
       From:  https://stackoverflow.com/questions/63017612/how-to-select-multiple-rows-with-fake-data-in-snowflake
 
       -- Example #1
