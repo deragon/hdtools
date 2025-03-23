@@ -1114,7 +1114,7 @@ DATE CHANGE
     If you want to update the date of the last commit to a specific date, you
     can use the following command:
 
-      GIT_COMMITTER_DATE="Tue Fan 25 12:00 2022 +0000" git commit --amend --no-edit
+      git commit --amend --no-edit --date "2025-03-22 12:13:46-0400"
 
     Basically, instead of using the date variable, you can manually set the
     date of the commit to any date you want.
