@@ -197,31 +197,34 @@ def findPositionsOfFields(header):
 
 def showGroupUsers(groupName, hierarchy_level):
 
+    print()
     if hierarchy_level > args.deep_in_hierarchy:
         return
+
+    indent = hierarchy_level * "  "
 
     (groupOU, exitcode) = runDsCommand(["dsquery.exe", "group", "-name", groupName], True)
     if groupOU == "":
         msg=text[language]["GroupDoesNotExist"]
-        print(f"\n{groupName} - {msg}.\n")
+        print(f"{indent}{groupName} - {msg}.\n")
         return
 
     groupName = extractCNfromOU(groupOU)  # Fetch name of group with proper, official case.
 
     (groupMembers, exitcode) = runDsCommand(["dsget.exe", "group", "-members", groupOU], True)
-    groupMembers = groupMembers.split("\n")
-    groupMembers = [ x.strip('"') for x in groupMembers ]
-    logger.debug("groupMembers = >>%s<<", groupMembers)
 
-
-    indent = hierarchy_level * " "
-    if len(groupMembers) == 0:
+    if groupMembers == "":
         msg=text[language]["Empty"]
-        print(f"\n{indent}{groupName} - {msg}:\n")
+        print(f"{indent}{groupName} - {msg}.\n")
         return
 
     msg=text[language]["MembersOfGroups"]
-    print(f"\n{indent}{groupName} - {msg}:\n")
+    print(f"{indent}{groupName} - {msg}:\n")
+    indent = (hierarchy_level + 1) * "  "
+
+    groupMembers = groupMembers.split("\n")
+    groupMembers = [ x.strip('"') for x in groupMembers ]
+    logger.debug("groupMembers = >>%s<<", groupMembers)
 
     groupsToExpandInto = []
     for member in groupMembers:
@@ -232,7 +235,7 @@ def showGroupUsers(groupName, hierarchy_level):
             (memberData, exitcode) = runDsCommand(["dsget.exe", "user", member, "-fn", "-ln", "-email"], False)
             if exitcode == 0 and memberData == "":
                 # Nothing to show / print.
-                pass
+                print(f"{indent}{member} - ERROR:  dsget.exe returns nothing.")
             elif exitcode == 0:
                 #print(f"{indent}{memberData}")
                 memberDataLines   = memberData.split('\n')
@@ -243,13 +246,14 @@ def showGroupUsers(groupName, hierarchy_level):
                 firstName  = memberData[positionsOfFields[0]:positionsOfFields[1]].strip()
                 lastName   = memberData[positionsOfFields[1]:positionsOfFields[2]].strip()
                 email      = memberData[positionsOfFields[2]:positionsOfFields[3]].strip()
-                to_print=f"{indent}    {firstName}"
+                to_print=f"{indent}{firstName}"
 
                 if firstName != lastName:
                     to_print=f"{to_print} {lastName}"
                 if len(email) > 0:
                     to_print=f"{to_print} ({email})"
 
+                to_print=f"{to_print} | {member})"
                 print(to_print)
             elif exitcode == 87:
                 groupsToExpandInto.append(extractCNfromOU(member))
@@ -257,7 +261,7 @@ def showGroupUsers(groupName, hierarchy_level):
                 logger.error("Failure with exit code #%d:  %s", exitcode, memberData)
 
     for group in groupsToExpandInto:
-        showGroupUsers(group, hierarchy_level)
+        showGroupUsers(group, hierarchy_level + 1)
 
 firstTime = True
 hierarchy_level=0
