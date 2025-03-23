@@ -52,6 +52,11 @@ TEAMS / MICROSOFT
   instance and hopefully the whole conversation will be printed in a single
   page.
 
+  To convert then the PDF to PNG, in Linux, run:
+
+    sudo apt install poppler-utils
+    pdftoppm -png myfile.pdf > myfile.png
+
 
 
 SCREENCAST
