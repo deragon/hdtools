@@ -853,6 +853,8 @@ LOGS / COMMENTS
   Change, ammend
   ────────────────────────────────────────────────────────────────────────────
 
+    git commit --amend  # Change the most recent commit message.
+
     Read:  https://help.github.com/en/github/committing-changes-to-your-project/changing-a-commit-message
 
 
