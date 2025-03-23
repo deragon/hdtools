@@ -43,6 +43,41 @@ GUI
 
 
 
+LUA
+══════════════════════════════════════════════════════════════════════════════
+
+  require() vs dofile()
+  ────────────────────────────────────────────────────────────────────────────
+
+    Lua offers a higher-level function to load and run libraries, called
+    require. Roughly, require does the same job as dofile, but with two
+    important differences. First, require searches for the file in a path;
+    second, require controls whether a file has already been run to avoid
+    duplicating the work. Because of these features, require is the preferred
+    function in Lua for loading libraries.
+
+    Ref:  https://www.lua.org/pil/8.1.html
+
+    From nvim help:
+
+      dofile({filename})                                      *dofile()*
+              Opens the named file and executes its contents as a Lua chunk. When
+              called without arguments, `dofile` executes the contents of the
+              standard input (`stdin`). Returns all values returned by the chunk. In
+              case of errors, `dofile` propagates the error to its caller (that is,
+              `dofile` does not run in protected mode).
+
+      :luafile {file}
+          Execute Lua script in {file}.
+          The whole argument is used as the filename (like |:edit|), spaces do not
+          need to be escaped. Alternatively you can |:source| Lua files.
+
+          Examples: >vim
+              :luafile script.lua
+              :luafile %
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2025 Hans Deragon - AGPL 3.0 licence.
