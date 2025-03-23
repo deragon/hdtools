@@ -169,7 +169,8 @@ def runDsCommand(command, failOnError):
     #output = completedProcess.stdout.decode('850')
     #output = completedProcess.stdout.decode('850').encode('utf-8').rstrip().strip('"')
     output = completedProcess.stdout.decode('850').rstrip().strip('"').replace('\r', '')
-    logger.debug("output = >>%s<<", output)
+    logger.debug("returncode = >>%d<<", completedProcess.returncode)
+    logger.debug("output     = >>%s<<", output)
     return (output, completedProcess.returncode)
 
 
