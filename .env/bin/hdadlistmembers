@@ -19,6 +19,8 @@ import re
 
 import argparse
 
+indent_marker = "▏ "
+
 # os.path.realpath(os.curdir) # Current directory, canonical form.
 
 scriptName=os.path.basename(sys.argv[0])
@@ -197,11 +199,13 @@ def findPositionsOfFields(header):
 
 def showGroupUsers(groupName, hierarchy_level):
 
-    print()
+    indent = hierarchy_level * indent_marker
+
+    print(indent)
+
     if hierarchy_level > args.deep_in_hierarchy:
         return
 
-    indent = hierarchy_level * "  "
 
     (groupOU, exitcode) = runDsCommand(["dsquery.exe", "group", "-name", groupName], True)
     if groupOU == "":
@@ -222,12 +226,12 @@ def showGroupUsers(groupName, hierarchy_level):
 
     if groupMembers == "":
         msg=text[language]["Empty"]
-        print(f"{indent}{groupName} - {msg}.\n")
+        padding=len(groupName)+3  # Add 3 to compensate for " - ".
+        print(f"{indent: <{padding}}{msg}.")
         return
 
-    msg=text[language]["MembersOfGroups"]
-    print(f"{indent}{groupName} - {msg}:\n")
-    indent = (hierarchy_level + 1) * "  "
+    indent = (hierarchy_level + 1) * indent_marker
+    print(indent)
 
     groupMembers = groupMembers.split("\n")
     groupMembers = [ x.strip('"') for x in groupMembers ]
@@ -237,7 +241,7 @@ def showGroupUsers(groupName, hierarchy_level):
     for member in groupMembers:
 
         if args.quick:
-            print(f"{indent}    {member}")
+            print(f"{indent}{member}")
         else:
             (memberData, exitcode) = runDsCommand(["dsget.exe", "user", member, "-fn", "-ln", "-email"], False)
             if exitcode == 0 and memberData == "":
