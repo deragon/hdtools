@@ -211,7 +211,14 @@ def showGroupUsers(groupName, hierarchy_level):
 
     groupName = extractCNfromOU(groupOU)  # Fetch name of group with proper, official case.
 
+    (groupDesc, exitcode) = runDsCommand(["dsget.exe", "group", "-desc", groupOU], True)
+
+    # Remove first line containing '  desc \n' and last line containing 'dsget succeeded'.
+    groupDesc="\n".join([line.strip() for line in groupDesc.split('\n')[1:-1]])
+
     (groupMembers, exitcode) = runDsCommand(["dsget.exe", "group", "-members", groupOU], True)
+
+    print(f"{indent}{groupName} - {groupDesc}")
 
     if groupMembers == "":
         msg=text[language]["Empty"]
