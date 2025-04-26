@@ -286,8 +286,7 @@ for line in lines:
 
 with open(filename,'w+') as fd:  # '+' means create if it does not exist.
                                  # 'a' stands for append.
-    fd.write(output + "\n")
-    fd.close()
+    fd.write(output + "\n")  # Because of 'with', fd will be closed automatically.
 
 
 
