@@ -35,14 +35,15 @@ STRING MANIPULATION
       RE.
 
 
-  F-STRING FORMATING (PYTHON 3)
+  F-STRING FORMATING
   ────────────────────────────────────────────────────────────────────────────
 
     Format:  f'{variable_name:[fill character][align < or >][width (integer]}'
 
     var1=123.23
     var2="16 padding."
-    print(f" >>{var1: >8.2f}<< →  >>{var2: >16}<< >>{var2:*<16}<<\n")
+    padding=16
+    print(f" >>{var1: >8.2f}<< →  >>{var2: >{padding}}<< >>{var2:*<{padding}}<<\n")
     print(f"{'This is static text, not a variable' :<64}Other text starting at column 65.")
 
     Left and right padding is determined with < and >.
