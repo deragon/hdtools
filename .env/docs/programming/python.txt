@@ -333,7 +333,7 @@ MISCELLANEOUS
     >>> 'Un test en français'.encode()
     b'Un test en fran\xc3\xa7ais'
 
-  ∙ python3 -m http.server # Simple HTTP server listening on port/socket 8000
+  ∙ python -m http.server # Simple HTTP server listening on port/socket 8000
 
   ∙ 2to3 -w ${PYTHON_SCRIPT}" # Conversion from Python 2 to Python 3.  Backup saved as "${PYTHON_SCRIPT}.bak"
 
@@ -379,7 +379,7 @@ MISCELLANEOUS
       # could replace the find statement with ... .find('{*}version') ...
 
       POM_NAMESPACE="$(perl -ne 'print if s/.*xmlns="(.*)"/\1/g' pom.xml)"
-      POM_VERSION="$(python3 -c "import xml.etree.ElementTree as xml;print(xml.parse('pom.xml').getroot().find('{${POM_NAMESPACE}}version').text)")"
+      POM_VERSION="$(python -c "import xml.etree.ElementTree as xml;print(xml.parse('pom.xml').getroot().find('{${POM_NAMESPACE}}version').text)")"
 
 
   Perl ne / perlne equivalent
@@ -585,7 +585,7 @@ CONFIG FILE - .ini - Standard Python
 SCRIPT STARTUP
 ══════════════════════════════════════════════════════════════════════════════
 
-  #!/usr/bin/env python3
+  #!/usr/bin/env python
   # -*- coding: utf-8 -*-
   # Defining encoding explained at http://www.python.org/dev/peps/pep-0263/
 
@@ -974,14 +974,8 @@ PIP / MODULES/PACKAGES DOWNLOADS
 
     Usage:
 
-      python -m pip install <module>     # Install system-wide.
-      python3 -m pip install <module>    # Install system-wide.
-      python3.5 -m pip install <module   # Install system-wide.
-      python3.6 -m pip install <module>  # Install system-wide.
-
-      python3   -m pip install --user <module>  # Install in user home directory.
-      python3.5 -m pip install --user <module>  # Install in user home directory.
-      python3.6 -m pip install --user <module>  # Install in user home directory.
+      python -m pip install <module>         # Install system-wide.
+      python -m pip install --user <module>  # Install in user home directory.
 
     Get Packages
 
@@ -989,12 +983,13 @@ PIP / MODULES/PACKAGES DOWNLOADS
       download, unpack and "python setup.py install" it. Browse all packages or
       use the search box above.
 
-    - pip3 list # List all Python modules installed and their version number.
+    - pip list # List all Python modules installed and their version number.
+    - pip install --upgrade <module>  # Upgrade/update module to latest version.
 
     - To install a python module from source (Git for instance):
 
-        python3 setup.py install # As root, install as system-wide
-        python3 setup.py install --user  # As user, install in user ~/.local
+        python setup.py install # As root, install as system-wide
+        python setup.py install --user  # As user, install in user ~/.local
 
     - Pour installer un package Python sous ${DIR}:
 
@@ -1165,14 +1160,14 @@ INSTALLATION
 
   Standard installation:
 
-    python3 -m pip install -r requirements.txt  # Install all dependency of a project
-    pip3 install -r requirements.txt  # Install all dependency of a project.
+    python -m pip install -r requirements.txt  # Install all dependencies of a project
+    pip install -r requirements.txt  # Install all dependencies of a project.
 
   If you do not have the permissions to install them as root, then add
   the '--user' option to install the dependencies on the user's home
   directory:
 
-    python3 -m pip install --user -r requirements.txt  # Install all dependency of a project
+    python -m pip install --user -r requirements.txt  # Install all dependencies of a project
 
 
 
@@ -1190,7 +1185,7 @@ COMPILATION OF C CODE (FOR BINDINGS FOR EXAMPLE)
   the following command will return all the gcc include argument that
   are necessary.
 
-    python3-config --includes
+    python-config --includes
 
 
 
