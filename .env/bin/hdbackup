@@ -148,11 +148,12 @@ setTimeStampFile()
 if (( BTAR || ZIP )); then
   setTimeStampFile "${FILES[0]}"
   [[ ! -z "${PREFIX}" ]] && PREFIX="${PREFIX}-"  # Appending '-' if set.
+  FILE_DST_BASENAME="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}"
   if (( BTAR )); then
-    FILE_DST="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}.tar.bz2"
+    FILE_DST="${FILE_DST_BASENAME}.tar.bz2"
     tar cvjf "${FILE_DST}" ${FILES[@]}
   else
-    FILE_DST="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}.zip"
+    FILE_DST="${FILE_DST_BASENAME}.zip"
     zip -r "${FILE_DST}" ${FILES[@]}
   fi
   echo "Created:  ${FILE_DST}"
