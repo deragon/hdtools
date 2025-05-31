@@ -24,11 +24,11 @@ TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
 usage()
 {
   cat <<EOM
-Usage:  ${SCRIPT_NAME} [-m] <file or directory>+ | [-d] | [-h]
+Usage:  ${SCRIPT_NAME} [-<option>]+ <file or directory>+ | [-d] | [-h]
 
 Copies the files or directories passed as parameters, named as:
 
-  [<prefix>-]<file or directory>-<ISO 8601 timestamp>[-<suffix>]
+  [<prefix>-][<FQDN>-]<file or directory>-<ISO 8601 timestamp>[-<suffix>][.<endsuffix>]
 
 The default timestamp appended in the 'modification time' of the file being
 process.  Use -c to tag the file with the current time instead.
@@ -37,18 +37,21 @@ OR
 
 If -d is used, create a directory with the ISO 8601 timestamp.
 
-  -c              Use current time to tag the file instead of its
-                  'modification' time.
-
   -m              Rename / move instead of copying the directories.
   -d              Create directory using the generated ISO 8601 timestamp.
-  -b              .tar.bz2 compression
-  -z              .zip compression
+
+  -c              Current time being used as timestamp instead of its
+                  'modification' time.
+  -n              No timestamp added.
+
+  -b              .tar.bz2 compression.
+  -z              .zip compression.
+
   -p <prefix>     Prefix filename with <prefix>.
-  -s <suffix>     Suffix filename with <suffix>.  Note that the suffix
+  -s <suffix>     Suffix filename with <suffix>.  Note that the suffix.
                   will show up before the extension of the file.
   -e <suffix>     Suffix filename after the extension with <suffix>.
-  -n              No timestamp added.
+  -f              Add current host FQDN at begning of the file.
 
   -h              Display this help text.
 EOM
@@ -63,16 +66,18 @@ BTAR=0
 ZIP=0
 TIMESTAMP_TYPE="file"
 TIMESTAMP_ACTIVATED=1
+FQDN=""
 unset PREFIX SUFFIX ENDSUFFIX
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "bzcdmnp:s:e:h" OPTCMD; do
+while getopts "bzcfdmnp:s:e:h" OPTCMD; do
   case "${OPTCMD}" in
     "b")    BTAR=1;;
     "z")    ZIP=1;;
     "c")    TIMESTAMP_TYPE="now";;
-    "p")    PREFIX="${OPTARG}";;
+    "f")    FQDN="$(hostname -f)-";;
+    "p")    PREFIX="${OPTARG}-";;
     "s")    SUFFIX="-${OPTARG}";;
     "e")    ENDSUFFIX=".${OPTARG}";;
     "d")    MAKEDIR=1;;
@@ -148,7 +153,7 @@ setTimeStampFile()
 if (( BTAR || ZIP )); then
   setTimeStampFile "${FILES[0]}"
   [[ ! -z "${PREFIX}" ]] && PREFIX="${PREFIX}-"  # Appending '-' if set.
-  FILE_DST_BASENAME="${PREFIX}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}"
+  FILE_DST_BASENAME="${PREFIX}${FQDN}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}"
   if (( BTAR )); then
     FILE_DST="${FILE_DST_BASENAME}.tar.bz2"
     tar cvjf "${FILE_DST}" ${FILES[@]}
