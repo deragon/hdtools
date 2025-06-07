@@ -38,6 +38,8 @@
     # Formated outputs.  See:  https://docs.docker.com/engine/reference/commandline/ps/#formatting
     docker ps --all --format 'table {{.ID}}\t{{.Image}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Names}}\t{{.Labels}}'
 
+    # Delete container.
+    # docker container rm "${DOCKER_CONTAINER_ID}"  # Danger.  Not recoverable.
 
 
 # CREATION
