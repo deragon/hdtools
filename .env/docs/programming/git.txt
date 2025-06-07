@@ -496,7 +496,7 @@ COMMITS
   COMMIT MESSAGE
   ────────────────────────────────────────────────────────────────────────────
 
-    GitMoji:  Emoji for git commit message:  https://gitmoji.carloscuesta.me/
+    GitMoji:  Emoji for git commit message:  https://gitmoji.dev/about
 
     50/72 rule → https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
     Under Hans's vim:  <esc>g for 72
