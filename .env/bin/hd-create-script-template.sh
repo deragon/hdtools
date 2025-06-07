@@ -92,7 +92,7 @@ run()
     echo "DRYRUN:  $@"
   else
     "$@"
-    eval $(printf \""%s\" " "$@")
+    eval "$(printf \""%s\" " "$@")"
   fi
 }
 
