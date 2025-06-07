@@ -1115,6 +1115,7 @@ DATE CHANGE
     can use the following command:
 
       git commit --amend --no-edit --date "2025-03-22 12:13:46-0400"
+      git commit --amend --no-edit --date "$(date '+%Y-%m-%d %H:%M:%S%z')"  # Now
 
     Basically, instead of using the date variable, you can manually set the
     date of the commit to any date you want.
