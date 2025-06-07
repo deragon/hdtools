@@ -50,4 +50,12 @@ done
 
 shift $((${OPTIND} - 1))  # Remove options from $@
 
-echo $@ | sed -r "s/(\S+)/${QUOTE}\1${QUOTE}/g"
+QUOTED_STRINGS="$(echo $@ | sed -r "s/(\S+)/${QUOTE}\1${QUOTE}/g")"
+QUOTED_STRINGS_HTML_SAFE="$(echo "${QUOTED_STRINGS}" | sed -r 's/ /+/g;s/"/%22/g')"
+cat <<EOM
+${QUOTED_STRINGS}
+
+EN  https://www.google.com/?hl=en&q=${QUOTED_STRINGS_HTML_SAFE}
+FR  https://www.google.com/?hl=fr&q=${QUOTED_STRINGS_HTML_SAFE}
+
+EOM
