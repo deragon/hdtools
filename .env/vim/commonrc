@@ -609,6 +609,9 @@ map K k
 "In scripts, one most double the ^V to escape ^M.
 
 " F5:  - Remove trailing spaces and carriage returns (\r, ^M, CR).
+"         mz           Mark position with 'z', so the cursor will return to it.
+"         `z           Jump back to mark 'z', restoring the cursor where it was before pressing F5.
+"         echoerr ""   Reset error message on the command line to "".
 map  <F5> mz:g/\r$/s///g<CR>:g/\s\+$/s///g<CR>:nohlsearch<CR>`z:echoerr ""<CR>
 map  <F6> :nohlsearch<CR>:set nospell<CR>
 map  <S-F6> :g/}\n\n\/\//s//}\r\r\/\//g<CR>
