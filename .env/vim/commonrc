@@ -1059,6 +1059,11 @@ if($HDVIM != "")
     " More options documented at:  https://github.com/rhysd/git-messenger.vim
     Plug 'rhysd/git-messenger.vim'
 
+    " A pretty list for showing diagnostics, references, telescope results,
+    " quickfix and location lists to help you solve all the trouble your code is
+    " causing.
+    Plug 'folke/trouble.nvim'
+
     Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
     " https://github.com/dense-analysis/neural
     "
