@@ -702,11 +702,11 @@ tarDecompress()
   # trouvant dans le fichier tar.
   parameters="--atime-preserve=replace -$2"
 
-  if [ -z "${filename%%*bz2*}" ]; then
+  if [[ "${filename}" == *"bz2" || "${filename}" == *"tbz" ]]; then
     tar ${parameters}vjf "${filename}"
-  elif [ -z "${filename%%*gz*}" ]; then
+  elif [[ "${filename}" == *"gz" ]]; then
     tar ${parameters}vzf "${filename}"
-  elif [ -z "${filename%%*tar*}" ]; then
+  elif [[ "${filename}" == *"tar" ]]; then
     tar ${parameters}vf "${filename}"
   else
     echo "Sorry, cannot figure out what type of tar file it is."
