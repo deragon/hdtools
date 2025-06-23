@@ -733,6 +733,28 @@ map <esc>xx :silent 1,$!xmllint --format --recover - 2>/dev/null<CR>
 
 
 
+" HDCalc - Calculator - Calculates expression on the current line.
+" ══════════════════════════════════════════════════════════════════════════════
+nnoremap <Leader>= :call HDCalcLineExpr()<CR>
+
+function! HDCalcLineExpr()
+  " Remove any '=' sign preceeded by spaces, if any are there.
+  let l:expr = substitute(getline('.'), '^ *=', '', '')
+  try
+    let l:result = eval(l:expr)
+    call append(line('.'), l:result)
+  catch
+    echohl ErrorMsg
+    echom "Error evaluating expression: " . v:exception
+    echohl None
+  endtry
+endfunction
+
+" Define 'HDCalc' which then can be called in command-line mode as ':HDCalc'.
+command! -nargs=0 HDCalc call HDCalcLineExpr()
+
+
+
 " Date commands
 " ══════════════════════════════════════════════════════════════════════════════
 if($HD_TIMESTAMP_FORMAT_HUMAN != "")
