@@ -897,11 +897,10 @@ endfunction
 command! -nargs=+ MapToggle call MapToggle(<f-args>)
 MapToggle <Leader>w wrap
 
-" Search for non-ascii/unicode characters
-map <Leader>c /[^\x00-\x7F]\+<CR>
+command! -nargs=0 HDFindCharactersNonAscii /[^\x00-\x7F]\+
+command! -nargs=0 HDFindCharactersNull     /[\x00]
 
-" Search for null character
-map <Leader>n /[\x00]<CR>
+
 
 " From: http://superuser.com/questions/271471/vim-macro-to-convert-camelcase-to-lowercase-with-underscores
 " Change selected text from NameLikeThis to name_like_this.
