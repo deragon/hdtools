@@ -206,7 +206,7 @@ logger.debug("Test of logging %s", "here. :)")
 errors = ""
 
 # if args.hardlink == True:
-#   errors += "\n  --hardlink is required."
+#     errors += "\n  --hardlink is required."
 
 def report_error():
 
@@ -403,7 +403,10 @@ for file in args.files:
 
 # New: (from:  https://stackoverflow.com/questions/12420779/simplest-way-to-get-the-equivalent-of-find-in-python)
 
-allfiles = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
+files = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
+files = [path for path in pathlib.Path(".").rglob("*.txt")]  # Return all '*.txt' files; Global search support.
+# Returns all directories which contains files with extension "*.tf".
+directories = sorted(set([path.parent for path in pathlib.Path(".").rglob("*.tf")]))  # Global search support.
 
 # WARNING:
 #
