@@ -499,6 +499,28 @@ STORAGE / SPACE TAKEN BY THE ACCOUNT
 
 
 
+GLOSSARY
+══════════════════════════════════════════════════════════════════════════════
+
+  DDL       Data Definition Language commands
+
+            DDL commands are used to create, manipulate, and modify objects in
+            Snowflake, such as users, virtual warehouses, databases, schemas,
+            tables, views, columns, ..
+
+  DML       Data Manipulation Language
+
+            Commands for inserting, deleting, updating, and merging data in
+            Snowflake tables.  Commands for performing DML operations,
+            include:
+
+              - Inserting, deleting, updating, and merging data in Snowflake
+                tables.
+              - Bulk copying data into and out of Snowflake tables.
+              - Staging files for bulk copying.
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2025 Hans Deragon - AGPL 3.0 licence.
