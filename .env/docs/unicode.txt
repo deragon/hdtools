@@ -6,8 +6,8 @@ UNICODE UTF-8 UTF8
   ⚠️  Warning  ⚡ Electricity      🚨 Alarm    🔧 Wrench
   💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)  🔑 Key
   🧱 Brick wall/Blocked           🚧 Construction/Blocked
-  🐔👍 (pull request)             💀 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
-  👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹 🎯         🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
+  🐔👍 (pull request)             ❌💀 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
+  👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹 🎯         ☕🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
   🚀🍏🌟🆕 Feature  🪰 Bug  𒁈  CPU
   ❄️ Snowflake  🏦 Bank/vault
 
@@ -17,7 +17,7 @@ UNICODE UTF-8 UTF8
     🟡 Yellow  🔵 Blue    ⚫ Empty        🟨 Yellow  🟦 Blue    ⬛ Black
     🟢 Green   🟣 Purple  ⚪ White        🟩 Green   🟪 Purple  ⬜ White
 
-   ✓ ✖ ✘    ✓ ✕ ✗  ❌  █ ⛀⛁⛂⛃
+   ✓ ✖ ✘    ✓ ✕ ✗  ❌ ⭕️ █ ⛀⛁⛂⛃
   ┏━▶ ◀━┓ ▲ ━┓ ┏━ ▲ ▲ ┃
   ┣━▶ ◀━┫ ┃  ┃ ┃  ┃ ┃ ┃
   ┗━▶ ◀━┛ ┗━ ▼ ▼ ━┛ ┃ ▼
