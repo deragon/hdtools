@@ -31,10 +31,13 @@ if has('nvim')
   -- require() does not make use of VIM's rtp setup.  It uses package.path to
   -- which we must add ${HDVIM}.
 
-  local custom_path = os.getenv("HDVIM")
-  if custom_path then
+  local hdvim_path = os.getenv("HDVIM")
+  if hdvim_path then
       -- Append the custom path to package.path
-      package.path = package.path .. ";" .. custom_path .. "/?.lua"
+      package.path = package.path
+                     .. ";" .. hdvim_path .. "/?.lua"
+      --                .. ";" .. hdvim_path .. "/nvim/plugins/?.lua"
+      -- print(package.path)
   else
       print("ERROR:  ${HDVIM} is not set.  'package.path' is missing that path.")
       print(package.path)
@@ -52,7 +55,7 @@ if has('nvim')
 
   -- print(vim.o.runtimepath)
   --require('hdinit')  -- Hans Deragon's init.lua loaded.
-  dofile(custom_path .. '/hdinit.lua')  -- Hans Deragon's init.lua loaded.
+  dofile(hdvim_path .. '/hdinit.lua')  -- Hans Deragon's init.lua loaded.
 EOF
 else
   source $HDVIM/vimrc
