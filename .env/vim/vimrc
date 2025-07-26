@@ -370,7 +370,8 @@ endif
 
 " Fetch first character of the comment string, to get the comment character.
 " Does not exists in Nvim.
-let commentcharacter=split(&commentstring, '%s')[0]
+" Commented out because not being used.
+" let commentcharacter=split(&commentstring, '%s')[0]
 
 "if($HD_OS_FAMILY != "AIX")
 colorscheme hdblue
