@@ -22,6 +22,16 @@
 --   end
 -- end
 
+-- vim.opt.rtp:prepend(os.getenv("HDVIM") .. "/plugged")  -- Ne sert à rien.
+-- vim.opt.rtp:prepend(os.getenv("HDVIM") .. "/nvim")
+-- vim.opt.rtp:prepend(os.getenv("HDVIM") .. "/nvim/plugins")
+-- print("rtp path:  " .. vim.inspect(vim.api.nvim_list_runtime_paths()))
+local lazy = require 'nvim/config.lazy'
+-- lazy.setup("plugins")
+
+--print("rtp path:  " .. vim.inspect(vim.api.nvim_list_runtime_paths()))
+--print("type(vim.api.nvim_list_runtime_paths()) ▶▶▶" .. type(vim.api.nvim_list_runtime_paths()) .. "◀◀◀")
+--print("rtp path:\n" .. table.concat(vim.api.nvim_list_runtime_paths(), "\n"))
 
 -- LSP - LANGUAGE SERVER PROTOCOL
 -- ══════════════════════════════════════════════════════════════════════════════
