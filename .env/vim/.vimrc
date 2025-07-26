@@ -19,6 +19,8 @@ endif
 
 if has('nvim')
 
+  set rtp+=$HDVIM/nvim
+
   "echo "NVIM detected."
   cmap ,u :source $HDVIM/.vimrc<CR>:echo "Sourced " . $HDVIM . "/.vimrc"<CR>
   source $HDVIM/commonrc
