@@ -42,6 +42,7 @@ local lazy = require 'nvim/config.lazy'
 --     Web:       https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 local lspconfig = require 'lspconfig'
 lspconfig.pyright.setup{}               -- Python
+-- To install bash language server:  sudo npm install -g bash-language-server
 lspconfig.bashls.setup{}                -- Bash
 -- lspconfig.java_language_server.setup{}  -- Java
 lspconfig.sqlls.setup{}                 -- SQL
