@@ -1046,16 +1046,6 @@ if($HDVIM != "")
   Plug 'hashivim/vim-terraform'
 
   if has('nvim')
-    " mason.nvim is a Neovim plugin that allows you to easily manage external
-    " editor tooling such as LSP servers, DAP servers, linters, and formatters
-    " through a single interface.
-    "
-    "   https://github.com/williamboman/mason.nvim
-    Plug 'williamboman/mason.nvim'
-    " From:  https://github.com/williamboman/mason-lspconfig.nvim?tab=readme-ov-file#vim-plug
-    Plug 'williamboman/mason-lspconfig.nvim'
-
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " https://github.com/nvim-treesitter/nvim-treesitter
 
     Plug 'neovim/nvim-lspconfig'
 
@@ -1079,11 +1069,6 @@ if($HDVIM != "")
     "
     " More options documented at:  https://github.com/rhysd/git-messenger.vim
     Plug 'rhysd/git-messenger.vim'
-
-    " A pretty list for showing diagnostics, references, telescope results,
-    " quickfix and location lists to help you solve all the trouble your code is
-    " causing.
-    "Plug 'folke/trouble.nvim'
 
     Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
     " https://github.com/dense-analysis/neural

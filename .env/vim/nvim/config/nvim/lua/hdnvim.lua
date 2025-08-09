@@ -49,12 +49,6 @@ lspconfig.sqlls.setup{}                 -- SQL
 -- lspconfig.terraform_lsp.setup{}         -- Terraform
 
 
--- To make use of Trouble, type:
--- :Trouble diagnostics
-local trouble = require 'trouble'
-trouble.setup()
-
-
 -- nvim-treesitter - https://github.com/nvim-treesitter/nvim-treesitter
 -- ────────────────────────────────────────────────────────────────────────────
 --
