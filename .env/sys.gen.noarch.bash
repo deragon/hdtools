@@ -835,7 +835,7 @@ exportfunction hd_trim_variable
 
 # ════════════════════════════════════════════════════════════════════════════
 # TIME
-export HD_TIMESTAMP_FORMAT_ISO8601="%Y%m%dT%H%M%S"
+export HD_TIMESTAMP_FORMAT_ISO8601="%Y%m%dT%H%M%SZ%z"
 export HD_TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %Z"
 export HD_TIMESTAMP_FORMAT_CHANGELOG="%Y-%m-%d %H:%M %Z"
 export HD_TIMESTAMP_FORMAT_CHANGELOG_RPM="%a %b %d %Y" # Mon Nov 17 2014, no choice, that is the only format that would work.
