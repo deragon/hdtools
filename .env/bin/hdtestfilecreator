@@ -14,7 +14,7 @@
 SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
 
 unset COLORS
-if [ -t 1 ] ; then
+if [ -t 1 ]; then
   # STDOUT is a terminal.  Set colors.  If STDOUT is redirected, COLORS
   # remain unset and no ANSI codes are sent out.
   declare -A COLORS=(
@@ -106,6 +106,7 @@ This is a test file created on ${TIMESTAMP_HUMAN}${OWNER_DETAILS}.
 EOM
 fi
 
-echo -e "Content of '${FILENAME}':\n"
+echo "Created:  '$(readlink -f "${FILENAME}")'"
+echo -e "Content:\n"
 
 cat "${FILENAME}"
