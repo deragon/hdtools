@@ -310,29 +310,6 @@ set ic
 set report=1
 
 
-" Tab & Indentation settings
-let tabsizehd=2
-"set tabstop=$tabsizehd
-execute "set tabstop=".tabsizehd
-set cinoptions=>2  "The 'cinoptions' affect the way 'cindent' reindents lines in a C program
-set shiftwidth=2   "Number of spaces to use for each step of (auto)indent.
-
-" ════════════════════════════════════════════════════════════════════
-" TABS:
-"
-"   To re-indent a file, do in command mode:  :gg=G
-"   To convert tabs to spaces:                :retab
-"   Key "tab" express as spaces:              :set expandtab / set et
-"   Key "tab" express as a true tab:          :set noet
-"Typing key "tab" is represented with spaces instead of actual tabs.
-"To disable this:  set noet
-set et
-
-" For retab:  to insert space characters whenever the tab key is pressed, set
-" the 'expandtab' option.
-set expandtab
-
-
 set timeout
 set timeoutlen=20000
 set autowrite
@@ -664,11 +641,11 @@ map <esc>s :set nospell<CR>
 " Non breaking spaces now show as: ☠ (dead skull)
 "                    Tabs show as: ↳↳
 "         Trailing spaces show as: ␣
-set listchars=nbsp:☠,tab:↳↳,trail:␣
-set list
-
-set noautoindent " if autoindent is on, this causes problems with cut&paste
-                 " feature of X (at least, on Sun machines).
+" set listchars=nbsp:☠,tab:↳↳,trail:␣
+" set list
+"
+" set noautoindent " if autoindent is on, this causes problems with cut&paste
+"                  " feature of X (at least, on Sun machines).
 " Following filetype commands set up some special features that allow
 " gg=G to properly indent bash scripts for instance.
 "
@@ -978,118 +955,7 @@ if v:version > 800
   "source $HDVIM/hd-quickmenu.vim
 endif
 
-" CSV Plugin
-" CSVArrangeColumn <-> UnArrangeColumn (to undo)
 
-
-
-" if($HDVIM != "")
-"
-"   if has('nvim')
-"     "let g:loaded_plug  " Unset the variable by not assing any value to it.
-"     "set g:loaded_plug  " Unset the variable by not assing any value to it.
-"     execute "source" "${HDVIM}/autoload/plug.vim"
-"   endif
-"   call plug#begin('$HDVIM/plugged')
-"   "silent! call plug#begin('$HDVIM/plugged')
-"   Plug 'godlygeek/tabular'
-"   call plug#end()
-" endif
-
-
-
-if($HDVIM != "")
-  " VIM-PLUG - Plugin manager / packager
-  " ════════════════════════════════════════════════════════════════════
-  "
-  "   https://github.com/junegunn/vim-plug
-  "
-  "   Installation:
-  "
-  "      curl -fLo "${HDVIM}/autoload/plug.vim" --create-dirs \
-  "        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  "
-  "   To install all plugins from scratch on a new computer:  PlugInstall
-  "   To update all plugins:                                  PlugUpdate
-
-  " silent! is used here to avoid native gvim on Windows to display the
-  " following error message:
-  "
-  "   [vim-plug] `git` executable not found. Most commands will not be
-  "   available. To suppress this message, prepend `silent!` to `call
-  "   plug#begin(...)`.
-
-  if has('nvim')
-    " Absolutely required for loading the plugin since NvChad uses LazyVim and
-    " thus this autoload directory is not called under nvim automatically.
-    "let g:loaded_plug  " Unset the variable by not assigning any value to it.
-    "set g:loaded_plug  " Unset the variable by not assigning any value to it.
-    execute "source" "${HDVIM}/autoload/plug.vim"
-  endif
-  silent! call plug#begin('$HDVIM/plugged')
-  Plug 'rickhowe/diffchar.vim'
-  Plug 'AndrewRadev/linediff.vim'
-  Plug 'chrisbra/csv.vim'
-  Plug 'elzr/vim-json'
-  Plug 'godlygeek/tabular'
-  Plug 'jamessan/vim-gnupg'
-  Plug 'plasticboy/vim-markdown'
-  Plug 'scrooloose/nerdtree'
-  Plug 'skywind3000/quickmenu.vim'
-  Plug 'thinca/vim-fontzoom'
-  Plug 'tomtom/tcomment_vim'
-  Plug 'tpope/vim-abolish'
-  Plug 'tpope/vim-commentary'
-  Plug 'tpope/vim-sensible'
-  Plug 'tpope/vim-unimpaired'
-  Plug 'vim-scripts/SQLUtilities'
-  Plug 'hashivim/vim-terraform'
-
-  if has('nvim')
-
-    Plug 'neovim/nvim-lspconfig'
-
-    " nvim-cmp
-    " ────────────────────────────────────────────────────────────────────────────
-    Plug 'hrsh7th/cmp-nvim-lsp'
-    Plug 'hrsh7th/cmp-buffer'
-    Plug 'hrsh7th/cmp-path'
-    Plug 'hrsh7th/cmp-cmdline'
-    Plug 'hrsh7th/nvim-cmp'
-
-    " For vsnip users.
-    Plug 'hrsh7th/cmp-vsnip'
-    Plug 'hrsh7th/vim-vsnip'
-
-    "Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-    " Only one mapping (or one command) provides all features of this plugin.
-    " Briefly, move cursor to the position and run :GitMessenger or <Leader>gm.
-    " If you see an error message, please try health check.
-    "
-    " More options documented at:  https://github.com/rhysd/git-messenger.vim
-    Plug 'rhysd/git-messenger.vim'
-
-    Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-    " https://github.com/dense-analysis/neural
-    "
-    "   A ChatGPT Vim plugin, an OpenAI Neovim plugin, and so much more! Neural
-    "   integrates various machine learning tools so you can let AI write code
-    "   for you in Vim/Neovim, among other helpful things.
-    "Plug 'dense-analysis/neural'
-    "Plug 'muniftanjim/nui.nvim'
-    "Plug 'elpiloto/significant.nvim'
-    "Plug 'vim-textobj-comment'   " Bug; runs deprecated code.  Had to comment out.
-    "Plug 'vim-textobj-user'      " Bug; runs deprecated code.  Had to comment out.
-  endif
-
-  " On-demand loading
-  call plug#end()
-else
-  echo "ERROR:  ${HDVIM} is not set.  'rtp' is missing that path:"
-  echo "rtp=" &rtp
-endif
-colorscheme hdblue
 
 
 " STATUS LINE / STATUS BAR AT THE BOTTOM

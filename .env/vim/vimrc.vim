@@ -356,9 +356,6 @@ if v:version > 800
   "source $HDVIM/hd-quickmenu.vim
 endif
 
-" CSV Plugin
-" CSVArrangeColumn <-> UnArrangeColumn (to undo)
-
 
 
 " NVIM / NEOVIM
@@ -386,3 +383,76 @@ colorscheme hdblue
 " kprinter non disponible pour Ubuntu >=11.04.  gtklp est l'alternative.
 "set printexpr=system('kprinter'\ .\ '\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
 set printexpr=system('gtklp'\ .\ '\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
+
+if($HDVIM != "")
+  " VIM-PLUG - Plugin manager / packager
+  " ════════════════════════════════════════════════════════════════════
+  "
+  "   https://github.com/junegunn/vim-plug
+  "
+  "   Installation:
+  "
+  "      curl -fLo "${HDVIM}/autoload/plug.vim" --create-dirs \
+  "        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  "
+  "   To install all plugins from scratch on a new computer:  PlugInstall
+  "   To update all plugins:                                  PlugUpdate
+
+  " silent! is used here to avoid native gvim on Windows to display the
+  " following error message:
+  "
+  "   [vim-plug] `git` executable not found. Most commands will not be
+  "   available. To suppress this message, prepend `silent!` to `call
+  "   plug#begin(...)`.
+
+  silent! call plug#begin('$HDVIM/plugged')
+  Plug 'rickhowe/diffchar.vim'
+  Plug 'AndrewRadev/linediff.vim'
+
+  " CSV Plugin
+  " CSVArrangeColumn <-> UnArrangeColumn (to undo)
+  Plug 'chrisbra/csv.vim'
+  Plug 'elzr/vim-json'
+  Plug 'godlygeek/tabular'
+  Plug 'jamessan/vim-gnupg'
+  Plug 'plasticboy/vim-markdown'
+  Plug 'scrooloose/nerdtree'
+  Plug 'skywind3000/quickmenu.vim'
+  Plug 'thinca/vim-fontzoom'
+  Plug 'tomtom/tcomment_vim'
+  Plug 'tpope/vim-abolish'
+  Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-sensible'
+  Plug 'tpope/vim-unimpaired'
+  Plug 'vim-scripts/SQLUtilities'
+  Plug 'hashivim/vim-terraform'
+
+  " On-demand loading
+  call plug#end()
+else
+  echo "ERROR:  ${HDVIM} is not set.  'rtp' is missing that path:"
+  echo "rtp=" &rtp
+endif
+
+
+" Tab & Indentation settings
+let tabsizehd=2
+"set tabstop=$tabsizehd
+execute "set tabstop=".tabsizehd
+set cinoptions=>2  "The 'cinoptions' affect the way 'cindent' reindents lines in a C program
+set shiftwidth=2   "Number of spaces to use for each step of (auto)indent.
+
+" ════════════════════════════════════════════════════════════════════
+" TABS:
+"
+"   To re-indent a file, do in command mode:  :gg=G
+"   To convert tabs to spaces:                :retab
+"   Key "tab" express as spaces:              :set expandtab / set et
+"   Key "tab" express as a true tab:          :set noet
+"Typing key "tab" is represented with spaces instead of actual tabs.
+"To disable this:  set noet
+set et
+
+" For retab:  to insert space characters whenever the tab key is pressed, set
+" the 'expandtab' option.
+set expandtab

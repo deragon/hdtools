@@ -19,13 +19,6 @@ endif
 
 if has('nvim')
 
-  set rtp+=$HDVIM/nvim
-
-  "echo "NVIM detected."
-  cmap ,u :source $HDVIM/.vimrc<CR>:echo "Sourced " . $HDVIM . "/.vimrc"<CR>
-  source $HDVIM/commonrc
-
-  "let mapleader = "\\"  " Actually, just type '\'
   lua <<EOF
 
   -- require() does not make use of VIM's rtp setup.  It uses package.path to
@@ -55,9 +48,18 @@ if has('nvim')
 
   -- print(vim.o.runtimepath)
   --require('hdnvim')  -- Hans Deragon's init.lua loaded.
-  dofile(hdvim_path .. '/nvim/config/nvim/lua/hdnvim.lua')  -- Hans Deragon's init.lua loaded.
+  --dofile(hdvim_path .. '/nvim/config/nvim/lua/hdnvim.lua')  -- Hans Deragon's init.lua loaded.
+  dofile(hdvim_path .. '/nvim/config/nvim/init.lua')  -- Hans Deragon's init.lua loaded.
 EOF
+
+  set rtp+=$HDVIM/nvim
+
+  "echo "NVIM detected."
+  cmap ,u :source $HDVIM/.vimrc<CR>:echo "Sourced " . $HDVIM . "/.vimrc"<CR>
+
+  "let mapleader = "\\"  " Actually, just type '\'
 else
-  source $HDVIM/vimrc
-  source $HDVIM/commonrc
+  source $HDVIM/vimrc.vim
 endif
+
+source $HDVIM/commonrc.vim
