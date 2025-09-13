@@ -158,6 +158,7 @@ alias docs='f "${HDDOCSDIR}"'
 alias cdbd='cdprint ${HDDOCSDIR}/programming/bigdata'
 alias cdprg='cdprint ${HDDOCSDIR}/programming'
 alias cdvim='cdprint "${HDVIM}"'
+alias cdnvim='cdprint "${HDVIM}/nvim/config/nvim/lua/plugins"'
 
 eval $(hddocsaliascreate)  # Generate documents aliases.
 
@@ -299,7 +300,7 @@ if type -P nvim >/dev/null 2>&1; then
   alias nvim='hdvim --hdnvim'
   alias nvdiff='hdvim --hddiff'
 
-  nw() { hdvim "$(type -P $*)"; }
+  nw() { hdvim --hdnvim "$(type -P $*)"; }
   gnw()  { eval hdvim --hdgnvim '"$(hdtype -P $*)"'; }
 fi
 
