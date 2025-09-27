@@ -188,6 +188,8 @@ AWS CLOUDFORMATION
     CloudFormation stacks. This is because the variable is stored in the AWS
     Systems Manager Parameter Store.
 
+    aws ssm get-parameter --name "${KEY}"  # Add --with-decryption if secured.
+
 
   Renaming of stacks is impossible.
   ────────────────────────────────────────────────────────────────────────────
