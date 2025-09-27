@@ -850,7 +850,7 @@ HOST GIT REPOSITORY
 LOGS / COMMENTS
 ══════════════════════════════════════════════════════════════════════════════
 
-  Change, ammend
+  Change, amend
   ────────────────────────────────────────────────────────────────────────────
 
     git commit --amend  # Change the most recent commit message.
@@ -1005,7 +1005,11 @@ DIFF
   Diff between file versions
   ────────────────────────────────────────────────────────────────────────────
 
+    export COMMITID1=""
+    export COMMITID2=""
     git diff "${COMMITID1}" "${COMMITID2}" "${FILE}"
+    git diff "${COMMITID1}"~1 "${COMMITID1}"   # Diff between a commit and its previous version
+
 
 
   Diff between branches
