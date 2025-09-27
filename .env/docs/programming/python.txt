@@ -856,7 +856,13 @@ EXCEPTIONS
   try:
     # Code here
   except Exception as exception:
+    # Not all exception have the 'message' attribute.  This method checks for the
+    # message attribute and print it or print the Exception object as a fallback.
+    print getattr(e, 'message', repr(e))
+
+    # Or a simple solution:
     print(exception)
+
 
   try:
     # Code here
