@@ -147,12 +147,23 @@ AWS IAM
 AWS CLOUDFORMATION
 ══════════════════════════════════════════════════════════════════════════════
 
+  USEFUL COMMANDS
+  ────────────────────────────────────────────────────────────────────────────
+
+    # Fetch existing CloudFormation template from existing stack.
+    aws cloudformation get-template --stack-name "${CF_STACK_NAME}" --query 'TemplateBody' --output text | \
+      tee "${CF_STACK_NAME}-$(hddate -f).yml"
+
+
+  NOTES
+  ────────────────────────────────────────────────────────────────────────────
+
   - Descriptions of resources must be a static String and never can be
     built from functions such as !Join or !Ref.
 
       https://stackoverflow.com/questions/39678784/validationerror-when-calling-the-createstack-operation-template-format-error
 
-  - Descrition on multiple line are defined as:
+  - Description on multiple line are defined as:
 
       Description: >
 
