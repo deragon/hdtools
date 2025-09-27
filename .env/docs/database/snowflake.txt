@@ -209,6 +209,7 @@ SQL
 VARIABLES
 ══════════════════════════════════════════════════════════════════════════════
 
+  set CURRENT_USER  = (select current_user());
   set DATABASE_NAME = '<Database name>';
   set SCHEMA_NAME   = '<Schema name>';
 
