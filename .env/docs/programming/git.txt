@@ -338,7 +338,7 @@ WORKTREE
 
     BRANCH="feature/myfeature"  # May contain '/'.
     git checkout -b "${BRANCH}" "remotes/origin/${BRANCH}"  # CREATE BRANCH
-    git checkout master
+    git checkout main
     git worktree add ../"${BRANCH}" "${BRANCH}"
     cd ../"${BRANCH}"
 
@@ -353,7 +353,7 @@ WORKTREE
   REMOVE WORKTREE (DELETE)
   ────────────────────────────────────────────────────────────────────────────
 
-    cd master
+    cd main
     BRANCH_DIR=""
     git worktree remove "${BRANCH_DIR}"
 
@@ -435,18 +435,18 @@ TAGGING / TAGS
     Always tag the commit that has been pushed into production.  There are
     two types of workflow which are the following:
 
-    Merge code into 'master' once the PIP (Put In Production) was completed
+    Merge code into 'main' once the PIP (Put In Production) was completed
     and successful (no rollbacks)
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
 
       In this scenario, the tag should be created on the commit of the
-      branch that was used to release the code, prior the merge into 'master'.
+      branch that was used to release the code, prior the merge into 'main'.
 
-    Merge code into 'master' first, then deploy 'master'.
+    Merge code into 'main' first, then deploy 'main'.
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
 
       In this scenario, the tag should be created on the commit generated
-      by the merge of the branch into 'master'.
+      by the merge of the branch into 'main'.
 
 
     See:
@@ -714,7 +714,7 @@ KEEPING A FORK UP TO DATE - APPLIES TO GITHUB FORKS - UPDATE
   3. Updating your fork from original repo to keep up with their changes:
 
     git pull <remote> <remote branch>
-    git pull upstream master
+    git pull upstream main
 
 
 
@@ -1028,7 +1028,7 @@ DIFF
       #
       # Read:  https://til.hashrocket.com/posts/18139f4f20-list-different-commits-between-two-branches
 
-      BRANCH1="master"
+      BRANCH1="main"
       BRANCH2="origin/<replaceme>"
       git log --left-right --graph --cherry-pick --oneline "${BRANCH1}..${BRANCH2}"
       git log --left-right --graph --cherry-pick --oneline "${BRANCH2}..${BRANCH1}"
@@ -1210,11 +1210,11 @@ TROUBLESHOOTING
 DBUNIT MERGE COMMANDS
 ══════════════════════════════════════════════════════════════════════════════
 
-  git checkout master
+  git checkout main
   git pull
   git checkout <branch>
-  git rebase master
-  git checkout master
+  git rebase main
+  git checkout main
   git merge <branch>
 
 
@@ -1244,7 +1244,7 @@ INTELLIJ IDEA
 
   [alias]
 
-      oldest-ancestor = !bash -c 'diff -u <(git rev-list --first-parent "${1:-master}") <(git rev-list --first-parent "${2:-HEAD}") | sed -ne \"s/^ //p\" | head -1' -
+      oldest-ancestor = !bash -c 'diff -u <(git rev-list --first-parent "${1:-main}") <(git rev-list --first-parent "${2:-HEAD}") | sed -ne \"s/^ //p\" | head -1' -
 
 
 
