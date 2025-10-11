@@ -641,9 +641,9 @@ map <esc>s :set nospell<CR>
 " Non breaking spaces now show as: ☠ (dead skull)
 "                    Tabs show as: ↳↳
 "         Trailing spaces show as: ␣
-" set listchars=nbsp:☠,tab:↳↳,trail:␣
-" set list
-"
+set listchars=nbsp:☠,tab:↳↳,trail:␣
+set list  " 'set list'  command is used to make certain "invisible" characters visible within the editor. This
+
 " set noautoindent " if autoindent is on, this causes problems with cut&paste
 "                  " feature of X (at least, on Sun machines).
 " Following filetype commands set up some special features that allow
