@@ -455,9 +455,9 @@ WAREHOUSE
       -- select above, thus the UNION below to include it.
       UNION (SELECT 'PUBLIC' AS ROLE, USER FROM u)
   )
-  select user_role.USER, warehouse.NAME AS WAREHOUSE, warehouse.GRANTEE_NAME AS ROLE from snowflake.account_usage.grants_to_roles g
+  select user_role.USER, g.NAME AS WAREHOUSE, g.GRANTEE_NAME AS ROLE from snowflake.account_usage.grants_to_roles g
   join user_role on
-      warehouse.grantee_name = user_role.ROLE
+    g.grantee_name = user_role.ROLE
   and deleted_on      is null
   and granted_on      = 'WAREHOUSE'
   and privilege       = 'USAGE'
