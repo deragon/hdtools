@@ -9,8 +9,10 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
   reverse engineering        -> rétro-ingénierie, ingénierie inversée, rétro-conception, conception inverse
+  mockup                     -> maquette
   wildcard                   -> métacaractère, caractère générique, caractère de remplacement, électron libre
   snapshot                   -> instantané
+  spotcheck                  -> vérification ponctuelle, contrôle aléatoire, contrôle inopiné, contrôle par sondage
   throttle                   -> régulariser le débit, régularisation, mettre au ralenti, ralentir
   refactoring                -> refactorisation
   override                   -> surcharge
