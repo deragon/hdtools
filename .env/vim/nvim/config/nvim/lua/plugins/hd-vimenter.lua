@@ -48,6 +48,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
       ctermfg = 59,
       ctermbg = 41,
     })
+
+    -- NormalFloat for popup showing function signatures.
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#282C34" }) -- Example: set background to a dark grey
+    -- Not sure what a FloatBorder is.
+    vim.api.nvim_set_hl(0, "FloatBorder", { bg = "#282C34", fg = "#61AFEF" }) -- Example: same background for border, with blue foreground
+
     vim.api.nvim_set_hl(0, "Todo", {
       --   au ColorScheme * highlight  Todo         guifg=white     guibg=red    gui=bold   ctermfg=white   ctermbg=red
       fg = "white",
