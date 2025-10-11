@@ -165,6 +165,11 @@ parser.add_argument('-l', '--log-level', dest='loglevel', default='info',
 
 args = parser.parse_args()
 
+
+
+# LOGGING CONFIGURATION
+# ────────────────────────────────────────────────────────────────────────────
+
 if args.loglevel=="debug":
     log_level=logging.DEBUG
 elif args.loglevel=="warning":
@@ -176,32 +181,45 @@ elif args.loglevel=="critical":
 else:
     log_level=logging.INFO
 
-
-# When setting the log level with logging.basicConfig(), the log level is set
-# for ALL Python modules that using the logging facility, not just the code
-# found in this script.  This is usually not desired.
+# When setting the log level with logging.basicConfig(), the log level and
+# other parameters are set for ALL Python modules that using the logging
+# facility, not just the code found in this script.  This is usually not
+# desired.
 #
-# It is preferred to use a logger and set the log level only for it, so only
-# its logs are showing, not that of other modules (very preferable when the
-# log level is set to DEBUG).
+# logging.basicConfig(
+# 	level=logging.DEBUG,
+#     format='%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s',
+#     datefmt=iso8601Human,
+#     # filename=f"/var/log/{scriptName}.log",
+#     # filemode="a",
+#     )
 
-# logging.debug("Test of logging %s", "here. :)")
-logging.basicConfig(
-    format='%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s',
-    datefmt=iso8601Human,
-    # filename=f"/var/log/{scriptName}.log",
-    # filemode="a",
-    )
+logger_formatter = logging.Formatter("%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s", datefmt=iso8601Human)
+
+# Handler for STDOUT
+sh = logging.StreamHandler()
+sh.setLevel(log_level)
+sh.setFormatter(logger_formatter)
+
+# Handler for log file.
+fh = logging.FileHandler(f"{scriptNameAndPathAbs}-{datetime.now().strftime(iso8601Filename)}.log", mode='a')
+fh.setLevel(log_level)
+fh.setFormatter(logger_formatter)
 
 # Creating a logger with the script's name and setting it to a specific log
 # level.
 logger = logging.getLogger(scriptName)
 logger.setLevel(log_level)
-logger.debug("Test of logging %s", "here. :)")
+logger.addHandler(sh)
+logger.addHandler(fh)
 
-# fh = logging.FileHandler(f"/var/log/{scriptName}.log", mode='a')
-# fh.setLevel(log_level)
-# logger.addHandler(fh)  # For some reason, the basicConfig format does not apply.  Need to investigate more on this.
+# logging.debug("Test of logging %s", "here. :)")
+# logger.debug("Test of logger %s", "here. :)")
+
+
+
+# PARAMETERS VALIDATIONS
+# ────────────────────────────────────────────────────────────────────────────
 
 errors = ""
 
