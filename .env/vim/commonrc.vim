@@ -632,11 +632,6 @@ vmap <F9>   gc<CR>
 autocmd FileType python  map <buffer> <C-F9> :w<CR>:exec      '!python3' shellescape(@%, 1)<CR>
 autocmd FileType python imap <buffer> <C-F9> <esc>:w<CR>:exec '!python3' shellescape(@%, 1)<CR>
 
-map <esc>e :setlocal spell spelllang=en_us<CR>
-map <esc>f :setlocal spell spelllang=fr<CR>
-"map <esc>e :setlocal spell spelllang=en_us,intl<CR>
-"map <esc>f :setlocal spell spelllang=fr,intl<CR>
-map <esc>s :set nospell<CR>
 
 " Non breaking spaces now show as: ☠ (dead skull)
 "                    Tabs show as: ↳↳
@@ -857,6 +852,10 @@ set nostartofline
 let corpfile=expand("$HDVIM/../../.$HD_ENV_CORP_IDENTIFIER/vimrc")
 if filereadable(corpfile)
   execute "source" corpfile
+endif
+
+if filereadable(expand("$HDVIM/spellrc.vim"))
+  execute "source" expand("$HDVIM/spellrc.vim")
 endif
 
 "let g:ucs_encode_locale=1
