@@ -39,6 +39,21 @@ CALL WINDOWS EXECUTABLES
 
 
 
+BACKUP
+══════════════════════════════════════════════════════════════════════════════
+
+    In Powershell (not Linux because an export shuts down WSL):
+
+      $DISTRO = "Ubuntu-22.04"
+
+      # Format TAR, universal format and can be read by Linux.
+      wsl --export $DISTRO --format tar.gz $DISTRO-$(Get-Date -Format 'yyyyMMddTHHmmss').tar.gz
+
+      # Native image format, fast and self-contained.
+      wsl --export $DISTRO --format vhd    $DISTRO-$(Get-Date -Format 'yyyyMMddTHHmmss').vhdx
+
+
+
 SETUP / INSTALLATION
 ══════════════════════════════════════════════════════════════════════════════
 
