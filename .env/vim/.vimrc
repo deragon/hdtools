@@ -9,13 +9,11 @@
 "
 " ─────────────────────────────────────────────────── Copyright Notice ─
 
-if($HDVIM != "")
-  set rtp+=$HDVIM
-  " echo "${HDVIM} set." $HDVIM
-else
-  echo "ERROR:  ${HDVIM} is not set.  'rtp' is missing that path."
-  echo "rtp=" &rtp
-endif
+" $MYVIMRC exist, but only when the option -u is not used.  So $MYVIMRC is not
+" universal.  Instead, we use the path of this file to set the HDVIM variable.
+let $HDVIM = expand('<sfile>:p:h')
+set rtp+=$HDVIM
+" echo "${HDVIM} set." $HDVIM
 
 if has('nvim')
 
