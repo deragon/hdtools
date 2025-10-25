@@ -69,6 +69,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
       ctermbg = "red",
     })
 
+    -- Override Snacks plugin highlights because the plugin's default has poor
+    -- contrast making it hard to read with dark themes.
+    vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "SnacksPickerFile", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "SnacksPickerGitStatusUntracked", { link = "Special" })
+
     -- If a dark theme is used, I want the background to be totally black, not
     -- some dark gray which they seam all to use.
     if vim.o.background == "dark" then
