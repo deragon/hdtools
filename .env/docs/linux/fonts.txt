@@ -15,6 +15,21 @@ INSTALLATION
     fc-list   # Print list of fonts.
 
 
+  Nerd fonts
+  ────────────────────────────────────────────────────────────────────────────
+
+    https://www.nerdfonts.com/font-downloads
+
+    Installation:  Just create a directory, unzip them there and ensure that
+                   this directory has a symlink under
+                   '/usr/local/share/fonts/'.  See 'INSTALLATION/General'
+                   section above.
+
+    Good fonts:
+
+      - Hurmit Nerd
+
+
   Google fonts - Massive installation
   ────────────────────────────────────────────────────────────────────────────
 
