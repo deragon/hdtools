@@ -1,7 +1,21 @@
-INSTALLATION (MASSIVE)
+INSTALLATION
 ══════════════════════════════════════════════════════════════════════════════
 
-  Google fonts
+  General
+  ────────────────────────────────────────────────────────────────────────────
+
+    You can copy files, directories, or add symlink under
+    '/usr/local/share/fonts/' and after 'fc-cache' is called, the fonts will
+    then be available.
+
+    su - # Switch to root.
+    cd /usr/local/share/fonts/
+    ln -s <your font directory> .
+    fc-cache  # Update Font cache.
+    fc-list   # Print list of fonts.
+
+
+  Google fonts - Massive installation
   ────────────────────────────────────────────────────────────────────────────
 
     Download:  git clone https://github.com/google/fonts.git
