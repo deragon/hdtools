@@ -136,7 +136,7 @@ parser.add_argument('files', metavar='files', type=str, nargs='+',
 
 # Mandatory arguments.
 # parser.add_argument('-d', '--dst', dest='dst', default='.', required=True,
-#                     help='Destination where subdirectories will be created.')
+#                     help='Destination where subdirectories will be created.  Default:  %(default)s"')
 
 # Optional arguments.
 # action="store_true" means is that if the argument is given on the command
