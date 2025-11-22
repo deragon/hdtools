@@ -498,10 +498,66 @@ COMMITS
 
     GitMoji:  Emoji for git commit message:  https://gitmoji.dev/about
 
-    50/72 rule → https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
     Under Hans's vim:  <esc>g for 72
 
     Conventional Commits -> https://www.conventionalcommits.org/
+
+    50/72 rule
+    --------------------------------------------------------------------------
+
+      https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
+      AI Claude Sonnet 4.5 take on the subject, 2025-11-25 17:26:54 EST
+
+      The 50/72 rule for git commits is widely recognized and commonly
+      referenced in the development community, though adherence varies
+      significantly in practice.
+
+      The Rule:
+
+      - Limit the subject line to 50 characters (can extend to ~72 as a
+        hard limit)
+      - Wrap the body text at 72 characters
+      - Separate subject from body with a blank line
+
+      Widely Documented:
+
+      - Featured in official Git documentation and numerous style guides
+      - Referenced in Chris Beams' influential 2014 article "How to Write
+        a Git Commit Message"
+      - Taught in many developer onboarding materials and coding bootcamps
+
+      Who Uses It:
+
+      - Linux Kernel - Strict adherence (where it originated from)
+      - Git project itself - Follows this convention
+      - Many open-source projects that emphasize maintainability
+      - Enterprise teams with formal development processes
+      - Projects using tools that display commits in constrained UIs
+        (GitHub, GitLab, terminal git log --oneline)
+
+      Reality Check:
+
+      - Large corporate codebases often have their own variations or ignore
+        it entirely
+      - Many developers find 50 characters too restrictive for modern
+        descriptive commits
+      - GitHub itself shows ~72 characters before truncating in many views
+      - Commit message linters and pre-commit hooks sometimes enforce it
+      - Modern tooling (VS Code, IDEs) often don't enforce these limits by
+        default
+
+      Current Trend:
+
+      The 50-character limit is increasingly seen as a guideline rather
+      than a hard rule, with many teams relaxing it to 72 for the subject
+      line while still emphasizing clarity and conciseness. The
+      72-character body wrap remains more commonly followed since it
+      ensures readability in terminals and email-based workflows.
+
+      It's considered a best practice but not universally enforced—adoption
+      depends heavily on team culture, project requirements, and tooling
+      choices.
 
 
 
