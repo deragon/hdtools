@@ -510,6 +510,53 @@ set fileencodings=utf-8,latin1
 
 " Generic GUI configuration
 if has("gui_running")
+
+  " DYNAMIC FONT SIZE ADJUSTMENT
+  " ════════════════════════════════════════════════════════════════════
+  " Allows increasing/decreasing GUI font size dynamically with Ctrl+Up/Down.
+  " Parses current font string (Windows/Linux/macOS formats), adjusts size,
+  " and updates &guifont. Keeps size bounded between 6-72 points.
+  function! AdjustFontSize(amount)
+    let l:current_font = &guifont
+    let l:size = 0
+    let l:new_font = ''
+
+    " Windows format: Font_Name:h12:style
+    if l:current_font =~ ':h\d\+'
+      let l:size = matchstr(l:current_font, ':h\zs\d\+')
+      let l:new_size = str2nr(l:size) + a:amount
+      if l:new_size < 6 | let l:new_size = 6 | endif
+      if l:new_size > 72 | let l:new_size = 72 | endif
+      let l:new_font = substitute(l:current_font, ':h\d\+', ':h'.l:new_size, '')
+    " GTK/Linux format: Font Name 12
+    elseif l:current_font =~ '\s\d\+$'
+      let l:size = matchstr(l:current_font, '\s\zs\d\+$')
+      let l:new_size = str2nr(l:size) + a:amount
+      if l:new_size < 6 | let l:new_size = 6 | endif
+      if l:new_size > 72 | let l:new_size = 72 | endif
+      let l:new_font = substitute(l:current_font, '\s\d\+$', ' '.l:new_size, '')
+    " macOS format: Font-Name:h12
+    elseif l:current_font =~ '-.*:h\d\+'
+      let l:size = matchstr(l:current_font, ':h\zs\d\+')
+      let l:new_size = str2nr(l:size) + a:amount
+      if l:new_size < 6 | let l:new_size = 6 | endif
+      if l:new_size > 72 | let l:new_size = 72 | endif
+      let l:new_font = substitute(l:current_font, ':h\d\+', ':h'.l:new_size, '')
+    else
+      echo "Unable to parse font format: " . l:current_font
+      return
+    endif
+
+    let &guifont = l:new_font
+    echo "Font size: " . l:new_size . " - " . &guifont
+  endfunction
+
+  nnoremap <C-up> :call AdjustFontSize(2)<CR>
+  nnoremap <C-down> :call AdjustFontSize(-2)<CR>
+
+  " Keep window size fixed when changing font, adjust rows/columns instead
+  set guioptions+=k
+
   if &foldmethod == 'diff'
     " Running gvimdiff here.  Let the system determine the number of columns.
     "
