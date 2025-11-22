@@ -18,6 +18,10 @@ select * from table(result_scan($LAST_QUERY_ID));
 select 'REVOKE ' || "privilege" || ' ON ' || "granted_on" || ' FROM ' || "granted_to" || ' FROM ' || "grantee_name" || ';' from table(result_scan($LAST_QUERY_ID));
 
 
+select get_ddl('TABLE', '<table name'>');
+
+
+
 LIKE
 ══════════════════════════════════════════════════════════════════════════════
 
@@ -466,7 +470,7 @@ USER MANAGEMENT
             SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS g
         WHERE
             -- Use the session variable here
-            g.GRANTEE_NAME = $USER_NAME_VAR 
+            g.GRANTEE_NAME = $USER_NAME_VAR
             AND g.GRANTED_TO = 'USER'
             AND g.DELETED_ON IS NULL
 
@@ -480,7 +484,7 @@ USER MANAGEMENT
         INNER JOIN
             role_hierarchy rh
             -- Join: The role receiving the grant (CHILD role) must match the role found in the previous iteration
-            ON gr.GRANTEE_NAME = rh.ACCESSIBLE_ROLE 
+            ON gr.GRANTEE_NAME = rh.ACCESSIBLE_ROLE
         WHERE
             gr.GRANTED_ON = 'ROLE'
             AND gr.DELETED_ON IS NULL
