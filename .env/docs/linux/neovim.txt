@@ -1,3 +1,19 @@
+Shortcuts
+══════════════════════════════════════════════════════════════════════════════
+
+  Autocompletion & Signature Help: Type code and see suggestions.
+
+  Go to Definition: Place your cursor on a symbol and press gd.
+
+  Find References: Press gr to see where a symbol is used.
+
+  Rename Symbol: Use grn to safely rename variables, functions, etc., across files.
+
+  Code Actions: Press <leader>ca to see available actions (e.g., fix linter errors, organize imports via <leader>co).
+
+
+
+
 GUI
 ══════════════════════════════════════════════════════════════════════════════
 
