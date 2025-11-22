@@ -282,6 +282,42 @@ PROCEDURES
 TASKS
 ══════════════════════════════════════════════════════════════════════════════
 
+  Privileges required
+  ────────────────────────────────────────────────────────────────────────────
+
+    Privilege                       Scope             Purpose / Functionality
+    -----------------------------   ---------------   --------------------------------------------------------
+
+    OPERATE ON TASK <task_name>     Object-level      Allows a role to **manually trigger** a task using the
+                                                      EXECUTE TASK command, and to suspend/resume the task.
+                                                      Required By: The role manually running the task.
+
+    EXECUTE TASK ON ACCOUNT         Global            Required by the **Task Owner Role** to allow Snowflake's
+                                    (Account-level)   internal **scheduler** to run the task *automatically*
+                                                      on a schedule or as part of a task graph.
+
+    EXECUTE MANAGED TASK ON ACCOUNT Global            Required by the **Task Owner Role** specifically for
+                                    (Account-level)   tasks using the **Serverless Compute Model** (where no
+                                                      WAREHOUSE is specified).
+
+    USAGE ON DATABASE <db_name>     Container-level   Allows the role to **see and access** the database
+                                                      that holds the schema and the task.
+
+    USAGE ON SCHEMA <schema_name>   Container-level   Allows the role to **see and access** the schema
+                                                      that holds the task.
+
+
+  Commands
+  ────────────────────────────────────────────────────────────────────────────
+
+      grant usage on database <DATABASE_OF_TASK> to role <ROLE>;
+      grant usage on schema   <SCHEMA_OF_TASK>   to role <ROLE>;
+
+      grant operate on task         account to role <ROLE>;
+      grant execute task on         account to role <ROLE>;
+      grant execute managed task on account to role <ROLE>;
+
+
   Fetch error message on tasks executions
   ────────────────────────────────────────────────────────────────────────────
 
