@@ -39,6 +39,7 @@ try:
 except IndexError:
     scriptNameBase=scriptName # There is no extension.
 
+# fmt: off
 ansi = {
     "FG_WHITE_BG_GREEN":      "\033[1;37;42m",
     "FG_BLACK_BG_YELLOW":     "\033[1;30;43m",
@@ -73,6 +74,7 @@ ansi = {
     "BG_WHITE":               "\033[47m",
     "BG_DEFAULT":             "\033[49m"
 }
+# fmt: on
 
 # PARSING ARGUMENTS
 # ────────────────────────────────────────────────────────────────────────────
