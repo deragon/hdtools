@@ -194,6 +194,132 @@ WSL GUI
 
 
 
+TERMINALS
+══════════════════════════════════════════════════════════════════════════════
+
+  All terminals here and configuration are for the Windows version.
+
+  Windows Terminal
+  ────────────────────────────────────────────────────────────────────────────
+
+    ✅ Accelerated.
+    ✅ Copy on select.
+    ❌ Middle mouse paste.
+    ✅ Scroll wheel font size ajustement.
+    ❌ Maximized start not supported.
+
+  WezTerm
+  ────────────────────────────────────────────────────────────────────────────
+
+    ✅ Accelerated.
+    ✅ Copy on select.
+    ✅ Middle mouse paste.
+    ❌ Scroll wheel font size ajustement.
+    ❌ Maximized start not supported.
+
+    Downdload:  https://wezterm.org/install/windows.html
+
+    Config file
+    --------------------------------------------------------------------------
+
+      Located in Windows's user home directory (%USERPROFILE%):
+
+        $ cat /mnt/c/Users/${USER}/.wezterm.lua
+        local wezterm = require 'wezterm'
+
+        return {
+          default_prog = { 'wsl.exe', '-d', 'Ubuntu-22.04' },
+          initial_rows = 60,
+          initial_cols = 200,
+          font = wezterm.font("Hurmit Nerd Font", {weight="Regular"}),
+          font_size = 12.0,
+        }
+
+
+    Notes
+    --------------------------------------------------------------------------
+
+      <CTRL>-<SHIFT>-P  Open Commands palette, showing all commands avail.
+
+      wezterm.exe ls-fonts  # List all fonts available.
+
+
+  Alacritty - https://alacritty.org/
+  ────────────────────────────────────────────────────────────────────────────
+
+    ✅ Accelerated.
+    ✅ Copy on select and middle mouse paste supported.
+    ❌ Middle mouse paste.
+    ❌ Maximized start not supported.
+
+
+    Config file
+    --------------------------------------------------------------------------
+
+      Documentation:  https://alacritty.org/config-alacritty.html
+
+      $ cat /mnt/c/Users/${USER}/AppData/Roaming/alacritty/alacritty.toml
+
+        [terminal]
+        [terminal.shell]
+        program = "C:\\Windows\\System32\\wsl.exe"
+        args = ["--cd", "~"]
+
+        [font]
+        #
+        # Hurmit Nerd Font Bold (TrueType)
+        # Hurmit Nerd Font Bold Italic (TrueType)
+        # Hurmit Nerd Font Propo (TrueType)
+        # Hurmit Nerd Font Propo Light Italic (TrueType)
+        # Hurmit Nerd Font Propo Light (TrueType)
+        # Hurmit Nerd Font Propo Italic (TrueType)
+        # Hurmit Nerd Font Propo Bold Italic (TrueType)
+        # Hurmit Nerd Font Propo Bold (TrueType)
+        # Hurmit Nerd Font Mono (TrueType)
+        # Hurmit Nerd Font Mono Light Italic (TrueType)
+        # Hurmit Nerd Font Mono Light (TrueType)
+        # Hurmit Nerd Font Mono Italic (TrueType)
+        # Hurmit Nerd Font Mono Bold Italic (TrueType)
+        # Hurmit Nerd Font Mono Bold (TrueType)
+        # Hurmit Nerd Font Light Italic (TrueType)
+        # Hurmit Nerd Font Light (TrueType)
+        # Hurmit Nerd Font Italic (TrueType)
+        # Hurmit Nerd Font (TrueType)
+
+        size = 13.0
+
+        [font.normal]
+        family = "Hurmit Nerd Font"
+        style = "Regular"
+
+        [font.bold]
+        family = "Hurmit Nerd Font"
+        style = "Bold"
+
+        [font.italic]
+        family = "Hurmit Nerd Font"
+        style = "Italic"
+
+
+  Fonts in Windows
+  ────────────────────────────────────────────────────────────────────────────
+
+    To list all fonts available under Windows, in PowerShell, run:
+
+    System wide fonts:
+
+       (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts').psobject.Properties | Select-Object -ExpandProperty Name
+
+    User fonts:
+
+       (Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts').psobject.Properties | Select-Object -ExpandProperty Name
+
+       With grep feature, looking for hurmit in case insensitive way:
+
+       (Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts').psobject.Properties | Select-Object -ExpandProperty Name | Select-String -Pattern 'hurmit' -CaseSensitive:$false
+
+
+
 █ ─ Copyright Notice ───────────────────────────────────────────────────
 █
 █ Copyright 2000-2025 Hans Deragon - AGPL 3.0 licence.
