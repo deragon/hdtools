@@ -426,6 +426,15 @@ SNOWPARK & PYTHON
     $$;
 
 
+  List of Python runtime currently available
+  ────────────────────────────────────────────────────────────────────────────
+
+    SELECT DISTINCT RUNTIME_VERSION
+    FROM SNOWFLAKE.INFORMATION_SCHEMA.PACKAGES
+    WHERE LANGUAGE = 'python'
+    ORDER BY RUNTIME_VERSION DESC;
+
+
 
 USER MANAGEMENT
 ══════════════════════════════════════════════════════════════════════════════
