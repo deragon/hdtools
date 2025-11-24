@@ -11,9 +11,11 @@
 
 " $MYVIMRC exist, but only when the option -u is not used.  So $MYVIMRC is not
 " universal.  Instead, we use the path of this file to set the HDVIM variable.
-let $HDVIM = expand('<sfile>:p:h')
+"
+" Resolve symlinks, get full path, then get the head (directory) portion only.
+let $HDVIM = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 set rtp+=$HDVIM
-" echo "${HDVIM} set." $HDVIM
+"echo "${HDVIM} set to:  '" $HDVIM "'"
 
 if has('nvim')
 
