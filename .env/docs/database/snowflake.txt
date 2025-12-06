@@ -72,6 +72,107 @@ GRANT
       grant USAGE on schema <schema of someview> to role <some role>;  -- Now the 'select' works.
 
 
+  List all privileges of a user
+  ────────────────────────────────────────────────────────────────────────────
+
+    use role securityadmin;
+    use warehouse <medium at least>;
+    set user_name = '<user name here>';
+
+    -- COMPAS_NP_WH
+    -- COMPAS_PR_WH
+    -- OLAPH_BATCH_XS_PR_WH
+    -- OLAPH_GLOBAL_XS_PR_WH
+    -- OLAPH_GLOBAL_MD_PR_WH
+    -- OLAPH_GLOBAL_SM_PR_WH
+    -- OLAPH_GLOBAL_XS_PR_WH
+    -- OLAPH_GLOBAL_XS_NP_WH
+
+
+    WITH RECURSIVE role_chain (role_name, traversal_path) AS (
+        SELECT
+            role,
+            ARRAY_CONSTRUCT(role)
+        FROM snowflake.account_usage.grants_to_users
+        WHERE grantee_name = $user_name
+          AND deleted_on IS NULL
+
+      UNION ALL
+
+        SELECT
+            gtr.name,
+            ARRAY_CAT(traversal_path, ARRAY_CONSTRUCT(gtr.name))
+        FROM snowflake.account_usage.grants_to_roles gtr
+        JOIN role_chain rc
+          ON gtr.grantee_name = rc.role_name
+        WHERE gtr.granted_on = 'ROLE'
+          AND gtr.deleted_on IS NULL
+          AND gtr.name IS NOT NULL
+          AND NOT ARRAY_CONTAINS(traversal_path, TO_VARIANT(gtr.name))
+    ),
+    distinct_roles AS (
+        SELECT DISTINCT role_name
+        FROM role_chain
+    ),
+    role_privileges AS (
+        SELECT
+            dr.role_name          AS privilege_source,
+            gtr.privilege,
+            gtr.granted_on,
+            gtr.name              AS object_name,
+            gtr.table_catalog,
+            gtr.table_schema,
+            gtr.grant_option,
+            gtr.granted_by
+        FROM distinct_roles dr
+        JOIN snowflake.account_usage.grants_to_roles gtr
+          ON gtr.grantee_name = dr.role_name
+        WHERE gtr.deleted_on IS NULL
+          AND gtr.granted_on <> 'ROLE'
+    ),
+    user_privileges AS (
+        SELECT
+            gtr.grantee_name      AS privilege_source,
+            gtr.privilege,
+            gtr.granted_on,
+            gtr.name              AS object_name,
+            gtr.table_catalog,
+            gtr.table_schema,
+            gtr.grant_option,
+            gtr.granted_by
+        FROM snowflake.account_usage.grants_to_roles gtr
+        WHERE gtr.granted_to = 'USER'
+          AND gtr.grantee_name = $user_name
+          AND gtr.deleted_on IS NULL
+          AND gtr.granted_on <> 'ROLE'
+    )
+    SELECT
+        privilege_source,
+        privilege,
+        granted_on,
+        object_name,
+        table_catalog,
+        table_schema,
+        grant_option,
+        granted_by
+    FROM role_privileges
+    UNION ALL
+    SELECT
+        privilege_source,
+        privilege,
+        granted_on,
+        object_name,
+        table_catalog,
+        table_schema,
+        grant_option,
+        granted_by
+    FROM user_privileges
+    ORDER BY privilege_source, privilege, object_name, table_catalog, table_schema;
+
+    set PRIVILEGES4USER_QUERY_ID=(select last_query_id());
+    select * from table(result_scan($PRIVILEGES4USER_QUERY_ID)) where 1=1;
+
+
 
 VIEWS
 ══════════════════════════════════════════════════════════════════════════════
