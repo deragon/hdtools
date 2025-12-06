@@ -57,7 +57,7 @@ fi
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Git
-which git >/dev/null 2>&1
+type git >/dev/null 2>&1
 if (( $? == 0 )); then
   alias hdgpull='git pull --all --prune; git branch -a'
   alias hdgstatus='git status --untracked-files=no'
@@ -227,10 +227,10 @@ fi
 #
 #   New development is meant for Python 3 (thus the 3 in the directory of
 #   WORKON_HOME.
-HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH=$(which virtualenvwrapper.sh 2>/dev/null)
+HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH=$(type -p virtualenvwrapper.sh 2>/dev/null)
 if [ ! -z "${HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH}" ]; then
   setVarIfDirsExist WORKON_HOME "${HOME}/.python/3/virtualenvs"
-  export VIRTUALENVWRAPPER_PYTHON=$(which python3)
+  export VIRTUALENVWRAPPER_PYTHON=$(type -p python3)
   unset VIRTUALENVWRAPPER_HOOK_DIR
   source virtualenvwrapper.sh >/dev/null 2>&1
 
