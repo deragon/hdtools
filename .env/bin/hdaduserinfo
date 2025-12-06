@@ -141,15 +141,16 @@ if len(args.userNames) == 0:
     args.userNames.append(getpass.getuser())  # Use current user.
 
 
-text =  {
-           "en": {
-                    "Group": "Group",
-                 },
-
-           "fr": {
-                    "Group": "Groupe",
-                 }
-        }
+text = {
+    "en": {
+        "Group": "Group",
+        "Information": "Information",
+    },
+    "fr": {
+        "Group": "Groupe",
+        "Information": "Information",
+    },
+}
 
 
 def runDsCommand(command, failOnError):
@@ -169,12 +170,47 @@ def runDsCommand(command, failOnError):
 def showUser(username: str):
     (userOU, exitcode) = runDsCommand([ "dsquery.exe",   "user", "-name", username ], True)
     userOU = userOU.strip('"')
-    output=runDsCommand([ "dsget.exe",   "user", userOU, "-fn", "-ln", "-email" ], True)
+    #fmt:off
+    dsget_fields = [
+        ("-fn",       {"en": "First Name",   "fr": "Prénom"}),
+        ("-ln",       {"en": "Last Name",    "fr": "Nom"}),
+        ("-upn",      {"en": "UPN",          "fr": "UPN"}),
+        ("-email",    {"en": "Email",        "fr": "Courriel"}),
+        ("-disabled", {"en": "Disabled",     "fr": "Désactivé"}),
+        ("-desc",     {"en": "Description",  "fr": "Description"}),
+    ]
+    #fmt:on
+    output = runDsCommand(
+        ["dsget.exe", "user", userOU] + [flag for flag, _ in dsget_fields],
+        True,
+    )
     outputstdout = re.sub(r"dsget.*", "", output[0])
-    print(f"Information:\n\n  {userOU}\n\n{outputstdout}")
-    groups=sorted(runDsCommand([ "dsget.exe", "user", userOU, "-memberof" ], True)[0].split('\n'))
-    groups = [ group.strip('"') for group in groups ]
-    groups="\n  ".join(groups)
+    lines = [line for line in outputstdout.strip().split("\n") if line.strip()]
+    if len(lines) >= 2:
+        fields = [f.strip() for f in re.split(r"\s{2,}", lines[0])]
+        values = [v.strip() for v in re.split(r"\s{2,}", lines[1])][1:]  # Skip first empty value.
+        user_info = {
+            field.lower(): value
+            for field, value in zip(fields, values)
+        }
+        print(f"{text[language]['Information']}:\n\n  {userOU}\n")
+        ordered_rows = []
+        for flag, labels in dsget_fields:
+            field_key = flag.lstrip("-").lower()
+            value = user_info.get(field_key, "")
+            label_text = labels.get(language, labels["en"])
+            ordered_rows.append((label_text, value))
+        label_column_width = max(len(label) for label, _ in ordered_rows) + 1
+        for label, value in ordered_rows:
+            label_with_colon = f"{label}:"
+            print(f"  {label_with_colon.ljust(label_column_width)} {value}")
+    else:
+        print(f"{text[language]['Information']}:\n\n  {userOU}\n{outputstdout.strip()}")
+    groups = sorted(
+        runDsCommand(["dsget.exe", "user", userOU, "-memberof"], True)[0].split("\n")
+    )
+    groups = [group.strip('"') for group in groups]
+    groups = "\n  ".join(groups)
     print(f"\n{text['fr']['Group']}s:\n\n  " + str(groups))
 
 
