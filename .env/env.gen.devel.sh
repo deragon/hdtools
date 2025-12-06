@@ -243,6 +243,76 @@ unset HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH
 # Does not work well.  Need work
 #alias hdpyx='python -m trace --ignore-dir "\$\(python -c \'import os, sys; print\(os.pathsep.join\(sys.path[1:]\)\)\'\)" --trace'
 
+hd_python_venv_activate() {
+  # Optional parameter: starting directory for the search (defaults to $PWD)
+  local start_dir
+  start_dir="${1:-$PWD}"
+
+  # Get the project root directory.
+  project_root="$(hdprojectdir)"
+  if [ -z "$project_root" ]; then
+    echo "No project directory found upward from '$start_dir'.  Aborting."
+    return
+  fi
+
+  # Search for an activation script under the project root
+  # Look for paths that end with /bin/activate
+  local -a candidates
+  # Use find with a null delimiter and mapfile to safely handle paths with spaces
+  mapfile -d '' -t candidates < <(find "$project_root" -type f -path '*/bin/activate' -print0 2>/dev/null)
+
+  # If no results, check common venv directory names
+  if [ ${#candidates[@]} -eq 0 ]; then
+    for name in .venv venv env; do
+      local try="$project_root/$name/bin/activate"
+      if [ -f "$try" ]; then
+        candidates+=("$try")
+      fi
+    done
+  fi
+
+  if [ ${#candidates[@]} -eq 0 ]; then
+    echo "No activate script found under '$project_root'" >&2
+    return 2
+  fi
+
+  # Prefer a candidate that is validated as a venv (presence of pyvenv.cfg or content in activate)
+  local chosen=""
+  for c in "${candidates[@]}"; do
+    # Resolve symlink if necessary
+    if [ -L "$c" ]; then
+      c=$(readlink -f "$c")
+    fi
+    # Parent directory of 'bin' is the venv directory
+    local venv_dir
+    venv_dir=$(dirname "$(dirname "$c")")
+    # Simple validation: check for pyvenv.cfg, or first lines of activate contain VIRTUAL_ENV
+    if [ -f "$venv_dir/pyvenv.cfg" ]; then
+      chosen="$c"
+      break
+    fi
+    if sed -n '1,20p' "$c" 2>/dev/null | grep -q "VIRTUAL_ENV\|virtualenv"; then
+      chosen="$c"
+      break
+    fi
+  done
+
+  # If none validated, select the first candidate
+  if [ -z "$chosen" ]; then
+    chosen="${candidates[0]}"
+  fi
+
+  # Verify readability
+  if [ ! -r "$chosen" ]; then
+    echo "Activation script '$chosen' is not readable" >&2
+    return 3
+  fi
+
+  echo "Sourcing virtualenv activation script: $chosen"
+  # shellcheck disable=SC1090
+  . "$chosen"
+  return $?
+}
 
 # DOCKER
 # ══════════════════════════════════════════════════════════════════════════════
