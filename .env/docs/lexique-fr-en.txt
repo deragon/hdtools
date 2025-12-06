@@ -8,6 +8,7 @@ SITES
 LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
 ══════════════════════════════════════════════════════════════════════════════
 
+  dry-run                    -> simulation, essai à sec
   reverse engineering        -> rétro-ingénierie, ingénierie inversée, rétro-conception, conception inverse
   mockup                     -> maquette
   wildcard                   -> métacaractère, caractère générique, caractère de remplacement, électron libre
