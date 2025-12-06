@@ -11,36 +11,36 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-import os.path
-import sys
-import logging
-
-from datetime import datetime
-import time
+"""
+Template script for Python projects.
+"""
 
 import argparse
+import getpass
+import json
+import logging
+import os
+import pathlib
+import re
+import shutil
+import socket
 import subprocess
+import sys
+import time
+import traceback
+from configparser import SafeConfigParser
+from datetime import datetime
+from email.mime.text import MIMEText
+from smtplib import SMTP
 
-# os.path.realpath(os.curdir) # Current directory, canonical form.
+import yaml  # Requires: pip install pyyaml
 
-scriptName=os.path.basename(sys.argv[0])
-scriptPath=os.path.dirname(sys.argv[0])
-
-scriptPathAbs=os.path.realpath(scriptPath)
-scriptPathAbsParent=os.path.dirname(scriptPathAbs)
-
-scriptNameAndPathAbs=scriptPathAbs + os.sep + scriptName
-
-iso8601Human    = "%Y-%m-%d %H:%M:%S"
-iso8601Filename = "%Y%m%dT%H%M%S"
-
-try:
-    scriptNameBase=scriptName.rsplit('.', 1)[0] # Extension found.
-except IndexError:
-    scriptNameBase=scriptName # There is no extension.
+# Constants
+ISO8601_HUMAN = "%Y-%m-%d %H:%M:%S"
+ISO8601_FILENAME = "%Y%m%dT%H%M%S"
 
 # fmt: off
-ansi = {
+ANSI = {
     "FG_WHITE_BG_GREEN":      "\033[1;37;42m",
     "FG_BLACK_BG_YELLOW":     "\033[1;30;43m",
     "FG_WHITE_BG_RED":        "\033[1;37;41m",
@@ -76,17 +76,67 @@ ansi = {
 }
 # fmt: on
 
-# PARSING ARGUMENTS
-# ────────────────────────────────────────────────────────────────────────────
-#
-# See:  https://docs.python.org/3/library/argparse.html
-#
-# WARNING:
-#
-# - and -- options are always optional according to argparse.  If you
-# want mandatory arguments, they should not be prefixed with - or --.
-#
-# http://stackoverflow.com/questions/24180527/argparse-required-arguments-listed-under-optional-arguments
+# Global variables for script info
+SCRIPT_NAME = os.path.basename(sys.argv[0])
+SCRIPT_PATH = os.path.dirname(sys.argv[0])
+SCRIPT_PATH_ABS = os.path.realpath(SCRIPT_PATH)
+SCRIPT_PATH_ABS_PARENT = os.path.dirname(SCRIPT_PATH_ABS)
+SCRIPT_NAME_AND_PATH_ABS = os.path.join(SCRIPT_PATH_ABS, SCRIPT_NAME)
+
+try:
+    SCRIPT_NAME_BASE = SCRIPT_NAME.rsplit('.', 1)[0]  # Extension found.
+except IndexError:
+    SCRIPT_NAME_BASE = SCRIPT_NAME  # There is no extension.
+
+
+def setup_logging(log_level_str):
+    """Configures the logging."""
+    if log_level_str == "debug":
+        level = logging.DEBUG
+    elif log_level_str == "warning":
+        level = logging.WARNING
+    elif log_level_str == "error":
+        level = logging.ERROR
+    elif log_level_str == "critical":
+        level = logging.CRITICAL
+    else:
+        level = logging.INFO
+
+    # When setting the log level with logging.basicConfig(), the log level and
+    # other parameters are set for ALL Python modules that using the logging
+    # facility, not just the code found in this script.  This is usually not
+    # desired.
+    #
+    # logging.basicConfig(
+    # 	level=logging.DEBUG,
+    #     format='%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s',
+    #     datefmt=ISO8601_HUMAN,
+    #     # filename=f"/var/log/{SCRIPT_NAME}.log",
+    #     # filemode="a",
+    #     )
+
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s",
+        datefmt=ISO8601_HUMAN
+    )
+
+    # Handler for STDOUT
+    sh = logging.StreamHandler()
+    sh.setLevel(level)
+    sh.setFormatter(formatter)
+
+    # Handler for log file.
+    log_filename = f"{SCRIPT_NAME_AND_PATH_ABS}-{datetime.now().strftime(ISO8601_FILENAME)}.log"
+    fh = logging.FileHandler(log_filename, mode='a')
+    fh.setLevel(level)
+    fh.setFormatter(formatter)
+
+    # Creating a logger
+    logger_instance = logging.getLogger(SCRIPT_NAME)
+    logger_instance.setLevel(level)
+    logger_instance.addHandler(sh)
+    logger_instance.addHandler(fh)
+    return logger_instance
 
 
 # WARNING:  THIS GETTEXT CODE DOES NOT WORKANYMORE WITH PYTHON 3.
@@ -112,417 +162,346 @@ ansi = {
 # gettext.translation('guess', localedir='locale', languages=['fr']).install()
 
 
-parser = argparse.ArgumentParser(description=f"""
-{ansi['FG_WHITE_BG_GREEN']} SAFE {ansi['RESET']}
-{ansi['FG_BLACK_BG_YELLOW']} SLIGHT DANGER {ansi['RESET']}
-{ansi['FG_WHITE_BG_RED']} DANGER {ansi['RESET']}
+def parse_arguments():
+    """Parses command line arguments."""
+    parser = argparse.ArgumentParser(description=f"""
+{ANSI['FG_WHITE_BG_GREEN']} SAFE {ANSI['RESET']}
+{ANSI['FG_BLACK_BG_YELLOW']} SLIGHT DANGER {ANSI['RESET']}
+{ANSI['FG_WHITE_BG_RED']} DANGER {ANSI['RESET']}
 
-{ansi['FG_WHITE_BG_GREEN']} SAUF {ansi['RESET']}
-{ansi['FG_BLACK_BG_YELLOW']} LÉGER DANGER {ansi['RESET']}
-{ansi['FG_WHITE_BG_RED']} DANGER {ansi['RESET']}
+{ANSI['FG_WHITE_BG_GREEN']} SAUF {ANSI['RESET']}
+{ANSI['FG_BLACK_BG_YELLOW']} LÉGER DANGER {ANSI['RESET']}
+{ANSI['FG_WHITE_BG_RED']} DANGER {ANSI['RESET']}
 
 Read a .ini file and export its full content in variables that Bash can make use of.
 
 For example, run:
 
-    """ + scriptName + """  config.ini --export
+    {SCRIPT_NAME}  config.ini --export
 
 """, formatter_class=argparse.RawTextHelpFormatter)
 
-# Positional arguments.
-# If <files> is mandatory, use "nargs='+'".  If optional, use "nargs='*'".
-parser.add_argument('files', metavar='files', type=str, nargs='+',
-                    help='List of files to rename.')
+    # Positional arguments.
+    # If <files> is mandatory, use "nargs='+'".  If optional, use "nargs='*'".
+    parser.add_argument('files', metavar='files', type=str, nargs='+',
+                        help='List of files to rename.')
 
-# Mandatory arguments.
-# parser.add_argument('-d', '--dst', dest='dst', default='.', required=True,
-#                     help='Destination where subdirectories will be created.  Default:  %(default)s"')
+    # Mandatory arguments.
+    # parser.add_argument('-d', '--dst', dest='dst', default='.', required=True,
+    #                     help='Destination where subdirectories will be created.  Default:  %(default)s"')
 
-# Optional arguments.
-# action="store_true" means is that if the argument is given on the command
-# line then a True value should be stored in the parser.
-# parser.add_argument('--hardlink', dest='hardlink',
-#                     default=False, action="store_true",
-#                     help='Create hard links instead of moving files.')
-#
-# parser.add_argument('-s', '--split', dest='split', default=10, required=False,
-#                     help='Number of split to perform.')
+    # Optional arguments.
+    # action="store_true" means is that if the argument is given on the command
+    # line then a True value should be stored in the parser.
+    # parser.add_argument('--hardlink', dest='hardlink',
+    #                     default=False, action="store_true",
+    #                     help='Create hard links instead of moving files.')
+    #
+    # parser.add_argument('-s', '--split', dest='split', default=10, required=False,
+    #                     help='Number of split to perform.')
 
-# Optional argument with parameter (--user USER).  By putting 'type=str', we
-# tell the parser that the argument must take a parameter with it.
-# parser.add_argument('-u', '--user', type=str, dest='user',
-#                     default=os.environ["USER"], help='Provide user id.')
+    # Optional argument with parameter (--user USER).  By putting 'type=str', we
+    # tell the parser that the argument must take a parameter with it.
+    # parser.add_argument('-u', '--user', type=str, dest='user',
+    #                     default=os.environ["USER"], help='Provide user id.')
 
-# Optional argument with choices.
-# See:  https://stackoverflow.com/questions/40324356/python-argparse-choices-with-a-default-choice
-# parser.add_argument('-t', '--type', dest='type', default="ascii7bits", required=False, type=str,
-#                     nargs='?',
-#                     choices=['ascii7bits', 'latin', 'digitAndLetters', 'digitAndLowerLetters', 'digitAndUpperLetters' ],
-#                     help='Length of password generated.  Default is ascii7bits.')
+    # Optional argument with choices.
+    # See:  https://stackoverflow.com/questions/40324356/python-argparse-choices-with-a-default-choice
+    # parser.add_argument('-t', '--type', dest='type', default="ascii7bits", required=False, type=str,
+    #                     nargs='?',
+    #                     choices=['ascii7bits', 'latin', 'digitAndLetters', 'digitAndLowerLetters', 'digitAndUpperLetters' ],
+    #                     help='Length of password generated.  Default is ascii7bits.')
 
-parser.add_argument('-l', '--log-level', dest='loglevel', default='info',
-       choices=['debug', 'info', 'warning', 'error', 'critical'],
-       help='Set logs level.  Default is \'info\'.')
-#       help='Niveau des logs.  Défaut est \'info\'.')
+    parser.add_argument('-l', '--log-level', dest='loglevel', default='info',
+                        choices=['debug', 'info', 'warning', 'error', 'critical'],
+                        help="Set logs level. Default is 'info'.")
 
-args = parser.parse_args()
-
+    return parser.parse_args()
 
 
-# LOGGING CONFIGURATION
-# ────────────────────────────────────────────────────────────────────────────
-
-if args.loglevel=="debug":
-    log_level=logging.DEBUG
-elif args.loglevel=="warning":
-    log_level=logging.WARNING
-elif args.loglevel=="error":
-    log_level=logging.ERROR
-elif args.loglevel=="critical":
-    log_level=logging.CRITICAL
-else:
-    log_level=logging.INFO
-
-# When setting the log level with logging.basicConfig(), the log level and
-# other parameters are set for ALL Python modules that using the logging
-# facility, not just the code found in this script.  This is usually not
-# desired.
-#
-# logging.basicConfig(
-# 	level=logging.DEBUG,
-#     format='%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s',
-#     datefmt=iso8601Human,
-#     # filename=f"/var/log/{scriptName}.log",
-#     # filemode="a",
-#     )
-
-logger_formatter = logging.Formatter("%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s", datefmt=iso8601Human)
-
-# Handler for STDOUT
-sh = logging.StreamHandler()
-sh.setLevel(log_level)
-sh.setFormatter(logger_formatter)
-
-# Handler for log file.
-fh = logging.FileHandler(f"{scriptNameAndPathAbs}-{datetime.now().strftime(iso8601Filename)}.log", mode='a')
-fh.setLevel(log_level)
-fh.setFormatter(logger_formatter)
-
-# Creating a logger with the script's name and setting it to a specific log
-# level.
-logger = logging.getLogger(scriptName)
-logger.setLevel(log_level)
-logger.addHandler(sh)
-logger.addHandler(fh)
-
-# logging.debug("Test of logging %s", "here. :)")
-# logger.debug("Test of logger %s", "here. :)")
-
-
-
-# PARAMETERS VALIDATIONS
-# ────────────────────────────────────────────────────────────────────────────
-
-errors = ""
-
-# if args.hardlink == True:
-#     errors += "\n  --hardlink is required."
-
-def report_error():
-
+def report_error(errors):
+    """Reports errors and exits if any."""
     if len(errors) > 0:
-        print(f"{ansi['FG_WHITE_BG_RED']}ERROR:{ansi['RESET']}  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
-        print(f"{ansi['FG_WHITE_BG_RED']}ERREUR:{ansi['RESET']}  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
+        print(f"{ANSI['FG_WHITE_BG_RED']}ERROR:{ANSI['RESET']}  The following errors where detected.\n" + errors + "\n\nCommand aborted.")
+        print(f"{ANSI['FG_WHITE_BG_RED']}ERREUR:{ANSI['RESET']}  Les erreurs suivantes furent détectées.\n" + errors + "\n\nCommande avortée")
         sys.exit(1)
 
-report_error()
 
+def file_commands_examples():
+    """Examples of file commands."""
+    # rm -rf:  Erase directory, causes no error if not existing.
+    # shutil.rmtree(path, ignore_errors=True, onerror=None)
 
-#print(args)
+    # mkdir -p:  from Python >= 3.5
+    # pathlib.Path("<directory name/path here>").mkdir(parents=True, exist_ok=True)
 
-#print("Subdirectories will be created in '" + args.dst + "'.")
+    # shutil.copy2(package, packages_dir) # cp -p (best copy option)
+    # os.chdir("<dir>")  # cd "<dir">
 
-
-
-# FILE COMMANDS
-# ────────────────────────────────────────────────────────────────────────────
-
-import shutil
-import pathlib
-
-# rm -rf:  Erase directory, causes no error if not existing.
-shutil.rmtree(path, ignore_errors=True, onerror=None)
-
-# mkdir -p:  from Python >= 3.5
-pathlib.Path("<directory name/path here>").mkdir(parents=True, exist_ok=True)
-
-shutil.copy2(package, packages_dir) # cp -p (best copy option)
-os.chdir("<dir>")  # cd "<dir">
-
-# 'mkdir -p' - OLD CODE (Python 2)?
-# import errno
-# try:
-#   os.makedirs(args.dst + os.sep + str(index) )
-# except OSError as oserror:
-#   if oserror.errno == errno.EEXIST:
-#     pass   # Already exists, we continue.
-#
-#     import shutil  # Erase directory recursively and recreate it.
-#     shutil.rmtree(directory)
-#     os.makedirs(directory)
-#   else:
-#     raise  # Some odd problem, maybe permission problem?  Raising.
-
-
-
-# REGULAR EXPRESSION
-# ────────────────────────────────────────────────────────────────────────────
-
-import re
-pattern = re.compile(r"<regex>")
-matches = pattern.match(line)
-if matches != None:
-    data=matches.group(1)
-
-
-
-# READ AND WRITE TO A FILE
-# ────────────────────────────────────────────────────────────────────────────
-
-lines = [ i.strip() for i in open("somefile") ]  # Strips lines
-
-# All in memory
-whole_content = open(file).read()
-lines = open(file).readlines()  # Lines remain intact.
-
-for line in lines:
+    # 'mkdir -p' - OLD CODE (Python 2)?
+    # import errno
+    # try:
+    #   os.makedirs(args.dst + os.sep + str(index) )
+    # except OSError as oserror:
+    #   if oserror.errno == errno.EEXIST:
+    #     pass   # Already exists, we continue.
+    #
+    #     import shutil  # Erase directory recursively and recreate it.
+    #     shutil.rmtree(directory)
+    #     os.makedirs(directory)
+    #   else:
+    #     raise  # Some odd problem, maybe permission problem?  Raising.
     pass
 
-# Not all in memory, one line at a time
-lines = open(file)
 
-for line in lines:
+def regex_example(line):
+    """Example of regex usage."""
+    pattern = re.compile(r"<regex>")
+    matches = pattern.match(line)
+    if matches is not None:
+        data = matches.group(1)
+        return data
+    return None
+
+
+def read_write_file_examples(file, filename, output):
+    """Examples of reading and writing files."""
+    lines = [ i.strip() for i in open("somefile") ]  # Strips lines
+
+    # All in memory
+    whole_content = open(file).read()
+    lines = open(file).readlines()  # Lines remain intact.
+
+    for line in lines:
+        pass
+
+    # Not all in memory, one line at a time
+    lines = open(file)
+
+    for line in lines:
+        pass
+
+    with open(filename,'w+') as fd:  # '+' means create if it does not exist.
+                                     # 'a' stands for append.
+        fd.write(output + "\n")  # Because of 'with', fd will be closed automatically.
     pass
 
-with open(filename,'w+') as fd:  # '+' means create if it does not exist.
-                                 # 'a' stands for append.
-    fd.write(output + "\n")  # Because of 'with', fd will be closed automatically.
 
-
-
-# JSON
-# ────────────────────────────────────────────────────────────────────────────
 def json_example():
-    import json
+    """Example of JSON usage."""
     with open('file.json') as fd:
-        json_dict=json.load(fd)
+        json_dict = json.load(fd)
 
-    json_dict   = json.loads('{ "test": "Hi there." }') # Load json from str.
-    json_string = json.dumps(json_dict, ensure_ascii= False, indent = 2)
+    json_dict = json.loads('{ "test": "Hi there." }')  # Load json from str.
+    json_string = json.dumps(json_dict, ensure_ascii=False, indent=2)
+    return json_string
 
 
-
-# RETURN LINUX STANDARD CONFIGURATION DIRECTORY FOR A USER.
-# ────────────────────────────────────────────────────────────────────────────
 def linux_conf_dir():
+    """Return Linux standard configuration directory for a user."""
     try:
-        config_dir=os.environ["XDG_CONFIG_HOME"]
-    except:
-        config_dir=os.environ["HOME"] + os.sep + ".config"
+        config_dir = os.environ["XDG_CONFIG_HOME"]
+    except KeyError:
+        config_dir = os.path.join(os.environ["HOME"], ".config")
     return config_dir
 
 
-
-# YAML
-# ────────────────────────────────────────────────────────────────────────────
-#
-# To install yaml module, you must run:  'pip install pyyaml'.
-#
-# See:  https://stackoverflow.com/questions/14261614/how-do-i-install-the-yaml-package-for-python
-import yaml
-
-def yaml_example():
-    config_path=linux_conf_dir()+f"{os.sep}myproject{os.sep}myfile.yaml"
+def yaml_example(logger):
+    """Example of YAML usage."""
+    config_path = os.path.join(linux_conf_dir(), "myproject", "myfile.yaml")
 
     with open(config_path, 'r') as stream:
         print(f"Reading configuration file:  {config_path}")
         yaml_conf = yaml.safe_load(stream)
-
+    
     logger.debug(f"yaml_conf = {yaml_conf}")
     return yaml_conf
+    pass
 
 
-
-# MISCELLANEOUS
-# ────────────────────────────────────────────────────────────────────────────
-def stringToHex(string):
+def string_to_hex(string):
+    """Converts a string to hex representation."""
     return ':'.join("{:0>2}".format(hex(ord(x))[2:]) for x in string).upper()
 
 
-# DEBUGGING
-# ────────────────────────────────────────────────────────────────────────────
+def debugging_example():
+    """Example of debugging."""
+    # Using Stop watch module to measure laps time between calls.
+    # See:  https://pypi.org/project/swpy/
 
-# Using Stop watch module to measure laps time between calls.
-# See:  https://pypi.org/project/swpy/
-
-# from swpy import Timer
-#
-# t = Timer("Chronometer")
-#
-# t.split()
-# <long function here
-# t.split()
-
-
-# READ AND WRITE TO A FILES OR STDIN
-# ────────────────────────────────────────────────────────────────────────────
-if len(args.files) == 0:
-    args.files = [ "<stdin>" ]
-
-for file in args.files:
-
-    text=None
-    if "<stdin>" in file:
-        fd = sys.stdin
-        text="".join(fd.readlines())
-    else:
-        with open(file) as fd:
-            # Script files are always small enough to fit into memory.
-            # Thus, we load everything since it makes things easier.
-            text="".join(fd.readlines())
-
-    # At this point, 'text' contains all the content of the file, each line
-    # separated with a newline.  Be aware, too, that a newline can consist of
-    # a linefeed (\n), a carriage-return (\r), or a carriage-return+linefeed
-    # (\r\n).
-
-    # Searching for lines that match the given regular expression.  WARNING:
-    # In multiline mode, ^ matches the position immediately following a
-    # newline and $ matches the position immediately preceding a newline, NOT
-    # THE NEWLINE ITSELF.
+    # from swpy import Timer
     #
-    # See:  https://stackoverflow.com/questions/587345/regular-expression-matching-a-multiline-block-of-text
-    pattern = re.compile(r"^\s+Name:\s+(\w+).*$", re.MULTILINE)
-    for matches in pattern.finditer(text):
-         data=matches.group(1)
-         logger.info(">>" + str(data)+ "<<")
+    # t = Timer("Chronometer")
+    #
+    # t.split()
+    # <long function here
+    # t.split()
+    pass
 
 
-# Snippet to print over a line the index we are at.
-# import curses
-# setupterm()
-# index=1000
-# print(title, end="")
-# indexpos=len(title)+10
-# For...
-#    print("\r" + curses.tparm(curses.tigetstr("cuf"), indexpos, 0).decode("UTF8") + str(index), end="")
+def curses_example():
+    """Example of curses usage."""
+    # Snippet to print over a line the index we are at.
+    # import curses
+    # setupterm()
+    # index=1000
+    # print(title, end="")
+    # indexpos=len(title)+10
+    # For...
+    #    print("\r" + curses.tparm(curses.tigetstr("cuf"), indexpos, 0).decode("UTF8") + str(index), end="")
+    pass
 
 
-# WALK A DIRECTORY
-# ────────────────────────────────────────────────────────────────────────────
+def walk_directory_example(args):
+    """Example of walking a directory."""
+    # files = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
+    # files = [path for path in pathlib.Path(".").rglob("*.txt")]  # Return all '*.txt' files; Global search support.
+    # Returns all directories which contains files with extension "*.tf".
+    # directories = sorted(set([path.parent for path in pathlib.Path(".").rglob("*.tf")]))  # Global search support.
 
-# New: (from:  https://stackoverflow.com/questions/12420779/simplest-way-to-get-the-equivalent-of-find-in-python)
-
-files = [os.path.join(dirpath, filename) for (dirpath, dirs, files) in os.walk('.') for filename in (dirs + files)]
-files = [path for path in pathlib.Path(".").rglob("*.txt")]  # Return all '*.txt' files; Global search support.
-# Returns all directories which contains files with extension "*.tf".
-directories = sorted(set([path.parent for path in pathlib.Path(".").rglob("*.tf")]))  # Global search support.
-
-# WARNING:
-#
-# This script is far from perfect.  It makes use of os.walk that reads in
-# memory all the files.  Thus if you have say 30E06 files, this script will
-# consume Gib of memories.
-#
-# One should use os.scandir() for large directories.
-# See:  https://peps.python.org/pep-0471/
-index=0
-for root, dirs, files in os.walk(args.inputdir):
-    #print "root="  + str(root)
-    #print "dirs="  + str(dirs)
-    #print "files=" + str(files)
-
-    numberoffiles = len(files)
-
-    for file in files:
-      # basename=os.path.basename(file)
-
-      #from pathlib import Path
-      # https://docs.python.org/3/library/pathlib.html
-      #basename_without_extension=Path(basename).stem
-      #extension=Path(basename).suffix
-      #extensions=Path(basename).suffixes  # Return an array, such as PurePosixPath('my/library.tar.gz').suffixes returns ['.tar', '.gz']
-
-      index+=1
-      dst_fullpath = args.dst + os.sep + str(index % args.split) + os.sep + file
-      src_fullpath = root + os.sep + file
-
-      print("                                                                                \r", end=' ')
-
-      if index%100000 == 0:
-        print("Number of entries processed " + str(index)) # + "\n\n"
-
-      if args.hardlink:
-        print("Creating hardlink " + src_fullpath + " -> " + dst_fullpath, end=' ')
-        os.link(src_fullpath, dst_fullpath)
-      elif args.softlink:
-        print("Creating softlink " + src_fullpath + " -> " + dst_fullpath, end=' ')
-        os.symlink(src_fullpath, dst_fullpath)
-      else:
-        print("Moving " + src_fullpath + " -> " + dst_fullpath, end=' ')
-        os.rename(src_fullpath, dst_fullpath)
-      print("\r", end=' ')
-
+    # WARNING:
+    #
+    # This script is far from perfect.  It makes use of os.walk that reads in
+    # memory all the files.  Thus if you have say 30E06 files, this script will
+    # consume Gib of memories.
+    #
+    # One should use os.scandir() for large directories.
+    # See:  https://peps.python.org/pep-0471/
+    
+    # index = 0
+    # for root, dirs, files in os.walk(args.inputdir):
+    #     # print "root="  + str(root)
+    #     # print "dirs="  + str(dirs)
+    #     # print "files=" + str(files)
+    #
+    #     numberoffiles = len(files)
+    #
+    #     for file in files:
+    #         # basename=os.path.basename(file)
+    #
+    #         # from pathlib import Path
+    #         # https://docs.python.org/3/library/pathlib.html
+    #         # basename_without_extension=Path(basename).stem
+    #         # extension=Path(basename).suffix
+    #         # extensions=Path(basename).suffixes  # Return an array, such as PurePosixPath('my/library.tar.gz').suffixes returns ['.tar', '.gz']
+    #
+    #         index += 1
+    #         dst_fullpath = args.dst + os.sep + str(index % args.split) + os.sep + file
+    #         src_fullpath = root + os.sep + file
+    #
+    #         print("                                                                                \r", end=' ')
+    #
+    #         if index % 100000 == 0:
+    #             print("Number of entries processed " + str(index))  # + "\n\n"
+    #
+    #         if args.hardlink:
+    #             print("Creating hardlink " + src_fullpath + " -> " + dst_fullpath, end=' ')
+    #             os.link(src_fullpath, dst_fullpath)
+    #         elif args.softlink:
+    #             print("Creating softlink " + src_fullpath + " -> " + dst_fullpath, end=' ')
+    #             os.symlink(src_fullpath, dst_fullpath)
+    #         else:
+    #             print("Moving " + src_fullpath + " -> " + dst_fullpath, end=' ')
+    #             os.rename(src_fullpath, dst_fullpath)
+    #         print("\r", end=' ')
+    pass
 
 
 def handle_exception(exception):
+    """Handles exceptions by sending an email."""
     logging.error("Exception lancée:  %s", str(exception))
 
-    from configparser import SafeConfigParser
-    import traceback
-    import socket
-    import getpass
     username = getpass.getuser()
     hostname = socket.gethostname()
 
     config = SafeConfigParser()
     config.read(os.path.join(os.environ["HOME"], "config", "lake.ini"))
-    emails = config['Support']['emails'].split(' ')
-    env    = config['Environment']['type']
+    try:
+        emails = config['Support']['emails'].split(' ')
+        env = config['Environment']['type']
+    except KeyError:
+        logging.error("Could not read config for email support.")
+        return
 
     # Sending an email when an error occured.
-    # ────────────────────────────────────────────────────────────────────
     body = "En " + env + """, l'erreur suivante:
 
   """ + str(exception) + """
-  """ + '  '.join(('\n'+traceback.format_exc().lstrip()).splitlines(True)) + """
+  """ + '  '.join(('\n' + traceback.format_exc().lstrip()).splitlines(True)) + """
 ...c'est produite à l'exécution du script:
 
-  """ + username + "@" + hostname + ":" + scriptNameAndPathAbs
+  """ + username + "@" + hostname + ":" + SCRIPT_NAME_AND_PATH_ABS
 
     logging.error("Contenu du courriel d'erreur suit:\n\n%s", body)
 
     msg = MIMEText(body, 'plain')
     msg['Subject'] = env + " / partition - Erreur sur " + username + "@" + hostname + ":  " + str(exception)
     msg['To'] = ','.join(emails)
-    #msg['From']   = sender # some SMTP servers will do this automatically, not all
 
     conn = SMTP("localhost")
     conn.set_debuglevel(False)
-    #conn.login(USERNAME, PASSWORD)
     try:
         conn.sendmail("noreply@videotron.com", emails, msg.as_string())
     finally:
         conn.quit()
 
 
-def main_wrapper():
+def run_os_command(command_as_array: list[str], logger) -> tuple[int, str, str]:
+    """Runs an OS command."""
+    logger.debug("Executing:  " + " ".join(command_as_array))
+    completed_process = subprocess.run(command_as_array, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout = completed_process.stdout.decode('utf-8').rstrip()
+    stderr = completed_process.stderr.decode('utf-8').rstrip()
 
-    # Command below is used to suppress JetBrains's IDE PyCharm's warning 'too
-    # broad exception clause'.
+    logger.debug(f"stdout  = >>{stdout}<<")
+    logger.debug(f"stderr  = >>{stderr}<<")
+    logger.debug(f"retcode = >>{completed_process.returncode}<<")
+
+    return completed_process.returncode, stdout, stderr
+
+
+def main():
+    """Main function."""
+    args = parse_arguments()
+    logger = setup_logging(args.loglevel)
+
+    # PARAMETERS VALIDATIONS
+    errors = ""
+    # if args.hardlink:
+    #     errors += "\n  --hardlink is required."
+    report_error(errors)
+
+    # Example usage of run_os_command
+    # (returncode, stdout, stderr) = run_os_command(["cat", "/etc/services"], logger)
+
+    # READ AND WRITE TO A FILES OR STDIN
+    if len(args.files) == 0:
+        args.files = ["<stdin>"]
+
+    for file_path in args.files:
+        text = None
+        if "<stdin>" in file_path:
+            fd = sys.stdin
+            text = "".join(fd.readlines())
+        else:
+            if os.path.exists(file_path):
+                with open(file_path) as fd:
+                    text = "".join(fd.readlines())
+            else:
+                logger.warning(f"File not found: {file_path}")
+                continue
+
+        if text:
+            pattern = re.compile(r"^\s+Name:\s+(\w+).*$", re.MULTILINE)
+            for matches in pattern.finditer(text):
+                data = matches.group(1)
+                logger.info(">>" + str(data) + "<<")
+
+
+def main_wrapper():
+    """Wrapper for main to handle exceptions and timing."""
     # noinspection PyBroadException
     try:
-
         time_start = datetime.now()
 
         main()
@@ -533,8 +512,8 @@ def main_wrapper():
         time_executed_hours, time_executed_remainder = divmod(time_executed.seconds, 3600)
         time_executed_minutes, time_executed_seconds = divmod(time_executed_remainder, 60)
 
-        time_start_string = time_start.strftime(iso8601Human)
-        time_end_string = time_end.strftime(iso8601Human)
+        time_start_string = time_start.strftime(ISO8601_HUMAN)
+        time_end_string = time_end.strftime(ISO8601_HUMAN)
 
         print("\nStarted:   " + time_start_string)
         print("Ended:     " + time_end_string)
@@ -546,35 +525,18 @@ def main_wrapper():
             time_executed_hours, time_executed_minutes, time_executed_seconds))
 
     except Exception as exception:
+        # We need a logger here, but it might not be initialized if exception happens early.
+        # We'll try to get it or use basic logging.
+        logger = logging.getLogger(SCRIPT_NAME)
+        if not logger.handlers:
+             logging.basicConfig(level=logging.ERROR)
+             logger = logging.getLogger(SCRIPT_NAME)
+
         logger.error("Exception:  %s", exception)
         stacktrace = traceback.format_exc()
         logger.error("Exception:  %s", stacktrace)
         handle_exception(exception)
 
 
-def run_os_command(command_as_array: list[str]) -> tuple[int, str, str]:
-
-    logger.debug("Executing:  " + " ".join(command_as_array))
-    completedProcess = subprocess.run(command_as_array, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # Python 3.6 & +
-    stdout = completedProcess.stdout.decode('utf-8').rstrip()
-    stderr = completedProcess.stderr.decode('utf-8').rstrip()
-
-    logger.debug(f"stdout  = >>{stdout}<<")
-    logger.debug(f"stderr  = >>{stderr}<<")
-    logger.debug(f"retcode = >>{completedProcess.returncode}<<")
-
-    return (completedProcess.returncode, stdout, stderr)
-
-
-def main():
-
-    (returncode, stdout, stderr) = run_os_command(["cat", "/etc/services"])
-
-    # stdout_text = os.popen("cat /etc/services").read()  # stderr is not catched and is sent out to the terminal.
-    # return_code = os.system("cat /etc/services")  # stdout and stderr cannot be caught and is sent to the terminal.
-
-    pass # <code here>
-
-
 if __name__ == "__main__":
-    main()
+    main_wrapper()
