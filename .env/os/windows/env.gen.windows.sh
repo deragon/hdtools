@@ -113,6 +113,11 @@ excel()
   hd_application_run_executable_windows MSEXCEL "Microsoft Excel" "EXCEL.EXE" "$@"
 }
 
+code()
+{
+  hd_application_run_executable_windows VSCODE "Microsoft VSCode" "CODE.EXE" "$@"
+}
+
 chrome()
 {
   # IMPORTANT:  DO NO APPEND '&' AT THE END BECAUSE IT WILL SPAWN A NEW PROCESS
