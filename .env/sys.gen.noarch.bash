@@ -657,8 +657,10 @@ cdup()
   cdprint "${DIR}"
 }
 
-alias cdinit='cd /etc/init.d'
-alias cdlog='cd /var/log'
+alias cdinit='cdprint /etc/init.d'
+alias cdlog='cdprint /var/log'
+alias cdcrash='cdprint /var/crash;lscrash'
+alias lscrash='hdfindfiles /var/crash'
 #alias locateupdate='/usr/bin/updatedb -f "nfs,smbfs,ncpfs,proc,devpts" -e "/tmp,/var/tmp,/usr/tmp,/afs,/net"'
 
 alias hd-firewall-list-nat='iptables -t nat --list -n -v'
