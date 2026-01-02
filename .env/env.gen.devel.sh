@@ -9,6 +9,26 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
+# ══════════════════════════════════════════════════════════════════════════════
+# VS Code - Visiual Studio Code
+
+# Starts VS Code of the root directory of a project if the user is
+# currently under one or one of its sub-directories, or else starts with
+# the current directory.
+vsc()
+{
+  HD_PROJECT_DIR="$(hdprojectdir)"
+  [[ -z "${HD_PROJECT_DIR}" ]] && HD_PROJECT_DIR="${PWD}"
+
+  # Under Windows, the line below might call the 'code' alias instead
+  # of the VS Code binary, which is a desired behavior.
+  code "${HD_PROJECT_DIR}" &
+
+  echo "Visual Code started under directory:  '${HD_PROJECT_DIR}'"
+}
+
+
+
 # Eclipse
 # ══════════════════════════════════════════════════════════════════════════════
 
