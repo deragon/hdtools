@@ -1,0 +1,97 @@
+#!/bin/bash
+
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2026 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+hd_project_dir_find() {
+  local dir="$PWD"
+  while [[ "${dir}" != "/" ]]; do
+    if [[ -d "${dir}/.git" ]] && [[ -f "$dir/.git/HEAD" ]]; then
+      echo "${dir}"
+      return 0
+    fi
+    if [[ -d "${dir}/venv" && -x "$dir/venv/bin/python" ]]; then
+      echo "${dir}"
+      return 0
+    fi
+    dir="$(dirname "$dir")"
+  done
+  return 1
+}
+
+# Execute only if called directly, not sourced.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  unset ANSI
+  if [ -t 1 ] ; then
+    declare -Ag ANSI=(
+      ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+      ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+      ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+      ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+      ["RESET"]="\e[0;00m"
+      ["BOLD"]="\e[1m"
+      ["ITALIC"]="\e[2m"
+      ["UNDERLINE"]="\e[3m"
+      ["REVERSE"]="\e[7m"
+      ["STRIKETHROUGH"]="\e[9m"
+      ["BOLD_OFF"]="\e[21m"
+      ["ITALIC_OFF"]="\e[22m"
+      ["UNDERLINE_OFF"]="\e[23m"
+      ["REVERSE_OFF"]="\e[27m"
+      ["STRIKETHROUGH_OFF"]="\e[29m"
+      ["BLINK"]="\e[5m"
+      ["BLACK"]="\e[30m"
+      ["RED"]="\e[31m"
+      ["GREEN"]="\e[32m"
+      ["YELLOW"]="\e[33m"
+      ["BLUE"]="\e[34m"
+      ["MAGENTA"]="\e[35m"
+      ["CYAN"]="\e[36m"
+      ["WHITE"]="\e[37m"
+      ["BG_RED"]="\e[41m"
+      ["BG_GREEN"]="\e[42m"
+      ["BG_YELLOW"]="\e[43m"
+      ["BG_BLUE"]="\e[44m"
+      ["BG_MAGENTA"]="\e[45m"
+      ["BG_CYAN"]="\e[46m"
+      ["BG_WHITE"]="\e[47m"
+      ["BG_DEFAULT"]="\e[49m"
+    )
+  fi
+
+
+  usage()
+  {
+    echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Returns the root directory of a project if the user is currently under one.
+Returns nothing otherwise.
+
+Usage:  ${SCRIPT_NAME} [-h]
+
+  -h  Display this help text.
+"
+  }
+
+  OPTIND=1
+  while getopts "h" OPTCMD; do
+    case "${OPTCMD}" in
+      "h"|*)  usage; exit 1;;
+    esac
+  done
+
+  hd_project_dir_find
+fi
