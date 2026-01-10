@@ -20,9 +20,18 @@ vsc()
   HD_PROJECT_DIR="$(hdprojectdir)"
   [[ -z "${HD_PROJECT_DIR}" ]] && HD_PROJECT_DIR="${PWD}"
 
-  # Under Windows, the line below might call the 'code' alias instead
-  # of the VS Code binary, which is a desired behavior.
-  code "${HD_PROJECT_DIR}" &
+  if [[ ! -z "${WSL_DISTRO_NAME}" ]]; then
+
+    # WSL detected.  As of 2026-01-01, VS Code Linux version works badly in
+    # WSL (GUI problems).  To get around this, run the Windows version with
+    # remote WSL connection.
+    #
+    # The line below might call the 'code' alias instead
+    # of the VS Code binary, which is a desired behavior.
+    code --folder-uri "vscode-remote://wsl+${WSL_DISTRO_NAME}${HD_PROJECT_DIR}" $@
+  else
+    code "${HD_PROJECT_DIR}" $@ &
+  fi
 
   echo "Visual Code started under directory:  '${HD_PROJECT_DIR}'"
 }
