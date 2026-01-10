@@ -115,7 +115,13 @@ excel()
 
 code()
 {
-  hd_application_run_executable_windows VSCODE "Microsoft VSCode" "CODE.EXE" "$@"
+  # Not using 'hd_application_run_executable_windows' with VSCode because that
+  # function redo paths.  VSCode under WSL is executed by calling function
+  # 'vsc' (defined in env.gen.devel.sh). 'vsc' uses the following argument
+  # which must not be tempered with:
+  #
+  # --folder-uri "vscode-remote://wsl+<distro>/home/<user>/path/to/project"
+  hd_application_run_executable VSCODE "Microsoft VSCode" "CODE.EXE" "$@"
 }
 
 chrome()
