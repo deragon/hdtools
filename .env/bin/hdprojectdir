@@ -16,19 +16,30 @@
 SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
 
 hd_project_dir_find() {
-  local dir="$PWD"
+  local dir="${PWD}"
+  local dir_git dir_python
+
   while [[ "${dir}" != "/" ]]; do
-    if [[ -d "${dir}/.git" ]] && [[ -f "$dir/.git/HEAD" ]]; then
-      echo "${dir}"
-      return 0
+    if [[ -z "${dir_git}" && -d "${dir}/.git" && -f "$dir/.git/HEAD" ]]; then
+      dir_git="${dir}"
     fi
-    if [[ -d "${dir}/venv" && -x "$dir/venv/bin/python" ]]; then
-      echo "${dir}"
-      return 0
+    if [[ -z "${dir_python}" && -d "${dir}/venv" && -x "$dir/venv/bin/python" ]]; then
+      dir_python="${dir}"
     fi
     dir="$(dirname "$dir")"
   done
-  return 1
+
+  # .git directory has precedence to any other type of directory, so it is
+  # tested first, then Python.
+  if [[ ! -z "${dir_git}" ]]; then
+    echo "${dir_git}"
+    return 0
+  elif [[ ! -z "${dir_python}" ]]; then
+    echo "${dir_python}"
+    return 0
+  else
+    return 1
+  fi
 }
 
 # Execute only if called directly, not sourced.
