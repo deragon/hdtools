@@ -460,6 +460,12 @@ PROCEDURES
   describe PROCEDURE "<DATABASE>"."<SCHEMA>"."<PROCEDURE>"(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR, BOOLEAN);
   SHOW PROCEDURES like '<Procedure names>';  -- DOES NOT SHOW OWNERSHIP.
 
+  -- ERROR:  Fetch the error message.
+  select query_text, database_name, schema_name, query_type, session_id, error_message, start_time, end_time
+  from table(information_schema.query_history_by_session(result_limit => 100))
+  where execution_status not in ('RUNNING', 'SUCCES')
+  order by start_time desc;
+
 
 
 TASKS
