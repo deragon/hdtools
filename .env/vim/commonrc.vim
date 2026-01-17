@@ -118,6 +118,18 @@
 " ════════════════════════════════════════════════════════════════════
 "let mapleader = "\\"  " Actually, just type '\'
 
+" From:  http://vim.wikia.com/wiki/Quick_generic_option_toggling
+" Map key to toggle opt
+function! MapToggle(key, opt)
+  let cmd = ':set '.a:opt.'! \| set '.a:opt."?\<CR>"
+  exec 'nnoremap '.a:key.' '.cmd
+  " Comment by Hans Deragon (hans@deragon.biz), 2017-02-22 15:31:56 Est
+  " For \w to work in insert mode normally instead of toggling between
+  " wrap and no wrap, we must not set inoremap.
+  "exec 'inoremap '.a:key." \<C-O>".cmd
+endfunction
+command! -nargs=+ MapToggle call MapToggle(<f-args>)
+
 " |fold-marker| marker      Markers are used to specify folds.
 set foldmethod=marker
 
@@ -907,17 +919,6 @@ endif
 
 "let g:ucs_encode_locale=1
 
-" From:  http://vim.wikia.com/wiki/Quick_generic_option_toggling
-" Map key to toggle opt
-function! MapToggle(key, opt)
-  let cmd = ':set '.a:opt.'! \| set '.a:opt."?\<CR>"
-  exec 'nnoremap '.a:key.' '.cmd
-  " Comment by Hans Deragon (hans@deragon.biz), 2017-02-22 15:31:56 Est
-  " For \w to work in insert mode normally instead of toggling between
-  " wrap and no wrap, we must not set inoremap.
-  "exec 'inoremap '.a:key." \<C-O>".cmd
-endfunction
-command! -nargs=+ MapToggle call MapToggle(<f-args>)
 MapToggle <Leader>w wrap
 
 command! -nargs=0 HDFindCharactersNonAscii /[^\x00-\x7F]\+
