@@ -46,29 +46,25 @@ return {
   -- Override the conform.nvim plugin
   {
     "stevearc/conform.nvim",
-    opts = {
-      -- Remove 'shfmt' as a formatter for bash files
-      formatters_by_ft = {
-        -- Set to an empty table to disable all formatters for 'sh' filetype such as
-        -- bash, zsh, sh, etc...
-        sh = {},
-      },
-
-      -- The 'formatters' table is where you override settings for specific formatters.
-      formatters = {
-        shfmt = {
-          -- ⚠️  This configuration is ignored since formatters_by_ft above
-          --    disables formatin for Bash / shell scirpts.
-          --
-          -- 'prepend_args' adds these arguments before any default ones.
-          -- Use 'args' instead if you want to completely replace all arguments.
-          prepend_args = {
-            "-i", "2", -- Indentation width of 2
-            "-ci", -- Collapse case branches
-            "-bn", -- Binary operators on the same line as their operand
-          },
-        },
-      },
-    },
+    optional = true,
+    opts = function(_, opts)
+      -- Completely disable formatters for sh/bash and python filetypes
+      -- by setting them to empty lists
+      opts.formatters_by_ft = opts.formatters_by_ft or {}
+      opts.formatters_by_ft.sh = {}
+      opts.formatters_by_ft.bash = {}
+      opts.formatters_by_ft.zsh = {}
+      opts.formatters_by_ft.python = {}
+      
+      -- Also disable the formatters themselves
+      opts.formatters = opts.formatters or {}
+      opts.formatters.shfmt = { command = "false" }  -- Make shfmt unusable
+      opts.formatters.black = { command = "false" }  -- Make black unusable
+      opts.formatters.ruff_format = { command = "false" }  -- Make ruff_format unusable
+      
+      return opts
+    end,
+    -- Note: <leader>cf is already mapped by LazyVim to manually format with force=true
+    -- This bypasses the vim.b.autoformat=false setting when you want to format manually
   },
 }
