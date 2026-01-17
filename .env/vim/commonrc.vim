@@ -722,25 +722,17 @@ filetype indent on
 "
 " For tips:  https://stackoverflow.com/questions/7338214/nicely-formatting-long-comments-in-vim
 "
-"   <esc>v -> formats the current paragraph to 78 cols
-"   <esc>g -> formats the current paragraph to 72 cols (Git commit format)
-"   <esc>p -> formats the current paragraph to 60 cols
-"   <esc>o -> formats the current paragraph to 50 cols
-set formatoptions=tcql2
-map <esc>v :set textwidth=78<CR>:set ai<CR>gqap<CR>:set noai<CR>:set textwidth=0<CR>
-" <esc>g 'g' stands for 'git', to follow convention documented at:
+set formatoptions+=cro
+" <Leader>gg 'g' stands for 'git', to follow convention documented at:
 "        http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
-map <esc>g :set textwidth=72<CR>:set ai<CR>gqap<CR>:set noai<CR>:set textwidth=0<CR>
-map <esc>p :set textwidth=60<CR>:set ai<CR>gqap<CR>:set noai<CR>:set textwidth=0<CR>
-map <esc>o :set textwidth=50<CR>:set ai<CR>gqap<CR>:set noai<CR>:set textwidth=0<CR>
-" Old - not all systems have "par", thus cannot call this external tool to do
-" the job.
-" V -> formats the file to 72 cols
-"map <esc>V :1,$!par w72<CR>
-"map <esc>P {!}par w60<CR>
-
+nnoremap <Leader>wg :set textwidth=72<CR>gww:set textwidth=0<CR>
+nnoremap <Leader>w5 :set textwidth=50<CR>gww:set textwidth=0<CR>
+nnoremap <Leader>w6 :set textwidth=60<CR>gww:set textwidth=0<CR>
+nnoremap <Leader>w8 :set textwidth=80<CR>gww:set textwidth=0<CR>
 " Center for 80 char screen
-map <esc>c :ce 80<CR>
+nnoremap <Leader>wc :ce 80<CR>
+MapToggle <Leader>ww wrap
+
 
 
 
@@ -918,8 +910,6 @@ if filereadable(expand("$HDVIM/spellrc.vim"))
 endif
 
 "let g:ucs_encode_locale=1
-
-MapToggle <Leader>w wrap
 
 command! -nargs=0 HDFindCharactersNonAscii /[^\x00-\x7F]\+
 command! -nargs=0 HDFindCharactersNull     /[\x00]
