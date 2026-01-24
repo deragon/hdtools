@@ -36,6 +36,8 @@ vsc()
   echo "Visual Code started under directory:  '${HD_PROJECT_DIR}'"
 }
 
+alias ch='copilot --allow-all-paths --allow-all-tools'
+
 
 
 # Eclipse
