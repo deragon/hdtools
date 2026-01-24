@@ -841,6 +841,9 @@ map <esc>ds :call HDSignature("-- ")<CR>
 map <esc>dd O<C-R>=strftime(g:hd_timestamp_format_human)<CR>
 map <esc>dl I* <C-R>=strftime($HD_TIMESTAMP_FORMAT_CHANGELOG)<CR>, Hans Deragon<CR>
 
+" CA == Comment Aesthetic.
+map <esc>ca IAesthetic changes only.  No logic changed.<CR>Changements esthétiques seulement.  Aucune logique affectée.<CR>
+
 map m1 ddpkA:  J0j
 " Assemble all lines of a paragraph into a single line.
 "map <esc>z VapjJi<CR><esc><Down>0
