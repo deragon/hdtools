@@ -20,7 +20,7 @@ usage()
 
 Usage:  ${SCRIPT_NAME} [-a] [-h] <file>+
 
-  -a  Show logs of author returned by 
+  -a  Show logs of author returned by
   -h  Display this help text.
 "
 }
@@ -81,4 +81,10 @@ fi
 # --no-init:  To prevent less from clearing the screen upon exit.
 export LESS="--no-init --ignore-case --use-color --RAW-CONTROL-CHARS"
 
-eval git log ${OPTIONS} $@
+
+unset EXTRA_ARGS
+if [ "$#" != 0 ]; then
+  EXTRA_ARGS=\"$@\"
+fi
+
+eval git log ${OPTIONS} ${EXTRA_ARGS}
