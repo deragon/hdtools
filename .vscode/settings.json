@@ -1,0 +1,11 @@
+{
+  "search.exclude": {
+    "**/*.swp": true,
+    "**/*.swo": true,
+    "**/*.sw?": true,
+    "**/*.un~": true,
+    "**/*.bak": true,
+    "**/*.tmp": true,
+    "**/plugged/**": true
+  }
+}
