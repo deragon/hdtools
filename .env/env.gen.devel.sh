@@ -127,14 +127,30 @@ if (( $? == 0 )); then
     hdgvarclear
   }
 
-  hdgdate()
-  {
+  hdgdate() {
+    local hd_git_date_or_offset
     #  https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables
 
-    if [ -z "${HD_GIT_DATE_OFFSET}" -o "$1" == "-r" ]; then
-      echo -en "Enter offset (in hours):  "
-      read HD_GIT_DATE_OFFSET
-      echo
+    if [[ -z "${HD_GIT_DATE_OFFSET}" || "$1" == "-r" ]]; then
+      if [[ -z "$2" ]]; then
+        echo -en "Enter offset (in hours) or full ISO date:  "
+        read hd_git_date_or_offset
+        echo
+      else
+        shift
+        hd_git_date_or_offset="$@"
+      fi
+      unset HD_GIT_DATE_OFFSET
+    fi
+
+    if [[ -z "${HD_GIT_DATE_OFFSET}" ]]; then
+      if date -d "${hd_git_date_or_offset}" >/dev/null 2>&1; then
+        # User provided a full date.  Calculating offset from now.
+        HD_GIT_DATE_OFFSET=$((($(date -d "${hd_git_date_or_offset}" +%s) - $(date +%s)) / 3600))
+      else
+        # User provided an offset in hours.
+        HD_GIT_DATE_OFFSET=${HD_GIT_DATE_OR_OFFSET}
+      fi
     fi
 
     if [ -z "${GIT_BACKUP_USERNAME}" ]; then
