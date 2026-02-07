@@ -286,14 +286,27 @@ if (( ${HD_BASH_INTERACTIVE} )); then
   HD_BASH_PS_USER="${HD_SCREEN_COLORSET_USER}\u\[${HD_SCREEN_COLOR_DEFAULT}\]"
   HD_BASH_PS_HOST="${HD_SCREEN_COLORSET_HOST}\h\[${HD_SCREEN_COLOR_DEFAULT}\]"
 
+  # Provide a clipped version of \W (basename of PWD) limited to 24 chars.
+  hd_prompt_W()
+  {
+    local base
+    base="${PWD##*/}"
+    if [ "${#base}" -gt 32 ]; then
+      printf "%s" "${base:0:31}…"
+    else
+      printf "%s" "${base}"
+    fi
+  }
+  exportfunction hd_prompt_W
+
   # Under ubuntu, if PS1 is set, it might not be possible to set it
   # again here, i.e. the following command will simply fail.  You
   # need to comment out any PS1 setting in the default .bashrc.
   if [ -z "${STY}" ]; then
-    export HD_BASH_PS1="[${HD_BASH_PS_USER}@${HD_BASH_PS_HOST} \W] "
+    export HD_BASH_PS1="[${HD_BASH_PS_USER}@${HD_BASH_PS_HOST} \$(hd_prompt_W)] "
   else
     # We are under a 'screen' session.  Changing brackets.
-    export HD_BASH_PS1="•${HD_BASH_PS_USER}@${HD_BASH_PS_HOST} \W• "
+    export HD_BASH_PS1="•${HD_BASH_PS_USER}@${HD_BASH_PS_HOST} \$(hd_prompt_W)• "
   fi
 
   # ${VIRTUAL_ENV_PROMPT} is set when the shell is within a Python virtual
