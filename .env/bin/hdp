@@ -23,7 +23,7 @@ gScriptName=os.path.basename(sys.argv[0])
 
 # ----------------------------------------------------------------------
 def usage(code=255):
-  print(gScriptName + """ [ -c | --content ]
+  print(gScriptName + """   [ -c | --content ]          Show all files within the package.
 
       [ <-l|--list> "argument*"]  List all packages installed.
                                   On DEB systems, * wildcard works.
