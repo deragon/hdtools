@@ -256,6 +256,22 @@ alias cdnm='cdprint /etc/NetworkManager/dispatcher.d/'
 add2path PATH "${HOME}/.cargo/bin"
 
 
+# POSTGRESQL
+# ══════════════════════════════════════════════════════════════════════════════
+
+HD_POSTGRESQL_DIR="/usr/lib/postgresql"
+if [[ -e ${HD_POSTGRESQL_DIR} ]]; then
+  # Fetch version of latest installed postgresql instance.  This is needed since
+  # the version number is part of the path.
+  export HD_POSTGRESQL_VERSION=$(find "${HD_POSTGRESQL_DIR}" -maxdepth 1 | sed -r "s,${HD_POSTGRESQL_DIR},,g" | sort -n | tail -1)
+  export HD_POSTGRESQL_DIR="${HD_POSTGRESQL_DIR}/${HD_POSTGRESQL_VERSION}"
+  add2path PATH "${HD_POSTGRESQL_DIR}/bin"
+  alias cdpostgresql='cdprint "${HD_POSTGRESQL_DIR}"'
+else
+  unset HD_POSTGRESQL_DIR
+fi
+
+
 # MUSÉE
 # ══════════════════════════════════════════════════════════════════════════════
 
