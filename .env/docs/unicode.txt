@@ -59,7 +59,7 @@ UNICODE UTF-8 UTF8
   🖥Desktop Computer                           🖫 White Hard Shell Floppy Disk
   🖧 Three Networked Computers                  🖬 Soft Shell Floppy Disk
   🖳 Old Personal Computer                      🖴 Hard Disk
-  ⛁ 26C1 (database)
+  ⛁ 🛢 ▤ ⌸ 🗄 🗃 🗂 ⛃ Database / Filler
   ☰ Burger Menu
   ◉ Radio on  ◯ Radio off
   🕹 ⌨ 🖱 🖱️
