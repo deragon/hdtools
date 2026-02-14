@@ -71,6 +71,7 @@ Example:
   git switch -c 'bug/JIRA-1234_Adaptation_to_API_2.0'
   git switch -c 'hotfix/JIRA-1234_Adaptation_to_API_2.0'
   git switch -c 'feature/JIRA-1234_Adaptation_to_API_2.0'
+  git switch -c 'JIRA-1234_Adaptation_to_API_2.0'
 
 Usage:  ${SCRIPT_NAME} [-h] '<string for branch name>'
 
@@ -140,6 +141,7 @@ for ENDING in "${ENTRIES[@]}"; do
 git switch -c 'bug/${BRANCH_NAME_BASE}'
 git switch -c 'hotfix/${BRANCH_NAME_BASE}'
 git switch -c 'feature/${BRANCH_NAME_BASE}'
+git switch -c '${BRANCH_NAME_BASE}'
 
 EOM
 done
