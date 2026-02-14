@@ -21,10 +21,17 @@ SCRIPT_PATH_ABS_PARENT=`dirname "${SCRIPT_PATH_ABS}"`
 usage()
 {
   cat <<EOM
-Usage:  ${SCRIPT_NAME} [-z] [-n <nom>] [-h]
+${SCRIPT_NAME} - Convert PDF files to JPG images with simulated scan rotation.
+
+This script converts PDF documents to JPEG images and applies slight random
+rotations to simulate the appearance of physically scanned documents.
+
+Usage:  ${SCRIPT_NAME} [-h] <file1> [file2] ...
+
+Options:
+  -h         Display this help message
 EOM
 }
-
 
 
 # ARGUMENT PARSING
@@ -32,17 +39,8 @@ EOM
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "n:hz" OPTCMD; do
+while getopts "h" OPTCMD; do
   case "${OPTCMD}" in
-    "-")
-        # Long options here.
-        case "${OPTARG}" in
-          name=)
-            val=${OPTARG#*=}
-            NAME=${OPTARG%=$val}
-        esac;;
-    "n")    NAME="${OPTARG}";;
-    "z")    ZIP=1;;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -52,6 +50,7 @@ IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
                           # we separate FILES properly.
 
 FILES=("$@") # If you want the number of elements of $@, use $#
+
 
 # COMMANDLINE VALIDATION
 # ════════════════════════════════════════════════════════════════════
