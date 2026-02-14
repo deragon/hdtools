@@ -43,6 +43,11 @@ pattern = re.compile(r".*\.(txt|md)")
 
 doc_dirs=os.path.join(os.environ["HDENVDIR"], "docs")
 
+if "WSL" in os.environ["HD_OS_FAMILY"]:
+    editor="gvimwin"
+else:
+    editor="hdvim --hdgvim"
+
 index=0
 for root, dirs, files in os.walk(doc_dirs):
     #print("root="  + str(root))
@@ -60,9 +65,10 @@ for root, dirs, files in os.walk(doc_dirs):
             # Path.stem() removes the extension.
             alias_name=Path(re.sub(r"[^\w|\.|\-|+|=]", '¤', file_basename, flags=re.IGNORECASE)).stem
 
-            print("alias hdd" + alias_name + "='hdvim --hdgvim \"" + fullpath + "\"';")
+            print(f"alias hdd{alias_name}='{editor} \"" + fullpath + "\"';")
 
-print("""
-alias hddbashtemplate='hdvim --hdgvim "${HDENVDIR}/bin/hd-create-script-template.sh"';
-alias hddpythontemplate='hdvim --hdgvim "${HDENVDIR}/bin/hd-create-script-template.py"';
-""")
+print(f"""
+alias hddbashtemplate='{editor} "${{HDENVDIR}}/bin/hd-create-script-template.sh"';
+alias hddpythontemplate='{editor} "${{HDENVDIR}}/bin/hd-create-script-template.py"';
+"""
+)
