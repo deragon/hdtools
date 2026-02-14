@@ -113,6 +113,11 @@ excel()
   hd_application_run_executable_windows MSEXCEL "Microsoft Excel" "EXCEL.EXE" "$@"
 }
 
+gvimwin()
+{
+  hd_application_run_executable_windows GVIMWIN "Gvim" "GVIM.EXE" "$@"
+}
+
 code()
 {
   # Not using 'hd_application_run_executable_windows' with VSCode because that
