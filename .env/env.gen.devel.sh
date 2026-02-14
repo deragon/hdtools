@@ -99,6 +99,12 @@ if (( $? == 0 )); then
   alias gdev='git switch develop'
   alias gmain='git switch main'
   alias gmaster='git switch master'
+  alias gmainormaster='git branch --list main master | sed -r "s/.*\s(main|master).*/\1/g"'
+
+  alias grebasemain='git stash save; git rebase -i "origin/$(gmainormaster)"; git stash pop'
+  alias grebasedevelop='git stash save; git rebase -i origin/develop; git stash pop'
+  alias grm='grebasemain'
+  alias grd='grebasedevelop'
 
   hdgvarclear()
   {
