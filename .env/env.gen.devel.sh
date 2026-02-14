@@ -101,8 +101,30 @@ if (( $? == 0 )); then
   alias gmaster='git switch master'
   alias gmainormaster='git branch --list main master | sed -r "s/.*\s(main|master).*/\1/g"'
 
-  alias grebasemain='git stash save; git rebase -i "origin/$(gmainormaster)"; git stash pop'
-  alias grebasedevelop='git stash save; git rebase -i origin/develop; git stash pop'
+  hdgrebase() {
+    local branch="$1"
+
+    if [[ -z "${branch}" ]]; then
+      echo "Error: branch parameter required" >&2
+      return 1
+    fi
+
+    # Attempt to stash local changes
+    local stash_output
+    stash_output="$(git stash save 2>&1)"
+
+    # Perform interactive rebase
+    git rebase -i "${branch}"
+
+    # Pop stash only if something was actually stashed
+    if [[ "${stash_output}" != *"No local changes to save"* ]]; then
+      git stash pop
+    fi
+  }
+  export -f hdgrebase
+
+  alias grebasemain='hdgrebase "$(gmainormaster)"'
+  alias grebasedevelop='hdgrebase develop'
   alias grm='grebasemain'
   alias grd='grebasedevelop'
 
