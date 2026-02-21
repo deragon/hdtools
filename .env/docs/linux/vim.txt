@@ -124,6 +124,44 @@ MISCELLANEOUS
 
 
 
+UNICODE CHARACTERS COLORS
+══════════════════════════════════════════════════════════════════════════════
+
+  Windows - gvim.exe cannot display glyphs with colors.
+  ────────────────────────────────────────────────────────────────────────────
+
+    From Claude Sonnet 4.5, 2026-02-23
+
+      The problem is Windows GDI, not the font or Vim config.
+
+      gvim.exe on Windows uses the GDI (Graphics Device Interface) rendering
+      backend, which does not support color emoji font tables (COLR/CPAL,
+      CBDT/CBLC). This is why you see the glyphs but no color — GDI strips the
+      color layer entirely. Linux gvim uses GTK + Cairo/Pango, which does
+      support color rendering.
+
+      There is no fix within standard gvim.exe — this is a hard limitation of
+      GDI.
+
+      Alternatives that actually work:
+
+      - Neovide (neovide.dev) — a Neovim GUI that uses GPU rendering and fully
+        supports color emoji on Windows.
+
+      - nvim-qt — another Neovim GUI frontend that uses Qt rendering instead of
+        GDI.
+
+      - Windows Terminal + vim/nvim (in WSL or native) — Windows Terminal has
+        its own renderer that supports color emoji.
+
+      - VimR — only on macOS, not relevant here.
+
+      - Compile gvim with DirectWrite — gvim has experimental DirectWrite
+        support (--enable-directx), but pre-built binaries typically don't
+        include it, and even then color emoji support is inconsistent.
+
+
+
 SPELLING
 ══════════════════════════════════════════════════════════════════════════════
 
