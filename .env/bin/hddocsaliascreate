@@ -43,10 +43,13 @@ pattern = re.compile(r".*\.(txt|md)")
 
 doc_dirs=os.path.join(os.environ["HDENVDIR"], "docs")
 
+editor_wsl="gvimwin"
+editor_linux="hdvim --hdgvim"
+
 if "WSL" in os.environ["HD_OS_FAMILY"]:
-    editor="gvimwin"
+    editor=editor_wsl
 else:
-    editor="hdvim --hdgvim"
+    editor=editor_linux
 
 index=0
 for root, dirs, files in os.walk(doc_dirs):
@@ -65,7 +68,14 @@ for root, dirs, files in os.walk(doc_dirs):
             # Path.stem() removes the extension.
             alias_name=Path(re.sub(r"[^\w|\.|\-|+|=]", '¤', file_basename, flags=re.IGNORECASE)).stem
 
-            print(f"alias hdd{alias_name}='{editor} \"" + fullpath + "\"';")
+            # For a few documents, getting color unicode characters is very important,
+            # so the linux editor which display them in color is being used.
+            #
+            # For details, call up alias 'hddvim' and search for gvim.exe.
+            if alias_name in ["unicode"]:
+              print(f"alias hdd{alias_name}='{editor_linux} \"" + fullpath + "\"';")
+            else:
+              print(f"alias hdd{alias_name}='{editor} \"" + fullpath + "\"';")
 
 print(f"""
 alias hddbashtemplate='{editor} "${{HDENVDIR}}/bin/hd-create-script-template.sh"';
