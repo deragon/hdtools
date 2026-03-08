@@ -48,7 +48,13 @@ UNICODE UTF-8 UTF8
   ⎘ External link
   ℃  Celcius  €  Euro
   ☕ Café (hot beverage)  💤 Sleep  🐔 Chicken  🥔 Potato
-  🏖️ Vacation      🌈 Rainbow         📡 Radar
+  🌈 Rainbow         📡 Radar
+
+  Vacation
+
+    🏖️ 🏖 ⛱ Beach 🌴 Palm Tree 🏄 Surfer 🌊 Water Wave
+    ✈️  🛩️ 🛩 ✈ Airplane   ⛵ 🚢 🛳 Boat/ship   🚐 🚙 Van   🧳 Luggage
+
   🎆 Fireworks     🎉 Party Popper    🎊 Confetti Ball
   🥂 Clinking Glasses  🍾 Bottle of Champagne  🔫 Gun/Pistol
   🎆 🎉 🎊 🥂 🍾 Party / festivity / celebration related characters
