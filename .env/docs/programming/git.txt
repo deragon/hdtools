@@ -155,7 +155,11 @@ COMMANDES
 
     git config --get remote.origin.url  # Safe:  List current URL.
 
-    git remote rm origin
+    git remote rm origin # WARNING:  Removes the connection to the remote
+                         # repository named origin from your local Git
+                         # repository.  This means that your local repository
+                         # does not know to where to push any of your branches.
+
     git remote add origin "${URL_NEW}"
 
 
