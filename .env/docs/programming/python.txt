@@ -1160,6 +1160,46 @@ PROJECT CREATION
       only apply to files, not directories, unfortunately.
 
 
+  PIPX
+  ────────────────────────────────────────────────────────────────────────────
+
+    Pipx is a specialized tool for installing and running Python-based
+    command-line applications in isolated, automatic virtual environments. It
+    prevents dependency conflicts between tools and ensures system stability,
+    acting like a package manager (similar to brew or apt) for Python CLI tools
+    like black or flake8.
+
+    Key Characteristics:
+
+    - Isolation: Every application is installed in its own virtual environment,
+      separating its dependencies from others.
+
+    - Global Access: It makes the application's executable available in your
+      shell's PATH, allowing you to run the tool from anywhere.
+
+    - CLI Focused: It is intended for end-user applications that provide CLI
+      commands, not for managing project libraries.
+
+
+    Pipx vs. Pip
+    --------------------------------------------------------------------------
+
+      pip is for installing libraries into a Python environment (often user or
+      global site-packages), which can lead to conflicts.
+
+      pipx manages the virtual environments for you automatically, ensuring
+      clean installation and removal.
+
+
+    Common Commands
+    --------------------------------------------------------------------------
+
+      pipx install <package>   # Installs a CLI application.
+      pipx run <package>       # Runs a tool without installing it permanently.
+      pipx upgrade <package>   # Upgrades an installed tool.
+      pipx list                # Lists all installed tools.
+
+
 
 INSTALLATION
 ══════════════════════════════════════════════════════════════════════════════
