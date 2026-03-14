@@ -118,6 +118,11 @@ gvimwin()
   hd_application_run_executable_windows GVIMWIN "Gvim" "GVIM.EXE" "$@"
 }
 
+hdrdpclean()
+{
+    rm -f "${HOME}/Downloads/*.rdp"
+}
+
 code()
 {
   # Not using 'hd_application_run_executable_windows' with VSCode because that
