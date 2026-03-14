@@ -11,4 +11,4 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-find . -name '*.properties' -print0 | xargs --null fgrep "$@"
+find . -type f -name '*.properties' -print0 | xargs --null fgrep "$@"

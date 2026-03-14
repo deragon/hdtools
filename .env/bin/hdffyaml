@@ -12,6 +12,6 @@
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
 # Scan Terraform (*.tf) files.
-find . -regextype posix-extended -iregex '.*.ya*ml?$' | \
+find . -type f -regextype posix-extended -iregex '.*.ya*ml?$' | \
   egrep -v '(^(\./)*old/)' | \
   xargs --delimiter '\n' grep --line-number --extended-regexp --ignore-case --color "$@"

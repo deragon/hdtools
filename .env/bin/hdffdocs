@@ -19,7 +19,7 @@ else
   FGREP_OPTIONS="--color=never"
 fi
 
-find "${HDDOCSDIR}" \
+find "${HDDOCSDIR}" -type f \
    \( -name '*.txt' -print0 \) -o \
    \( -name '*.md' -print0 \) | \
   xargs --null fgrep -i ${FGREP_OPTIONS} "$@" | \

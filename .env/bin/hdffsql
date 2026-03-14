@@ -19,6 +19,6 @@ else
 fi
 
 echo "Scanning ${DIR} for "$@""
-CMD="find \"${DIR}\" -name '*.sql' -print0 | xargs --null fgrep --color "$@""
+CMD="find \"${DIR}\" -type f -name '*.sql' -print0 | xargs --null fgrep --color "$@""
 echo "${CMD}"
 eval ${CMD}

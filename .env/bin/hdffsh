@@ -11,4 +11,4 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-find . -name '*.sh' -print0 | xargs --null fgrep --color "$@"
+find . -type f -name '*.sh' -print0 | xargs --null fgrep --color "$@"

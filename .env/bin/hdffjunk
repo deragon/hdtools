@@ -60,7 +60,7 @@ shift $((${OPTIND} - 1))  # Remove options from $@
 IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
                           # we separate FILES properly.
 
-FILES="$(find . -regextype posix-extended -iregex "${JUNK_PATTERN}")"
+FILES="$(find . -type f -regextype posix-extended -iregex "${JUNK_PATTERN}")"
 
 
 

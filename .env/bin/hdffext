@@ -14,4 +14,4 @@
 EXTENSION="${1/./}"
 shift
 
-find . -name "*.${EXTENSION}" -print0 | xargs --null fgrep --color "$@"
+find . -type f -name "*.${EXTENSION}" -print0 | xargs --null fgrep --color "$@"

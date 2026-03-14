@@ -11,4 +11,4 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-find . -name '*.txt' -print0 | xargs --null fgrep -i --color "$@"
+find . -type f -name '*.txt' -print0 | xargs --null fgrep -i --color "$@"

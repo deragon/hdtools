@@ -11,4 +11,4 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-find . -name '*.java' -print0 | xargs --null fgrep --color "$@"
+find . -type f -name '*.java' -print0 | xargs --null fgrep --color "$@"

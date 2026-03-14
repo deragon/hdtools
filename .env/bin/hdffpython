@@ -11,4 +11,4 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-find . -name '*.py' -print0 | xargs --null fgrep --color "$@"
+find . -type f -name '*.py' -print0 | xargs --null fgrep --color "$@"

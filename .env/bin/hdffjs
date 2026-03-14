@@ -11,6 +11,6 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
-find . -name '*.js' \
+find . -type f -name '*.js' \
   -not -path "*/node_modules/*" -and -not -path "*/instrument/*" -print0 | \
   xargs --null fgrep --color "$@"

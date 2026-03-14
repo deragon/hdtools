@@ -12,4 +12,4 @@
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
 # Scan Terraform (*.tf) files.
-find . -name '*.lua' -print0 | xargs --null fgrep --color "$@"
+find . -type f -name '*.lua' -print0 | xargs --null fgrep --color "$@"
