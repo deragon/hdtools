@@ -171,13 +171,13 @@ if (( $? == 0 )); then
       unset HD_GIT_DATE_OFFSET
     fi
 
-    if [[ -z "${HD_GIT_DATE_OFFSET}" ]]; then
+    if ! [[ "${HD_GIT_DATE_OFFSET}" =~ ^-?[0-9]+$ ]]; then
       if date -d "${hd_git_date_or_offset}" >/dev/null 2>&1; then
         # User provided a full date.  Calculating offset from now.
         HD_GIT_DATE_OFFSET=$((($(date -d "${hd_git_date_or_offset}" +%s) - $(date +%s)) / 3600))
       else
         # User provided an offset in hours.
-        HD_GIT_DATE_OFFSET=${HD_GIT_DATE_OR_OFFSET}
+        HD_GIT_DATE_OFFSET=${hd_git_date_or_offset}
       fi
     fi
 
