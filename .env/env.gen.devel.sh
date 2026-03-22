@@ -28,7 +28,7 @@ vsc()
     #
     # The line below might call the 'code' alias instead
     # of the VS Code binary, which is a desired behavior.
-    code --folder-uri "vscode-remote://wsl+${WSL_DISTRO_NAME}${HD_PROJECT_DIR}" $@
+    code --remote wsl+${WSL_DISTRO_NAME} --folder-uri "vscode-remote://wsl+${WSL_DISTRO_NAME}${HD_PROJECT_DIR}" $@
   else
     code "${HD_PROJECT_DIR}" $@ &
   fi
