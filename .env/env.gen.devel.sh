@@ -245,15 +245,42 @@ fi
 #   Ils ont par la suite installés sous "${HOME}/.local/bin"
 #
 #   Voir:  https://docs.aws.amazon.com/cli/latest/userguide/installing.html
-add2path PATH "${HOME}/.local/bin"
-alias hdawsvarunset='unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN;blackbg'
+hdawsssh() { ssh "ec2-user@$1"; }; exportfunction hdawsssh
+
+alias hdawsvarunset='unset HD_AWS_PROFILE AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN;blackbg'
 alias hdawsvarprint='printf "
+export HD_AWS_PROFILE=\"${HD_AWS_PROFILE}\"
 export AWS_ACCESS_KEY_ID=\"${AWS_ACCESS_KEY_ID}\"
 export AWS_SECRET_ACCESS_KEY=\"${AWS_SECRET_ACCESS_KEY}\"
 export AWS_SESSION_TOKEN=\"${AWS_SESSION_TOKEN}\"
 export AWS_REGION=\"${AWS_REGION}\"
 "'
-hdawsssh() { ssh "ec2-user@$1"; }; exportfunction hdawsssh
+
+hdawssetenv()
+{
+  local env=$1
+  export HD_AWS_PROFILE=$2
+
+  # Export credentials as environment variables
+  # aws-sso-creds available at https://github.com/jaxxstorm/aws-sso-creds
+  eval $(aws-sso-creds export --profile ${HD_AWS_PROFILE})
+
+  # Update ~/.aws/credentials file with the exported credentials
+  aws configure set aws_access_key_id     "${AWS_ACCESS_KEY_ID}"     --profile "${HD_AWS_PROFILE}"
+  aws configure set aws_secret_access_key "${AWS_SECRET_ACCESS_KEY}" --profile "${HD_AWS_PROFILE}"
+  aws configure set aws_session_token     "${AWS_SESSION_TOKEN}"     --profile "${HD_AWS_PROFILE}"
+
+  case "${env}" in
+    "dv") greenbg;;
+    "ta") bluebg;;
+    *) redbg;;
+  esac
+  hdawsinfo
+}
+
+# Not used for the moment.  Left here as examples.
+#alias hdawslogin='aws sso login --profile aws_sso_dv; awsdv'
+#alias hdawsdv='hdawssetenv "dv" "aws_sso_dv"'
 
 # Interesting reading about proxy* variables:
 #
