@@ -437,3 +437,6 @@ alias hddockerimagelist='docker images --format "table {{.Repository}}\t{{.Tag}}
 if [ -e "${HOME}/.sdkman/bin/sdkman-init.sh" ]; then
   source "${HOME}/.sdkman/bin/sdkman-init.sh"
 fi
+
+
+alias cdproject='cdprint "$(hdprojectdir)"'
