@@ -63,8 +63,10 @@ chmod +x "${NEW_SCRIPT}"
 #echo "vim \"${NEW_SCRIPT}\""
 
 if ! xset q &>/dev/null; then
-  # No X server at.
-  vim -u "${HDVIMRC}" "${NEW_SCRIPT}"
+  # No desktop available.  Going terminal.
+  #vim -u "${HDVIMRC}" "${NEW_SCRIPT}"
+  hdvim --hdnvim "${NEW_SCRIPT}"
 else
-  gvim -u "${HDVIMRC}" "${NEW_SCRIPT}"
+  #gvim -u "${HDVIMRC}" "${NEW_SCRIPT}"
+  hdvim --hdgnvim "${NEW_SCRIPT}"
 fi
