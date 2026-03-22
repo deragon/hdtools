@@ -18,7 +18,9 @@ SD Card (SDHC)
 DISK ANALYSIS
 ══════════════════════════════════════════════════════════════════════════════
 
-  gnome-disks - Excellent GUI disk utility.
+  gnome-disks # Excellent GUI disk utility at the partition level.
+  baobab      # Gnome Disk Usage Analyzer for analyzing space used by folders.
+  TreeSize    # MS Windows only, good.  https://www.jam-software.com/treesize
 
 
   SD CARD STATUS / STATE / VERIFICATION / FRAUD ANALYSER:  F3
