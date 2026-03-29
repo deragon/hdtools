@@ -1,0 +1,4 @@
+#!/bin/bash
+
+gzip -c tpnc | uuencode -m - | tr -d '\n' \
+  | sed -r 's/(begin-base64 644 -)/\1\n/g;s/====$/\n====/g' | uudecode | gunzip -c
