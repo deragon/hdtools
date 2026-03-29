@@ -1,0 +1,180 @@
+// Location of this file:
+//
+//   Linux:    /home/derah/.config/Code/User/settings.json
+//   Windows:  C:\Users\derah\AppData\Roaming\Code\User\settings.json
+{
+  "workbench.colorCustomizations": {
+    "editor.selectionBackground": "#0039f5",
+    "editor.selectionForeground": "#ffffff",
+    "editor.selectionHighlightBackground": "#ffedcc",
+    "editor.selectionHighlightBorder": "#ffcc00",
+    "editor.wordHighlightBackground": "#77722a00",
+    "editor.wordHighlightStrongBackground": "#ffff02",
+    "editor.wordHighlightBorder": "#ffff02",
+    "editor.findMatchBackground": "#ffedcc",
+    "editor.findMatchHighlightBackground": "#991700",
+    "editor.findRangeHighlightBackground": "#ffcc00",
+    "tab.activeBackground": "#d43232",
+    "tab.activeForeground": "#ffffff",
+    "tab.activeBorder": "#d43232",
+    "tab.inactiveBackground": "#2a2a2a",
+    "tab.inactiveForeground": "#c5c5c5",
+    "tab.border": "#2a2a2a"
+  },
+  // Neovim integration
+  "vscode-neovim.neovimExecutablePaths.linux": "/home/derah/3rdparty/bin/nvim",
+  "vscode-neovim.neovimInitVimPaths.linux": "~/.config/nvim/init.lua",
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  // Python settings
+  "python.languageServer": "Pylance",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.indexing": false,
+  "python.analysis.exclude": [
+    "**/.git",
+    "**/.hg",
+    "**/.svn",
+    "**/.mypy_cache",
+    "**/.pytest_cache",
+    "**/__pycache__",
+    "**/.ruff_cache",
+    "**/.tox",
+    "**/build",
+    "**/dist",
+    "**/.venv",
+    "**/venv",
+    "**/env",
+    "**/node_modules",
+    "**/site-packages"
+  ],
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/.mypy_cache/**": true,
+    "**/.pytest_cache/**": true,
+    "**/__pycache__/**": true,
+    "**/.ruff_cache/**": true,
+    "**/.tox/**": true,
+    "**/build/**": true,
+    "**/dist/**": true,
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/venv/**": true,
+    "**/env/**": true
+  },
+  // GitHub Copilot settings
+  "github.copilot.nextEditSuggestions.enabled": true,
+  // Other settings
+  "redhat.telemetry.enabled": true,
+  "workbench.settings.openDefaultSettings": true,
+  "workbench.settings.useSplitJSON": true,
+  "git.ignoreMissingGitWarning": true,
+  "security.allowedUNCHosts": [
+    "wsl.localhost"
+  ],
+  // Controls whether text selected in the terminal will be copied to the clipboard.
+  "terminal.integrated.copyOnSelection": true,
+  // Controls whether text copied to the clipboard will be pasted into the terminal
+  // when no text is selected.
+  "cSpell.language": "en,fr",
+  "cSpell.enableFiletypes": [
+    "plaintext"
+  ],
+  "cSpell.userWords": [
+    "artéfacts",
+    "Deragon",
+    "PDATA"
+  ],
+  "snowflake.connectionsConfigFile": "C:\\Users\\derah\\.snowflake\\connections.toml",
+  // Always install the Remote - WSL extension in WSL containers
+  "remote.containers.defaultExtensions": [
+    "ms-vscode-remote.remote-wsl"
+  ],
+  "chat.tools.terminal.autoApprove": {
+    ".env/bin/hd-copilot-instructions.sh": true,
+    "/home/derah/.hans.deragon/.env/bin/hd-copilot-instructions.sh": true,
+    "timeout": true,
+    "/home/derah/3rdparty/liquibase-4.16.1/liquibase": true,
+    "mv": true,
+    "pgrep": true,
+    "true": true,
+    "docker build": true,
+    "aws": true,
+    "/^cd /home/derah/cdpq/git/dba/CDP\\.OGBD/AWS_Produits_DBA/portfolios/bd && python3 << 'EOF'\nimport yaml\n\nclass CFLoader\\(yaml\\.SafeLoader\\):\n    pass\nclass CFDumper\\(yaml\\.Dumper\\):\n    pass\nclass TaggedNode:\n    def __init__\\(self, tag, value\\):\n        self\\.tag = tag\n        self\\.value = value\ndef _cf_constructor\\(loader, tag_suffix, node\\):\n    full_tag = '!' \\+ tag_suffix\n    if isinstance\\(node, yaml\\.ScalarNode\\):\n        v = loader\\.construct_scalar\\(node\\)\n    elif isinstance\\(node, yaml\\.SequenceNode\\):\n        v = loader\\.construct_sequence\\(node, deep=True\\)\n    else:\n        v = loader\\.construct_mapping\\(node, deep=True\\)\n    return TaggedNode\\(full_tag, v\\)\ndef _cf_representer\\(dumper, data\\):\n    if isinstance\\(data\\.value, str\\):\n        return dumper\\.represent_scalar\\(data\\.tag, data\\.value\\)\n    elif isinstance\\(data\\.value, list\\):\n        return dumper\\.represent_sequence\\(data\\.tag, data\\.value\\)\n    else:\n        return dumper\\.represent_mapping\\(data\\.tag, data\\.value\\)\nCFLoader\\.add_multi_constructor\\('!', _cf_constructor\\)\nCFDumper\\.add_representer\\(TaggedNode, _cf_representer\\)\n\nwith open\\(\"cdpq-sc-bd\\.yaml\", \"r\"\\) as f:\n    template = yaml\\.load\\(f, Loader=CFLoader\\)\n\nresources_to_remove = \\[\n    \"ServiceCatalogPortfolio\",\n    \"ServiceCatalogPortfolioAuroraMySQLProductAssociation\",\n    \"ServiceCatalogPortfolioAuroraPostgreSQLProductAssociation\",\n    \"ServiceCatalogPortfolioDynamoDBProductAssociation\",\n    \"ServiceCatalogPortfolioEC2SrvLicSybaseProductAssociation\",\n    \"ServiceCatalogPortfolioEC2SybaseProductAssociation\",\n    \"ServiceCatalogPortfolioRDSOracleProductAssociation\",\n    \"ServiceCatalogPortfolioRDSSQLServerProductAssociation\",\n    \"ServiceCatalogProductAuroraMySQLLaunchConstraint\",\n    \"ServiceCatalogProductAuroraPostgreSQLLaunchConstraint\",\n    \"ServiceCatalogProductDynamoDBLaunchConstraint\",\n    \"ServiceCatalogProductEC2SrvLicSybaseLaunchConstraint\",\n    \"ServiceCatalogProductEC2SybaseLaunchConstraint\",\n    \"ServiceCatalogProductRDSOracleLaunchConstraint\",\n    \"ServiceCatalogProductRDSSQLServerLaunchConstraint\",\n    \"SynchronisationAccesPortfolioSNS\",\n    \"SynchronisationAccesPortfolioSNSWithSuffix\",\n\\]\nfor r in resources_to_remove:\n    template\\[\"Resources\"\\]\\.pop\\(r, None\\)\n\nwith open\\(\"/tmp/cdpq-sc-bd-no-portfolio\\.yaml\", \"w\"\\) as f:\n    yaml\\.dump\\(template, f, Dumper=CFDumper, default_flow_style=False, allow_unicode=True\\)\n\nprint\\(f\"Done\\. Remaining resources: \\{len\\(template\\['Resources'\\]\\)\\}\"\\)\nEOF\nhead -8 /tmp/cdpq-sc-bd-no-portfolio\\.yaml$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^bash create-import-changeset-kms-alias\\.sh DV ca-central-1 aws_sso_dba_dv 2>&1$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  },
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "chat.tools.urls.autoApprove": {
+    "https://aws.amazon.com": true,
+    "https://modelcontextprotocol.io": {
+      "approveRequest": false,
+      "approveResponse": true
+    },
+    "https://d2lang.com": true,
+    "https://github.com": {
+      "approveResponse": true
+    },
+    "https://stackoverflow.com": {
+      "approveRequest": true,
+      "approveResponse": false
+    },
+    "https://docs.aws.amazon.com": true,
+    "https://registry.terraform.io": true,
+    "https://docs.w3cub.com": true,
+    "https://runebook.dev": {
+      "approveRequest": true,
+      "approveResponse": false
+    },
+    "https://*.amazonaws.com": true,
+    "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/rds/modify-db-instance.html": true,
+    "https://www.pulumi.com": {
+      "approveRequest": false,
+      "approveResponse": true
+    },
+    "https://duckduckgo.com": {
+      "approveRequest": true,
+      "approveResponse": false
+    },
+    "https://www.bing.com": {
+      "approveRequest": false,
+      "approveResponse": true
+    }
+  },
+  "D2.previewLayout": "elk",
+  "atlascode.jira.enabled": true,
+  "atlascode.bitbucket.enabled": false,
+  "chat.mcp.gallery.enabled": true,
+  "chat.mcp.autostart": "never",
+  "workbench.colorTheme": "Default Dark+",
+  "remote.autoForwardPortsSource": "hybrid",
+  "files.trimTrailingWhitespace": false,
+  "files.associations": {
+    "*.sql": "sql"
+  },
+  "sqltools.format": {},
+  "sonarlint.rules": {
+    "python:S7622": {
+      "level": "on"
+    }
+  },
+  "chat.viewSessions.orientation": "stacked",
+  "remote.SSH.remotePlatform": {
+    "wsl-ubuntu": "linux"
+  },
+}
