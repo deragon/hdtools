@@ -460,9 +460,9 @@ alias hd-ssh-prd-rm='ssh-add -d "${HOME}/.ssh/id_rsa_prd"'
 alias hd-ssh-unset='unset SSH_AGENT_PID SSH_AUTH_SOCK; unalias ssh'
 alias hd-ssh-all='sshenv; hd-ssh-prd-add'
 
-# Command 'host' is deprecated.  Need to use dig, but with the option
-# '+short' to have the same output as 'host'
-alias hdhost='dig +short'
+# Command 'host' is deprecated.  Using dig now.
+alias hddig='dig +short +search'
+alias hddigreverse='dig +noall +short -x'
 
 # gpgenv()
 # {
