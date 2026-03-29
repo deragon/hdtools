@@ -31,8 +31,11 @@ UNICODE UTF-8 UTF8
   †‡ (daggers)
   📁(folder) 1F4C1   № ou Nº (Numéro) 【】
 
+  Copyright, Trademark: 🄫 🄬  @ , © ℗ ® ™ ℠ 🅪 🄮 Ⓜ
+  Anti-copyright:       🄯 🅮 🅭 Creative Commons, 🄏
+
     The ™ and ® marks have no legal significance or meaning in Canada. Thus
-    there are no repercussions to using these marks. Surprisingly neither the
+    there are no repercussions to using these marks.  Surprisingly neither the
     ™ nor the ® mark appears in official Canadian Trademark Law.
 
   Vim dig:  <CTRL-K>0M→● (bullet)
@@ -71,8 +74,7 @@ UNICODE UTF-8 UTF8
   ◉ Radio on  ◯ Radio off
   🕹 ⌨ 🖱 🖱️
 
-  ❏ 274F   ─ 2504    ━ 2505    ▬ 25AC
-  ▚ 259A   ▞ 259E    © 00A9    ® 00AE    ™ 2122
+  ❏ 274F   ─ 2504    ━ 2505    ▬ 25AC    ▚ 259A   ▞ 259E
   ☠ 2620   シ30B7    ₵ 20B5    € 20AC    ⋘ 22D8    ⋙ 22D9
   ♥ 2665   ♡ 2661    ❤ 2764    ° 00B0 (degree)
   ⚠️  ⚠ (warning)   ⚡ (high voltage)    ℹ (info)    🆘 SOS
@@ -106,7 +108,7 @@ UNICODE UTF-8 UTF8
 
   Alternatives for common ASCII characters:  ∕ ╱ ╲ │ ː ‑
 
-  Characters:   «» ¡¿ ¢£¤¥¦§¨©ª¬­®¯°±´µ¶·¸☠␣
+  Characters:   «» ¡¿ ¢£¤¥¦§¨ª¬­¯°±´µ¶·¸☠␣
   Super/sub:    ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱ  ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎
   Fractions:  ½  ¼  ¾  ⅐  ⅑  ⅒  ⅓  ⅔  ⅕  ⅖  ⅗  ⅘  ⅙  ⅚  ⅛  ⅜  ⅝  ⅞  ⅟
   Roman:      Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅸ Ⅹ Ⅺ Ⅻ Ⅼ Ⅽ Ⅾ Ⅿ  / ⅰ ⅱ ⅲ ⅳ ⅵ ⅶ ⅷ ⅸ ⅹ ⅺ ⅻ ⅼ ⅽ ⅾ ⅿ
