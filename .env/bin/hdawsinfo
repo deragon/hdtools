@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2025 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["RESET"]="\e[0;00m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Show current AWS configuration.
+
+Usage:  ${SCRIPT_NAME} [-h]
+
+  -h  Display this help text.
+"
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "h" OPTCMD; do
+  case "${OPTCMD}" in
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+# Display format of timestamps.
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+TIMESTAMP_HUMAN="$(date +"${TIMESTAMP_FORMAT_HUMAN}")"
+
+echo "AWS Profile:  ${HD_AWS_PROFILE}"
+# Call jq to print the AWS caller identity in a human readable format.
+aws sts get-caller-identity | jq -r '"AWS Account:  \(.Account)\nAWS User ID:  \(.UserId)\nAWS ARN:      \(.Arn)"'
+echo "Time:         ${TIMESTAMP_HUMAN}"
