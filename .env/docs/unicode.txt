@@ -118,8 +118,12 @@ UNICODE UTF-8 UTF8
   Art:        ¯\_(ツ)_/¯
   3D blocks:  ❏ ❐ ❑ ❒ ❍
 
-  From:  http://en.wikipedia.org/wiki/List_of_Unicode_characters#Supplemental_Arrows-A
+  ORNAMENTS - http://xahlee.info/comp/unicode_index.html?q=
+  ────────────────────────────────────────────────────────────────────────────
+    & 🙰 🙱 🙲 🙳 🙴 🙵 ☙ ❧
 
+
+  From:   https://en.wikipedia.org/wiki/List_of_Unicode_character
 
   ARROWS
   ────────────────────────────────────────────────────────────────────────────
