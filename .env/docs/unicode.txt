@@ -17,7 +17,8 @@ UNICODE UTF-8 UTF8
     🟡 Yellow  🔵 Blue    ⚫ Empty        🟨 Yellow  🟦 Blue    ⬛ Black
     🟢 Green   🟣 Purple  ⚪ White        🟩 Green   🟪 Purple  ⬜ White
 
-   ✓ ✖ ✘    ✓ ✕ ✗  ❌ ⭕️ █ ⛀⛁⛂⛃
+   ✓ ✖ ✘    ✓ ✕ ✗  ❓❗❔❕ ❎❌⭕️ █  ⛀⛁⛂⛃
+
   ┏━▶ ◀━┓ ▲ ━┓ ┏━ ▲ ▲ ┃
   ┣━▶ ◀━┫ ┃  ┃ ┃  ┃ ┃ ┃
   ┗━▶ ◀━┛ ┗━ ▼ ▼ ━┛ ┃ ▼
