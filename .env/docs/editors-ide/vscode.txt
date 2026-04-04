@@ -1,0 +1,34 @@
+MODES WHEN RUNNING UNDER WINDOWS, BUT CONNECTING TO WSL
+══════════════════════════════════════════════════════════════════════════════
+
+  WSL:         Ubuntu-22.04 mode: VS Code runs directly against the WSL distro
+               via the WSL extension.
+               Blue bar showing on the bottom.
+
+  SSH-to-WSL:  wsl-ubuntu mode: Windows VS Code SSHes into the same WSL distro
+               as if it were a remote Linux host.
+               Purple bar showing on the bottom.
+
+  Pros / Cons
+  ────────────────────────────────────────────────────────────────────────────
+
+    - WSL mode pros: simplest setup, no local SSH daemon/port routing needed,
+      fewer auth layers, best integration with WSL paths and tooling.
+    - WSL mode cons: mostly tied to local WSL workflows; less representative of
+      a “real remote host” setup.
+
+    - SSH-to-WSL pros: mirrors true server workflows, useful for validating SSH
+      configs and remote-host behavior, transferable to non-WSL Linux hosts.
+    - SSH-to-WSL cons: more moving parts (sshd, host/port, keys, config), easier
+      to misroute to Windows localhost:22, more troubleshooting overhead.
+
+
+  Best Choice
+  ────────────────────────────────────────────────────────────────────────────
+
+    For daily development on your local machine, WSL mode is best (most reliable
+    and lowest friction).  Use SSH-to-WSL only when you specifically need to
+    test or reproduce Remote-SSH behavior similar to real remote servers.
+
+    If your goal is productivity:                 choose WSL: Ubuntu-22.04.
+    If your goal is SSH topology/testing parity:  choose SSH-to-WSL: wsl-ubuntu.
