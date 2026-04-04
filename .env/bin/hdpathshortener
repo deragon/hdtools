@@ -1,0 +1,633 @@
+#!/usr/bin/env python3
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2026 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+"""Shorten path components, filenames, or both, then rename on disk."""
+
+import argparse
+import errno
+import logging
+import os
+import pathlib
+import shutil
+import sys
+import traceback
+from datetime import datetime
+
+
+ISO8601_HUMAN = "%Y-%m-%d %H:%M:%S"
+ISO8601_FILENAME = "%Y%m%dT%H%M%S"
+
+# fmt: off
+ANSI = {
+    "FG_WHITE_BG_GREEN":      "\033[1;37;42m",
+    "FG_BLACK_BG_YELLOW":     "\033[1;30;43m",
+    "FG_WHITE_BG_RED":        "\033[1;37;41m",
+    "FG_WHITE_BG_BLUE":       "\033[1;37;44m",
+    "FG_WHITE_BG_ORANGERED":  "\033[38;2;255;255;255m\033[48;2;255;69;0m",
+    "RESET":                  "\033[0;00m",
+    "BOLD":                   "\033[1m",
+    "ITALIC":                 "\033[2m",
+    "UNDERLINE":              "\033[3m",
+    "REVERSE":                "\033[7m",
+    "STRIKETHROUGH":          "\033[9m",
+    "BOLD_OFF":               "\033[21m",
+    "ITALIC_OFF":             "\033[22m",
+    "UNDERLINE_OFF":          "\033[23m",
+    "REVERSE_OFF":            "\033[27m",
+    "STRIKETHROUGH_OFF":      "\033[29m",
+    "BLACK":                  "\033[30m",
+    "RED":                    "\033[31m",
+    "GREEN":                  "\033[32m",
+    "YELLOW":                 "\033[33m",
+    "BLUE":                   "\033[34m",
+    "MAGENTA":                "\033[35m",
+    "CYAN":                   "\033[36m",
+    "WHITE":                  "\033[37m",
+    "BG_RED":                 "\033[41m",
+    "BG_GREEN":               "\033[42m",
+    "BG_YELLOW":              "\033[43m",
+    "BG_BLUE":                "\033[44m",
+    "BG_MAGENTA":             "\033[45m",
+    "BG_CYAN":                "\033[46m",
+    "BG_WHITE":               "\033[47m",
+    "BG_DEFAULT":             "\033[49m",
+}
+# fmt: on
+
+SCRIPT_NAME = os.path.basename(sys.argv[0])
+SCRIPT_PATH = os.path.dirname(sys.argv[0])
+SCRIPT_PATH_ABS = os.path.realpath(SCRIPT_PATH)
+SCRIPT_NAME_AND_PATH_ABS = os.path.join(SCRIPT_PATH_ABS, SCRIPT_NAME)
+
+
+def setup_logging(log_level_str):
+    """Configures the logging."""
+    if log_level_str == "debug":
+        level = logging.DEBUG
+    elif log_level_str == "warning":
+        level = logging.WARNING
+    elif log_level_str == "error":
+        level = logging.ERROR
+    elif log_level_str == "critical":
+        level = logging.CRITICAL
+    else:
+        level = logging.INFO
+
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)5s - %(funcName)20s(): %(message)s",
+        datefmt=ISO8601_HUMAN,
+    )
+
+    sh = logging.StreamHandler()
+    sh.setLevel(level)
+    sh.setFormatter(formatter)
+
+    log_filename = f"{SCRIPT_NAME_AND_PATH_ABS}-{datetime.now().strftime(ISO8601_FILENAME)}.log"
+    fh = logging.FileHandler(log_filename, mode="a")
+    fh.setLevel(level)
+    fh.setFormatter(formatter)
+
+    logger_instance = logging.getLogger(SCRIPT_NAME)
+    logger_instance.handlers.clear()
+    logger_instance.setLevel(level)
+    logger_instance.propagate = False
+    logger_instance.addHandler(sh)
+    logger_instance.addHandler(fh)
+    return logger_instance
+
+
+def parse_arguments():
+    """Parses command line arguments."""
+    parser = argparse.ArgumentParser(
+        description=f"""
+{ANSI['FG_WHITE_BG_RED']} DANGER {ANSI['RESET']}
+
+Shorten directory names, file names, or both, then rename paths on disk.
+
+Examples:
+    {SCRIPT_NAME} /very/long/path/to/a/verylongfilename.log
+    {SCRIPT_NAME} --execute --mode both /very/long/path/to/a/verylongfilename.log
+    {SCRIPT_NAME} --execute --mode path --path-length 2 /very/long/path/to/directory
+    {SCRIPT_NAME} --execute --mode filename --filename-length 12 ./some/really-long-file-name.tar.gz
+""",
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+
+    parser.add_argument(
+        "paths",
+        metavar="paths",
+        type=str,
+        nargs="+",
+        help="List of paths to shorten and rename.",
+    )
+    parser.add_argument(
+        "-m",
+        "--mode",
+        dest="mode",
+        default="both",
+        choices=["path", "filename", "both"],
+        help="Select what to shorten. Default: %(default)s.",
+    )
+    parser.add_argument(
+        "--path-length",
+        dest="path_length",
+        type=int,
+        default=8,
+        help="Maximum length of each directory component after shortening. Default: %(default)s.",
+    )
+    parser.add_argument(
+        "--filename-length",
+        dest="filename_length",
+        type=int,
+        default=24,
+        help="Maximum length of the filename stem after shortening. Default: %(default)s.",
+    )
+    parser.add_argument(
+        "-d",
+        "--dry-run",
+        "--dryrun",
+        dest="dryrun",
+        action="store_true",
+        default=True,
+        help="Preview renames without changing the filesystem. Default: enabled.",
+    )
+    parser.add_argument(
+        "-e",
+        "--execute",
+        dest="dryrun",
+        action="store_false",
+        help="Execute the renames instead of running in dry-run mode.",
+    )
+    parser.add_argument(
+        "-l",
+        "--log-level",
+        dest="loglevel",
+        default="info",
+        choices=["debug", "info", "warning", "error", "critical"],
+        help="Set logs level. Default: %(default)s.",
+    )
+
+    return parser.parse_args()
+
+
+def report_error(errors):
+    """Reports errors and exits if any."""
+    if len(errors) > 0:
+        print(
+            f"{ANSI['FG_WHITE_BG_RED']}ERROR:{ANSI['RESET']}  The following errors where detected.\n"
+            + errors
+            + "\n\nCommand aborted.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
+def handle_exception(exception):
+    """Handles exceptions in a template-compatible way."""
+    print(
+        f"{ANSI['FG_WHITE_BG_RED']}ERROR:{ANSI['RESET']}  {exception}",
+        file=sys.stderr,
+    )
+
+
+def shorten_component(component, max_length):
+    """Shorten one path component while keeping it recognizable."""
+    if component in {"", ".", "..", "~"}:
+        return component
+
+    if len(component) <= max_length:
+        return component
+
+    if max_length == 1:
+        return component[0]
+
+    return component[: max_length - 1] + "~"
+
+
+def split_filename(filename):
+    """Return filename prefix and extension suffixes."""
+    if filename in {"", ".", ".."}:
+        return filename, ""
+
+    if filename.startswith(".") and filename.count(".") == 1:
+        return filename, ""
+
+    suffixes = []
+    remainder = filename
+
+    while True:
+        stem, suffix = os.path.splitext(remainder)
+        if not suffix:
+            break
+        suffixes.insert(0, suffix)
+        remainder = stem
+
+        if remainder in {"", "."}:
+            break
+
+    extension = "".join(suffixes)
+    if extension and filename.endswith(extension):
+        stem = filename[: -len(extension)]
+    else:
+        stem = filename
+
+    if stem == "" and extension:
+        return filename, ""
+
+    return stem, extension
+
+
+def shorten_filename(filename, max_length):
+    """Shorten a filename while preserving its extension."""
+    stem, extension = split_filename(filename)
+    shortened_stem = shorten_component(stem, max_length)
+    return shortened_stem + extension
+
+
+def split_path(path_value):
+    """Split a path into root, components, and trailing separator flag."""
+    trailing_separator = len(path_value) > 1 and path_value.endswith(os.sep)
+    root = os.sep if path_value.startswith(os.sep) else ""
+    stripped = path_value.strip(os.sep)
+    components = stripped.split(os.sep) if stripped else []
+    return root, components, trailing_separator
+
+
+def should_shorten_as_path(mode, index, last_index, component_count, trailing_separator):
+    """Return whether a component should be shortened as a path segment."""
+    if mode == "path":
+        return trailing_separator or component_count == 1 or index < last_index
+
+    return index < last_index and mode == "both"
+
+
+def shorten_path_component(
+    component,
+    mode,
+    index,
+    last_index,
+    component_count,
+    trailing_separator,
+    path_length,
+    filename_length,
+):
+    """Shorten one component according to the current mode."""
+    if should_shorten_as_path(mode, index, last_index, component_count, trailing_separator):
+        return shorten_component(component, path_length)
+
+    is_filename = index == last_index and not trailing_separator
+    if is_filename and mode in {"filename", "both"}:
+        return shorten_filename(component, filename_length)
+
+    return component
+
+
+def shorten_path(path_value, path_length, filename_length, mode, treat_last_as_path=False):
+    """Shorten the supplied path according to the selected mode."""
+    root, components, trailing_separator = split_path(path_value)
+
+    if treat_last_as_path:
+        trailing_separator = True
+
+    if not components:
+        return path_value
+
+    last_index = len(components) - 1
+    component_count = len(components)
+    shortened_components = [
+        shorten_path_component(
+            component,
+            mode,
+            index,
+            last_index,
+            component_count,
+            trailing_separator,
+            path_length,
+            filename_length,
+        )
+        for index, component in enumerate(components)
+    ]
+
+    shortened = root + os.sep.join(shortened_components)
+    if trailing_separator and root and shortened != os.sep:
+        return shortened.rstrip(os.sep)
+    return shortened
+
+
+def path_is_relative_to(path_value, other_path):
+    """Compatibility helper for Path.is_relative_to."""
+    try:
+        path_value.relative_to(other_path)
+        return True
+    except ValueError:
+        return False
+
+
+def path_from_parts(parts):
+    """Build a pathlib.Path from path parts."""
+    path_value = pathlib.Path(parts[0])
+    for part in parts[1:]:
+        path_value /= part
+    return path_value
+
+
+def build_rename_operations(source_path, target_path):
+    """Build staged rename operations so parent directories are renamed first."""
+    source_parts = source_path.parts
+    target_parts = target_path.parts
+
+    if source_parts == target_parts:
+        return []
+
+    if len(source_parts) != len(target_parts):
+        raise ValueError(f"Cannot stage rename from '{source_path}' to '{target_path}'.")
+
+    operations = []
+    current_parts = list(source_parts)
+    start_index = 1 if source_parts and source_parts[0] == os.sep else 0
+
+    for index in range(start_index, len(source_parts)):
+        if current_parts[index] == target_parts[index]:
+            continue
+
+        old_path = path_from_parts(current_parts[: index + 1])
+        new_parts = current_parts[: index + 1]
+        new_parts[index] = target_parts[index]
+        new_path = path_from_parts(new_parts)
+        operations.append((old_path, new_path))
+        current_parts[index] = target_parts[index]
+
+    return operations
+
+
+def update_pending_paths(path_items, old_path, new_path, start_index):
+    """Update remaining pending paths after a staged rename."""
+    for index in range(start_index, len(path_items)):
+        current_path = path_items[index]["current_path"]
+        if current_path == old_path or path_is_relative_to(current_path, old_path):
+            relative_suffix = current_path.relative_to(old_path) if current_path != old_path else pathlib.Path()
+            path_items[index]["current_path"] = new_path / relative_suffix
+
+
+def print_action(label, source_path, target_path, color):
+    """Print a single action line."""
+    print(f"{ANSI[color]}{label}:{ANSI['RESET']}  {source_path} -> {target_path}")
+
+
+def execute_rename(source_path, target_path, logger):
+    """Rename a path using the most appropriate API for the situation."""
+    if source_path.parent == target_path.parent:
+        logger.debug("Using pathlib.Path.rename('%s', '%s').", source_path, target_path)
+        source_path.rename(target_path)
+        return
+
+    try:
+        logger.debug("Using os.rename('%s', '%s').", source_path, target_path)
+        os.rename(source_path, target_path)
+    except OSError as exception:
+        if exception.errno != errno.EXDEV:
+            raise
+
+        logger.debug("Using shutil.move('%s', '%s') after EXDEV.", source_path, target_path)
+        shutil.move(str(source_path), str(target_path))
+
+
+def compute_target_name(current_path, is_directory, args):
+    """Compute the shortened basename for one filesystem path."""
+    if is_directory:
+        if args.mode in {"path", "both"}:
+            return shorten_component(current_path.name, args.path_length)
+        return current_path.name
+
+    if args.mode in {"filename", "both"}:
+        return shorten_filename(current_path.name, args.filename_length)
+
+    return current_path.name
+
+
+def compute_target_path(current_path, scope_root, is_directory, args):
+    """Compute the shortened target path for one filesystem path."""
+    del scope_root
+    target_name = compute_target_name(current_path, is_directory, args)
+    if target_name == current_path.name:
+        return current_path
+    return current_path.with_name(target_name)
+
+
+def append_integer_suffix(path_value, suffix_index, is_directory):
+    """Append a numeric suffix before the extension or at the end of a directory name."""
+    if is_directory:
+        return path_value.with_name(f"{path_value.name}-{suffix_index}")
+
+    stem, extension = split_filename(path_value.name)
+    if extension:
+        return path_value.with_name(f"{stem}-{suffix_index}{extension}")
+    return path_value.with_name(f"{path_value.name}-{suffix_index}")
+
+
+def target_path_exists(candidate_path, source_path, reserved_targets):
+    """Return whether a target path is already occupied or reserved."""
+    if candidate_path == source_path:
+        return False
+
+    if candidate_path in reserved_targets:
+        return True
+
+    return candidate_path.exists() or candidate_path.is_symlink()
+
+
+def resolve_available_target_path(source_path, target_path, is_directory, reserved_targets):
+    """Return a free target path, retrying with numeric suffixes when needed."""
+    if source_path == target_path:
+        return target_path
+
+    candidate_path = target_path
+    suffix_index = 1
+
+    while target_path_exists(candidate_path, source_path, reserved_targets):
+        candidate_path = append_integer_suffix(target_path, suffix_index, is_directory)
+        suffix_index += 1
+
+    return candidate_path
+
+
+def make_path_item(current_path, scope_root):
+    """Create metadata for a path scheduled for renaming."""
+    return {
+        "current_path": current_path,
+        "scope_root": scope_root,
+        "is_directory": current_path.is_dir() and not current_path.is_symlink(),
+    }
+
+
+def build_recursive_path_items(root_path):
+    """Return a leaf-first rename list for a directory tree."""
+    path_items = []
+
+    for directory_path, directory_names, file_names in os.walk(root_path, topdown=False, followlinks=False):
+        directory = pathlib.Path(directory_path)
+
+        for file_name in sorted(file_names):
+            path_items.append(make_path_item(directory / file_name, root_path))
+
+        for directory_name in sorted(directory_names):
+            child_directory = directory / directory_name
+            if child_directory.is_symlink():
+                path_items.append(make_path_item(child_directory, root_path))
+
+        path_items.append(make_path_item(directory, root_path))
+
+    return path_items
+
+
+def validate_input_roots(root_paths):
+    """Reject duplicate or overlapping root paths."""
+    errors = ""
+
+    for index, root_path in enumerate(root_paths):
+        for other_root_path in root_paths[index + 1:]:
+            if root_path == other_root_path:
+                errors += f"\n  Duplicate input path: '{root_path}'."
+                continue
+
+            if path_is_relative_to(root_path, other_root_path) or path_is_relative_to(other_root_path, root_path):
+                errors += (
+                    "\n  Overlapping input paths are not supported: "
+                    f"'{root_path}' and '{other_root_path}'."
+                )
+
+    return errors
+
+
+def build_path_items(paths):
+    """Validate input paths and collect metadata used during renames."""
+    errors = ""
+    path_items = []
+    root_paths = []
+
+    for path_value in paths:
+        current_path = pathlib.Path(path_value).expanduser()
+        if not current_path.exists() and not current_path.is_symlink():
+            errors += f"\n  Path does not exist: '{path_value}'."
+            continue
+
+        root_paths.append(current_path)
+
+    errors += validate_input_roots(root_paths)
+
+    for root_path in root_paths:
+        if root_path.is_dir() and not root_path.is_symlink():
+            path_items.extend(build_recursive_path_items(root_path))
+        else:
+            path_items.append(make_path_item(root_path, root_path))
+
+    return errors, path_items
+
+
+def process_path_item(path_items, index, args, logger, reserved_targets):
+    """Process one input path, applying staged renames if necessary."""
+    path_item = path_items[index]
+    current_path = path_item["current_path"]
+    target_path = compute_target_path(
+        current_path,
+        path_item["scope_root"],
+        path_item["is_directory"],
+        args,
+    )
+    target_path = resolve_available_target_path(
+        current_path,
+        target_path,
+        path_item["is_directory"],
+        reserved_targets,
+    )
+    operations = build_rename_operations(current_path, target_path)
+
+    if not operations:
+        print_action("UNCHANGED", current_path, target_path, "FG_WHITE_BG_BLUE")
+        return
+
+    for source_path, destination_path in operations:
+        if args.dryrun:
+            print_action("DRY-RUN", source_path, destination_path, "FG_BLACK_BG_YELLOW")
+        else:
+            execute_rename(source_path, destination_path, logger)
+            print_action("RENAMED", source_path, destination_path, "FG_WHITE_BG_GREEN")
+
+        reserved_targets.add(destination_path)
+        update_pending_paths(path_items, source_path, destination_path, index)
+
+
+def main():
+    """Main function."""
+    args = parse_arguments()
+    logger = setup_logging(args.loglevel)
+    logger.debug("Arguments: %s", args)
+
+    errors = ""
+    if args.path_length < 1:
+        errors += "\n  --path-length must be greater than or equal to 1."
+    if args.filename_length < 1:
+        errors += "\n  --filename-length must be greater than or equal to 1."
+
+    path_errors, path_items = build_path_items(args.paths)
+    errors += path_errors
+
+    report_error(errors)
+
+    if args.dryrun:
+        print(f"{ANSI['FG_BLACK_BG_YELLOW']}DRY-RUN:{ANSI['RESET']}  No filesystem changes will be made.")
+    else:
+        print(f"{ANSI['FG_WHITE_BG_RED']}EXECUTE:{ANSI['RESET']}  Renames will be applied.")
+
+    reserved_targets = set()
+    for index in range(len(path_items)):
+        process_path_item(path_items, index, args, logger, reserved_targets)
+
+
+def main_wrapper():
+    """Wrapper for main to handle exceptions and timing."""
+    try:
+        time_start = datetime.now()
+
+        main()
+
+        time_end = datetime.now()
+        time_executed = time_end - time_start
+        time_executed_hours, time_executed_remainder = divmod(time_executed.seconds, 3600)
+        time_executed_minutes, time_executed_seconds = divmod(time_executed_remainder, 60)
+
+        time_start_string = time_start.strftime(ISO8601_HUMAN)
+        time_end_string = time_end.strftime(ISO8601_HUMAN)
+
+        print("\nStarted:   " + time_start_string)
+        print("Ended:     " + time_end_string)
+        print("Executed:  {0:02}:{1:02}:{2:02}".format(
+            time_executed_hours,
+            time_executed_minutes,
+            time_executed_seconds,
+        ))
+
+    except Exception as exception:
+        logger = logging.getLogger(SCRIPT_NAME)
+        if not logger.handlers:
+            logging.basicConfig(level=logging.ERROR)
+            logger = logging.getLogger(SCRIPT_NAME)
+
+        logger.error("Exception: %s", exception)
+        logger.error("Exception: %s", traceback.format_exc())
+        handle_exception(exception)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main_wrapper()
