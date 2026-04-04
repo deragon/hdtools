@@ -25,6 +25,7 @@ LEXIQUE / DICTIONNAIRE / TERMINOLOGIE / GLOSSAIRE - FRANÇAIS
   troubleshooting            -> dépannage / résolution de problèmes / diagnostic des défaillances
   backdoor                   -> porte dérobée
   credentials                -> données de connexion
+  crontab                    -> planificateur/gestionnaire de tâches
   bug                        -> vermine
   enjoy                      -> savourez / prenez plaisir / appréciez / jouissiez
   feature                    -> fonctionnalité
