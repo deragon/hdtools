@@ -58,6 +58,23 @@ function! SetLocalSpell(lang_code) abort
 
 endfunction
 
+function! AddToSpellFile(filename) abort
+    let word = expand('<cword>')
+    let spell_dir = expand('$HDVIM/spell')
+    let filepath = spell_dir . '/' . a:filename
+    
+    " Add the word and rebuild the spell file silently
+    call writefile([word], filepath, 'a')
+    silent! execute 'mkspell! ' . filepath
+    echo 'Added "' . word . '" to ' . a:filename
+endfunction
+
+" Add word directly in the specified file.
+nnoremap zig :call AddToSpellFile('intl.utf-8.add')<CR>
+nnoremap zeg :call AddToSpellFile('en.utf-8.add')<CR>
+nnoremap zfg :call AddToSpellFile('fr.utf-8.add')<CR>
+
+" Switch mode ton english or french.
 nmap <esc>e :call SetLocalSpell('en')<CR>
 nmap <esc>f :call SetLocalSpell('fr')<CR>
 
