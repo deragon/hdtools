@@ -1,0 +1,155 @@
+Teams forces camera into 4:3
+══════════════════════════════════════════════════════════════════════════════
+
+  As of 2026-04-01
+
+  Teams forces camera into 4:3 when it opens it What you are observing is real and
+  reproducible.  When Microsoft Teams starts using the camera, it explicitly
+  reconfigures the camera hardware to a specific capture profile. In many cases,
+  that profile is 4:3.
+
+  This is why:
+
+  - The Windows camera preview looks correct (usually 16:9) when Teams is NOT
+    using the camera As soon as Teams starts, Windows immediately switches to 4:3
+    When Teams releases the camera, it switches back again
+
+  This behavior is not caused by Windows Settings or Studio Effects.  It is a
+  format negotiation initiated by Teams itself.
+
+  What is actually happening under the hood
+
+  1. Teams opens the camera via Windows Media Foundation
+  2. Teams requests a specific video format
+  3. Very often, this is a legacy 4:3 mode
+  4. The camera switches hardware mode
+  5. Windows reflects the new mode instantly
+
+  Windows cannot prevent an application from doing this.
+
+
+  Why Microsoft does this
+  ────────────────────────────────────────────────────────────────────────────
+
+  Teams prioritizes robustness and compatibility over visual fidelity.
+
+  Reasons include:
+
+  • Many laptop cameras are natively 4:3
+  • 4:3 works better with face detection
+  • Background effects are more stable
+  • Lower risk of failures on older hardware
+  • Reduced bandwidth and processing complexity
+
+  There is no exposed UI toggle to override this behavior.  This is NOT caused by:
+
+  • Windows Studio Effects
+  • Self‑preview distortion bug
+  • GPU scaling issues
+  • Camera drivers malfunctioning
+
+  This is intentional application‑level behavior.
+
+  Is there a native fix?  No.
+
+  There is currently:
+
+  • No Windows setting
+  • No Teams setting
+  • No supported registry override
+
+  Microsoft has confirmed this limitation across multiple Teams versions.
+
+  Solution 1:
+  ────────────────────────────────────────────────────────────────────────────
+
+    Lock the camera format using vendor software (best if available) If your
+    device provides a camera control utility, it may allow you to lock the
+    aspect ratio so Teams cannot change it.
+
+    Look for settings like:
+
+    • Aspect ratio: Native / Original
+    • Disable automatic mode switching
+    • Disable per‑application control
+
+    Utilities that sometimes support this:
+
+    • Logitech G Hub / Logi Tune
+    • Dell Optimizer
+    • Lenovo Vantage
+    • HP Presence
+
+    If available, this completely solves the issue.
+
+  Solution 2:
+  ────────────────────────────────────────────────────────────────────────────
+
+  OBS Virtual Camera (100% reliable)
+
+  This is the only universal fix that works even with laptop cameras.
+
+  How it works:
+
+  • OBS captures your camera at 16:9
+  • OBS outputs a virtual camera
+  • Teams can only see the virtual camera
+  • Teams cannot force hardware aspect ratio changes
+
+  Steps:
+
+  Install OBS Studio
+  Add “Video Capture Device” with your camera
+  Set canvas to 1920x1080 (16:9)
+  Start the OBS Virtual Camera
+  Select “OBS Virtual Camera” in Teams
+
+  Result:
+
+  • No aspect ratio changes
+  • No stretching or squeezing
+  • Windows Camera remains correct
+
+  Drawback:
+
+  • One extra application running
+
+  Solution 3:
+  ────────────────────────────────────────────────────────────────────────────
+
+  Use a webcam that resists 4:3 switching
+
+  External webcams with strong 16:9 defaults are less affected.
+
+  Examples (not guaranteed):
+
+  • Logitech Brio
+  • Logitech C920 / C930 (with settings locked)
+  • Elgato Facecam
+
+  Laptop cameras are the most affected.
+
+  What does NOT work (avoid wasting time)
+
+  • Windows Camera settings
+  • Windows Privacy toggles
+  • Studio Effects settings
+  • GPU acceleration on/off
+  • Switching between New Teams and Classic Teams
+  • Resolution changes alone
+
+  Bottom line
+
+  • Your diagnosis is correct
+  • Teams forces the camera into 4:3 at the driver level
+  • Windows has no control once Teams opens the camera
+  • There is no native fix inside Teams
+  • OBS Virtual Camera is the only guaranteed solution
+
+  If you want, provide:
+
+  • Laptop model or webcam model
+  • Windows 10 or Windows 11
+  • New Teams or Classic Teams
+
+  I can tell you whether camera format locking is possible without OBS.
