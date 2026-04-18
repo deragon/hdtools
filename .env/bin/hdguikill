@@ -1,0 +1,220 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2024 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General public Picense which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+
+DRYRUN=1
+DEBUG=0
+
+declare -a GUI_WINDOW_PIDS=()
+declare -A GUI_WINDOW_PIDS_SEEN=()
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["RESET"]="\e[0;00m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${ANSI[RESET]}
+
+If this script is executed while GUI applications are not frozen, well they
+will be killed and data might get lost.
+
+Kill any GUI application running.  This is necessary when the Windows machine
+wakes up from sleep (S3 state) and all the WSL2g Linux GUI applications are
+frozen and not responding.
+
+This script finds GUI applications dynamically from X11 windows and from
+processes actively connected to an X11 or Wayland display socket.
+
+Usage:  ${SCRIPT_NAME} [-d] [-e] [-z] [-h]
+
+  -d  Dry-run mode (default). Show what would be killed without executing.
+  -e  Execute mode. Actually kill the identified GUI applications.
+  -z  Debug logs enabled.
+  -h  Display this help text.
+"
+}
+
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    "$@"
+  fi
+}
+
+
+isProtectedGuiPid()
+{
+  local PID="${1}"
+  local COMMAND_NAME="${2}"
+
+  if [ -z "${PID}" ] || [ "${PID}" = "0" ] || [ "${PID}" = "$$" ]; then
+    return 0
+  fi
+
+  case "${COMMAND_NAME}" in
+    at-spi-*|dbus-*|flatpak-session-helper|gnome-keyring-*|gvfsd*|p11-kit-server|pipewire|pipewire-*|wireplumber|xdg-*)
+      return 0;;
+    gnome-shell|Hyprland|kwin_wayland|kwin_x11|labwc|mutter|openbox|plasmashell|sway|wayfire|weston|xfwm4|Xorg|Xwayland)
+      return 0;;
+  esac
+
+  return 1
+}
+
+
+addGuiPid()
+{
+  local PID="${1}"
+  local COMMAND_NAME="${2}"
+
+  if [ -z "${PID}" ] || [ ! -d "/proc/${PID}" ]; then
+    return
+  fi
+
+  if [ -z "${COMMAND_NAME}" ]; then
+    COMMAND_NAME="$(ps -p "${PID}" -o comm= 2>/dev/null | sed 's/^[[:space:]]*//')"
+  fi
+
+  if isProtectedGuiPid "${PID}" "${COMMAND_NAME}"; then
+    return
+  fi
+
+  if [ ! -z "${GUI_WINDOW_PIDS_SEEN[${PID}]}" ]; then
+    return
+  fi
+
+  GUI_WINDOW_PIDS_SEEN["${PID}"]=1
+  GUI_WINDOW_PIDS+=("${PID}")
+}
+
+
+collectGuiWindowPidsFromX11Windows()
+{
+  local WINDOW_ID
+  local PID
+  local XPROP_OUTPUT
+
+  if ! command -v xlsclients >/dev/null 2>&1; then
+    return
+  fi
+
+  if ! command -v xprop >/dev/null 2>&1; then
+    return
+  fi
+
+  while IFS= read -r WINDOW_ID; do
+    XPROP_OUTPUT="$(xprop -id "${WINDOW_ID}" _NET_WM_PID 2>/dev/null)"
+    PID="$(awk -F' = ' '/_NET_WM_PID/ {print $2}' <<< "${XPROP_OUTPUT}")"
+    addGuiPid "${PID}"
+  done < <(xlsclients -la | awk '/^Window /{print $2}')
+}
+
+
+collectGuiWindowPidsFromDisplaySockets()
+{
+  local PID
+  local COMMAND_NAME
+  local FD_TARGET
+  local SOCKET_INODE
+
+  if ! command -v ss >/dev/null 2>&1; then
+    return
+  fi
+
+  declare -A DISPLAY_CLIENT_SOCKET_INODES=()
+
+  while IFS= read -r SOCKET_INODE; do
+    if [ ! -z "${SOCKET_INODE}" ]; then
+      DISPLAY_CLIENT_SOCKET_INODES["${SOCKET_INODE}"]=1
+    fi
+  done < <(
+    ss -xpH 2>/dev/null | awk '
+      {
+        for (idx = 1; idx <= NF; idx++) {
+          if ($idx ~ /\/tmp\/\.X11-unix\/X[0-9]+$/ || $idx ~ /\/wayland-[0-9]+$/) {
+            if ((idx + 2) <= NF && $(idx + 2) ~ /^[0-9]+$/) {
+              print $(idx + 2)
+            }
+          }
+        }
+      }
+    ' | sort -u
+  )
+
+  if ((${#DISPLAY_CLIENT_SOCKET_INODES[*]} == 0)); then
+    return
+  fi
+
+  while read -r PID COMMAND_NAME; do
+    if [ ! -d "/proc/${PID}/fd" ]; then
+      continue
+    fi
+
+    while IFS= read -r FD_TARGET; do
+      SOCKET_INODE="$(sed -n 's/^socket:\[\([0-9][0-9]*\)\]$/\1/p' <<< "${FD_TARGET}")"
+
+      if [ -z "${SOCKET_INODE}" ]; then
+        continue
+      fi
+
+      if [ ! -z "${DISPLAY_CLIENT_SOCKET_INODES[${SOCKET_INODE}]}" ]; then
+        addGuiPid "${PID}" "${COMMAND_NAME}"
+        break
+      fi
+    done < <(find "/proc/${PID}/fd" -mindepth 1 -maxdepth 1 -printf '%l\n' 2>/dev/null)
+  done < <(ps -u "$(id -u)" -o pid=,comm= --no-headers)
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+OPTIND=1
+while getopts "dezh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;
+    "e")    DRYRUN=0;;
+    "z")    DEBUG=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+collectGuiWindowPidsFromX11Windows
+collectGuiWindowPidsFromDisplaySockets
+
+echo "Found ${#GUI_WINDOW_PIDS[*]} GUI application(s) to kill:"
+for PID in "${GUI_WINDOW_PIDS[@]}"; do
+  COMM="$(ps -p "${PID}" -o comm= 2>/dev/null)"
+  echo "  PID=${PID}  COMM=${COMM}"
+done
+
+if (( DRYRUN )); then
+  echo -e "\n${ANSI[FG_BLACK_BG_YELLOW]}DRY-RUN${ANSI[RESET]}: Use -e flag to actually execute the kill command."
+  exit 0
+fi
+
+run kill "${GUI_WINDOW_PIDS[@]}"
