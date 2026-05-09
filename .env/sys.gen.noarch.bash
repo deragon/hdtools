@@ -566,8 +566,6 @@ fi
 #     # Mac machine with gnu tools installled using brew detected.
 #     HD_BINARY_LS="${HD_BINARY_LS_MAC}"
 #   fi
-# elif [ "${HD_OS_FAMILY}" = "AIX" ]; then
-#
 # fi
 
 alias ls="${HD_BINARY_LS} ${LS_OPTIONS}"
@@ -578,23 +576,27 @@ alias dw="ls"
 
 unset HD_BINARY_LS HD_BINARY_LS_MAC # Reduce bash environment memory.
 
-if [ "${MACHTYPE/*solaris*/x}" = "x" ]; then
-  export LS_OPTIONS=""
-  alias manpath='echo $MANPATH'
-  #export MACHOS="solaris"
-  alias disphost='export DISPLAY=`hostname`:0.0;disp'
-elif [ "${MACHTYPE/*aix*/x}" = "x" ]; then
-  export LS_OPTIONS=""
-  alias disphost='export DISPLAY=`hostname`:0.0;disp'
+if [ "${MACHTYPE/*linux*/x}"  = "x" -o \
+     "${MACHTYPE/*redhat*/x}" = "x" -o \
+     "${MACHTYPE/*suse*/x}"   = "x" -o \
+     "${MACHTYPE/*i386*/x}"   = "x" ]; then
+  #export MACHOS="linux"
+  alias disphost='export DISPLAY=`hostname -f`:0.0;disp'
 elif [ "${MACHTYPE/*cygwin*/x}"  = "x" ]; then
   #export MACHOS="cygwin"
   alias disphost='export DISPLAY=`hostname`:0.0;disp'
-elif [ "${MACHTYPE/*linux*/x}"  = "x" -o \
-       "${MACHTYPE/*redhat*/x}" = "x" -o \
-       "${MACHTYPE/*suse*/x}"   = "x" -o \
-       "${MACHTYPE/*i386*/x}"   = "x" ]; then
-  #export MACHOS="linux"
-  alias disphost='export DISPLAY=`hostname -f`:0.0;disp'
+
+# Chances are that I (Hans Deragon) will never use Solaris or AIX again, thus I
+# am commenting out the following code for now.
+#  
+# elif [ "${MACHTYPE/*solaris*/x}" = "x" ]; then
+#   export LS_OPTIONS=""
+#   alias manpath='echo $MANPATH'
+#   #export MACHOS="solaris"
+#   alias disphost='export DISPLAY=`hostname`:0.0;disp'
+# elif [ "${MACHTYPE/*aix*/x}" = "x" ]; then
+#   export LS_OPTIONS=""
+#   alias disphost='export DISPLAY=`hostname`:0.0;disp'
 fi
 
 if [ -e /usr/bin/less ]; then
