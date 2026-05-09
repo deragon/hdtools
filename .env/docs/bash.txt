@@ -3,62 +3,62 @@ ARRAYS
 
   # -g makes the array global, else it is created only locally, if declared in
   # a function like if when a variable is declared with 'local'.
-  declare -ag ENTRIES=(${VARIABLE_WITH_ENTRIES_SEPERATED_WITH_LF});
+  declare -ag ITEMS=(${VARIABLE_WITH_ITEMS_SEPERATED_WITH_LF});
 
-  local IFS=$'\n'   # IMPORTANT to setup so that entries are only separated by
+  local IFS=$'\n'   # IMPORTANT to setup so that items are only separated by
                     # linefeed, not spaces that could be found in filenames.
-  declare -ag ENTRIES=($(find .))
-  declare -ag ENTRIES=() # empty array
-  declare -ag ENTRIES=(
-  "entry #1"
-  "entry #2"
+  declare -ag ITEMS=($(find .))
+  declare -ag ITEMS=() # empty array
+  declare -ag ITEMS=(
+  "item #1"
+  "item #2"
   )
 
-  echo ">>${ENTRIES[*]}<<"        # Print array content with \n between
-  echo ">>${ENTRIES[@]}<<"        # Print array content without \n between
-  echo "${!ENTRIES[*]}"           # List all keys in the ENTRIES
-  echo "${#ENTRIES[*]}"           # Number of elements in the ENTRIES.
-  echo "${ENTRIES[0]}"            # Element 0 of the ENTRIES
-  echo "${ENTRIES[@]:1:3}"        # Slice:  Elements 1 to 3.
-  echo "${ENTRIES[@]:3}"          # Slice:  Elements 3 to the end of the arary.
+  echo ">>${ITEMS[*]}<<"        # Print array content with \n between
+  echo ">>${ITEMS[@]}<<"        # Print array content without \n between
+  echo "${!ITEMS[*]}"           # List all keys in ITEMS
+  echo "${#ITEMS[*]}"           # Number of elements in ITEMS.
+  echo "${ITEMS[0]}"            # Element 0 of ITEMS
+  echo "${ITEMS[@]:1:3}"        # Slice:  Elements 1 to 3.
+  echo "${ITEMS[@]:3}"          # Slice:  Elements 3 to the end of the arary.
     Slicing:  See https://gist.github.com/steakknife/8294792
 
-  printf '%s\n' "${ENTRIES[@]}"   # Print all values on separate lines.
+  printf '%s\n' "${ITEMS[@]}"   # Print all values on separate lines.
   printf "%s\n" "$@"              # Only way this works with $@
 
-  printf '%s\0' "${ENTRIES[@]}" | xargs --null -I "{}" echo -e "{}"  # Print all values separate with nulls, useful for sending to xargs.
-  readarray -d '' ENTRIES < <(git ls-files -z)  # Read into an array entries separated with nulls.
+  printf '%s\0' "${ITEMS[@]}" | xargs --null -I "{}" echo -e "{}"  # Print all values separate with nulls, useful for sending to xargs.
+  readarray -d '' ITEMS < <(git ls-files -z)  # Store data into an array ITEMS separated with nulls.
 
-  printf -v STRING ',%s' "${ENTRIES[@]}"; STRING=${STRING:1}; echo "${STRING}"  # Join all elements, separted by ','.
+  printf -v STRING ',%s' "${ITEMS[@]}"; STRING=${STRING:1}; echo "${STRING}"  # Join all elements, separted by ','.
 
-  printf -v <VARNAME> '%s\n' "${ENTRIES[@]}"   # Save all values on separate lines into variable <VARNAME>.
+  printf -v <VARNAME> '%s\n' "${ITEMS[@]}"   # Save all values on separate lines into variable <VARNAME>.
   printf "%02d\n" $number         # Pad with 0.
     Example:  for (( i = 1; i <= 20; i++)); do printf "%02d\n" $i ; done
 
-  ENTRIES[0]="data 0"
-  ENTRIES[1]="data 12"
-  ENTRIES[2]="data 234"
-  ENTRIES+=("data 4567")  # Equivalent of push / put; add/append element at end of array.
-  ENTRIES=("data -1" "${ENTRIES[@]}" "data 3")   # Add elements at beginning and end of array.
+  ITEMS[0]="data 0"
+  ITEMS[1]="data 12"
+  ITEMS[2]="data 234"
+  ITEMS+=("data 4567")  # Equivalent of push / put; add/append element at end of array.
+  ITEMS=("data -1" "${ITEMS[@]}" "data 3")   # Add elements at beginning and end of array.
 
   Read:  https://unix.stackexchange.com/questions/328882/how-to-add-remove-an-element-to-from-the-array-in-bash
 
-  # Load lines from a file - one line == one array entry
+  # Load lines from a file - one line == one array item
   # Pipe (|) does not work here.  Use "< <(...)"
   readarray FILES < <(find "${RECURSIVEPATH}" -type f -name "*.pdf")
 
   # Pass all arguments to a command, all quotes so spaces are well handled.
   # See:  https://stackoverflow.com/questions/7454526/variable-containing-multiple-args-with-quotes-in-bash
-  <command> "${ENTRIES[@]}"
+  <command> "${ITEMS[@]}"
 
-  for ITEM in "${ENTRIES[@]}"; do  # Quotes are important to handle spaces.
+  for ITEM in "${ITEMS[@]}"; do  # Quotes are important to handle spaces.
   done
 
-  for (( INDEX=0; INDEX<${#ENTRIES[*]}; INDEX++ )); do
+  for (( INDEX=0; INDEX<${#ITEMS[*]}; INDEX++ )); do
   done
 
   # Test if string is in array / array contains string.
-  if [[ "${ENTRIES[@]}" =~ "file1" ]]; then
+  if [[ "${ITEMS[@]}" =~ "file1" ]]; then
     # Perform code when match is found.
   fi
 
@@ -81,9 +81,9 @@ ARRAYS
 
     function_name()
     {
-      local ENTRIES=("$@")
+      local ITEMS=("$@")
       ...
-      printf '%s\n' "${ENTRIES[@]}"   # Print all values on separate lines.
+      printf '%s\n' "${ITEMS[@]}"   # Print all values on separate lines.
     }
 
     function_name "${ARRAY[@]}"
@@ -92,8 +92,8 @@ ARRAYS
   LENGTH OF LONGEST STRING IN AN ARRAY
   ────────────────────────────────────────────────────────────────────────────
 
-    # Using nulls so entries with spaces are well handled by xargs.
-    printf '%s\0' "${ENTRIES[@]}" | xargs --null --replace="{}" -n 1 bash -c 'echo "{}" | wc --chars' | sort -n | tail -1
+    # Using nulls so items with spaces are well handled by xargs.
+    printf '%s\0' "${ITEMS[@]}" | xargs --null --replace="{}" -n 1 bash -c 'echo "{}" | wc --chars' | sort -n | tail -1
 
 
   BASH ARGUMENTS $@
@@ -102,7 +102,7 @@ ARRAYS
     Quick recipes
     ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
 
-      - "$@"   All entries, but individually quotes for taking spaces into
+      - "$@"   All items, but individually quotes for taking spaces into
                account.
       - $#     Number of arguments
 
@@ -112,17 +112,17 @@ ARRAYS
 
       - Assigment $@ to a variable
 
-        ENTRIES=("$@")  # Make it an array.
+        ITEMS=("$@")  # Make it an array.
 
         # This multi-line assignment will also work with below for loop
         # below.  It:
-        ENTRIES="
+        ITEMS="
         Ligne 1
         Ligne 2
         "
 
-        for ENTRY in ${ENTRIES[@]}; do
-          echo "Processing ${ENTRY}"
+        for ITEM in ${ITEMS[@]}; do
+          echo "Processing ${ITEM}"
         done;
 
 
