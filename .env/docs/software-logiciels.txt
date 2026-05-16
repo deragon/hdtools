@@ -440,6 +440,16 @@ CALCULATEURS
 
 
 
+CHROME
+══════════════════════════════════════════════════════════════════════════════
+
+  Good safe RED extension used for specifying that a chrome instance is used
+  to access a production server.
+
+  - Spicy Red  # Chrome red color extension pretty good.
+    https://chromewebstore.google.com/detail/spicy-red/ienegdgaikckljnoaaenajfafpopoihe?hl=fr&utm_source=ext_sidebar
+
+
 LIBREOFFICE
 ══════════════════════════════════════════════════════════════════════════════
 
