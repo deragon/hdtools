@@ -71,8 +71,25 @@ mainloop: while (<>)
 {
 	$thisline = $_;
 
-	$timestamp = substr($_,0,15);
-	s/................//;
+	# Detect RFC 3339/RFC 5424 date format, optionally preceded by a syslog
+	# priority+version prefix (e.g. "<30>1 ").
+	# Examples handled:
+	#   2026-05-08T10:51:13+00:00          (RFC 3339)
+	#   2026-05-08T10:51:13.056394-04:00   (RFC 3339 with fractional seconds)
+	#   2026-05-08T10:51:13Z               (RFC 3339 UTC)
+	#   <30>1 2026-05-08T10:51:13.056394-04:00  (RFC 5424)
+	# vs traditional syslog format (e.g. Jan  1 12:34:56)
+	if (/^((?:<\d+>\d+ )?\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:[.,]\d+)?(?:Z|[+-]\d{2}:\d{2})?) /)
+	{
+		$timestamp = $1;
+		my $len = length($timestamp) + 1;  # +1 for the trailing space
+		s/.{$len}//;
+	}
+	else
+	{
+		$timestamp = substr($_,0,15);
+		s/................//;
+	}
 
 	@rec = split (/ /, $_);
 
