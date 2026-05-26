@@ -677,6 +677,7 @@ alias cdlog='cdprint /var/log'
 alias cdcrash='cdprint /var/crash;lscrash'
 alias lscrash='hdfindfiles /var/crash'
 #alias locateupdate='/usr/bin/updatedb -f "nfs,smbfs,ncpfs,proc,devpts" -e "/tmp,/var/tmp,/usr/tmp,/afs,/net"'
+alias hd-updatedb-get-database-timestamp='ls -l /var/lib/plocate/plocate.db'
 
 alias hd-firewall-list-nat='iptables -t nat --list -n -v'
 alias hd-firewall-list='iptables --list -n -v'
