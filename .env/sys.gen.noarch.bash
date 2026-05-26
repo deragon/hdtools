@@ -699,12 +699,12 @@ alias cdbin='cdprint "${HDENVDIR}/bin"'
 # WARNING:
 #
 #   An actual 'gtar' command exist under Linux!  No function or alias must be
-#   created with the name 'gtar'.  This is why 'hdgtar' is being used here.
-function hdgtar
+#   created with the name 'gtar'.  This is why 'gztar' is being used here.
+function gztar
 {
   tar cvzf "`basename ${1}`.tar.gz" "${1}"
 }
-exportfunction hdgtar
+exportfunction gztar
 
 function btar
 {
