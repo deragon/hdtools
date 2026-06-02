@@ -1,0 +1,188 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2026 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True ANSI (24 bits) terminal.
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["ITALIC"]="\e[2m"
+    ["UNDERLINE"]="\e[3m"
+    ["REVERSE"]="\e[7m"
+    ["STRIKETHROUGH"]="\e[9m"
+    ["BOLD_OFF"]="\e[21m"
+    ["ITALIC_OFF"]="\e[22m"
+    ["UNDERLINE_OFF"]="\e[23m"
+    ["REVERSE_OFF"]="\e[27m"
+    ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLINK"]="\e[5m"
+    ["BLACK"]="\e[30m"
+    ["RED"]="\e[31m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+    ["MAGENTA"]="\e[35m"
+    ["CYAN"]="\e[36m"
+    ["WHITE"]="\e[37m"
+    ["BG_RED"]="\e[41m"
+    ["BG_GREEN"]="\e[42m"
+    ["BG_YELLOW"]="\e[43m"
+    ["BG_BLUE"]="\e[44m"
+    ["BG_MAGENTA"]="\e[45m"
+    ["BG_CYAN"]="\e[46m"
+    ["BG_WHITE"]="\e[47m"
+    ["BG_DEFAULT"]="\e[49m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${ANSI[RESET]}
+
+Usage:  ${SCRIPT_NAME} [-d] [-t <hh:mm>] [hh:mm] [-h]
+
+  -d  Dry-run.
+  -t  Wakeup time in hh:mm format (default: 10:30).
+  hh:mm  Wakeup time as positional argument.
+  -h  Display this help text.
+"
+}
+
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+  else
+    "$@"
+  fi
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=0
+TIME="06:30"
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "dt:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "t")    TIME="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+IFS=$(echo -en "\n\b")    # Set IFS so if FILES in $@ have spaces,
+                          # we separate FILES properly.
+
+if (( $# > 1 )); then
+  ERRORS="${ERRORS} - No extra arguments allowed.\n"
+elif (( $# == 1 )); then
+  TIME="$1"
+fi
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+printErrorsAndExitIfAny()
+{
+  printWarnings
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
+}
+
+printWarnings()
+{
+  if [ ! -z "${WARNINGS}" ]; then
+    echo -e "${ANSI[FG_BLACK_BG_YELLOW]}WARNING:${ANSI[RESET]}  The following warnings were thrown.\n"
+    echo -e "${WARNINGS}"
+  fi
+}
+
+WARNINGS=""
+ERRORS=""
+
+if ((${#FILES[*]} > 0)); then
+  ERRORS="${ERRORS} - No extra arguments allowed.\n"
+fi
+
+if [[ ! "${TIME}" =~ ^[0-9]{1,2}:[0-9]{2}$ ]]; then
+  ERRORS="${ERRORS} - Time must be in hh:mm format.\n"
+else
+  HOUR="${TIME%%:*}"
+  MIN="${TIME##*:}"
+  if (( HOUR < 0 || HOUR > 23 )); then
+    ERRORS="${ERRORS} - Hour must be between 0 and 23.\n"
+  fi
+  if (( MIN < 0 || MIN > 59 )); then
+    ERRORS="${ERRORS} - Minute must be between 0 and 59.\n"
+  fi
+fi
+
+printErrorsAndExitIfAny
+
+
+# MAIN CODE
+# ════════════════════════════════════════════════════════════════════
+
+NOW="$(date +"%-H:%-M")"
+NOW_HOUR="${NOW/:*/}"
+NOW_MIN="${NOW/*:/}"
+
+if (( ${NOW_HOUR} < ${HOUR} || ( ${NOW_HOUR} == ${HOUR} && ${NOW_MIN} < ${MIN} ) )); then
+  DAY_OFFSET=0
+else
+  DAY_OFFSET=1
+fi
+
+TIME_WAKUP="$(date -d "${DAY_OFFSET} day" +"%Y-%m-%d ${TIME}:00")"
+echo "Wake up time set to:  ${TIME_WAKUP}"
+
+
+# Comment by Hans Deragon (hans@deragon.biz), 2024-08-24 09:09:41 EDT
+#
+# NFS is blocking 'rtcwake', causing it to spill out 'write error'.  We thus
+# stop NFS before calling 'rtcwake' and start it afterwards.
+#
+# See https://askubuntu.com/questions/1026609/rtcwake-write-error/1524308#1524308
+run systemctl stop nfs-server.service
+run /usr/sbin/rtcwake -m mem --date "${TIME_WAKUP}"
+run systemctl start nfs-server.service
+
+# For debugging
+#
+#  - Wake computer in 5 mins
+#
+#    alias wake5min='/usr/sbin/rtcwake -m mem --date "$(date -d "5 min" +"%Y-%m-%d %H:%M:%S")"'
