@@ -1,0 +1,203 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2026 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT="$(dirname "${SCRIPT_PATH_ABS}")"
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+  Schedule recurring wakeups at minute XX:<initial minute> every hour.
+
+  -d               Dry-run.
+  -e               Execute command. Default is dry-run.
+  -i <minute>      Minute in each hour to wake up (0..59). Default: 45
+  -w <minutes>     Minutes to stay awake before scheduling next wakeup. Default: 15
+  -s <minutes>     Alias of -w.
+  -z               Debug logs enabled.
+  -h               Display this help text.
+"
+}
+
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $@"
+    return 0
+  fi
+
+  "$@"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+INITIAL_MINUTE=45
+WAKEUP_DELAY_MINUTES=15
+DRYRUN=1
+DEBUG=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "dei:w:s:zh" OPTCMD; do
+  case "${OPTCMD}" in
+    "d")    DRYRUN=1;;
+    "e")    DRYRUN=0;;
+    "i")    INITIAL_MINUTE="${OPTARG}";;
+    "w")    WAKEUP_DELAY_MINUTES="${OPTARG}";;
+    "s")    WAKEUP_DELAY_MINUTES="${OPTARG}";;
+    "z")    DEBUG=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+WARNINGS=""
+ERRORS=""
+
+# Validate initial minute is an integer between 0 and 59.
+if ! [[ "${INITIAL_MINUTE}" =~ ^[0-9]+$ ]]; then
+  ERRORS="${ERRORS} - Initial minute must be an integer between 0 and 59.\n"
+elif (( 10#${INITIAL_MINUTE} < 0 || 10#${INITIAL_MINUTE} > 59 )); then
+  ERRORS="${ERRORS} - Initial minute must be between 0 and 59.\n"
+fi
+
+# Validate wakeup delay is a non-negative integer.
+if ! [[ "${WAKEUP_DELAY_MINUTES}" =~ ^[0-9]+$ ]]; then
+  ERRORS="${ERRORS} - Wakeup delay must be a non-negative integer.\n"
+fi
+
+INITIAL_MINUTE=$(( 10#${INITIAL_MINUTE} ))
+WAKEUP_DELAY_MINUTES=$(( 10#${WAKEUP_DELAY_MINUTES} ))
+
+HDWAKEUP_COMMAND="${SCRIPT_PATH_ABS}/hdwakeup"
+
+if [ ! -x "${HDWAKEUP_COMMAND}" ]; then
+  ERRORS="${ERRORS} - hdwakeup command not found or not executable at: ${HDWAKEUP_COMMAND}\n"
+fi
+
+printWarnings()
+{
+  if [ ! -z "${WARNINGS}" ]; then
+    echo -e "${ANSI[FG_BLACK_BG_YELLOW]}WARNING:${ANSI[RESET]}  The following warnings were thrown.\n"
+    echo -e "${WARNINGS}"
+  fi
+}
+
+printErrorsAndExitIfAny()
+{
+  printWarnings
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors were detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
+}
+
+printErrorsAndExitIfAny
+
+# ════════════════════════════════════════════════════════════════════
+# FUNCTIONS
+# ════════════════════════════════════════════════════════════════════
+
+calculateNextWakeTime()
+{
+  local now_hour=$(date +%H)
+  local now_minute=$(date +%M)
+  local target_hour=${now_hour}
+
+  # If current minute is at/after target minute, schedule next hour.
+  if (( 10#${now_minute} >= 10#${INITIAL_MINUTE} )); then
+    target_hour=$(( 10#${now_hour} + 1 ))
+  fi
+
+  if (( target_hour >= 24 )); then
+    target_hour=0
+  fi
+
+  printf "%02d:%02d" "${target_hour}" "${INITIAL_MINUTE}"
+}
+
+# ════════════════════════════════════════════════════════════════════
+# MAIN LOGIC
+# ════════════════════════════════════════════════════════════════════
+
+echo -e "${ANSI[GREEN]}${SCRIPT_NAME} started${ANSI[RESET]}"
+if (( DRYRUN )); then
+  echo -e "${ANSI[YELLOW]}Mode: dry-run${ANSI[RESET]}"
+else
+  echo -e "${ANSI[GREEN]}Mode: execute${ANSI[RESET]}"
+fi
+echo -e "${ANSI[BLUE]}Wakeup minute each hour: ${INITIAL_MINUTE}${ANSI[RESET]}"
+echo -e "${ANSI[BLUE]}Stay-awake delay after resume: ${WAKEUP_DELAY_MINUTES} minutes${ANSI[RESET]}"
+echo -e "${ANSI[BLUE]}hdwakeup command: ${HDWAKEUP_COMMAND}${ANSI[RESET]}"
+
+if (( DEBUG )); then
+  echo -e "${ANSI[YELLOW]}Debug mode enabled${ANSI[RESET]}"
+fi
+
+while true; do
+  TARGET_TIME=$(calculateNextWakeTime)
+  
+  if (( DEBUG )); then
+    echo -e "${ANSI[YELLOW]}Current time: $(date '+%H:%M:%S')${ANSI[RESET]}"
+    echo -e "${ANSI[YELLOW]}Next wakeup target: ${TARGET_TIME}${ANSI[RESET]}"
+  fi
+  
+  echo -e "${ANSI[BLUE]}[$(date '+%H:%M:%S')] Executing: ${HDWAKEUP_COMMAND} ${TARGET_TIME}${ANSI[RESET]}"
+  if run "${HDWAKEUP_COMMAND}" "${TARGET_TIME}"; then
+    echo -e "${ANSI[GREEN]}[$(date '+%H:%M:%S')] hdwakeup completed successfully${ANSI[RESET]}"
+  else
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]} [$(date '+%H:%M:%S')] hdwakeup failed with exit code $?"
+  fi
+
+  if (( WAKEUP_DELAY_MINUTES > 0 )); then
+    if (( DEBUG )); then
+      echo -e "${ANSI[YELLOW]}Sleeping for ${WAKEUP_DELAY_MINUTES} minute(s) before scheduling again${ANSI[RESET]}"
+    fi
+    sleep "$(( WAKEUP_DELAY_MINUTES * 60 ))"
+  fi
+done
