@@ -22,14 +22,23 @@ usage()
   echo -e "
 \e[1;37;42m SAFE \e[0m  This command sleeps until the target date is attained.
 
-Usage:  ${SCRIPT_NAME} [-h] <target date>
+Usage:  ${SCRIPT_NAME} [-h] <target date | duration>
 
-<target date> is the target date until this command should sleep too.
+<target date> is the target date/time until this command should sleep.
+<duration>    is an integer followed by a suffix:
+                  s  seconds   e.g. 33s
+                  m  minutes   e.g. 23m
+                  h  hours     e.g. 54h
+                  d  days      e.g. 3d
 
 Exemples:
 
   ${SCRIPT_NAME} 11:34
   ${SCRIPT_NAME} 2025-01-01 23:00
+  ${SCRIPT_NAME} 33s
+  ${SCRIPT_NAME} 23m
+  ${SCRIPT_NAME} 9h
+  ${SCRIPT_NAME} 3d
 
 Options:
 
@@ -81,20 +90,54 @@ fi
 # PROCESSING
 # ────────────────────────────────────────────────────────────────────────────
 
-EPOCH_NOW="$(date +"%s")"
+# Duration suffix support: <integer>(s|m|h|d)
+if [[ "${TIME_TARGET}" =~ ^([0-9]+)([smhd])$ ]]; then
+  AMOUNT="${BASH_REMATCH[1]}"
+  UNIT="${BASH_REMATCH[2]}"
+  case "${UNIT}" in
+    "s")  SLEEP_TIME=$(( AMOUNT ));;          # seconds
+    "m")  SLEEP_TIME=$(( AMOUNT * 60 ));;     # minutes
+    "h")  SLEEP_TIME=$(( AMOUNT * 3600 ));;   # hours
+    "d")  SLEEP_TIME=$(( AMOUNT * 86400 ));;  # days
+  esac
+  EPOCH_NOW="$(date +"%s")"
+  EPOCH_TARGET=$(( EPOCH_NOW + SLEEP_TIME ))
+else
+  EPOCH_NOW="$(date +"%s")"
+fi
 
-SLEEP_TIME=-1
-DAY=0
+# For date targets, calculate EPOCH_TARGET by adding days until time is in future.
+# For duration targets, EPOCH_TARGET was already set above.
+if [[ ! -v EPOCH_TARGET ]]; then
+  SLEEP_TIME=-1
+  DAY=0
 
-# As long as SLEEP_TIME is negative, we add a day and retry.  Thus if it is
-# currently 20:30 but the user entered 18:00, we will sleep until 18:00 the
-# next day.
-while (( SLEEP_TIME < 0 )); do
-  let EPOCH_TARGET=$(date -d "${TIME_TARGET}" +"%s")+DAY*60*60*24
+  # As long as SLEEP_TIME is negative, we add a day and retry.  Thus if it is
+  # currently 20:30 but the user entered 18:00, we will sleep until 18:00 the
+  # next day.
+  while (( SLEEP_TIME < 0 )); do
+    let EPOCH_TARGET=$(date -d "${TIME_TARGET}" +"%s")+DAY*60*60*24
+    SLEEP_TIME=$((EPOCH_TARGET-EPOCH_NOW))
+    let DAY=DAY+1
+  done
+else
   SLEEP_TIME=$((EPOCH_TARGET-EPOCH_NOW))
-  let DAY=DAY+1
-done
+fi
 
-TIME_TARGET="$(date --date="@${EPOCH_TARGET}" +"%Y-%m-%d %H:%M:%S")"
-(( ! QUIET )) && echo "Sleeping until ${TIME_TARGET} (${SLEEP_TIME}s)"
-sleep ${SLEEP_TIME}
+(( ! QUIET )) && echo "Sleeping until $(date --date="@${EPOCH_TARGET}" +"%Y-%m-%d %H:%M:%S") (${SLEEP_TIME}s)"
+
+# Sleep in short intervals (10s) and recheck target time after each interval.
+# This ensures that if the computer wakes from S3 suspension, we do not sleep
+# longer than necessary. After resuming, the wall clock is updated immediately,
+# so we can detect that the target time has already passed and exit without
+# oversleeping.
+while (( $(date +"%s") < EPOCH_TARGET )); do
+  REMAINING=$(( EPOCH_TARGET - $(date +"%s") ))
+  if (( REMAINING <= 10 )); then
+    # Less than 10s remaining: sleep the exact remainder.
+    sleep ${REMAINING}
+  else
+    # More than 10s remaining: sleep 10s and re-check on next iteration.
+    sleep 10
+  fi
+done
