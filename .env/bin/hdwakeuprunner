@@ -49,7 +49,6 @@ ${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
   -i <minute>      Minute in each hour to wake up (0..59). Default: 45
   -w <minutes>     Minutes to stay awake before scheduling next wakeup. Default: 15
   -s <minutes>     Alias of -w.
-  -z               Debug logs enabled.
   -h               Display this help text.
 "
 }
@@ -72,7 +71,6 @@ run()
 INITIAL_MINUTE=45
 WAKEUP_DELAY_MINUTES=15
 DRYRUN=1
-DEBUG=0
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
@@ -83,7 +81,6 @@ while getopts "dei:w:s:zh" OPTCMD; do
     "i")    INITIAL_MINUTE="${OPTARG}";;
     "w")    WAKEUP_DELAY_MINUTES="${OPTARG}";;
     "s")    WAKEUP_DELAY_MINUTES="${OPTARG}";;
-    "z")    DEBUG=1;;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -175,17 +172,13 @@ echo -e "${ANSI[BLUE]}Wakeup minute each hour: ${INITIAL_MINUTE}${ANSI[RESET]}"
 echo -e "${ANSI[BLUE]}Stay-awake delay after resume: ${WAKEUP_DELAY_MINUTES} minutes${ANSI[RESET]}"
 echo -e "${ANSI[BLUE]}hdwakeup command: ${HDWAKEUP_COMMAND}${ANSI[RESET]}"
 
-if (( DEBUG )); then
-  echo -e "${ANSI[YELLOW]}Debug mode enabled${ANSI[RESET]}"
 fi
 
 while true; do
   TARGET_TIME=$(calculateNextWakeTime)
   
-  if (( DEBUG )); then
-    echo -e "${ANSI[YELLOW]}Current time: $(date '+%H:%M:%S')${ANSI[RESET]}"
-    echo -e "${ANSI[YELLOW]}Next wakeup target: ${TARGET_TIME}${ANSI[RESET]}"
-  fi
+  echo -e "${ANSI[YELLOW]}Current time: $(date '+%H:%M:%S')${ANSI[RESET]}"
+  echo -e "${ANSI[YELLOW]}Next wakeup target: ${TARGET_TIME}${ANSI[RESET]}"
   
   echo -e "${ANSI[BLUE]}[$(date '+%H:%M:%S')] Executing: ${HDWAKEUP_COMMAND} ${TARGET_TIME}${ANSI[RESET]}"
   if run "${HDWAKEUP_COMMAND}" "${TARGET_TIME}"; then
@@ -195,9 +188,7 @@ while true; do
   fi
 
   if (( WAKEUP_DELAY_MINUTES > 0 )); then
-    if (( DEBUG )); then
-      echo -e "${ANSI[YELLOW]}Sleeping for ${WAKEUP_DELAY_MINUTES} minute(s) before scheduling again${ANSI[RESET]}"
-    fi
+    echo -e "${ANSI[YELLOW]}Sleeping for ${WAKEUP_DELAY_MINUTES} minute(s) before scheduling again${ANSI[RESET]}"
     sleep "$(( WAKEUP_DELAY_MINUTES * 60 ))"
   fi
 done
