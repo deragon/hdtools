@@ -65,6 +65,7 @@ ${ANSI[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${ANSI[RESET]}
 Usage:  ${SCRIPT_NAME} [-d] [-t <hh:mm>] [hh:mm] [-h]
 
   -d  Dry-run.
+  -s  Simulation mode.  In this mode, the script will sleep during the time the computer would be turned off.
   -t  Wakeup time in hh:mm format (default: 10:30).
   hh:mm  Wakeup time as positional argument.
   -h  Display this help text.
@@ -76,6 +77,13 @@ run()
 {
   if (( DRYRUN )); then
     echo "DRYRUN:  $@"
+  elif (( SIMULATION )); then
+    # In simulation mode, sleep instead of actually suspending the system
+    if [[ "$1" == "/usr/sbin/rtcwake" ]]; then
+      hdsleep "${TIME_WAKUP}"
+    else
+      "$@"
+    fi
   else
     "$@"
   fi
@@ -86,13 +94,15 @@ run()
 # ════════════════════════════════════════════════════════════════════
 
 DRYRUN=0
+SIMULATION=0
 TIME="06:30"
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "dt:h" OPTCMD; do
+while getopts "dst:h" OPTCMD; do
   case "${OPTCMD}" in
     "d")    DRYRUN=1;;  # Run in dry-run mode.
+    "s")    SIMULATION=1;;  # Run in simulation mode.
     "t")    TIME="${OPTARG}";;
     "h"|*)  usage; exit 1;;
   esac
