@@ -164,40 +164,46 @@ calculateNextWakeTime()
 # MAIN LOGIC
 # ════════════════════════════════════════════════════════════════════
 
-echo -e "${ANSI[GREEN]}${SCRIPT_NAME} started${ANSI[RESET]}"
+{
+echo -n "${SCRIPT_NAME} started in "
 if (( DRYRUN )); then
-  echo -e "${ANSI[YELLOW]}Mode: dry-run${ANSI[RESET]}"
+  echo -e "mode: dry-run"
 else
-  echo -e "${ANSI[GREEN]}Mode: execute${ANSI[RESET]}"
+  echo -e "mode: execute"
 fi
 
-cat <<EOM
+if (( DRYRUN )); then
+  EXTRA_ARG="-s"
+else
+  EXTRA_ARG=""
+fi
+
+  cat <<EOM
 Wakeup minute each hour: ${INITIAL_MINUTE}
 Stay-awake delay after resume: ${WAKEUP_DELAY_MINUTES} minutes
 hdwakeup command: ${HDWAKEUP_COMMAND}
 EOM
 
-if (( DRYRUN )); then
-  EXTRA_ARG="-s"
-else 
-  EXTRA_ARG=""
-fi
+  while true; do
+    TARGET_TIME=$(calculateNextWakeTime)
 
-while true; do
-  TARGET_TIME=$(calculateNextWakeTime)
+    echo -e "Current time: $(date '+%H:%M:%S')"
+    echo -e "Next wakeup target: ${TARGET_TIME}"
 
-  echo -e "Current time: $(date '+%H:%M:%S')"
-  echo -e "Next wakeup target: ${TARGET_TIME}"
+    echo -e "Executing: ${HDWAKEUP_COMMAND} ${EXTRA_ARG} ${TARGET_TIME}"
+    if "${HDWAKEUP_COMMAND}" "${EXTRA_ARG}" "${TARGET_TIME}"; then
+      echo -e "hdwakeup completed successfully"
+    else
+      echo -e "ERROR: hdwakeup failed with exit code $?"
+    fi
 
-  echo -e "Executing: ${HDWAKEUP_COMMAND} ${EXTRA_ARG} ${TARGET_TIME}"
-  if "${HDWAKEUP_COMMAND}" "${EXTRA_ARG}" "${TARGET_TIME}"; then
-    echo -e "hdwakeup completed successfully"
-  else
-    echo -e "ERROR: hdwakeup failed with exit code $?"
-  fi
-
-  if (( WAKEUP_DELAY_MINUTES > 0 )); then
-    echo -e "Staying awake for ${WAKEUP_DELAY_MINUTES} minute(s)."
-    hdsleep "${WAKEUP_DELAY_MINUTES}m"
-  fi
+    if (( WAKEUP_DELAY_MINUTES > 0 )); then
+      echo -e "Staying awake for ${WAKEUP_DELAY_MINUTES} minute(s)."
+      hdsleep "${WAKEUP_DELAY_MINUTES}m"
+    fi
+  done
+} 2>&1 | \
+while IFS= read -r LINE; do
+  printf -v NOW '%(%F %T)T'  # ISO 8601 Format, to the seconds.
+  echo "${NOW} ${LINE}"
 done
