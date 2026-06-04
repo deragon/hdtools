@@ -18,6 +18,8 @@ SCRIPT_NAME_BASE="${SCRIPT_NAME}"
 SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
 SCRIPT_PATH_ABS_PARENT="$(dirname "${SCRIPT_PATH_ABS}")"
 
+TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S"
+
 unset ANSI
 if [ -t 1 ] ; then
   # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
@@ -142,13 +144,13 @@ printErrorsAndExitIfAny
 
 calculateNextWakeTime()
 {
-  local now_hour=$(date +%H)
-  local now_minute=$(date +%M)
+  local now_hour=$((10#$(date +%H)))
+  local now_minute=$((10#$(date +%M)))
   local target_hour=${now_hour}
 
   # If current minute is at/after target minute, schedule next hour.
-  if (( 10#${now_minute} >= 10#${INITIAL_MINUTE} )); then
-    target_hour=$(( 10#${now_hour} + 1 ))
+  if (( now_minute >= INITIAL_MINUTE )); then
+    target_hour=$(( target_hour + 1 ))
   fi
 
   if (( target_hour >= 24 )); then
@@ -168,27 +170,34 @@ if (( DRYRUN )); then
 else
   echo -e "${ANSI[GREEN]}Mode: execute${ANSI[RESET]}"
 fi
-echo -e "${ANSI[BLUE]}Wakeup minute each hour: ${INITIAL_MINUTE}${ANSI[RESET]}"
-echo -e "${ANSI[BLUE]}Stay-awake delay after resume: ${WAKEUP_DELAY_MINUTES} minutes${ANSI[RESET]}"
-echo -e "${ANSI[BLUE]}hdwakeup command: ${HDWAKEUP_COMMAND}${ANSI[RESET]}"
 
+cat <<EOM
+Wakeup minute each hour: ${INITIAL_MINUTE}
+Stay-awake delay after resume: ${WAKEUP_DELAY_MINUTES} minutes
+hdwakeup command: ${HDWAKEUP_COMMAND}
+EOM
+
+if (( DRYRUN )); then
+  EXTRA_ARG="-s"
+else 
+  EXTRA_ARG=""
 fi
 
 while true; do
   TARGET_TIME=$(calculateNextWakeTime)
-  
-  echo -e "${ANSI[YELLOW]}Current time: $(date '+%H:%M:%S')${ANSI[RESET]}"
-  echo -e "${ANSI[YELLOW]}Next wakeup target: ${TARGET_TIME}${ANSI[RESET]}"
-  
-  echo -e "${ANSI[BLUE]}[$(date '+%H:%M:%S')] Executing: ${HDWAKEUP_COMMAND} ${TARGET_TIME}${ANSI[RESET]}"
-  if run "${HDWAKEUP_COMMAND}" "${TARGET_TIME}"; then
-    echo -e "${ANSI[GREEN]}[$(date '+%H:%M:%S')] hdwakeup completed successfully${ANSI[RESET]}"
+
+  echo -e "Current time: $(date '+%H:%M:%S')"
+  echo -e "Next wakeup target: ${TARGET_TIME}"
+
+  echo -e "Executing: ${HDWAKEUP_COMMAND} ${EXTRA_ARG} ${TARGET_TIME}"
+  if "${HDWAKEUP_COMMAND}" "${EXTRA_ARG}" "${TARGET_TIME}"; then
+    echo -e "hdwakeup completed successfully"
   else
-    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]} [$(date '+%H:%M:%S')] hdwakeup failed with exit code $?"
+    echo -e "ERROR: hdwakeup failed with exit code $?"
   fi
 
   if (( WAKEUP_DELAY_MINUTES > 0 )); then
-    echo -e "${ANSI[YELLOW]}Sleeping for ${WAKEUP_DELAY_MINUTES} minute(s) before scheduling again${ANSI[RESET]}"
-    sleep "$(( WAKEUP_DELAY_MINUTES * 60 ))"
+    echo -e "Staying awake for ${WAKEUP_DELAY_MINUTES} minute(s)."
+    hdsleep "${WAKEUP_DELAY_MINUTES}m"
   fi
 done
