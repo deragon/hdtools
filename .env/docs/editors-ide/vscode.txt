@@ -32,3 +32,11 @@ MODES WHEN RUNNING UNDER WINDOWS, BUT CONNECTING TO WSL
 
     If your goal is productivity:                 choose WSL: Ubuntu-22.04.
     If your goal is SSH topology/testing parity:  choose SSH-to-WSL: wsl-ubuntu.
+
+
+
+BUGS / FEATURE REQUESTS
+══════════════════════════════════════════════════════════════════════════════
+
+  - Provide ability to ignore all whitespace in diff editor (feature request)
+    https://github.com/microsoft/vscode/issues/43026
