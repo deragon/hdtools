@@ -116,7 +116,7 @@ fi
 
 if ! run "git merge --ff-only \"${REMOTE_AND_BRANCH}\""; then
   if [[ -z "${REMOTE}" ]]; then
-    CMD="git pull --rebase \"${BRANCH}\""
+    CMD="git rebase \"${BRANCH}\""
   else
     CMD="git pull --rebase \"${REMOTE}\" \"${BRANCH}\""
   fi
