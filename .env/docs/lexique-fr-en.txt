@@ -88,6 +88,8 @@ ACRONYMS
   ITIL                      -> (formerly Information Technology Infrastructure Library)
   RBAC                      -> Role-based access control
   IdP                       -> Identity Provider
+  MANGOS                    -> Meta, Anthropic, Nvidia, Google, OpenAI, SpaceX
+  FAANG                     -> Facebook, Amazon, Apple, Netflix, Google
 
 
 
