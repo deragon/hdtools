@@ -78,6 +78,7 @@ COMMANDES
 
     To undo a reset:
 
+      git reset origin/main         # Whip any commits made after origin/main, but keep all local changes including those part of the commits being lost.
       git reset --hard              # Whip all local changes.
       git reset --hard origin/main  # Whip all local changes and sync with remote.  Stronger than 'git pull --force'.
 
