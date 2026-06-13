@@ -34,6 +34,7 @@ Usage:  ${SCRIPT_NAME} [-l|-e] [-f] [-n <# of DIRECTORIES>] [-m <maxdepth>] [-h]
   -e  earliest
   -m  <maxdepth> (default ∞)
   -f  Format of stats
+  -i  Filter out paths matching ignore patterns (default: .git, .venv)
   -p  Show only paths, one per line
   -n  Number of DIRECTORIES to show (default 20)
       Set to 0 for NO LIMITS.
@@ -49,6 +50,12 @@ NUMBER="20"
 TYPE="latest"
 FILENAMES_ONLY_FILTER=""
 MAXDEPTH="255"
+FILTER_IGNORE=0
+IGNORE_PATTERNS=(
+  "\\.git"
+  "\\.venv"
+  "\d{8}T\d+" # ISO 8601 timestamps, e.g. 2024-06-30T12:34:56.789Z
+)
 
 # 'stat' format
 # ────────────────────────────────────────────────────────────────────
@@ -71,8 +78,9 @@ FORMAT='%y %12s "%n"'
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "lf:pen:m:h" OPTCMD; do
+while getopts "ilf:pen:m:h" OPTCMD; do
   case "${OPTCMD}" in
+    "i")    FILTER_IGNORE=1;;
     "l")    TYPE="latest";;
     "p")    FORMAT="%n";;
     "f")    FORMAT="${OPTARG}";;
@@ -132,6 +140,10 @@ fi
 #   output and if "${FORMAT}" includes human-readable dates, nanoseconds and
 #   the timezone are removed from them.
 FILES="$(find "${DIRECTORIES[@]}" -maxdepth ${MAXDEPTH} -type f)"
+if (( FILTER_IGNORE == 1 )) && [[ -n "${FILES}" ]]; then
+  IGNORE_REGEX="$(IFS='|'; echo "${IGNORE_PATTERNS[*]}")"
+  FILES="$(printf '%s\n' "${FILES}" | IGNORE_REGEX="${IGNORE_REGEX}" perl -ne 'my $pattern = $ENV{IGNORE_REGEX}; print unless /$pattern/;')"
+fi
 if [[ -z "${FILES}" ]]; then
   echo "No files found in directories provided."
 else
