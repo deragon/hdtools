@@ -24,6 +24,10 @@ OFF SCREEN WINDOW
 MISCELLANEOUS
 ══════════════════════════════════════════════════════════════════════════════
 
+  - services.msc  # Windows Services.
+
+  - taskmgr       # Task manager.
+
   - To execute a PowerShell script (the script must finish with .ps1 extension):
 
       powershell -File <Windows formatted path>.ps1
