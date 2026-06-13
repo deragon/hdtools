@@ -172,10 +172,10 @@ STASH
          removed with 'git stash pop'.
 
   git stash list
-  git stash pop              # Apply stash@{0} and drop it from the stack.
   git stash show             # Show file affected in stash@{0}.
-  git stash save "Message"   # Saving data temporally.
+  git stash pop              # Apply stash@{0} and drop it from the stack.
   git stash apply            # Apply latest stash
+  git stash save "Message"   # Saving data temporally.
 
 
 
