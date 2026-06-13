@@ -3,13 +3,13 @@ UNICODE UTF-8 UTF8
 
   💯  Mon 2₵.  My 2₵.
   👍 😀 😉 😁 😂 😛 😜 😏 😎 🙄 😖 😠 😱 😢 😭 😲 🤯 😡 🙃 👶
-  ⚠️  Warning  ⚡ Electricity      🚨 Alarm    🔧 Wrench
+  ⚠️  Warning  ⚡ Electricity      🚨 Alarm    🔧 Wrench    ⚕😷🦷  Medic
   💤 Sleep    🛂 Control/Passport 🏫 School (to tag examples)  🔑 Key
   🧱 Brick wall/Blocked           🚧 Construction/Blocked
-  🐔👍 (pull request)             ❌💀 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
+  🐔👍 (pull request)             ❌💀🪦 Dead/Abandoned  ⏼ Poweroff  ⏻ Poweron
   👍👎  ✅ ✓ ✔ 🗸 ⍻ ☑ 🗹 🎯         ☕🌞🎆🎉🎺🎊🥁🌈🥀🌻 Party/celebration
   🚀🍏🌟🆕 Feature  🪰 Bug  𒁈  CPU
-  ❄️ Snowflake  🏦 Bank/vault
+  ❄️ Snowflake  🏦 Bank/vault  🔍 Magnifier/Search
 
   Circles                               Squares
 
@@ -27,8 +27,7 @@ UNICODE UTF-8 UTF8
   ➜ 279C   ➔ 2794    ➟ 279F    ➤ 27A4    ➥ 27A6 ↳ ➾
   • 2022   ‣ 2023    ⚪26AA    ⚫26AB    ○ 25CF    ● 25CB    ▶ 25B6
   × 00D7   ÷ 00F7    ≠ 2260    ≈ 2248    ≤ 2264    ≥ 2265    ¤ 00A4
-  π¶
-  †‡ (daggers)
+  π¶…“”  †‡ (daggers)
   📁(folder) 1F4C1   № ou Nº (Numéro) 【】
 
   Copyright, Trademark: 🄫 🄬  @ , © ℗ ® ™ ℠ 🅪 🄮 Ⓜ
