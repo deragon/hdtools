@@ -1,0 +1,4 @@
+This is a long comment block line that should be wrapped cleanly in both editors.
+This is a second long comment line that should be wrapped with comment leaders kept.
+# This is a long comment block line that should be wrapped cleanly in both editors.
+# This is a second long comment line that should be wrapped with comment leaders kept.

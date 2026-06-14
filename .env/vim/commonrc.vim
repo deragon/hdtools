@@ -722,17 +722,28 @@ filetype indent on
 "
 " For tips:  https://stackoverflow.com/questions/7338214/nicely-formatting-long-comments-in-vim
 "
-set formatoptions+=cro
-" <Leader>gg 'g' stands for 'git', to follow convention documented at:
-"        http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
-nnoremap <Leader>wg :set textwidth=72<CR>gww:set textwidth=0<CR>
-nnoremap <Leader>w5 :set textwidth=50<CR>gww:set textwidth=0<CR>
-nnoremap <Leader>w6 :set textwidth=60<CR>gww:set textwidth=0<CR>
-nnoremap <Leader>w8 :set textwidth=80<CR>gww:set textwidth=0<CR>
-" Center for 80 char screen
-nnoremap <Leader>wc :ce 80<CR>
-MapToggle <Leader>ww wrap
+" Terminology:  comment leader == comment string, like #, //, -- and more...
+"
+"   c: Auto-wrap comments using textwidth.
+"   r: Continue comment leader when pressing Enter in Insert mode.
+"   o: Continue comment leader when using o/O.
+"   n: Recognize numbered lists for proper formatting/indent.
+"   q: Allow gq formatting on comments.
+"   j: Remove comment leader when joining lines.
+"
+set formatoptions+=cronqj
 
+set autoindent
+
+" Recognize bullet lists (-, *, +, ∙) and numbered lists for proper hanging indent
+set formatlistpat=^\\s*\\(\\d\\+[\\]:.)}\\t\ ]\\|[-*+∙]\\)\\s*
+
+" Recognize # as a comment leader so gq properly reformats # comment blocks
+set comments+=b:#
+
+if filereadable(expand("$HDVIM/wrap.vim"))
+  execute "source" expand("$HDVIM/wrap.vim")
+endif
 
 
 

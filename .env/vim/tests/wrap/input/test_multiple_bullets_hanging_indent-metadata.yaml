@@ -1,0 +1,12 @@
+file_name: bullet.txt
+steps:
+  - cursor_line: 1
+    width: 60
+  - cursor_line: 4
+    width: 72
+  - cursor_line: 9
+    width: 72
+  - cursor_line: 11
+    width: 72
+  - cursor_line: 14
+    width: 50

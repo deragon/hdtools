@@ -1,0 +1,6 @@
+file_name: inline-comment.sh
+steps:
+  - cursor_line: 1
+    width: 60
+  - cursor_line: 4
+    width: 72

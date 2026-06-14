@@ -1,0 +1,3 @@
+rm -rf "/tmp/data" # WARNING this is a very long warning message that should wrap and stay readable.
+# This is a long comment block line that wraps with the second line below properly, without affecting the command below.
+# This is a second long comment block line which wraps with the first comment line above.

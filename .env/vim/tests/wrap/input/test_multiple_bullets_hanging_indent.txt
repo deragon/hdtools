@@ -1,0 +1,9 @@
+Some text outside the bullet zone.  Must be wrapped too properly.
+
+- First bullet item that is intentionally long so the line wraps and keeps hanging indentation.
+- Second bullet item that is intentionally long so the line wraps and keeps hanging indentation.
+
+  This bullet has multiple lines.  This bullet has multiple lines.  This bullet has multiple lines.  This bullet has multiple lines.
+- Third bullet item that is intentionally long so the line wraps and keeps hanging indentation.
+
+Some text outside the bullet zone.  Must be wrapped too properly to 50.

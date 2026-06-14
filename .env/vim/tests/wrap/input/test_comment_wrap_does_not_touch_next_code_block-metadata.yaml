@@ -1,0 +1,4 @@
+file_name: comment-then-code.py
+steps:
+  - cursor_line: 1
+    width: 60

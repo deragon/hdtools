@@ -1,0 +1,7 @@
+This is a very long line to test wrapping in a git commit message body and it must wrap while preserving the comment below as is.
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Changes to be committed:
+#	new file:   wrap.test.txt

@@ -1,0 +1,5 @@
+# This comment paragraph is long and should wrap at a
+# smaller width for readability The second line is also long
+# and should stay part of the same wrapped paragraph
+
+VERY_LONG_CODE_LINE = "postgresql+psycopg2://admin:secret_password@localhost:5432/prod?sslmode=require"

@@ -1,0 +1,9 @@
+file_name: comment-block.py
+
+steps:
+  - cursor_line: 1
+    width: 72
+
+steps:
+  - cursor_line: 2
+    width: 72

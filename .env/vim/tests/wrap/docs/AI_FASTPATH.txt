@@ -1,0 +1,91 @@
+AI FAST PATH FOR WRAP TESTS
+══════════════════════════════════════════════════════════════════════════════
+
+Goal
+──────────────────────────────────────────────────────────────────────────────
+
+Understand and validate the wrap behavior in the fewest steps possible.
+
+
+Primary File Under Test
+──────────────────────────────────────────────────────────────────────────────
+
+  /home/derah/.hans.deragon/.env/vim/wrap.vim
+
+
+Primary Command
+──────────────────────────────────────────────────────────────────────────────
+
+Run this first unless you are debugging a single fixture:
+
+  /home/derah/.hans.deragon/.env/vim/tests/wrap/run_wrap_regression.sh
+
+That command already:
+
+  1. Creates writable copies of all fixtures.
+  2. Runs both nvim and vim.
+  3. Reuses the existing per-file Vimscript runners.
+  4. Verifies Vim and Neovim outputs match.
+  5. Verifies COMMIT_EDITMSG wraps the body but preserves the comment block.
+
+
+Fixture Inventory
+──────────────────────────────────────────────────────────────────────────────
+
+  wrap.test.txt
+    Plain text wrapping cases.
+
+  wrap.test.python.py
+    Python comments and bullet-like text.
+
+  wrap.test.bash.sh
+    Bash comments and bullet-like text.
+
+  COMMIT_EDITMSG
+    Git commit message special case.  This is the highest-risk fixture because
+    the body must wrap to 72 columns while the '#' metadata block must not be
+    reformatted.
+
+
+Execution Model
+──────────────────────────────────────────────────────────────────────────────
+
+Per-file automation is implemented in these scripts:
+
+  run_wrap_tests.vim
+  run_wrap_tests.python.vim
+  run_wrap_tests.bash.vim
+
+Those scripts assume:
+
+  - a writable copy of the fixture
+  - commonrc.vim is sourced
+  - wrap.vim is pulled in through commonrc.vim
+
+The shell runner handles all of that already.
+
+
+Efficient Debugging Order
+──────────────────────────────────────────────────────────────────────────────
+
+  1. Run run_wrap_regression.sh.
+  2. If it fails on text/python/bash, compare:
+
+       .tmp/run-wrap-regression/nvim/<file>
+       .tmp/run-wrap-regression/vim/<file>
+
+  3. If it fails on COMMIT_EDITMSG, inspect:
+
+       .tmp/run-wrap-regression/nvim/COMMIT_EDITMSG
+       .tmp/run-wrap-regression/vim/COMMIT_EDITMSG
+
+  4. Only if needed, run the individual headless editor command manually.
+
+
+Important Constraints
+──────────────────────────────────────────────────────────────────────────────
+
+  - Do not edit the read-only source fixtures directly.
+  - Do not rely on older ad hoc files in .tmp/ for truth.
+  - COMMIT_EDITMSG must keep the exact filename COMMIT_EDITMSG during testing.
+  - A good fix must work in both vim and nvim, not only one editor.
