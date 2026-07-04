@@ -488,7 +488,8 @@ COMMITS
   UNDO / REVERT COMMIT
   ────────────────────────────────────────────────────────────────────────────
 
-    git reset HEAD~  # Undo last commit, totally removed.
+    git reset HEAD~  # SAFE - Undo/remove last commit.  Changes part of commit
+                     # remain locally; they are not lost.
 
     Revert an old commit, i.e. undo what that specific commit did:
 
