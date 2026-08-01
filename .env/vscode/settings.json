@@ -161,7 +161,7 @@
   "atlascode.bitbucket.enabled": false,
   "chat.mcp.gallery.enabled": true,
   "chat.mcp.autostart": "never",
-  "workbench.colorTheme": "Default Dark+",
+  "workbench.colorTheme": "Dark+",
   "remote.autoForwardPortsSource": "hybrid",
   "files.trimTrailingWhitespace": false,
   "files.associations": {
