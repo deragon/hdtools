@@ -21,10 +21,27 @@ SCRIPT_PATH_ABS_PARENT=$(dirname "${SCRIPT_PATH_ABS}")
 TIMESTAMP_START=$(date +"%s") # Seconds since epoch.
 TIMESTAMP_FORMAT_HUMAN="%Y-%m-%d %H:%M:%S %N"
 
+# ANSI colors
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["RED"]="\e[31m"
+  )
+fi
+
 usage()
 {
   cat <<EOM
-Usage:  ${SCRIPT_NAME} [-<option>]+ <file or directory>+ | [-d] | [-h]
+Usage:  ${SCRIPT_NAME} [-<option>]+ <file or directory>+ | [-C <days|ISO-date>] [-h]
 
 Copies the files or directories passed as parameters, named as:
 
@@ -35,10 +52,11 @@ process.  Use -c to tag the file with the current time instead.
 
 OR
 
-If -d is used, create a directory with the ISO 8601 timestamp.
+If -f is used, create a directory with the ISO 8601 timestamp.
 
+BACKUP OPERATIONS:
   -m              Rename / move instead of copying the directories.
-  -d              Create directory using the generated ISO 8601 timestamp.
+  -f              Create directory using the generated ISO 8601 timestamp.
 
   -c              Current time being used as timestamp instead of its
                   'modification' time.
@@ -51,10 +69,28 @@ If -d is used, create a directory with the ISO 8601 timestamp.
   -s <suffix>     Suffix filename with <suffix>.  Note that the suffix.
                   will show up before the extension of the file.
   -e <suffix>     Suffix filename after the extension with <suffix>.
-  -f              Add current host FQDN at begning of the file.
+  -F              Add current host FQDN at begning of the file.
+
+CLEANUP OPERATIONS:
+  -C <arg>        Delete backups older than specified time.
+                  <arg> can be:
+                    - A number of days (e.g., 7 for 7 days ago)
+                    - An ISO date (e.g., 2026-05-06 or 2026-05-06T12:30:00)
+
+GENERAL:
+  -d              Dry-run mode. Show what would be done without actually doing it.
 
   -h              Display this help text.
 EOM
+}
+
+run()
+{
+  if (( DRYRUN )); then
+    echo "DRYRUN:  $*"
+  else
+    "$@"
+  fi
 }
 
 # ARGUMENT PARSING
@@ -67,22 +103,27 @@ ZIP=0
 TIMESTAMP_TYPE="file"
 TIMESTAMP_ACTIVATED=1
 FQDN=""
+CLEANUP_MODE=0
+CLEANUP_CUTOFF=""
+DRYRUN=0
 unset PREFIX SUFFIX ENDSUFFIX
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "bzcfdmnp:s:e:h" OPTCMD; do
+while getopts "bzcfdmnp:s:e:C:Fh" OPTCMD; do
   case "${OPTCMD}" in
     "b")    BTAR=1;;
     "z")    ZIP=1;;
     "c")    TIMESTAMP_TYPE="now";;
-    "f")    FQDN="$(hostname -f)-";;
+    "F")    FQDN="$(hostname -f)-";;
     "p")    PREFIX="${OPTARG}-";;
     "s")    SUFFIX="-${OPTARG}";;
     "e")    ENDSUFFIX=".${OPTARG}";;
-    "d")    MAKEDIR=1;;
+    "f")    MAKEDIR=1;;
     "m")    MOVE=1;;
     "n")    TIMESTAMP_ACTIVATED=0;;
+    "d")    DRYRUN=1;;
+    "C")    CLEANUP_MODE=1; CLEANUP_CUTOFF="${OPTARG}";;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -98,26 +139,34 @@ FILES=("$@") # If you want the number of elements of $@, use $#
 
 ERRORS=""
 
-if ((MAKEDIR == 0 && ${#FILES[*]} == 0)); then
-  ERRORS="${ERRORS} - You must provide at least one file to backup.\n"
-fi
-
-for FILE_SRC in ${FILES[@]}; do
-  if [[ ! -e "${FILE_SRC}" ]]; then
-    ERRORS="${ERRORS} - File does not exists:  '${FILE_SRC}'\n"
+if ((CLEANUP_MODE)); then
+  # Cleanup mode validation
+  if [ -z "${CLEANUP_CUTOFF}" ]; then
+    ERRORS="${ERRORS} - Cleanup mode requires a cutoff time argument.\n"
   fi
-done
+else
+  # Backup mode validation
+  if ((MAKEDIR == 0 && ${#FILES[*]} == 0)); then
+    ERRORS="${ERRORS} - You must provide at least one file to backup.\n"
+  fi
 
-if [ "${BTAR}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
-  ERRORS="${ERRORS} - -b and -e options are not compatible.  Choose one or the other.\n"
-fi
+  for FILE_SRC in ${FILES[@]}; do
+    if [[ ! -e "${FILE_SRC}" ]]; then
+      ERRORS="${ERRORS} - File does not exists:  '${FILE_SRC}'\n"
+    fi
+  done
 
-if [ "${ZIP}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
-  ERRORS="${ERRORS} - -z and -e options are not compatible.  Choose one or the other.\n"
+  if [ "${BTAR}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
+    ERRORS="${ERRORS} - -b and -e options are not compatible.  Choose one or the other.\n"
+  fi
+
+  if [ "${ZIP}" == "1" -a ! -z "${ENDSUFFIX}" ]; then
+    ERRORS="${ERRORS} - -z and -e options are not compatible.  Choose one or the other.\n"
+  fi
 fi
 
 if [ ! -z "${ERRORS}" ]; then
-  echo -e "\e[1;37;41mERROR:\e[0m  The following errors where detected.\n"
+  echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
   echo -e "${ERRORS}"
   echo -e "Command aborted."
   exit 1
@@ -125,12 +174,120 @@ fi
 
 
 
+# UTILITY FUNCTIONS
+# ════════════════════════════════════════════════════════════════════
+
+# Parse cutoff time (days or ISO date) and return epoch timestamp
+parseCutoffTime()
+{
+  local CUTOFF="${1}"
+  local CUTOFF_EPOCH
+
+  # Check if it's a number (days)
+  if [[ "${CUTOFF}" =~ ^[0-9]+$ ]]; then
+    # It's a number of days ago
+    CUTOFF_EPOCH=$(date -d "${CUTOFF} days ago" +"%s")
+  else
+    # Try to parse as ISO date/datetime
+    if [[ "${CUTOFF}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
+      CUTOFF_EPOCH=$(date -d "${CUTOFF}" +"%s" 2>/dev/null)
+      if [ $? -ne 0 ]; then
+        echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  Invalid ISO date format: '${CUTOFF}'\n"
+        exit 1
+      fi
+    else
+      echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  Invalid cutoff format: '${CUTOFF}'\n"
+      echo -e "  Expected: number of days (e.g., 7) or ISO date (e.g., 2026-05-06)\n"
+      exit 1
+    fi
+  fi
+
+  echo "${CUTOFF_EPOCH}"
+}
+
+extractBackupTimestamp()
+{
+  local ITEM_NAME="${1}"
+  local ITEM_TIMESTAMP_RAW
+
+  ITEM_TIMESTAMP_RAW="$(sed -n 's/.*-\([0-9]\{8\}T[0-9]\{6\}\).*/\1/p' <<< "${ITEM_NAME}" | tail -n 1)"
+  if [ -z "${ITEM_TIMESTAMP_RAW}" ]; then
+    return 1
+  fi
+
+  date -d "${ITEM_TIMESTAMP_RAW:0:4}-${ITEM_TIMESTAMP_RAW:4:2}-${ITEM_TIMESTAMP_RAW:6:2} ${ITEM_TIMESTAMP_RAW:9:2}:${ITEM_TIMESTAMP_RAW:11:2}:${ITEM_TIMESTAMP_RAW:13:2}" +"%s" 2>/dev/null
+}
+
+# Delete backups older than cutoff time
+deleteOldBackups()
+{
+  local CUTOFF_EPOCH=$(parseCutoffTime "${CLEANUP_CUTOFF}")
+  local CUTOFF_DATE=$(date -d @"${CUTOFF_EPOCH}" +"%Y-%m-%d %H:%M:%S")
+  local DELETED_COUNT=0
+  local KEPT_COUNT=0
+  local ITEM_TIMESTAMP_EPOCH
+  local ITEM_DATE
+
+  echo "Searching for backups older than ${CUTOFF_DATE}..."
+
+  # Find all potential backup files/directories in current directory
+  # Pattern: *-YYYYMMDDTHHMMSS* or *-YYYYMMDDTHHMMSS*.tar.bz2 or *-YYYYMMDDTHHMMSS*.zip
+  shopt -s nullglob
+  local ITEMS=(*-[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]T[0-2][0-9][0-5][0-9][0-5][0-9]*)
+
+  if [ ${#ITEMS[@]} -eq 0 ]; then
+    echo -e "${ANSI[YELLOW]}No backups found matching the pattern.${ANSI[RESET]}"
+    return 0
+  fi
+
+  for ITEM in "${ITEMS[@]}"; do
+    ITEM_TIMESTAMP_EPOCH="$(extractBackupTimestamp "${ITEM}")"
+    if [ $? -ne 0 ] || [ -z "${ITEM_TIMESTAMP_EPOCH}" ]; then
+      echo -e "${ANSI[YELLOW]}Warning: Could not parse backup timestamp from '${ITEM}'${ANSI[RESET]}"
+      continue
+    fi
+
+    ITEM_DATE="$(date -d @"${ITEM_TIMESTAMP_EPOCH}" +"%Y-%m-%d %H:%M:%S")"
+
+    if [ "${ITEM_TIMESTAMP_EPOCH}" -lt "${CUTOFF_EPOCH}" ]; then
+      ((DELETED_COUNT+=1))
+
+      if (( DRYRUN )); then
+        echo -e "${ANSI[RED]}[DRY-RUN]${ANSI[RESET]} Would delete: ${ITEM} (${ITEM_DATE})"
+      else
+        echo -e "${ANSI[RED]}Deleting:${ANSI[RESET]} ${ITEM} (${ITEM_DATE})"
+        run rm -rf "${ITEM}"
+        if [ $? -eq 0 ]; then
+          echo -e "${ANSI[GREEN]}✓ Deleted${ANSI[RESET]}"
+        else
+          echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  Failed to delete '${ITEM}'"
+        fi
+      fi
+    else
+      ((KEPT_COUNT+=1))
+      echo -e "${ANSI[GREEN]}[KEEP]${ANSI[RESET]}  ${ITEM} (${ITEM_DATE})"
+    fi
+  done
+
+  echo ""
+  if (( DRYRUN )); then
+    echo -e "${ANSI[YELLOW]}[DRY-RUN]${ANSI[RESET]}  Would delete ${DELETED_COUNT} backup(s), keeping ${KEPT_COUNT}."
+  else
+    echo -e "Deleted ${DELETED_COUNT} backup(s), kept ${KEPT_COUNT}."
+  fi
+}
+
 # PROCESSING
 # ════════════════════════════════════════════════════════════════════
 
+if (( CLEANUP_MODE )); then
+  deleteOldBackups
+  exit 0
+fi
+
 if (( MAKEDIR )); then
   DIR="$(date +"%Y%m%dT%H%M%S")"
-  mkdir -p "${DIR}"
+  run mkdir -p "${DIR}"
   echo "cd '${DIR}'"
   exit 0
 fi
@@ -156,22 +313,22 @@ if (( BTAR || ZIP )); then
   FILE_DST_BASENAME="${PREFIX}${FQDN}${FILES[0]}${TIMESTAMP_FILE}${SUFFIX}"
   if (( BTAR )); then
     FILE_DST="${FILE_DST_BASENAME}.tar.bz2"
-    tar cvjf "${FILE_DST}" ${FILES[@]}
+    run tar cvjf "${FILE_DST}" ${FILES[@]}
   else
     FILE_DST="${FILE_DST_BASENAME}.zip"
-    zip -r "${FILE_DST}" ${FILES[@]}
+    run zip -r "${FILE_DST}" ${FILES[@]}
   fi
   echo "Created:  ${FILE_DST}"
   if ((MOVE)); then
     echo "Deleting ${FILES[@]} since move option has been provided."
-    rm -rf ${FILES[@]}
+    run rm -rf ${FILES[@]}
   fi
 else
   for FILE_SRC in ${FILES[@]}; do
 
     FILE_SRC="${FILE_SRC%\/}"  # Remove any trailing '/'.
     if [ ! -e "${FILE_SRC}" ]; then
-      echo -e "\e[1;37;41mFILE NOT FOUND\e[0m:  ${FILE_SRC}."
+      echo -e "${ANSI[FG_WHITE_BG_RED]}FILE NOT FOUND${ANSI[RESET]}:  ${FILE_SRC}."
       continue
     fi
 
@@ -224,10 +381,10 @@ else
     else
       if (( ${MOVE} )); then
         echo "Moving ${FILE_SRC} ▶▶ ${FILE_DST}"
-        mv "${FILE_SRC}" "${FILE_DST}"
+        run mv "${FILE_SRC}" "${FILE_DST}"
       else
         echo "Copying ${FILE_SRC} ▶▶ ${FILE_DST}"
-        cp -rp "${FILE_SRC}" "${FILE_DST}"
+        run cp -rp "${FILE_SRC}" "${FILE_DST}"
       fi
     fi
 
