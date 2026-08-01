@@ -345,7 +345,7 @@ unset HD_TMP_PYTHON_VIRTUALENVWRAPPER_PATH
 # Does not work well.  Need work
 #alias hdpyx='python -m trace --ignore-dir "\$\(python -c \'import os, sys; print\(os.pathsep.join\(sys.path[1:]\)\)\'\)" --trace'
 
-hdpyvenv() {
+hdpythonvenvsource() {
   # Optional parameter: starting directory for the search (defaults to $PWD)
   local start_dir
   start_dir="${1:-$PWD}"
