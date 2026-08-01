@@ -1,7 +1,7 @@
 // Location of this file:
 //
-//   Linux:    /home/derah/.config/Code/User/settings.json
-//   Windows:  C:\Users\derah\AppData\Roaming\Code\User\settings.json
+//   Linux:    /home/<myuserid>/.config/Code/User/settings.json
+//   Windows:  C:\Users\<myuserid>\AppData\Roaming\Code\User\settings.json
 {
   "workbench.colorCustomizations": {
     "editor.selectionBackground": "#0039f5",
