@@ -19,6 +19,9 @@ For new Python executable scripts, especially under .env/bin:
     required parts of the script structure, not optional presentation.
   - The ANSI mapping may be reduced to only the entries actually used by the
     script, as long as the required colored output remains implemented.
+  - Do NOT implement dry-run (-d) and execution (-e) options unless the user
+    explicitly requests them. These options should only be added when the user
+    specifically asks for this functionality.
   - Do not replace that structure with a simplified custom CLI pattern unless
     the user explicitly asks for an exception.
 
@@ -30,6 +33,9 @@ For new Bash executable scripts, especially under .env/bin:
     required parts of the script structure, not optional presentation.
   - The ANSI mapping may be reduced to only the entries actually used by the
     script, as long as the required colored output remains implemented.
+  - Do NOT implement dry-run (-d) and execution (-e) options unless the user
+    explicitly requests them. These options should only be added when the user
+    specifically asks for this functionality.
   - Do not replace that structure with a simplified custom CLI pattern unless
     the user explicitly asks for an exception.
 

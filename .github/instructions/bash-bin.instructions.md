@@ -10,6 +10,7 @@ When the target file in .env/bin is a Bash executable script:
 - Treat the template ANSI definitions and colored warning or error output as required parts of new script creation, not optional presentation.
 - The ANSI mapping may be shortened to only the entries actually used by the script, provided the required colored output is still implemented.
 - Do not replace the template approach with an ad hoc CLI pattern.
+- **IMPORTANT: Do NOT implement dry-run (-d) and execution (-e) options unless the user explicitly requests them.** These options should only be added when the user specifically asks for this functionality.
 - Keep the script language in English.
 
 If the file is not a Bash executable script, this instruction does not apply.

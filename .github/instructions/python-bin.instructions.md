@@ -10,6 +10,7 @@ When the target file in .env/bin is a Python executable script:
 - Treat the template ANSI constants and colored status or error formatting as required parts of new script creation, not optional presentation.
 - The ANSI mapping may be shortened to only the entries actually used by the script, provided the required colored output is still implemented.
 - Reuse the template's style for argument parsing and parameter validation.
+- **IMPORTANT: Do NOT implement dry-run (-d) and execution (-e) options unless the user explicitly requests them.** These options should only be added when the user specifically asks for this functionality.
 - Keep the script language in English.
 - The scripts should never need a virtual Python environment.  They must solely depend on the system's python interpreter and the modules it has.  You could suggest modules that can be installed
   with the system software installer (apt, dnf, etc..).
