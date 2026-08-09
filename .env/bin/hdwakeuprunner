@@ -51,6 +51,8 @@ ${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
   -i <minute>      Minute in each hour to wake up (0..59). Default: 45
   -w <minutes>     Minutes to stay awake before scheduling next wakeup. Default: 15
   -s <minutes>     Alias of -w.
+  -n [HH:MM-HH:MM] No wakeup window. Default: 21:00-06:45.
+                   Pass -n without value to disable no-wakeup jumps.
   -h               Display this help text.
 "
 }
@@ -73,16 +75,29 @@ run()
 INITIAL_MINUTE=45
 WAKEUP_DELAY_MINUTES=15
 DRYRUN=1
+NOWAKEUP_WINDOW_DEFAULT="21:00-06:45"
+NOWAKEUP_WINDOW="${NOWAKEUP_WINDOW_DEFAULT}"
+NOWAKEUP_WINDOW_ENABLED=1
+WARNINGS=""
+ERRORS=""
 
 OPTIND=1 # Normally not required, except if the script is sourced.
          # Better be safe than sorry.
-while getopts "dei:w:s:zh" OPTCMD; do
+while getopts ":dei:w:s:n:zh" OPTCMD; do
   case "${OPTCMD}" in
     "d")    DRYRUN=1;;
     "e")    DRYRUN=0;;
     "i")    INITIAL_MINUTE="${OPTARG}";;
     "w")    WAKEUP_DELAY_MINUTES="${OPTARG}";;
     "s")    WAKEUP_DELAY_MINUTES="${OPTARG}";;
+    "n")    NOWAKEUP_WINDOW="${OPTARG}"; NOWAKEUP_WINDOW_ENABLED=1;;
+    ":")
+      if [ "${OPTARG}" == "n" ]; then
+        NOWAKEUP_WINDOW_ENABLED=0
+      else
+        ERRORS="${ERRORS} - Option -${OPTARG} requires a value.\n"
+      fi
+      ;;
     "h"|*)  usage; exit 1;;
   esac
 done
@@ -93,8 +108,6 @@ shift $((${OPTIND} - 1))  # Remove options from $@
 # VALIDATION
 # ════════════════════════════════════════════════════════════════════
 
-WARNINGS=""
-ERRORS=""
 
 # Validate initial minute is an integer between 0 and 59.
 if ! [[ "${INITIAL_MINUTE}" =~ ^[0-9]+$ ]]; then
@@ -106,6 +119,27 @@ fi
 # Validate wakeup delay is a non-negative integer.
 if ! [[ "${WAKEUP_DELAY_MINUTES}" =~ ^[0-9]+$ ]]; then
   ERRORS="${ERRORS} - Wakeup delay must be a non-negative integer.\n"
+fi
+
+if (( NOWAKEUP_WINDOW_ENABLED )); then
+  if [[ ! "${NOWAKEUP_WINDOW}" =~ ^([0-1][0-9]|2[0-3]):[0-5][0-9]-([0-1][0-9]|2[0-3]):[0-5][0-9]$ ]]; then
+    ERRORS="${ERRORS} - No-wakeup window must be in HH:MM-HH:MM format (24h).\n"
+  else
+    NOWAKEUP_START_TIME="${NOWAKEUP_WINDOW%-*}"
+    NOWAKEUP_END_TIME="${NOWAKEUP_WINDOW#*-}"
+
+    NOWAKEUP_START_HOUR=${NOWAKEUP_START_TIME%:*}
+    NOWAKEUP_START_MINUTE=${NOWAKEUP_START_TIME#*:}
+    NOWAKEUP_END_HOUR=${NOWAKEUP_END_TIME%:*}
+    NOWAKEUP_END_MINUTE=${NOWAKEUP_END_TIME#*:}
+
+    NOWAKEUP_START_TOTAL_MINUTES=$(( 10#${NOWAKEUP_START_HOUR} * 60 + 10#${NOWAKEUP_START_MINUTE} ))
+    NOWAKEUP_END_TOTAL_MINUTES=$(( 10#${NOWAKEUP_END_HOUR} * 60 + 10#${NOWAKEUP_END_MINUTE} ))
+
+    if (( NOWAKEUP_START_TOTAL_MINUTES == NOWAKEUP_END_TOTAL_MINUTES )); then
+      ERRORS="${ERRORS} - No-wakeup start and end time cannot be identical.\n"
+    fi
+  fi
 fi
 
 INITIAL_MINUTE=$(( 10#${INITIAL_MINUTE} ))
@@ -144,6 +178,26 @@ printErrorsAndExitIfAny
 
 calculateNextWakeTime()
 {
+  if (( NOWAKEUP_WINDOW_ENABLED )); then
+    local now_total_minutes=$((10#$(date +%H) * 60 + 10#$(date +%M)))
+    local in_nowakeup_window=0
+
+    if (( NOWAKEUP_START_TOTAL_MINUTES < NOWAKEUP_END_TOTAL_MINUTES )); then
+      if (( now_total_minutes >= NOWAKEUP_START_TOTAL_MINUTES && now_total_minutes < NOWAKEUP_END_TOTAL_MINUTES )); then
+        in_nowakeup_window=1
+      fi
+    else
+      if (( now_total_minutes >= NOWAKEUP_START_TOTAL_MINUTES || now_total_minutes < NOWAKEUP_END_TOTAL_MINUTES )); then
+        in_nowakeup_window=1
+      fi
+    fi
+
+    if (( in_nowakeup_window )); then
+      printf "%s" "${NOWAKEUP_END_TIME}"
+      return 0
+    fi
+  fi
+
   local now_hour=$((10#$(date +%H)))
   local now_minute=$((10#$(date +%M)))
   local target_hour=${now_hour}
@@ -181,6 +235,7 @@ fi
   cat <<EOM
 Wakeup minute each hour: ${INITIAL_MINUTE}
 Stay-awake delay after resume: ${WAKEUP_DELAY_MINUTES} minutes
+No-wakeup window: $( (( NOWAKEUP_WINDOW_ENABLED )) && echo "${NOWAKEUP_WINDOW}" || echo "disabled" )
 hdwakeup command: ${HDWAKEUP_COMMAND}
 EOM
 
