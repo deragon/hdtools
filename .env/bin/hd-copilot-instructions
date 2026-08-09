@@ -72,17 +72,22 @@ remove_lines() {
     while (idx>0 && lines[idx] ~ /^[[:space:]]*$/) idx--
     for (i=1;i<=idx;i++) print lines[i]
   }' "$FILE_PATH" >"${FILE_PATH}.tmp" && mv "${FILE_PATH}.tmp" "$FILE_PATH"
-  echo "Lines have been removed."
+  echo "Lines have been removed from '${FILE_PATH}'."
 }
 
 # Function to add lines below "IMPORTANT"
 add_lines() {
+  if [[ ! -e "${FILE_PATH}" ]]; then
+    mkdir -p "$(dirname "${FILE_PATH}")"
+    touch "${FILE_PATH}"
+  fi
+
   # Prevent duplicate addition by checking if AI_TEXT is already present
   if grep -Fq "${MARKER}" "$FILE_PATH"; then
     echo "Lines already added. Skipping."
   else
     printf '%s' "${AI_TEXT}" >>"$FILE_PATH"
-    echo "Lines have been added."
+    echo "Lines have been added to '${FILE_PATH}'."
   fi
 }
 
