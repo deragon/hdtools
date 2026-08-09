@@ -67,8 +67,9 @@ hd_term_title_auto()
     TITLE_PREFIX="${HD_TITLE}${PWD/*\/}"
   fi
 
-  hdisroot && TITLE_PREFIX="⚠ ${TITLE_PREFIX}"
-  hd_term_title "${TITLE_PREFIX} - ${USER}@${HOSTNAME_FQDN} - ${PWD}"
+  TITLE="${TITLE_PREFIX} - ${USER}@${HOSTNAME_FQDN} - ${PWD}"
+  hdisroot && TITLE="🚨 ${TITLE} 🚨"
+  hd_term_title "${TITLE}" 
 }
 exportfunction hd_term_title_auto
 
