@@ -33,20 +33,36 @@ BUG, TRACKING, LIFE-CYCLE
 TEAMS / MICROSOFT
 ══════════════════════════════════════════════════════════════════════════════
 
-  Teams usually does not provide a way to save/export a chat conversation.
-  There is a way around, which is to use the web version of Teams at
-  https://teams.microsoft.com/v2/ and use the print option of your browser
-  (<CTRL-P>).
+  Non AI solution
+  ────────────────────────────────────────────────────────────────────────────
 
-  However, it will only print what you see on the screen, not the whole
-  conversation.  To get around this limitation, change the scale to 10% for
-  instance and hopefully the whole conversation will be printed in a single
-  page.
+    Teams usually does not provide a way to save/export a chat conversation.
+    There is a way around, which is to use the web version of Teams at
+    https://teams.microsoft.com/v2/ and use the print option of your browser
+    (<CTRL-P>).
 
-  To convert then the PDF to PNG, in Linux, run:
+    However, it will only print what you see on the screen, not the whole
+    conversation.  To get around this limitation, change the scale to 10% for
+    instance and hopefully the whole conversation will be printed in a single
+    page.
 
-    sudo apt install poppler-utils
-    pdftoppm -png myfile.pdf > myfile.png
+    To convert then the PDF to PNG, in Linux, run:
+
+      sudo apt install poppler-utils
+      pdftoppm -png myfile.pdf > myfile.png
+
+
+  AI solution
+  ────────────────────────────────────────────────────────────────────────────
+
+    Ask the AI this:
+
+      Generate a text file which I can download that copies exactly, verbatim,
+      without any transformation, summary or resume, of this conversation.  Show
+      clearly how wrote what and at what time, including year, month, day, hour
+      and minutes.  Fetch everything that was exchanged by typing, between all
+      parties.  Also, the list must be in chronological order, with the furthest
+      message in the past being the first in the file.
 
 
 
