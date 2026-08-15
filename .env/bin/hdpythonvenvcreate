@@ -1,0 +1,161 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2025 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+VENV_DIR=".venv"
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["FG_WHITE_BG_BLUE"]="\e[1;37;44m"
+    ["FG_WHITE_BG_ORANGERED"]="\x1b[38;2;255;255;255m\x1b[48;2;255;69;0m"  # Requires True ANSI (24 bits) terminal.
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+    ["ITALIC"]="\e[2m"
+    ["UNDERLINE"]="\e[3m"
+    ["REVERSE"]="\e[7m"
+    ["STRIKETHROUGH"]="\e[9m"
+    ["BOLD_OFF"]="\e[21m"
+    ["ITALIC_OFF"]="\e[22m"
+    ["UNDERLINE_OFF"]="\e[23m"
+    ["REVERSE_OFF"]="\e[27m"
+    ["STRIKETHROUGH_OFF"]="\e[29m"
+    ["BLINK"]="\e[5m"
+    ["BLACK"]="\e[30m"
+    ["RED"]="\e[31m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["BLUE"]="\e[34m"
+    ["MAGENTA"]="\e[35m"
+    ["CYAN"]="\e[36m"
+    ["WHITE"]="\e[37m"
+    ["BG_RED"]="\e[41m"
+    ["BG_GREEN"]="\e[42m"
+    ["BG_YELLOW"]="\e[43m"
+    ["BG_BLUE"]="\e[44m"
+    ["BG_MAGENTA"]="\e[45m"
+    ["BG_CYAN"]="\e[46m"
+    ["BG_WHITE"]="\e[47m"
+    ["BG_DEFAULT"]="\e[49m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Create a Python '${VENV_DIR}' virtual environment in the current directory, if it does
+not already exist.
+
+Usage:  ${SCRIPT_NAME} [-p <python_binary_path>] [-h]
+
+  -p  Full path to the Python binary, or command name resolvable with 'type -P'.
+  -h  Display this help text.
+"
+}
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DRYRUN=1
+DEBUG=0
+PYTHON_BIN="python"
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "p:h" OPTCMD; do
+  case "${OPTCMD}" in
+    "p")    PYTHON_BIN="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+printErrorsAndExitIfAny()
+{
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors where detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
+}
+
+ERRORS=""
+
+if [[ "${PYTHON_BIN}" != /* ]]; then
+  PYTHON_BIN_RESOLVED="$(type -P "${PYTHON_BIN}" 2>/dev/null)"
+  if [ -n "${PYTHON_BIN_RESOLVED}" ]; then
+    PYTHON_BIN="${PYTHON_BIN_RESOLVED}"
+  else
+    ERRORS="${ERRORS} - Could not resolve Python binary '${PYTHON_BIN}' via 'type -P'.\n"
+  fi
+fi
+
+if [ ! -x "${PYTHON_BIN}" ]; then
+  ERRORS="${ERRORS} - Python binary '${PYTHON_BIN}' does not exist or is not executable.\n"
+elif ! "${PYTHON_BIN}" -m venv --help >/dev/null 2>&1; then
+  ERRORS="${ERRORS} - Python binary '${PYTHON_BIN}' cannot run module 'venv'.\n"
+fi
+
+ACTIVATE_FILE="${VENV_DIR}/bin/activate"
+
+PROJECT_DIR="$(hdprojectdir)"
+VENV_PATH="${PROJECT_DIR}/${VENV_DIR}"
+
+if [ -d "${VENV_PATH}" ]; then
+  ERRORS="- Project directory already contains a '${VENV_DIR}' virtual environment under '${VENV_PATH}'.\n
+  Run 'hdpythonvenvsource' to activate it.\n"
+fi
+
+printErrorsAndExitIfAny
+
+if [ -d "${PROJECT_DIR}" ]; then
+  echo "Found project directory: ${PROJECT_DIR}.  Using it as the base directory for the virtual environment."
+else
+  echo "No project directory found.  Using the current working directory as the base directory for the virtual environment."
+  PROJECT_DIR="${PWD}"
+  VENV_PATH="${PROJECT_DIR}/${VENV_DIR}"
+fi
+
+cd "${PROJECT_DIR}"
+PROJECT_NAME=$(basename "${PROJECT_DIR}")
+
+if [ ! -d "${VENV_PATH}" ]; then
+  echo "Creating Virtual '${VENV_PATH}' environment with '${PYTHON_BIN}'."
+  "${PYTHON_BIN}" -m venv "${VENV_PATH}"
+  # Replace all occurrences of "(${VENV_DIR})" with the name of the project.
+  sed -i -r "s/\(${VENV_DIR}\)/(${PROJECT_NAME})/g" .venv/bin/activate "${ACTIVATE_FILE}"
+else
+  echo "Virtual '${VENV_PATH}' environment already exists.  Not touching it."
+fi
+
+source "${ACTIVATE_FILE}"
+
+if [ -f "requirements.txt" ]; then
+  pip install -r requirements.txt
+fi
+
+echo "To activate the virtual environment, run:  hdpythonvenvsource"
