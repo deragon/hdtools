@@ -11,6 +11,9 @@
 #
 # ─────────────────────────────────────────────────── Copyright Notice ─
 
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
 # Need to find a way to figure out if TRUECOLOR is supported.  For the
 # moment, we hard code, assuming it is.
 TRUECOLOR=1
@@ -21,15 +24,40 @@ if (( TRUECOLOR )); then
   #
   # https://stackoverflow.com/questions/15682537/ansi-color-specific-rgb-sequence-bash
   BG='\x1b[48;2;72;58;170m'
+  TERM_BG='\e]11;#483AAA\a'
   FG='\x1b[38;2;134;122;222m'
+  TERM_FG='\e]10;#867ADE\a'
 else
   # 16 Colors
   BG=''
+  TERM_BG=''
   FG='\e[1;36;44m'
+  TERM_FG=''
 fi
 
 OFF='\e[0m'
 
+# Apply terminal default background if TERM_BG is set.
+if [[ -n "$TERM_BG" ]]; then
+  printf "${TERM_BG}"
+fi
+
+# Apply terminal default foreground if TERM_FG is set.
+if [[ -n "$TERM_FG" ]]; then
+  printf "${TERM_FG}"
+fi
+
 # Hard space after "READY" at end is necessary to dray the full block's
 # background.
-printf "${BG}${FG}?SYNTAX  ERROR    \nREADY             ${OFF}\n"
+printf "${FG}?SYNTAX  ERROR    \n"
+
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+  printf -v FG_ESC '%b' "${FG}"
+  printf -v OFF_ESC '%b' "${OFF}"
+  PS1="\[${FG_ESC}\]READY\n\[${OFF_ESC}\]"
+else
+  printf "READY             ${OFF}\n"
+
+  printf "To get into more Commodore 64 mode, execute:"
+  printf "\n\n  source ${SCRIPT_PATH_ABS}/hdc64se\n\n"
+fi
