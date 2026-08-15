@@ -1,0 +1,150 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2026 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME/.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT="$(dirname "${SCRIPT_PATH_ABS}")"
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["GREEN"]="\e[32m"
+    ["YELLOW"]="\e[33m"
+    ["RESET"]="\e[0;00m"
+  )
+fi
+
+usage()
+{
+  echo -e "
+${ANSI[FG_WHITE_BG_GREEN]} SAFE ${ANSI[RESET]}
+
+Extracts files from a git tag or commit reference without changing the current
+working directory. A single file can be extracted and saved with the reference
+suffix, or all files can be extracted to a directory named after the reference.
+
+Usage:  ${SCRIPT_NAME} -t <git-tag-or-commit> [-f <path/in/repo>] [-h]
+
+  -t  Git tag or commit reference to extract from. (required)
+  -f  File path in repository to extract as '<basename>-<ref>'.
+      If omitted, extract all files to directory '<ref>/.
+  -h  Display this help text.
+"
+}
+
+printWarnings()
+{
+  if [ ! -z "${WARNINGS}" ]; then
+    echo -e "${ANSI[FG_BLACK_BG_YELLOW]}WARNING:${ANSI[RESET]}  The following warnings were thrown.\n"
+    echo -e "${WARNINGS}"
+  fi
+}
+
+printErrorsAndExitIfAny()
+{
+  printWarnings
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors were detected.\n"
+    echo -e "${ERRORS}"
+    echo -e "Command aborted."
+    exit 1
+  fi
+}
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+GIT_REF=""
+FILE_PATH=""
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "t:fh" OPTCMD; do
+  case "${OPTCMD}" in
+    "t")    GIT_REF="${OPTARG}";;
+    "f")    FILE_PATH="${OPTARG}";;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((OPTIND - 1)) # Remove options from $@
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+WARNINGS=""
+ERRORS=""
+
+if [ -z "${GIT_REF}" ]; then
+  ERRORS="${ERRORS} - You must provide a git tag or commit with '-t'.\n"
+fi
+
+if (($# > 0)); then
+  ERRORS="${ERRORS} - Unexpected positional arguments: '$*'.\n"
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  ERRORS="${ERRORS} - Current directory is not inside a git repository.\n"
+fi
+
+if [ ! -z "${GIT_REF}" ] && ! git rev-parse --verify --quiet "${GIT_REF}^{object}" >/dev/null; then
+  ERRORS="${ERRORS} - Git reference '${GIT_REF}' does not exist.\n"
+fi
+
+if [ ! -z "${FILE_PATH}" ] && [ ! -z "${GIT_REF}" ] && ! git cat-file -e "${GIT_REF}:${FILE_PATH}" 2>/dev/null; then
+  ERRORS="${ERRORS} - File '${FILE_PATH}' does not exist at reference '${GIT_REF}'.\n"
+fi
+
+printErrorsAndExitIfAny
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+EXTRACTED_FILES=()
+
+if [ ! -z "${FILE_PATH}" ]; then
+  OUTPUT_FILE="$(basename "${FILE_PATH}")-${GIT_REF}"
+  git cat-file -p "${GIT_REF}:${FILE_PATH}" > "${OUTPUT_FILE}"
+  EXTRACTED_FILES+=("${OUTPUT_FILE}")
+else
+  TARGET_DIR="${GIT_REF}"
+  if [ -e "${TARGET_DIR}" ] && [ ! -d "${TARGET_DIR}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  Target path exists and is not a directory: ${TARGET_DIR}"
+    exit 1
+  fi
+
+  mkdir -p "${TARGET_DIR}"
+
+  git archive --format=tar --prefix="${TARGET_DIR}/" "${GIT_REF}" | tar -x -f -
+
+  while IFS= read -r EXTRACTED_PATH; do
+    EXTRACTED_FILES+=("${TARGET_DIR}/${EXTRACTED_PATH}")
+  done < <(git ls-tree -r --name-only "${GIT_REF}")
+fi
+
+# OUTPUT
+# ════════════════════════════════════════════════════════════════════
+
+echo -e "${ANSI[GREEN]}Extraction completed.${ANSI[RESET]}"
+echo "Extracted files:"
+for EXTRACTED in "${EXTRACTED_FILES[@]}"; do
+  echo " - ${EXTRACTED}"
+done
