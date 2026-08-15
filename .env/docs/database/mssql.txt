@@ -1,0 +1,77 @@
+USEFUL SQL COMMANDS
+══════════════════════════════════════════════════════════════════════════════
+
+-- List all databases containing 'string'
+SELECT name FROM sys.databases WHERE name COLLATE Latin1_General_CI_AS LIKE '%string%';
+
+-- List all jobs containing 'string'
+SELECT name FROM msdb.dbo.sysjobs WHERE name COLLATE Latin1_General_CI_AS LIKE '%string%' ORDER BY name;
+
+-- List all jobs containing <string1> or <string2> or <string3>.
+DECLARE @csv nvarchar(max) =
+    N'string1,string2,string3'; -- Add as many strings you need.
+
+SELECT
+    j.job_id,
+    j.name,
+    j.enabled,
+    cmd_disable =
+        N'EXEC msdb.dbo.sp_update_job @job_id='
+        + QUOTENAME(CONVERT(nvarchar(36), j.job_id), '''')
+        + N', @enabled=0;  -- ' + j.name
+FROM msdb.dbo.sysjobs AS j
+WHERE EXISTS (
+    SELECT 1
+    FROM string_split(@csv, N',') AS s
+    WHERE j.name COLLATE Latin1_General_CI_AS LIKE N'%' + LTRIM(RTRIM(s.value)) + N'%'
+)
+ORDER BY j.name;
+
+-- List server version.
+select @@version
+
+
+
+INSTANCE MANAGEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  - Connect to Windows Server with RDP.
+  - Start 'SQL Server Configuration Manager'.
+  - In 'SQL Server Configuration Manager (Local)', select 'SQL Server Services'.
+  - Select the instance named 'SQL Server (<instance name>)'.
+  - Right click 'Properties'.
+  - Tab 'Service' is the most interesting, showing the 'Start Mode' which can
+    be set to 'Automatic', 'Manual' and 'Disabled'.
+
+
+Registered Servers
+══════════════════════════════════════════════════════════════════════════════
+
+    View -> Registered Servers (CTRL-ALT-G)
+    Database Engine -> Central Management Servers, right-click
+    Register Central Management Servers...
+    Connect to the server.
+    Select Server, right-click and select 'New Query'.
+
+
+Disable and renable databases
+══════════════════════════════════════════════════════════════════════════════
+
+  -- Disable access to database to only members of db_owner, dbcreator, or sysadmin.
+  ALTER DATABASE [<database name>] SET RESTRICTED_USER WITH ROLLBACK IMMEDIATE;
+
+  -- Renable access to database.
+  ALTER DATABASE [<database name>] SET MULTI_USER      WITH ROLLBACK IMMEDIATE;
+
+  Legend:
+
+    RESTRICTED_USER    Only members of db_owner, dbcreator, or sysadmin can access the database.
+    SINGLE_USER        Only one user (usually an admin) can access the database at a time.
+    MULTI_USER         Restores normal access for all users.
+
+  To find out if the current user is a member of db_owner, dbcreator, or sysadmin, run:
+
+    SELECT
+        IS_ROLEMEMBER('db_owner')     AS IsDbOwner,
+        IS_SRVROLEMEMBER('dbcreator') AS IsDbCreator,
+        IS_SRVROLEMEMBER('sysadmin')  AS IsSysAdmin;
