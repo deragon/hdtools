@@ -1,0 +1,15 @@
+LOCAL COPY OF YOUR CONVERSATION
+══════════════════════════════════════════════════════════════════════════════
+
+  Gemini
+  ────────────────────────────────────────────────────────────────────────────
+
+    Gemini provides a 'share' button from which you can save the conversation in
+    PDF.
+
+
+  Copilot M365
+  ────────────────────────────────────────────────────────────────────────────
+
+    At the end of a conversation click on the three dots (…) and export the
+    conversation to Word.
