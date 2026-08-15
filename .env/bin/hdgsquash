@@ -1,0 +1,238 @@
+#!/bin/bash
+
+# ─ Copyright Notice ───────────────────────────────────────────────────
+#
+# Copyright 2000-2025 Hans Deragon - AGPL 3.0 licence.
+#
+# Hans Deragon (hans@deragon.biz) owns the copyright of this work.  It is
+# released under the GNU Affero General Public License which can be found at:
+#
+#     https://www.gnu.org/licenses/agpl-3.0.en.html
+#
+# ─────────────────────────────────────────────────── Copyright Notice ─
+
+SCRIPT_NAME="${BASH_SOURCE[0]/*\/}" # Basename, efficient form.
+SCRIPT_PATH_ABS="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" # Fetch real directory, not symlink.  Spaces are well handled.
+
+SCRIPT_NAME_BASE="${SCRIPT_NAME%.sh}"
+SCRIPT_NAMEANDPATH_ABS="${SCRIPT_PATH_ABS}/${SCRIPT_NAME}"
+SCRIPT_PATH_ABS_PARENT="$(dirname "${SCRIPT_PATH_ABS}")"
+
+unset ANSI
+if [ -t 1 ] ; then
+  # STDOUT is a terminal.  Set ANSI.  If STDOUT is redirected, ANSI
+  # remain unset and no ANSI codes are sent out.
+
+  declare -Ag ANSI=(
+    ["FG_WHITE_BG_GREEN"]="\e[1;37;42m"
+    ["FG_BLACK_BG_YELLOW"]="\e[1;30;43m"
+    ["FG_WHITE_BG_RED"]="\e[1;37;41m"
+    ["RESET"]="\e[0;00m"
+    ["BOLD"]="\e[1m"
+  )
+fi
+
+
+usage()
+{
+  echo -e "
+${ANSI[FG_BLACK_BG_YELLOW]} SLIGHT DANGER ${ANSI[RESET]}
+
+Usage:  ${SCRIPT_NAME} [-z] [-b <branch>] [-a] [-h]
+
+  -b <branch>     Base branch to compare against.  Default: master or main.
+  -a              Append all commit messages.  Default: use only oldest message.
+  -z              Debug logs enabled.
+  -h              Display this help text.
+
+Description:
+
+  Squashes all commits in the current branch that are not in the base branch
+  into a single commit. By default, the message of the oldest commit is used.
+  With -a, all commit messages are concatenated from oldest to newest.
+
+Example:
+
+  ${SCRIPT_NAME} -b develop       # Squash commits in current branch vs develop
+  ${SCRIPT_NAME} -a               # Squash with all commit messages appended
+"
+}
+
+
+
+
+
+# ARGUMENT PARSING
+# ════════════════════════════════════════════════════════════════════
+
+DEBUG=0
+BASE_BRANCH=""
+APPEND_MESSAGES=0
+
+OPTIND=1 # Normally not required, except if the script is sourced.
+         # Better be safe than sorry.
+while getopts "b:zah" OPTCMD; do
+  case "${OPTCMD}" in
+    "b")    BASE_BRANCH="${OPTARG}";;
+    "z")    DEBUG=1;;
+    "a")    APPEND_MESSAGES=1;;
+    "h"|*)  usage; exit 1;;
+  esac
+done
+
+shift $((${OPTIND} - 1))  # Remove options from $@
+
+
+# VALIDATION
+# ════════════════════════════════════════════════════════════════════
+
+printErrorsAndExitIfAny()
+{
+  printWarnings
+  if [ ! -z "${ERRORS}" ]; then
+    echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  The following errors were detected.\n" >&2
+    echo -e "${ERRORS}" >&2
+    echo -e "Command aborted." >&2
+    exit 1
+  fi
+}
+
+printWarnings()
+{
+  if [ ! -z "${WARNINGS}" ]; then
+    echo -e "${ANSI[FG_BLACK_BG_YELLOW]}WARNING:${ANSI[RESET]}  The following warnings were thrown.\n" >&2
+    echo -e "${WARNINGS}" >&2
+  fi
+}
+
+WARNINGS=""
+ERRORS=""
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+  ERRORS="${ERRORS} - Not in a git repository.\n"
+fi
+
+# Avoid mixing uncommitted work with squash commit content.
+if ! git diff --quiet --ignore-submodules -- || ! git diff --cached --quiet --ignore-submodules --; then
+  ERRORS="${ERRORS} - Working tree or index is not clean. Commit or stash changes before running this script.\n"
+fi
+
+# Determine base branch
+if [ -z "${BASE_BRANCH}" ]; then
+  # Try master first, then main
+  if git rev-parse --verify master > /dev/null 2>&1; then
+    BASE_BRANCH="master"
+  elif git rev-parse --verify main > /dev/null 2>&1; then
+    BASE_BRANCH="main"
+  else
+    ERRORS="${ERRORS} - Could not find base branch (master or main). Use -b to specify one.\n"
+  fi
+fi
+
+# Check if base branch exists
+if [ ! -z "${BASE_BRANCH}" ] && ! git rev-parse --verify "${BASE_BRANCH}" > /dev/null 2>&1; then
+  ERRORS="${ERRORS} - Base branch '${BASE_BRANCH}' does not exist.\n"
+fi
+
+# Get current branch
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+if [ -z "${CURRENT_BRANCH}" ]; then
+  ERRORS="${ERRORS} - Could not determine current branch.\n"
+fi
+
+# Check if current branch is different from base branch
+if [ "${CURRENT_BRANCH}" == "${BASE_BRANCH}" ]; then
+  ERRORS="${ERRORS} - Current branch is the same as base branch. Nothing to squash.\n"
+fi
+
+printErrorsAndExitIfAny
+
+
+# PROCESSING
+# ════════════════════════════════════════════════════════════════════
+
+if (( DEBUG )); then
+  echo "Current branch: ${CURRENT_BRANCH}"
+  echo "Base branch: ${BASE_BRANCH}"
+  echo "Append messages: ${APPEND_MESSAGES}"
+  echo
+fi
+
+ORIGINAL_HEAD="$(git rev-parse HEAD 2>/dev/null)"
+SQUASH_IN_PROGRESS=0
+
+on_interrupt_restore()
+{
+  if (( SQUASH_IN_PROGRESS )); then
+    echo -e "\n${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  Operation interrupted. Restoring original branch state." >&2
+    git reset --hard "${ORIGINAL_HEAD}" > /dev/null 2>&1 || true
+  fi
+  exit 130
+}
+
+trap 'on_interrupt_restore' INT TERM
+
+# Get list of commits to squash
+COMMITS=$(git log --pretty=format:"%h %s" "${BASE_BRANCH}".."${CURRENT_BRANCH}" 2>/dev/null)
+COMMIT_COUNT=$(git log --pretty=format:"%h" "${BASE_BRANCH}".."${CURRENT_BRANCH}" 2>/dev/null | wc -l)
+
+if [ "${COMMIT_COUNT}" -eq 0 ]; then
+  echo -e "${ANSI[FG_BLACK_BG_YELLOW]}WARNING:${ANSI[RESET]}  No commits found between ${BASE_BRANCH} and ${CURRENT_BRANCH}."
+  exit 0
+fi
+
+echo -e "Found ${ANSI[BOLD]}${COMMIT_COUNT}${ANSI[RESET]} commit(s) to squash:\n"
+echo "${COMMITS}"
+echo
+
+# Generate squash message
+COMMITS_OLDEST_TO_NEWEST="$(git rev-list --reverse "${BASE_BRANCH}".."${CURRENT_BRANCH}" 2>/dev/null)"
+
+if (( APPEND_MESSAGES )); then
+  SQUASH_MESSAGE=""
+  while IFS= read -r COMMIT_HASH; do
+    [ -z "${COMMIT_HASH}" ] && continue
+    COMMIT_MESSAGE="$(git show -s --format=%B "${COMMIT_HASH}" 2>/dev/null)"
+    if [ -z "${SQUASH_MESSAGE}" ]; then
+      SQUASH_MESSAGE="${COMMIT_MESSAGE}"
+    else
+      SQUASH_MESSAGE="${SQUASH_MESSAGE}
+
+${COMMIT_MESSAGE}"
+    fi
+  done <<< "${COMMITS_OLDEST_TO_NEWEST}"
+else
+  OLDEST_COMMIT_HASH="$(echo "${COMMITS_OLDEST_TO_NEWEST}" | head -n 1)"
+  SQUASH_MESSAGE="$(git show -s --format=%B "${OLDEST_COMMIT_HASH}" 2>/dev/null)"
+fi
+
+if (( DEBUG )); then
+  echo "Squash message:"
+  echo "${SQUASH_MESSAGE}"
+  echo
+fi
+
+# Non-interactive squash: reset to base while keeping changes staged,
+# then create a single commit with a deterministic message.
+echo -e "${ANSI[FG_WHITE_BG_GREEN]}Squashing ${COMMIT_COUNT} commit(s)...${ANSI[RESET]}"
+
+if ! git reset --soft "${BASE_BRANCH}"; then
+  echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  Failed to prepare squash operation." >&2
+  exit 1
+fi
+
+SQUASH_IN_PROGRESS=1
+
+if ! git commit -m "${SQUASH_MESSAGE}"; then
+  echo -e "${ANSI[FG_WHITE_BG_RED]}ERROR:${ANSI[RESET]}  Squash commit failed. Restoring original branch state." >&2
+  git reset --hard "${ORIGINAL_HEAD}" > /dev/null 2>&1 || true
+  exit 1
+fi
+
+SQUASH_IN_PROGRESS=0
+
+echo -e "${ANSI[FG_WHITE_BG_GREEN]}SUCCESS:${ANSI[RESET]}  Commits squashed successfully!"
+echo
+echo -e "${ANSI[FG_WHITE_BG_GREEN]}Squashed Commit:${ANSI[RESET]}\n"
+git log --name-status "${BASE_BRANCH}"..HEAD
