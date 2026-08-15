@@ -1,0 +1,4 @@
+file_name: indented-comment-block.sh
+steps:
+  - cursor_line: 1
+    width: 80

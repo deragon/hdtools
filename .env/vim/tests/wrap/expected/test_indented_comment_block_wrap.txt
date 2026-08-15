@@ -1,0 +1,3 @@
+  # This is an indented comment line that should preserve indentation while
+  # being wrapped across multiple lines in vim and neovim behavior.  Another
+  # indented comment sentence follows to make this a paragraph for wrapping.

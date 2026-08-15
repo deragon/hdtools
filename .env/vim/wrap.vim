@@ -198,7 +198,11 @@ function! HDWrapWithPar(textwidth)
   "              after sentence-ending punctuation
   let l:p = strdisplaywidth(l:cur_indent)
   if l:is_comment
-    execute l:start . ',' . l:end . '!par w' . a:textwidth . ' p2 s0 g'
+    " Preserve the full comment leader (indent + '#' + optional spaces),
+    " otherwise wrapped continuation lines may lose '# '.
+    let l:comment_prefix = matchstr(getline(l:cur), '^\s*#\s*')
+    let l:comment_p = strdisplaywidth(l:comment_prefix)
+    execute l:start . ',' . l:end . '!par w' . a:textwidth . ' p' . l:comment_p . ' s0 g'
   else
     execute l:start . ',' . l:end . '!par w' . a:textwidth . ' p' . l:p . ' s0 g'
   endif
